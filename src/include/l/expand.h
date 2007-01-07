@@ -1,0 +1,69 @@
+/* expand.c - Handles code expansion.
+   Copyright (C) 2007 Matthieu Lemerre <racin@free.fr>
+
+   This file is part of the L programming language.
+
+   The L programming language is free software; you can redistribute it 
+   and/or modify it under the terms of the GNU Lesser General Public License
+   as published by the Free Software Foundation; either version 2.1 of the
+   License, or (at your option) any later version.
+   
+   The L programming language is distributed in the hope that it will be 
+   useful, but WITHOUT ANY WARRANTY; without even the implied warranty 
+   of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+   GNU Lesser General Public License for more details.
+   
+   You should have received a copy of the GNU Lesser General Public License
+   along with the L programming language; see the file COPYING.  If not,
+   write to the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+   Boston, MA  02110-1301  USA.  */
+
+#ifndef EXPAND_H
+#define EXPAND_H
+
+#include "../../parser/form.h"
+
+/* For now, we convey only type infomation in the malebolge compiler.
+   In the future, there will be additional info for determining if a
+   function is const, pure, reentrant, if the arguments can be
+   allocated on the stack... */
+
+/* The following trick is used: an expanded form is considered as an
+   normal atomic form by the expand function.  */
+#define Expanded_Form					    \
+  struct						    \
+  {							    \
+    Atomic_Form;					    \
+							    \
+    /* The original form.  */				    \
+    form_t original_form;				    \
+    							    \
+    /* The returned, translated form.  */		    \
+    form_t return_form;					    \
+    							    \
+    /* The type of the returned form.  */			\
+    Type type;							\
+    								\
+    /* Other informations will go in a hash or alist. Maybe*/	\
+    /* return_form and type would also go in that hash.  */	\
+    								\
+  } 
+
+Define_Form(expanded_form, Expanded_Form);
+
+/* The expander functions that the user write take a form as an
+   argument, and return an expanded form.  
+
+   In the future, we may request to return an expanded form, when we
+   have an easy to use syntax to do that.  */
+typedef form_t (*expander_t)(form_t);
+
+/* Register a new expander function, associated to SYMBOL.  */
+void
+define_expander(symbol_t symbol, expander_t expander);
+
+/* The classic function expander.  */
+expanded_form_t
+expand_function(generic_form_t form);
+
+#endif

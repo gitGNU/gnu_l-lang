@@ -1,0 +1,19 @@
+Many backends are possible:
+
+- The null backend does not generate code, but is still useful for
+  typechecking.
+
+- The jit backend exist for now, but really works only for x86;
+  porting it on SPARC and powerPC should not be difficult, though.
+
+- The GCC backend should link directly to GCC.
+
+- The GNU C backend should generate GNU C
+
+- The pretty GNU C backend would emphasize on readable output code.
+
+- The ANSI C backend would generate readable ANSI C and assembly
+  files.
+
+- The slim binary backend should generate a compressed version of the
+  abstract syntax tree.

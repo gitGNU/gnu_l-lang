@@ -1,0 +1,22 @@
+AC_INIT(L, 0.0, racin@free.fr)
+AM_INIT_AUTOMAKE
+AC_PROG_CC
+CC="$CC -std=gnu99"
+#AC_PROG_RANLIB
+AC_PROG_LIBTOOL
+
+DEFAULT_INCLUDES="-I. -I\$(srcdir) -I\$(top_srcdir)/src/include"
+AC_SUBST(DEFAULT_INCLUDES)
+
+AC_OUTPUT(Makefile
+	  src/Makefile
+	  src/memory/Makefile
+	  src/lexer/Makefile
+	  src/parser/Makefile
+	  src/compiler/Makefile
+          src/objects/Makefile
+	  src/std/Makefile
+	  src/compiler/jit/Makefile
+	  src/expander/Makefile
+)
+

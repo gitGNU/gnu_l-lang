@@ -1,0 +1,7 @@
+These tests are helpful when modifying something in compiler.
+
+The cocyte* tests are mainly tests for the cocyte.  They help changing
+stuff incrementally.
+
+The malebolge* tests test the malebolge expander.  They are more
+evolued tests.

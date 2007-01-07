@@ -1,0 +1,998 @@
+/* backend.c - Implementation of the backend.h interface for JIT.
+   Copyright (C) 2007 Matthieu Lemerre <racin@free.fr>
+
+   This file is part of the L programming language.
+
+   The L programming language is free software; you can redistribute it 
+   and/or modify it under the terms of the GNU Lesser General Public License
+   as published by the Free Software Foundation; either version 2.1 of the
+   License, or (at your option) any later version.
+   
+   The L programming language is distributed in the hope that it will be 
+   useful, but WITHOUT ANY WARRANTY; without even the implied warranty 
+   of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+   GNU Lesser General Public License for more details.
+   
+   You should have received a copy of the GNU Lesser General Public License
+   along with the L programming language; see the file COPYING.  If not,
+   write to the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+   Boston, MA  02110-1301  USA.  */
+
+
+/* The jit backend aims at being fast.  In particular, generation is
+   done in one pass.
+
+   We try to generate not too bad code when possible, while retaining
+   one-pass compilation.  This forces to do quite a few back
+   patches.  */
+
+#include <Judy.h>
+#include "../../objects/symbol.h"
+//#include "../../objects/type.h"
+#include "../type.h"
+#include "../../memory/code.h"
+#include "../backend.h"
+#include "lightning-extended.h"
+#include "../../objects/function.h"
+#include "low-location.h"
+#include "location.h"
+#include "stack.h"
+#include "register.h"
+
+#include <l/sys/panic.h>
+
+/* For debugging purposes.  */
+static int locations_created = 0;
+
+void
+debug_new_location (location_t location)
+{
+  // if(location == 0x80596a8 || location == 0x8059720)
+  //    asm("int $3");
+}
+
+#define NEW_LOCATION(type_)			\
+  ({location_t location = MALLOC (location);	\
+    location->type = type_;			\
+    location->ref_count = 1;			\
+    location->all = 0;				\
+    locations_created ++;			\
+    debug_new_location (location);						\
+    /*  printf ("NEW location : number = %d\n", locations_created); */	\
+    location; })
+
+location_t
+constant_value (Type type, unsigned int value)
+{
+  location_t location = NEW_LOCATION (type);
+  location->low_location = constant_value_location (value);
+
+  return location;
+}
+
+location_t
+function_parameter (Type type, unsigned int number)
+{
+  location_t location = NEW_LOCATION (type);
+  location->low_location = function_argument (number);
+  return location;
+}
+
+location_t
+stack_location (Type type, memory_block_t mb)
+{
+  location_t location = NEW_LOCATION (type);
+  location->low_location = stack_low_location (mb->offset);
+  location->mb = mb;
+  
+  return location;
+}
+
+location_t
+temporary_location (Type type, low_location_t lloc)
+{
+  static count = 0;
+  location_t loc = NEW_LOCATION (type);
+  loc->low_location = lloc;
+  
+  return loc;
+}
+
+location_t
+compound_location (list_t alist)
+{
+  panic ("not implemented, alist should be a list or an array\n");
+  //XXX: intern tuples types
+  location_t location = NEW_LOCATION (NULL);
+  location->compound_location = 1;
+  location->location_alist = alist;
+
+  return location;
+}
+
+/* A void location is just an empty compound.  We could always use the
+   same.*/
+location_t
+void_location (void)
+{
+  location_t location = NEW_LOCATION (NULL);
+  location->compound_location = 1;
+  location->location_alist = NULL;
+
+  return location;
+  //  return compound_location (NULL);
+  //  location_t location = temporary_location (TYPE (void), NULL);
+  //  return location;
+}
+
+
+#define compile_error panic
+
+
+
+
+/*
+typedef struct spill_alist
+  {
+    register_t reg;
+    location_t location;
+    struct spill_alist *next;
+  } *spill_alist_t;
+*/
+  
+/* XXX: in fact, should be attached to block info? No not really. */
+typedef struct path_info
+{
+  /* A word, set to 1 if the register has been spilled.  */
+  unsigned int registers_spilled;
+
+  /* List of spilled registers, to unspill at the end of the if.  */
+  location_t spilled_locations[DATA_REGISTER_NUMBER];
+  //  spill_alist_t spill_alist;
+  
+  
+  struct path_info *next;
+} *path_info_t;
+
+/* XXX: A list isn't appropriate for storing paths.  */
+static path_info_t path_info_list = NULL;
+
+void
+spill (register_t reg)
+{
+  assert (reg >= 0);
+  assert (register_locations[reg] != NULL);
+
+  assert (path_info_list);
+  
+  path_info_list->registers_spilled |= (1 << reg);
+  
+  
+  location_t to_spill_location = register_locations[reg];
+
+  to_spill_location->spilled_location = 1;
+  to_spill_location->spilled_register = reg;
+
+  path_info_list->spilled_locations[reg] = to_spill_location;
+  
+  if(to_spill_location == 0x80596a8 || to_spill_location == 0x8059720)
+    asm("int $3");
+  
+  low_location_t ll = to_spill_location->low_location;
+  
+  Type type = to_spill_location->type;
+
+  memory_block_t block = allocate_memory_block (type->size);
+  
+  to_spill_location->low_location = stack_low_location (block->offset);
+
+  to_spill_location->mb = block;
+
+  move_between_low_locations_register_indirection (ll,
+						   to_spill_location->low_location);
+  
+  register_locations[reg] = NULL;
+
+  free_data_register (reg);
+}
+
+/* XXX: Here, when registerizing a location, the new registerized
+   version would be written here.  */
+void
+move_between_locations (location_t from, location_t to)
+{
+  move_between_low_locations (from->low_location, to->low_location);
+}
+
+/* Retrieve the location associated to symbol ID.  */
+//location_t
+//get_location (symbol_t symbol)
+//{
+//  location_t *pvalue;
+//
+//  if(!symbol->location_table)
+//    {
+//      printf ("ASSERT Symbol->location table failed for symbol %s\n",
+//	      symbol->name);
+//      asm("jmp 0");
+//    }
+//  void **table = CAR (symbol->location_table);
+//  JLG (pvalue, *table, (Word_t) symbol);
+//
+//  if (pvalue == NULL)
+//    {
+//      compile_error ("Unknown symbol: %s\n", symbol->name);
+//      asm("int $3");
+//    }
+//  return *pvalue;
+//}
+
+void
+free_location (location_t location)
+{
+  // if(location == 0x80596a8 || location == 0x8059720)
+  //    asm("int $3");
+  
+  assert (location->ref_count > 0);
+  
+  if(--location->ref_count == 0)
+    {
+      locations_created--;
+
+      //      printf ("Free location : locations left = %d\n", locations_created);
+      if(location->compound_location)
+	{
+	  assert (location->type == TYPE (void));
+	  return;
+	}
+      if(location->low_location->location_type == REGISTER)
+	{
+	  register_locations[location->low_location->reg] = NULL;
+	  free_data_register (location->low_location->reg);
+	  return;
+	}
+      if(location->spilled_location)
+	{
+	  path_info_list->registers_spilled &= ~(1 << location->spilled_register);
+	  assert (path_info_list->spilled_locations[location->spilled_register]);
+	  path_info_list->spilled_locations[location->spilled_register] = NULL; /* Not really useful. */
+		  
+	}
+      //      if(location->automatic_variable)
+    }
+  /* XXX: to implement*/
+}
+
+
+
+/* 
+XXX: en fait il faut bien un compteur de reference
+
+Par exemple, quand on aura  a = { let b = 4; b }, alors a la creation du let, la refrence vaut 1, au b, la refrence vaut 2,
+  a la fin du block, la refrence vaut plus que 1, et une fois affectee, elle vaut 0 et disparait.
+
+  Donc free location ne devrait s'occuper que des cas sur un registre ou sur la pile : les autres locations on s'en fout.
+
+  On pourra verifier que la pile et les registres sont vides quand on a tout compile.
+
+  Et il faut rajouter une fonction add_reference(location) quand on renvoie la meme location mais plusieurs fois.
+
+  Dans le backend C, on s'en tape des references, mais dans les backends compile c'est important.
+*/
+
+
+
+//__thread
+void *function_start;
+
+void *allocate_stack_space_ptr;
+
+function_t current_function;
+
+typedef hash_table_t location_table_t;
+
+typedef struct block
+{
+  location_table_t location_table;
+  struct block *next;
+} *block_t;
+
+block_t block_list;
+
+
+
+
+/* Parameters is a tuple form.  */
+void
+generate_function_start (symbol_t name, generic_form_t parameters)
+{
+  /* XXX: allocate space for the code.  */
+  function_start = allocate_code_space (4096);
+  reinit_registers ();
+  reinit_stack ();
+  block_list = NULL;
+
+  create_block ();
+
+  create_execution_path_branch ();
+  
+  jit_prolog (length (parameters->form_list));
+  
+  {
+    FOREACH (element, parameters->form_list)
+      {
+	int i = jit_arg_ui ();
+	generic_form_t label_form = CAR (element);
+	assert (label_form->head == SYMBOL (label));
+
+	type_form_t tf = CAR (label_form->form_list->next);
+	symbol_t param_name = ((id_form_t) CAR (label_form->form_list))->value;
+
+	Type type = intern_type (tf);
+      
+	puthash (param_name, function_parameter (type, i),
+		 block_list->location_table);
+      }
+  }
+
+  allocate_stack_space_ptr = jite_retain_space_for (jit_addi_ui (JIT_SP,
+								 JIT_SP,
+								 0xe0e0e0e0));
+  /* XXX: init parameters.  */
+
+
+  current_function = gethash (name, function_hash);//MALLOC (function);
+  assert (current_function);
+  current_function->address = function_start;
+  //  current_function->name = name;
+}
+
+//int min_stack_offset = JITE_OFFSET_FROM_LOCAL_ARG;
+
+void *
+generate_function_end ()
+{
+  join_execution_path_branch ();
+  
+  delete_block ();
+  
+  assert (block_list == NULL);
+
+  assert (locations_created == 0);
+  
+  jite_occupy_space (allocate_stack_space_ptr,
+		     jit_addi_ui (JIT_SP, JIT_SP,
+				  (JITE_OFFSET_FROM_LOCAL_ARG 
+				   + min_offset_used/*current_function.max_offset*/)));
+
+  printf("STACK OFFSET: %d\n", min_offset_used);
+  
+  /* Finish the code, release the memory.  */
+  finish_code (function_start);
+
+  /* Patches all calls to redefine the function call.  */
+  link_symbol_address (current_function->name, function_start);
+  
+  
+  return current_function;
+}
+
+void
+create_block (void)
+{
+  block_t block = MALLOC (block);
+  block->location_table = make_hash_table ();
+  block->next = block_list;
+  block_list = block;
+}
+
+void
+delete_block (void)
+{
+  location_table_t location_table = block_list->location_table;
+  
+  /* XXX: delete all variables in the stack.  */
+
+  Word_t index = 0;
+  Word_t *pvalue;
+
+  JLF (pvalue, *location_table, index);
+
+  while(pvalue != NULL)
+    {
+      location_t loc = * (location_t *) pvalue;
+      
+      printf ("Stack variable: %s %d\n", ((symbol_t) index)->name, loc->ref_count);
+      
+      JLN (pvalue, *location_table, index);
+
+      free_location (loc);
+    }
+  
+  JLFA (index, *location_table);
+
+  printf ("Bytes freed:%d\n", index);
+  
+  block_list = block_list->next;
+}
+
+
+/* XXX: Pour les variables
+
+   - Pour les variables sur pile: on peut leur associer un registre
+     avec leur contenu.  A la fin d'un block if, on les ecris dans la
+     stack si leur contenu a change.
+
+   - Pour les autres locations (heap, variables globales): on peut
+     lire dans le registre, mais quand on ecris, on ecris aussi dans
+     la memoire. (et aussi dans le registre).
+
+   - Quand on fait un registerize, c'est la qu'on peut decider de
+     mettre une variable dans un registre.
+*/
+
+
+/* When type is NULL, we allocate the stack space on the first
+affectation. This is not a problem even in then / else branches:
+
+- If creating a location in a then, it will also be used in the else
+  branch.  As the else branch is not yet compiled, the stack location
+  will also be free in the else branch.
+
+- If creating the location in the else branch, it just means that the
+  then branch didn't touched the location.  Thus we don't care if it
+  used the stack space, since the variable contains garbage
+  anyway.  */
+void create_stack_variable (Type type, symbol_t name)
+{
+  memory_block_t block = allocate_memory_block (type->size);
+
+  location_t location = stack_location (type, block);
+
+  if(gethash (name, block_list->location_table))
+    compile_error ("Error: variable %s shadows a previous definition\n", name->name);
+  
+  puthash (name, location, block_list->location_table);
+}
+
+/* Retrieve the location associated to symbol ID.  */
+location_t
+get_location (symbol_t id)
+{
+  /* Go through the list of blocks to get the location.  */
+  /* XXX: the location_table could be also associated to the symbol in
+     another hash table.  */
+  //  block_t element;
+  location_t loc;
+  
+  for(block_t element = block_list; element; element = element->next)
+    {
+      loc = gethash (id, element->location_table);
+      if(loc)
+	goto next;
+    }
+  compile_error ("Symbol %s is never defined\n",id->name);
+  
+ next:
+  /* XXX: for special variables, it won't be like this.  */
+
+  /* Increments the reference counter.  */
+  loc->ref_count ++;
+
+  return loc;
+}
+
+
+void
+return_function_value (location_t location)
+{
+
+  /* XXX: What about compound locations?  */
+
+
+  /* XXX: free REG_RET? */
+  low_location_t ll = register_location (REG_RET);
+
+  move_between_low_locations (location->low_location, ll);
+  
+  /* Restore the stack pointer */
+  jit_addi_i (JIT_SP, JITE_FP, JITE_OFFSET_FROM_LOCAL_ARG);
+
+  /* XXX: move location to JIT_RET.  */
+  jit_ret ();
+}
+
+location_t
+function_call (function_t function, unsigned int loc_size,
+	       location_t *loc_array)
+{
+  /* XXX: Save the used registers that can be destroyed by the
+     function call (R0, R1, R2).  */
+  
+  assert (loc_size == function->nb_arguments);
+
+  jit_prepare_i (function->nb_arguments);
+
+  /* XXX: use these registers too.  */
+  
+  assert (register_locations[REG_R0] == NULL);
+  assert (register_locations[REG_R1] == NULL);
+  assert (register_locations[REG_R2] == NULL);
+  
+  for(int i = function->nb_arguments - 1; i >= 0; i--)
+    {
+      low_location_t from = loc_array[i]->low_location;
+
+      if(from->location_type == REGISTER)
+	{
+	  jit_pusharg_i (corresponding_register[from->reg]);
+	}
+      else
+	{
+	  /* XXX: allocate this reg only once.  */
+	  low_location_t reg = any_register_location ();
+
+	  move_between_low_locations_any_register (from, reg);
+	  jit_pusharg_ui (corresponding_register[reg->reg]);
+
+	  free_data_register (reg->reg);
+	}
+    }
+
+  /* Get the pointer address.  */
+  void *ref = jit_get_ip ().vptr;
+
+  jit_finish (function->address);
+
+  record_symbol_needed (current_function->name, ref, function->name);
+  
+  /* XXX: if not yet compiled, put it in the to patch list.  */
+  low_location_t reg = any_register_location ();
+
+  jit_retval (corresponding_register[reg->reg]);
+
+
+  /* XXX  Return the type */
+
+  location_t loc = temporary_location (NULL, reg);
+
+  register_locations[reg->reg] = loc;
+  return loc;
+}
+
+
+/* Labels.  */
+
+/* Creates a new label. Can be used for forward references.  */
+forward_label_t make_forward_label (void)
+{
+  forward_label_t label = MALLOC (label);
+
+  label->is_forward_label = 1;
+  label->patch_list = NULL;
+
+  return label;
+}
+
+/* Creates a jump to a label (backward or forward reference).  */
+void goto_label (label_t label)
+{
+  if(label->is_forward_label)
+    {
+      void *ref = jit_jmpi (jit_forward ());
+      label->patch_list = CONS (ref, label->patch_list);
+    }
+  else
+    {
+      jit_jmpi (label->address);
+    }
+}
+
+/* If the label was a forward.  */
+backward_label_t put_label_here (forward_label_t label)
+{
+  assert (label->is_forward_label == 1);
+
+  void * address = jit_get_ip ().ptr;
+  
+  label->is_forward_label = 0;
+
+  FOREACH (element, label->patch_list)
+    {
+      jit_patch_at (CAR (element), address);
+    }
+
+  label->address = address;
+
+  return label;
+
+  /* XXX: if the goto is juste before the label, just removes it.  */
+}
+
+/* Faster combinaison for make_label followed by put_label_here.  To
+use when the reference isn't forward.  */
+backward_label_t make_label_here ()
+{
+  return put_label_here (make_forward_label ());
+}
+
+
+/* Conditionals.  */
+
+#if 0
+boolean_expression_switch_t make_eq_switch (location_t loc1, location_t loc2)
+{
+  low_location_t lloc1 = loc1->low_location, lloc2 = loc2->low_location;
+
+
+  backward_label_t entry_point = make_label_here ();
+  void *ref_true;
+  
+  switch(lloc1->location_type)
+    {
+    case CONSTANT:
+      {
+	int value1 = lloc1->value;
+	
+	switch(lloc2->location_type)
+	  {
+	  case CONSTANT: panic ("Not yet implemented\n");
+	  case REGISTER: ref_true = jit_beqi_i (jit_forward (),
+						corresponding_register[lloc2->reg],
+						value1);
+	    break;
+	  default:
+	    {
+	      low_location_t reg = registerize (lloc2);
+	      ref_true = jit_beqi_i (jit_forward (),
+				     corresponding_register[reg->reg],
+				     value1);
+	      free_data_register (reg->reg);
+	    }
+	  }
+      }
+      break;
+      
+    case REGISTER:
+      {
+	register_t reg1 = lloc1->reg;
+	switch(lloc2->location_type)
+	  {
+	  case CONSTANT:
+	    ref_true = jit_beqi_ui (jit_forward (),
+				    corresponding_register[reg1],
+				    lloc2->value);
+	    break;
+	  case REGISTER:
+	    ref_true = jit_beqr_ui (jit_forward (),
+				    corresponding_register[reg1],
+				    corresponding_register[lloc2->reg]);
+	    break;
+	  default:
+	    {
+	      low_location_t reg = registerize (lloc2);
+	      ref_true = jit_beqi_i (jit_forward (),
+				     corresponding_register[reg1],
+				     corresponding_register[reg->reg]);
+	      free_data_register (reg->reg);
+	    }
+	  }
+      }
+      
+      break;
+    default:
+      {
+	low_location_t reg = registerize (lloc1);
+	register_t reg1 = reg->reg;
+	switch(lloc2->location_type)
+	  {
+	  case CONSTANT:
+	    ref_true = jit_beqi_ui (jit_forward (),
+				    corresponding_register[reg1],
+				    lloc2->value);
+	    break;
+	  case REGISTER:
+	    ref_true = jit_beqr_ui (jit_forward (),
+				    corresponding_register[reg1],
+				    corresponding_register[lloc2->reg]);
+	    break;
+	  default:
+	    {
+	      low_location_t reg2 = registerize (lloc2);
+	      ref_true = jit_beqi_i (jit_forward (),
+				     corresponding_register[reg1],
+				     corresponding_register[reg2->reg]);
+	      free_data_register (reg2->reg);
+	    }
+	  }
+	break;
+      }
+    }
+
+  void *ref_false = jit_jmpi (jit_forward ());
+
+  boolean_expression_switch_t bes = MALLOC (boolean_expression_switch);
+
+  bes->entry_point = entry_point;
+
+  forward_label_t true_jump = MALLOC (label);
+  true_jump->is_forward_label = 1;
+  true_jump->patch_list = CONS (ref_true, NULL);
+  bes->true_jump = true_jump;
+
+  forward_label_t false_jump = MALLOC (label);
+  false_jump->is_forward_label = 1;
+  false_jump->patch_list = CONS (ref_false, NULL);
+  bes->false_jump = false_jump;
+
+  return bes;
+}
+#endif
+
+
+#define DEFINE_BOOLEAN_SWITCH_MAKER(name, nameinv)				\
+boolean_expression_switch_t make_##name##_switch (location_t loc1, location_t loc2) \
+{									\
+  low_location_t lloc1 = loc1->low_location, lloc2 = loc2->low_location; \
+									\
+									\
+  backward_label_t entry_point = make_label_here ();			\
+  void *ref_true;							\
+									\
+  switch(lloc1->location_type)						\
+    {									\
+    case CONSTANT:							\
+      {									\
+	int value1 = lloc1->value;					\
+									\
+	switch(lloc2->location_type)					\
+	  {								\
+	    /*case CONSTANT: panic ("Not yet implemented\n");*/		\
+	  case REGISTER: ref_true = jit_b##nameinv##i_i (jit_forward (),	\
+						corresponding_register[lloc2->reg], \
+						value1);		\
+	    break;							\
+	  default:							\
+	    {								\
+	      low_location_t reg = registerize (lloc2);			\
+	      ref_true = jit_b##nameinv##i_i (jit_forward (),		\
+				     corresponding_register[reg->reg],	\
+				     value1);				\
+	      free_data_register (reg->reg);				\
+	    }								\
+	  }								\
+      }									\
+      break;								\
+									\
+    case REGISTER:							\
+      {									\
+	register_t reg1 = lloc1->reg;					\
+	switch(lloc2->location_type)					\
+	  {								\
+	  case CONSTANT:						\
+	    ref_true = jit_b##name##i_ui (jit_forward (),		\
+				    corresponding_register[reg1],	\
+				    lloc2->value);			\
+	    break;							\
+	  case REGISTER:						\
+	    ref_true = jit_b##name##r_ui (jit_forward (),		\
+				    corresponding_register[reg1],	\
+				    corresponding_register[lloc2->reg]); \
+	    break;							\
+	  default:							\
+	    {								\
+	      low_location_t reg = registerize (lloc2);			\
+	      ref_true = jit_b##name##i_i (jit_forward (),		\
+				     corresponding_register[reg1],	\
+				     corresponding_register[reg->reg]);	\
+	      free_data_register (reg->reg);				\
+	    }								\
+	  }								\
+      }									\
+									\
+      break;								\
+    default:								\
+      {									\
+	low_location_t reg = registerize (lloc1);			\
+	register_t reg1 = reg->reg;					\
+	switch(lloc2->location_type)					\
+	  {								\
+	  case CONSTANT:						\
+	    ref_true = jit_b##name##i_ui (jit_forward (),		\
+				    corresponding_register[reg1],	\
+				    lloc2->value);			\
+	    break;							\
+	  case REGISTER:						\
+	    ref_true = jit_b##name##r_ui (jit_forward (),		\
+				    corresponding_register[reg1],	\
+				    corresponding_register[lloc2->reg]); \
+	    break;							\
+	  default:							\
+	    {								\
+	      low_location_t reg2 = registerize (lloc2);		\
+	      ref_true = jit_b##name##r_i (jit_forward (),		\
+				     corresponding_register[reg1],	\
+				     corresponding_register[reg2->reg]); \
+	      free_data_register (reg2->reg);				\
+	    }								\
+	  }								\
+	free_data_register (reg->reg);					\
+	break;								\
+      }									\
+    }									\
+									\
+  void *ref_false = jit_jmpi (jit_forward ());				\
+									\
+  boolean_expression_switch_t bes = MALLOC (boolean_expression_switch);	\
+									\
+  bes->entry_point = entry_point;					\
+									\
+  forward_label_t true_jump = MALLOC (label);				\
+  true_jump->is_forward_label = 1;					\
+  true_jump->patch_list = CONS (ref_true, NULL);			\
+  bes->true_jump = true_jump;						\
+									\
+  forward_label_t false_jump = MALLOC (label);				\
+  false_jump->is_forward_label = 1;					\
+  false_jump->patch_list = CONS (ref_false, NULL);			\
+  bes->false_jump = false_jump;						\
+									\
+  return bes;								\
+}
+
+DEFINE_BOOLEAN_SWITCH_MAKER (eq, eq)
+DEFINE_BOOLEAN_SWITCH_MAKER (ne, ne)
+DEFINE_BOOLEAN_SWITCH_MAKER (gt, lt)
+DEFINE_BOOLEAN_SWITCH_MAKER (ge, le)
+DEFINE_BOOLEAN_SWITCH_MAKER (lt, gt)
+DEFINE_BOOLEAN_SWITCH_MAKER (le, ge)
+
+location_t
+make_unifiable_location (location_t loc)
+{
+  /* XXX: use a register for this.  Mais on peut avoir a faire un
+     spill, c'est embetant.  Il faudrait merger cette fonction avec
+     join_execution_path_branch.  */
+
+  low_location_t lloc = loc->low_location;
+
+  if(lloc->location_type == REGISTER)
+    return loc;
+  else
+    {
+      low_location_t reg = registerize (lloc);
+      location_t ret_loc = temporary_location (loc->type, reg);
+      free_location (loc);
+      return ret_loc;
+    }
+}
+
+void
+unify_location (location_t loc1, location_t loc2)
+{
+  move_between_locations (loc2, loc1);
+  free_location (loc2);
+}
+
+/* If we spill register in an alternative path, it should be done also
+on the other.
+
+Right now we try not to touch the spilling stuff in an alternative,
+and nothing else need to be done.
+
+We should check that the stack and register is the same after.
+*/
+
+/* The goal of these two functions is that on one branch, nothing
+change (like locations of the variables, spilling locations etc) so
+that we can compile the two branches and merge them. */
+void create_execution_path_branch (void)
+{
+  path_info_t ai = MALLOC (path_info);
+
+  ai->registers_spilled = 0;
+
+  for(int i = 0; i < DATA_REGISTER_NUMBER; i++)
+    ai->spilled_locations[i] = NULL;
+  
+  ai->next = path_info_list;
+  path_info_list = ai;
+
+  /* XXX: si tous les registres sont occupes, on doit en liberer un
+     pour mettre le resultat.  Ou alors on peut aussi le mettre sur la
+     pile.*/
+     
+}
+
+/* Attention: on a besoin d'au moins un registre pour y mettre le
+   resultat.  */
+void
+join_execution_path_branch (void)
+{
+  if (path_info_list->registers_spilled != 0)
+    {
+      for(int i = 0; i < DATA_REGISTER_NUMBER; i++)
+	{
+	  location_t sl = path_info_list->spilled_locations[i];
+	  if(sl)
+	    {
+	      low_location_t lloc = register_location (sl->spilled_register);
+	      move_between_low_locations_any_register (sl->low_location,
+						       lloc);
+	      sl->low_location = lloc;
+	      sl->spilled_register = 0;
+	    }
+	}
+    }
+      path_info_list = path_info_list->next;
+}
+
+
+/* Misc.  */
+location_t
+get_struct_field (location_t loc, symbol_t symbol)
+{
+  assert (loc->low_location->location_type == INDIRECTION);
+
+  low_location_t orig = loc->low_location;
+
+  assert (loc->type->type_type == STRUCT_TYPE);
+  hash_table_t ht = ((Struct_Type) loc->type)->field_hash;
+  
+  offset_type_t ot = gethash (symbol, ht);
+  if(ot == NULL)
+    panic("The field does not exist for this struct");
+  
+  low_location_t low_location = indirection (orig->offset + ot->offset,
+					     orig->loc);
+
+  return temporary_location (ot->type, low_location);
+}
+
+location_t
+get_address_of(location_t loc)
+{
+  assert (loc->low_location->location_type == INDIRECTION);
+
+  low_location_t lloc = loc->low_location;
+
+  low_location_t newloc = any_register_location();
+
+  move_between_low_locations_any_register(lloc->loc, newloc);
+
+  if(lloc->offset != 0)
+    {
+      jit_addi_i(corresponding_register[newloc->reg],
+		 corresponding_register[newloc->reg],
+		 lloc->offset);
+    }
+
+  if(lloc->offset_reg != REG_NO_REGISTER)
+    panic("Adress with offset register not yet implemented. \n");
+
+  return temporary_location(NULL, newloc);
+}
+
+location_t
+get_value_of(location_t loc)
+{
+  location_t value = temporary_location(NULL, 
+					indirection(0, loc->low_location));
+  return value;
+}
+
+location_t
+cast_location(Type type, location_t loc)
+{
+  if(loc->ref_count > 1)
+    {
+      location_t new_loc = temporary_location(type, loc->low_location);
+      return new_loc;
+    }
+  else
+    {
+      loc->type = type;
+      loc->ref_count++;
+      return loc;
+    }
+}

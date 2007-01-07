@@ -1,0 +1,6 @@
+This is the first jit implementation.  It is a bit naive; but I did
+not want something to complicated before I had an overview of the
+project.
+
+The goal of this particular compiler is to be fast; its main use will
+be while developping applications.  

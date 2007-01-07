@@ -1,0 +1,22 @@
+Welcome to L.
+
+
+If you want to have a look at some of the first language features, see
+the test/ subdirectory.  
+
+You should definitely read the documentation in the doc/ directory; it
+is a good introduction to the concepts of the language.
+
+The source is in src/; beware, it is not yet cleaned, nor optimised
+(many parts are even naive).  The emphasis has been on simplicity, so
+that L can quickly be self hosting.
+
+L is a cool language to hack with, please consider contributing! If
+you do, then say so in the mailing list, along with the parts that
+you'd like to begin hacking (or if you don't know, just tell what you
+can do, especially what languages you know, and I can give you a
+project that fits you well).
+
+Enjoy!
+
+Matthieu Lemerre
