@@ -1,0 +1,1791 @@
+
+\input texinfo   @c -*-texinfo-*-
+@c %**start of header
+@setfilename l.info
+@settitle The L Documentation
+
+@paragraphindent 2
+@c %**end of header
+
+@copying
+This manual is for L, version 0.0.1
+
+Copyright @copyright{} 2006 Matthieu Lemerre
+
+@quotation
+Permission is granted to copy this manual, modify it, and publish your
+modifications according to the GNU Free Documentation Licencse, as
+published by the Free Software Foundation.
+@end quotation
+@end copying
+
+@titlepage
+@title The L Documentation
+@c @subtitle SUBTITLE-IF-ANY
+@c @subtitle SECOND-SUBTITLE
+@author Matthieu Lemerre
+
+@c  The following two commands
+@c  start the copyright page.
+@page
+@vskip 0pt plus 1filll
+@insertcopying
+
+Published by nobody
+@end titlepage
+
+@c So the toc is printed at the start.
+@contents
+
+@ifnottex
+@node Top, Introduction, (dir), (dir)
+@top The L Documentation
+
+This manuals documents the L language.  It is both a user guide to L
+and a complete documentation on the inner workings of the language.
+
+It is not perfectly in sync with the source code; some parts of the
+source code are not yet documented, and some parts of the
+documentation do not exist in the code yet. In most cases, the later
+case is explicitly written in the documentation.
+
+L is still alpha; although many parts already work, some important do
+not.  The development has been focused on showing what is unique to L,
+and what you can do with it.  Convenient libraries for writing
+concrete code do not exist yet; but you are welcomed to help! If you
+do, you should know that the prime mean of communication is the L
+mailing list, l-lang-devel at nongnu dot org.
+
+@menu
+* Introduction::                
+* Tutorial::                    
+* L presentation::              
+
+@detailmenu
+ --- The Detailed Node Listing ---
+
+Introduction
+
+* L in brief::                  
+* L features::                  
+
+Tutorial
+
+* L tutorial for the C programmer::  
+
+L tutorial for the C programmer
+
+* Translating C into L::        
+* Extensions to C::             
+
+Translating C into L
+
+* Variables declaration::       
+* Type declaration::            
+* Grammar for types::           
+
+Extensions to C
+
+* Blocks and conditional as expressions::  
+* Tuples::                      
+* Keyword and default arguments::  
+* Recursive types and functions::  
+* Macros::                      
+* Expanders::                   
+* Extensible syntax::           
+
+L presentation
+
+* L structure::                 
+* L concrete syntax::           
+* Cocytus::                     
+* Malebolge::                   
+
+L structure
+
+* Cocytus::                      
+* Malebolge::                   
+
+L concrete syntax
+
+* Extending the syntax::        
+
+Cocytus
+
+* Language constructs::         
+* Definers::                    
+* Chunk::                       
+
+Malebolge
+
+* Type classes::                
+* Defining new macros::         
+* Creating new expanders::      
+* Defining coercions::          
+
+@end detailmenu
+@end menu
+
+@insertcopying
+@end ifnottex
+
+@node  Introduction, Tutorial, Top, Top
+@comment  node-name,  next,  previous,  up
+@chapter Introduction
+
+
+
+@menu
+* L in brief::                  
+* L features::                  
+@end menu
+
+@node  L in brief, L features, Introduction, Introduction
+@comment  node-name,  next,  previous,  up
+@section L in brief
+
+L is:
+
+@itemize @bullet
+
+@item
+A compiled language with a C-like syntax, and Lisp-like macros.
+
+@item
+It is an extensible programming language : even the syntax is
+modifiable at run-time.
+
+@item
+It is a mostly-safe language, with strong typing and encouraged
+confinement of dangerous constructs.
+
+@item 
+Finally, thanks to extensibility, L is an @emph{universal} language:
+it can be used both for low-level and system programming than for
+creating complex high-level applications.  Using certain set of
+predefined modules, it could even be used as a scripting language.
+@end itemize
+
+So, L can be seen both as:
+
+@itemize @bullet
+
+@item
+C with stronger typing + extensible compiler support (macros, parser,
+expanders) + fully expression-based.
+
+@item
+or Lisp with low-level capabilities, static typing, support for custom
+syntaxes, and type-aware macros.
+
+@end itemize
+
+Hence the name, L: L combines C and Lisp.
+
+But L is not just a combinaison of two languages: it a language of its
+own.  Just like Lisp and C are both defined by a just a small number
+of specific characteristics, L's features make it unique.
+
+@node L features,  , L in brief, Introduction
+@comment  node-name,  next,  previous,  up
+@section L features
+
+L has numerous features that makes it a cool language to hack with.
+Among them:
+
+@itemize @bullet
+
+@item
+L is a compiled language.  It can thus run very fast.  Compilation
+allows to track your errors sooner, and execution is faster than with
+other techniques.  L programs can have very low memory footprint.  L
+can sometimes outperfom C; for instance, its type system allows more
+agressive memory aliasing.
+
+@item
+L is interactive. Speed up your developpement by not using the
+``edit-compile-test'' cycle developpement process.  Write part of a
+function and immediately test it.  Interactively compiling functions
+is very fast, so you don't have to wait for long compile/link cycles.
+
+@item
+L is extensible.  If you need anything to add in the language you
+don't need to wait for 10 years that a committee decide to enhance the
+language. You just do it.  Extensibility is at the heart of L
+programming, and is a programmation paradigm in itself.
+
+@item
+L is multi-paradigm.  L's extensibility allows to write programs
+using different paradigm at the same time.  I.e., you can freely mix
+functional, imperative, and object-oriented code.
+
+@item
+L has a flexible type system.  Types are there to help you and
+automatically manage things for you; they don't get in your way.
+
+@item
+L helps you write safe programs.  Traditionnal languages are split
+between too extremes:
+
+@itemize @minus
+@item
+Safe languages.  Unfortunately, clever optimisations aren't allowed
+with them.
+
+@item
+Unsafe language, like C.  They allow to write any code, but programs
+written with them often crash or lead to security issues.
+
+@end itemize
+
+With L, it is easy to write safe programs with some confined unsafe
+parts.  Just write the unsafe parts carefully, and your program will
+be both optimized and won't crash.
+
+For instance, you can use pointers (both powerful and unsafe), but L
+provides many ways to avoid their use (for instance using Tuples, and
+multiple return values) or confine them (using macros, like the
+@code{foreach} macro for iterating on lists).
+
+@item
+L interfaces well with C.  You can directly use C libraries from L,
+and use L libraries from C.  No need to write long wrappers for that.
+
+@item
+L enables extreme factorisation of your programs.  Typical L programs
+are a lot smaller than equivalent C programs.  As such, they are
+easier to understand as a whole.
+
+As a corollary, with L, you can optimize your program without
+sacrificing readability.  Dirty hacks can be confined and factorised.
+If you later change your mind about a hack, you just have to change
+one place, something that is not always possible e.g. in C.
+@end itemize
+
+@node Tutorial, L presentation, Introduction, Top
+@comment  node-name,  next,  previous,  up
+@chapter Tutorial
+
+
+@menu
+* L tutorial for the C programmer::  
+@end menu
+
+@node L tutorial for the C programmer,  , Tutorial, Tutorial
+@comment  node-name,  next,  previous,  up
+@section L tutorial for the C programmer
+
+In this first part, I will assume that you are already accustomed to a
+C like-language, preferably C.  If you are not, skip to the unwritten
+node ``L tutorial for the newbie programmer'', or to ``L tutorial for
+the Ruby programmer'', or to ``L tutorial for the Lisp
+programmer''. Unfortunately for you, these tutorials are not yet
+written.
+
+@menu
+* Translating C into L::        
+* Extensions to C::             
+@end menu
+
+@node  Translating C into L, Extensions to C, L tutorial for the C programmer, L tutorial for the C programmer
+@comment  node-name,  next,  previous,  up
+@subsection Translating C into L
+
+First, you want to need at least as proficient with L than you were
+with C.
+
+L is basically compatible with C, but there are some syntaxic
+differences.
+
+Let's see our first example:
+
+@example
+int
+foo(int a, int b)
+@{
+  return (a * (a + b);
+@}
+@end example
+
+In this short example, you can see that L syntax is quite close to the
+one in C. Still, here are the main differences that you will find when
+you want to translate C code into L :
+
+
+@menu
+* Variables declaration::       
+* Type declaration::            
+* Grammar for types::           
+@end menu
+
+@node   Variables declaration, Type declaration, Translating C into L, Translating C into L
+@comment  node-name,  next,  previous,  up
+@subsubsection  Variables declaration
+
+You have to precede all your local variable definitions with a let :
+
+@smallexample
+int
+foo(int a, int b)
+@{
+  let int c = a + b;
+  return a * c;
+@}
+@end smallexample
+
+  I can already hear some old UNIX hackers already yelling : so L is
+more verbose than C, even more verbose than Java?
+
+No: in L, type annotations are optional.  That is, you can define
+exactly the same function if you use:
+
+@example
+int
+foo(int a, int b)
+@{
+  let c = a + b;
+  return a * c;
+@}
+@end example
+
+Type annotations are useful for the programmers for as checks of what
+is going on; you can see them as partial specifications of your
+program.
+
+Passing the types of the parameters (and knowing the types of the
+different global variables) is in fact sufficient for deducing the
+types of all local variables; that's why type annotation is useless
+for the compiler.
+
+Thus you avoid things like:
+
+@example
+BufferedInputStream bufferedInputStream = new BufferInputStream(....);
+@end example
+
+@noindent
+which are quite redundant, and for which the type of the variable is
+obvious.
+
+
+C's type qualifiers also have a different syntax: UNIMPLEMENTED
+
+let Int : extern global_variable;
+let Float : static other_global_variable;
+
+This ``:'' syntax will become clearer when we have seen @ref{Type
+classes}.
+
+
+@node  Type declaration, Grammar for types, Variables declaration, Translating C into L
+@comment  node-name,  next,  previous,  up
+@subsubsection Type declaration and utilisation
+
+Type declaration (@code{typedef} in C) are written as follows:
+
+@example
+type Toto = struct @{ Int foo; Int baz;@};
+@end example
+
+L's convention for types is that they should be capitalized, and if
+you have an identifiers that spans over several words, separate them
+by underscores and capitalize each word, Like_That.
+
+ But this is is really just a convention; your own program can be
+written as you like.
+
+The @code{type =} declaration isn't like @code{typedef}, because it
+introduces a new type that is incompatible with the first. (COMMENT :
+the = is maybe misleading in that case?)
+
+If you write, for instance:
+
+@example
+type Kelvin = Float;
+@end example
+
+then you cannot have:
+
+@example
+let Kelvin k = 3.0;
+@end example
+
+You have to do this instead: (UNIMPLEMENTED: does not work for now,
+explicit casts needed)
+
+@example
+let Kelvin k = Kelvin(3.0);
+@end example
+
+or simply:
+
+@example
+let k = Kelvin(3.0);
+@end example
+
+Similarly, the @code{+} operations work on @code{Int}s, and because
+@code{Kelvin}s are not @code{Int}s, you cannot add @code{Kelvin}s.
+
+L provides a shortcut (UNIMPLEMENTED) for specifying which operations
+are still allowed for the new type:
+
+@example
+type Kelvin = Float | allows +,-;
+@end example
+
+Forbiding @code{*} is interesting for instance, because multiplying
+Kelvins between them make no sense.  Multiplying them by a Float makes
+sense, however. (UNIMPLEMENTED: so we need a way to tell that).
+
+Finally, writing all this can be factorized to:
+@example
+import std.unit;
+
+type Kelvin = Float : unit;
+@end example
+
+@code{unit} declares a type that does all this (in fact, that respects
+the @code{unit} interface).  @code{numeric} declares a type that has
+@code{+}, @code{-}, @code{*}, @code{/}.  All these are in fact type
+classes, see @ref{Type classes}.
+
+
+If you just want something similar to C @code{typedef}, you can use
+L's @code{typealias}:
+
+@example
+typealias Floating_Point = Float;
+typealias Integer = Int;
+@end example
+
+defines Integer as an alias for Int. (i.e. they are the same type with
+just different names.)
+
+@node  Grammar for types,  , Type declaration, Translating C into L
+@comment  node-name,  next,  previous,  up
+@subsubsection Grammar for types
+
+The grammar for types is quite different from C's one.  First, all
+types information are grouped together; you don't have some that are
+prefix to the identifier, and some postfix (like @code{*} and
+@code{[]} are in C).
+
+Second, the notation for functions is simply @code{<-}.
+
+Here are some examples:
+
+@multitable @columnfractions .5 .5
+@headitem C @tab L 
+@item int i; @tab let Int i;
+@item int *pi; @tab let Int *pi;
+@item int pi[3]; @tab let Int[3] pi;
+@item int *pi[3]; @tab let Int *[3] pi;
+@item int (*)pi[3]; @tab let Int [3]* pi;
+@item float (*fi)(int); @tab let (Float <- Int)* fi;
+@end multitable
+
+
+@subsubsection Type construction and memory allocation
+
+By default when creating a new type, L creates also a new generic
+constructor, which depends on the created type.
+
+For instance, you must use
+
+@example
+type Kelvin = int;
+
+let degree = Kelvin(24);
+@end example
+
+to create new Kelvin objects.
+
+When the type is a struct, or a pointer to a struct, the constructor
+is used as in the following:
+
+@example
+type Point = struct @{ int x; int y; @} *;
+type Point_Struct = struct @{ int x; int y; @};
+
+...
+
+let p = Point(x:4, y:5);
+let p2 = Point_Struct(x:4, y:5);
+@end example
+
+The difference between the two is that @code{p2} is allocated on the stack
+(as a regular C struct), while @code{p} is allocated on the heap.
+
+The @code{x:} and @code{y:} are keys for keyword arguments.  The
+rationale behing using them is that if, later, you change your mind
+about the structure contents, you will know it immediatly (this
+wouldn't be the case if you used normal arguments).
+
+In order not to forget this '*', you can use the @code{record} type
+constructor:
+
+@example
+type Point = record @{ int x; int y; @};
+// same as type Point = struct @{ int x; int y; @} *;
+@end example
+
+In fact, it isn't really the same: @code{record}-declared types are by
+default garbage collected, whereas @code{struct *}-declared types must
+be explicitly freed.
+
+This can be overriddent by the @code{alloc:} parameter:
+
+@example
+let p1 = Point(x:4, y:5) 
+// Allocated and managed by the most appropriate garbage collector
+
+let p2 = Point(x:4, y:5, alloc:gc) // Same as p1
+
+let p3 = Point(x:4, y:5, alloc:refcount)
+// Same as p1, but explicitly asks for the refcount GC
+
+let p4 = Point(x:4, y:5, alloc:mark_sweep)
+// Same as p1, but explicitly asks for the mark&sweep GC
+
+let p5 = Point(x:4, y:5, alloc:heap) //No garbage collection is done
+
+let p6 = Point(x:4, y:5, alloc:stack) //Allocated on the stack.
+@end example
+
+By default, all the type fields have to be given as arguments.
+
+@node  Extensions to C,  , Translating C into L, L tutorial for the C programmer
+@comment  node-name,  next,  previous,  up
+@subsection Extensions to C
+
+L has numerous extensions to C, but here are some extensions that are
+useful when programming in the small
+
+@menu
+* Blocks and conditional as expressions::  
+* Tuples::                      
+* Keyword and default arguments::  
+* Recursive types and functions::  
+* Macros::                      
+* Expanders::                   
+* Extensible syntax::           
+@end menu
+
+@node Blocks and conditional as expressions, Tuples, Extensions to C, Extensions to C
+@comment  node-name,  next,  previous,  up
+@subsubsection Blocks and conditional as expressions
+
+In L, blocks can return a value.  For instance:
+
+@example
+let Int a = @{ let Int sum = 0;
+              let Int i = 0;
+              for(i = 0; i <= 10; i++) @{ sum += i; @}
+              sum @};
+@end example
+
+The above code creates a new block where @code{sum} and @code{i} are
+two variables created in the block.  An iteration is done, and then
+the value of sum is returned, and affected to @code{a}.
+
+Note the syntax : if a block is supposed to return a value, it is
+composed of a list of @emph{statements} followed by one expression.
+By contrast, the block in the @code{for} does not return a value, and
+is composed only of @code{statements}.  This will be detailed more in
+@ref{Extending the syntax}.
+
+
+This will be very useful when you write @ref{Macros}; but it is also
+good programming style : it is better to pass values around using this
+mechanism than creating a new variable to do it.
+
+Conditionals can also return a value. Here is how to compute the
+absolute value of a :
+
+@example
+let Int abs_x = if(x >= 0) x else -x;
+@end example
+
+This eliminates the need for a distinct @code{? ... :} operator.
+
+Note: You can still use conditional as you would in C.  The above
+example could also be written:
+
+@example
+let Int abs_x;
+if(x >= 0) 
+   abs_x = x;
+else
+   abs_x = -x;
+@end example
+
+or even:
+
+@example
+let Int abs_x = x;
+if(x < 0)
+  abs_x = -x;
+@end example
+
+@node  Tuples, Keyword and default arguments, Blocks and conditional as expressions, Extensions to C
+@comment  node-name,  next,  previous,  up
+@subsubsection Tuples
+
+Tuples are a way to manipulate several values at once.  
+
+Creating a new tuple does not allocate memory.  Tuples don't have
+addresses, their content is not placed contiguously in memory.  They
+@emph{really} are just a way to consider several values at once.
+
+For instance, the tuple (4, 5, 'toto') is a constant.  Thus you can
+create multiple-values constants with L.
+
+When a tuple contain @emph{complex} expressions (that is to say,
+anything except a constant or a variable), @emph{the order of
+evaluation is defined to be from the left to the right.}
+
+@itemize @bullet
+@item
+Passing arguments to functions is done using a tuple.  I.e.
+
+@example
+ let h = hypot(side1, side2);
+@end example
+
+calls @code{hypot} with the tuple @code{(side1, side2)}.  As a side
+effect of the order of evaluation rule stated before, @emph{function
+arguments are evaluated from left to right}.  In C, this is undefined,
+which causes many portability problems.
+
+@item
+Return values of functions are also tuples.  So, functions can return
+multiple values in L:
+
+@example
+let (return_value, is_present) = gethash('key');
+let (num_char_scanned, num1_scanned, num2_scanned) = scanf("%d %d");
+@end example
+
+In most cases, the use of pointers to return several data should be
+replaced by a multiple return value form.  This is one of the example
+where pointers can be easily avoided in L (thus providing more
+safety).
+
+In the implementation, the return values are passed in clobbered
+registers, and is very efficient.
+
+@item
+Finally, it is also useful to do multiple affectations simultaneously,
+without  having to explicitly declare local storage:
+
+@example
+(str,len) = ("foo",4); // same as str = "foo"; len = 4;
+
+(point.x, point.y) = (3.0, 5.0);
+
+a = 2;
+b = 3;
+
+(a,b) = (b, a); // Now b = 2, and a = 3.
+
+let (c,d) = (4, 'foo');
+
+@end example
+
+When doing multiple affectations, you can ``skip'' one by using the
+special symbol '_':
+
+@example
+let i = 0;
+(a,_,c) = (++i,++i,++i); //a = 1; c=3;
+@end example
+
+This is most useful when you want to receive values from functions:
+
+@example
+(value, present) = gethash(key, hash_table);
+(value, _) = gethash(key, hash_table);
+value = gethash(key, hash_table);
+@end example
+@end itemize
+
+Finally, on an implementation note, using tuple is higly efficient,
+because each component of a tuple can be a register.
+
+For instance, the @code{(a,b) = (b,a)} construct may use the efficient
+@code{xchg} instruction on CISC machines; It is difficult for a
+standard C compiler to use these instructions, and the corresponding
+code would use three instructions and a supplementary register.
+
+Tuple is thus an both a pleasant and efficient abstraction.
+
+Note: Depending on the architecture, Word64 can be or not a tuple.
+But most code can ignore this fact and completly ignore the issue.
+
+@node Keyword and default arguments, Recursive types and functions, Tuples, Extensions to C
+@comment  node-name,  next,  previous,  up
+@subsubsection Keyword and default arguments
+
+L functions can have default arguments UNIMPLEMENTED, like C++ ones:
+
+@example
+Int foo(Int bar = 3)
+@{
+  bar
+@}
+
+foo(5); //5
+foo();  //3
+@end example
+
+L functions argument passing may also be done using keyword arguments
+UNIMPLEMENTED:
+
+@example
+Int foo(Int bar, Int baz)
+@{
+  10 * bar + baz
+@}
+@end example
+
+If you write:
+@example
+Int foo(Int bar = 1, Int baz)
+@{
+  10 * bar + baz
+@}
+@end example
+
+Then @code{foo} can only be called like this:
+
+@example
+foo(3, 4)  //OK, 34
+foo(baz:5) //OK, 15
+foo(5)     //Wrong
+@end example
+
+
+Use of keyword arguments is a really good style when you create
+functions that create complex objects (structures and records),
+especially when they contain fields that have the same type.
+
+For instance:
+@example
+let richards_shoes = Shoes(color:Green, sole_color:Brown)
+@end example
+
+Is much better style than
+@example
+let richards_shoes = Shoes(Green, Brown)
+@end example
+
+In general, it is better to use them when a function has several
+arguments of the same type, or several arguments at all.  It makes
+your code more readable.
+
+
+You can also use them for ``cosmetic'' usage, as in:
+@example
+foreach(a, in:list) @{...@}
+foreach(element:a, in:list) @{...@}
+divide(25, by:73);
+@end example
+
+
+@node  Recursive types and functions, Macros, Keyword and default arguments, Extensions to C
+@comment  node-name,  next,  previous,  up
+@subsubsection Recursive types and functions
+
+L handle recursive types and functions very well.  In functional
+programming languages, recursive type definition is often
+``work-arounded'' by using a ``rec'' keyword.
+
+In L, the rule is that ``every code simultaneously entered is treated as
+a whole''.
+
+For instance, if you feed L with:
+
+@example
+type Toto = struct @{ Tata; @} *;
+type Tata = struct @{ Toto; @} *;
+@end example
+
+L would correctly interpret this. UNIMPLEMENTED: not yet.
+Only 
+
+@example
+type Int_List ; struct @{ Int head; Int_List tail; @}* 
+@end example
+
+recursive definition works for now.
+
+But if you feed L with:
+
+@example
+type Toto = struct @{ Tata; @} *;
+@end example
+
+and (after) with:
+
+@example
+type Tata = struct @{ Toto; @} *;
+@end example
+
+You would get an error after the first sentence, because the
+definitions you supply is incomplete.
+
+See @ref{Chunk} for more informations.
+
+@node Macros, Expanders, Recursive types and functions, Extensions to C
+@comment  node-name,  next,  previous,  up
+@subsubsection Macros
+
+Macros are L's replacement for the C preprocessor, or C++
+templates. It allows you to factorize patterns your code, so that your
+code is clearer and easier to understand.
+
+More specifically, macros are a templating language that replaces a
+construct by a sequence of code.
+
+@unnumberedsubsubsec Introduction
+
+Let's start with an example to see how it works:
+@example
+macro square(x)
+@{ let _value = $x;
+  _value * _value @}
+@end example
+
+The effect of the macro is as follow: if you write:
+@example
+let Int number = square(4);
+@end example
+
+It will be converted into:
+@example
+let Int number = @{let _value = 4; _value * _value; @};
+@end example
+
+thus yielding 16.
+
+If you have typed:
+@example
+let Float number = square(0.5);
+@end example
+
+it would have been converted to
+@example
+let Float number = @{let _value = 0.5; _value * _value; @};
+@end example
+ 
+thus yielding 0.25.
+
+The process of converting a ``macro call'' into what it stands for is
+called @emph{macro expansion}.  
+
+Here you can see how macros are type independent, since you can use
+them with Floats and Ints. In fact, you can use them on every type T
+for which the operation @code{*(T,T)} exists.
+
+Here you can see the interest of:
+@itemize @bullet
+@item
+Let without type annotation (that helps creating type independent
+macros easily), and
+@item
+Blocks that can return expressions (it allows to create local
+variables and still return a value).
+@end itemize
+
+@unnumberedsubsubsec Macros and type
+
+One of the distinguished features of L macros is that they are typed.
+L macros do not just perform text rewriting, like the C processor :
+they can check type, and even act differently according to the type.
+
+@example
+macro power(Float x, Float y)
+@{
+  powf($x, $y)
+@}
+
+macro power(Long x, Long y)
+@{
+  powl($x, y)
+@}
+@end example
+
+Note: this is in fact the way how overloading is
+implemented. UNIMPLEMENTED: or will be.
+
+The use of types allows earlier type-checking. If we take the previous
+example:
+
+@example
+macro square(x)
+@{ let _value = $x;
+  _value * _value @}
+@end example
+
+And if we write @code{square("25")}, we will end up with: 
+
+@example
+error: (in expansion from square)
+     :  in file test.c, line 25: 
+       * does not accept (String, String) arguments.
+@end example
+
+If we had written instead:
+@example
+macro square(Int x)
+@{ let _value = $x;
+  _value * _value @}
+@end example
+
+The error message would have become:
+@example
+error: in file test.c, line 25: square does not accept String argument.
+@end example
+
+which is much more readable.
+
+But if we want the definition of square to be more generic (for
+instance, to allow both Int and Floats, and any type T that have a
+@code{*(T,T)} operation), just specify the macro like this:
+
+@example
+macro square(x : numeric)
+@{ let _value = $x;
+  _value * _value @}
+@end example
+
+UNIMPLEMENTED: this relies on type classes, that are not yet
+implemented.
+
+@unnumberedsubsubsec Use of macros
+
+The main use of macros is not for @code{square}-like examples : inline
+functions are here for this (even if inline functions are implemented
+as macros in L).
+
+It is mainly useful to introduce new programming constructs.  For
+instance, in L, @code{while} is not part of the language: it is
+defined as a macro.  Here is its definition:
+
+@example
+macro while(Bool condition, body)
+@{
+  loop @{
+    if(!$condition)
+      break;
+    $body; @}
+@}
+@end example
+
+Then @code{while} can be used like this:
+@example
+let i = 25;
+while(i > 0, 
+    @{ print(i--, '\n'); 
+    @});
+@end example
+
+This isn't really like the C while.  To really obtain the C definition
+in this case, you also have to hook the parser: this is explained in
+@ref{Extending the syntax}.
+
+@code{++} and @code{--} are also not part of the language, but defined
+as macros, and  could be defined as:
+
+@example
+//pre_inc(x) is the same as ++x
+macro pre_inc(x)
+@{ x = x+1 @}
+
+//post_inc(x) is the same as x++
+macro post_inc(x)
+@{ let _temp = x;
+  x = x + 1;
+  _temp @}
+@end example
+
+Note: In fact, to make the Cocytus more readable, and the C output look
+more like real code, @code{while}, @code{++} and @code{--} are part of
+the Cocytus language.  But their default implementations are the above
+ones.
+
+@unnumberedsubsubsec Care with macros
+
+Use macros with care: for instance if you define
+
+@example
+macro square(Int x)
+@{$x * $x@}
+@end example
+
+Then @code{square(i++)} will be transformed into @code{(i++) * (i++)}
+which is certainly not what you want.  
+
+In this example, you must write:
+@example
+macro square(Int x)
+@{ let _x_value = $x;
+  _x_value * _x_value @}
+@end example
+
+That would yield the correct result.  (Note: in this case, an inline
+function would have been better than a macro).
+
+In general, it is dangerous to insert an argument directly more than
+once, and you must do it only if it is the effect that you want to
+achieve, as in
+
+@example
+macro do_twice(x)
+@{ $x; 
+   $x; 
+@}
+@end example
+
+The second problem you can encounter is called @emph{variable
+capture}.  For instance, if you define @code{do_times} like this: (the
+following example is inspired by Paul Graham's On Lisp):
+@example
+macro do_times(Unsigned_Int max, body)
+@{ let max_value = $max;
+  let i = 0;
+  loop @{
+  if(i++ == max_value)
+     break;
+   $body;
+   @}
+@}
+@end example
+
+then your code would work in most cases:
+@example
+do_times(4) @{ print("hello\n"); @} //print hello four times
+@end example
+
+But if you write:
+@example
+let i = 0;
+do_times(4) @{ i++; @}
+//Here, i is still 0
+@end example
+
+(Note: if you had written @code{do_times(5)} instead of
+@code{do_times(4)}, then the code would never have returned.)
+
+The reason is that the local variable @code{i} used by the
+@code{do_times} macro and the one used in the block passed as an
+argument ``clash'' because they have the same name.  Here is the full
+expansion of the above call:
+
+@example
+let i = 0;
+@{ let max_value = 4;
+  let i = 0;
+  loop @{
+  if(i++ == max_value)
+     break;
+   @{ i++ @};
+  @}
+@}
+@end example
+
+The naive solution to this problem is to use such ugly names that they
+can never clash with identifiers that a programmer would choose, like
+@code{srchroukjuk239}.  This doesn't really make your code pretty, and
+worse, it does not work when macro definitions are nested:
+
+@example
+do_times(4) @{ do_times(5) @{ print("Hello\n");@}@}
+@end example
+
+The real solution to this problem is to use @emph{generated symbols},
+i.e. to generate a new symbol for the name of the variable for each
+new expansion, that are guaranteed to be uniques, and thus never
+clash.
+
+L provides a simple way to do this: just prepend a '_' to your
+identifiers in your template code.  L will recognize that and instead
+will generate a new symbol for each new expansion of the macro.
+(Note: more over, the generated symbols are generated in such a way
+that they are readable, and that you can find out in what macro they
+have been generated.  This simplifies debugging of macros).
+
+In normal code, you do not have the right to begin an identifier by an
+underscore (as it is forbidden in C).
+
+Thus, the correct definition for the above macro is:
+
+@example
+macro do_times(Unsigned_Int max, body)
+@{ let _max_value = $max;
+  let _i = 0;
+  loop @{
+  if(_i++ == _max_value)
+     break;
+   $body;
+   @}
+@}
+@end example
+
+And macro expansion becomes:
+
+@example
+let i = 0;
+@{ let do_times#max_value_1 = 4;
+  let do_times#i_1 = 0;
+  loop @{
+  if(do_times#i_1++ == do_times#max_value_1)
+     break;
+   @{ i++ @};
+  @}
+@}
+@end example
+
+
+Note: You may wonder why all @code{let} definitions are not simply
+transformed into generated symbols.  First, sometimes you may want to
+generate a new symbol, even if there is no @code{let} (imagine, for
+instance, that you have written a @code{my_let} macro that expands
+into @code{let}).
+
+Second, there are some cases where variable capture is actually
+wanted, and it would be silly to prevent it. 
+
+ L can however generate a warning when it detects a variable capture
+because of a @code{let}; this warning can be desactivated like this:
+
+@example
+macro with_log_level(number, body) captures(log_level)
+@{
+  let log_level = number;
+  $body;
+@}
+@end example
+
+although this changes @code{log_level} only in the current lexical
+scope; compare it with that:
+
+@example
+macro with_log_level(number, body)
+@{
+ let _save_log_level = level;
+ log_level = number;
+ $body
+ log_level = _save_log_level;
+@}
+@end example
+
+@unnumberedsubsubsec Using multiple levels of macros
+
+Use of macros can be nested, as in:
+
+@example
+let x = 0;
+while(i <= 25) @{ i = square(x); print(i); x++; @}
+@end example
+
+In this case, inside expansions occurs @emph{before} outside
+expansions. That is to say, the above example is first converted into:
+
+@example
+let x = 0;
+while(i <= 25) @{ i = @{let square#temp = x; square#temp * square#temp @}
+@end example
+
+Before being converted to:
+
+@example
+let x = 0;
+loop @{ 
+   if(!(i <= 25)) break;
+   @{
+      i = @{let square#temp = x; square#temp * square#temp @}
+   @}
+@}
+@end example
+
+@c this can be a problem for local macro definitions.
+@c and macro-expand-1 is not the same.
+
+@c You can even use macros recursively: example of if(list) -> if(boolean)
+
+@unnumberedsubsubsec Conclusion
+
+Macros are a templating language for L; it allows code to be more
+understandable, and to let the compiler do things for you.
+
+The combination of macros and types allows many powerful definitions,
+that depends on the type of the arguments.  You can really define new
+programming language constructs, and use them as if they were part of
+the language.
+
+Note: as you have to use @{ @} in a macro, variables declared in a
+macro are always local to a macro, and are thus limited to computation
+inside the macro.  This catch programmers errors that are hard to
+find.
+
+If you want to implicitly declare new variables in your code, you have
+to use the more powerful @ref{Expanders}.  In general, if you want to
+generate code and that a templating language is not powerful for this,
+you have to use the more general @ref{Expanders}.
+
+Note: using macros create many redundant code that a programmer
+wouldn't have written.  Fortunately, this redundance is often
+eliminated when converted to SSA Form:
+
+@example
+let a = @{ let temp i; i = 3; i @};
+@end example
+
+is converted in :
+
+@example
+let a = 3;
+@end example
+
+in the optimisations pass of the compiler.
+
+@node  Expanders, Extensible syntax, Macros, Extensions to C
+@comment  node-name,  next,  previous,  up
+@subsubsection Expanders
+
+Expanders are a generalisation of the notion of macro. (In fact, it is
+more accurate to say that macros are a special case of expanders).
+
+Instead of using a fixed template for replacing code, code can be
+dynamically constructed based on the the parameters given (which do
+not need to be expanded).
+
+TO_WRITE
+
+@node  Extensible syntax,  , Expanders, Extensions to C
+@comment  node-name,  next,  previous,  up
+@subsubsection Extensible syntax
+
+TO_WRITE: how to hook the parser, the parse language...
+
+@subsection Restrictions to C
+
+TO_WRITE
+
+@node  L presentation,  , Tutorial, Top
+@comment  node-name,  next,  previous,  up
+@chapter L presentation
+
+The L compiler is composed of many parts.
+
+TO_COMPLETE
+
+@menu
+* L structure::                 
+* L concrete syntax::           
+* Cocytus::                     
+* Malebolge::                   
+@end menu
+
+@node  L structure, L concrete syntax, L presentation, L presentation
+@comment  node-name,  next,  previous,  up
+@section L structure
+
+L' compilation process is composed of several parts:
+
+@itemize @bullet
+@item
+The @samp{Parser}, that takes the buffer of characters and converts it
+into a tree of forms, the abstract syntax tree.  The input of the
+parser is what is called ``L''; and the parser acts according to the
+@ref{L concrete syntax}. 
+@item
+The @samp{Expander}, transforms the abstract, high level forms into
+concrete, low level ones. It is responsible for macro expansion.  It
+is also called @samp{Malebolge compiler}, because the parsed L forms
+are called Malebolge. Malebolge deals with the abstract syntax of the
+language.
+@item
+The @samp{Code generators}, take the low level forms and transform it
+into output.  It is highly dependent of the output; we could consider
+that there are in fact several code generators, and these are called
+@samp{backends}.  It is also called @samp{Cocytus compiler}, because
+the low level forms are the Cocytus language. Cocytus deals with the
+precise semantics of the language.
+@end itemize
+
+Malebolge is a bit to Cocytus what C++ is to C: a super-set of the
+language, that allows more abstraction, more hiding of informations.
+But reading C++ code, one cannot exactly says what will be executed;
+by contrast any experienced C programmer knows exactly what's going on
+when he reads a C program.  This is exactly the same thing for
+Malebolge and Cocytus: reading a Malebolge program provides a global
+understanding of the program, you can read the intention of the
+programmer, understand the algorithms.  Reading the Cocytus
+transformation, you can read how this intention was transformed by the
+Malebolge compiler, and how it is translated into machine language.  
+
+Malebolge programs can be converted to Cocytus : both languages
+coexists. This is important, because it allows a programmer to
+manually check what's going on in its program, AND to have precise
+control over the language. So in L, we combine both advantages.
+Separating the language into two levels renders easy both the global
+comprehension and deep comprehension of a program.
+
+We already have a complete compilation process that takes L source
+code, parses it, expands it, and generates x86 code dynamically in
+memory (that's why the compiler is @emph{interactive}).
+
+The following (outdated) diagrams shows how the complete L
+implementation could look like:
+
+@example
+      
+                   L source file (.l)
+                          |
+                       parser* (produce L forms)
+                       /  | \
+   parsed file generator  |  sexped file generator
+                     /    |   \
+      L parsed file (.pl) |    L sexped file (.sl)
+                          |
+                          |
+                    Malebolge compiler*  (produce L Cocytus forms)
+                      /   |     \     \------------------\
+L cocytus source generator |    L slim binaries genetor    \
+                    /     |       \                        GNU C generator
+                   /      |      L binary file (.bl)           \
+ L cocytus source (.cl)    |                                   C output file (.c)
+                          |
+                     Cocytus compiler* (calls the backend functions)
+                   /      |         \
+                  /       |          \-------\-----------------
+                 /   dynamic x86 code*        \                \
+     L GCC frontend                       ANSI C generator      \
+               /                                            L header files (.lh)
+             GCC  
+             /  \---------------     
+            /                   \
+        assembly file (.S)   object file (.o)
+
+@end example
+
+*: already implemented
+
+@menu
+* Cocytus::                      
+* Malebolge::                   
+@end menu
+
+
+@node L concrete syntax, Cocytus, L structure, L presentation
+@comment  node-name,  next,  previous,  up
+@section L concrete syntax
+
+The parser handle the concrete syntax of the language.
+
+
+TO_WRITE
+
+S-expressions (sexps): a notation to represent trees.
+
+Concept of tree : @code{a + b * c} is converted into @code{(* (+ a b)
+c)}. In this representation, the first symbol represents the head of
+the tree, and subsequents fields represent the sons, that can be trees
+themselves.  So the above code is really:
+
+@example
+*--- + --- a
+ \    \----b
+  \--c
+@end example
+
+Another example: L's code
+@example
+function1(toto, function2(24,49), 3+i)
+@end example
+
+has the tree representation:
+
+@example
+                function1
+               /     |    \
+           toto function2  +
+                  /   \    |\ 
+                 24   49   3 i
+@end example
+
+And the sexp representation:
+
+@example
+(function1 toto
+           (function2 24 49)
+           (+ 3 i))
+@end example
+
+So the sexp notation is just a convenient representation to represent
+trees.
+
+
+@menu
+* Extending the syntax::        
+@end menu
+
+@node  Extending the syntax,  , L concrete syntax, L concrete syntax
+@comment  node-name,  next,  previous,  up
+@subsection Extending the syntax
+
+TO_WRITE
+
+@node  Cocytus, Malebolge, L concrete syntax, L presentation
+@comment  node-name,  next,  previous,  up
+@section Cocytus
+
+The Cocytus is the set of core language constructs of L.  Every L code
+is transformed into an assembly of Cocytus operations, that form a
+tree.
+
+The goal of the Cocytus language is to have a language that is
+semantically non ambiguous; that is to say, that can express very
+precisely what the computer will do.  Cocytus output should be
+readable; it can be used to manually verify what a code does.  It is
+much higher level than assembly, approximatively of equal
+expressiveness than C, but more precise, less ambiguous.
+
+@menu
+* Language constructs::         
+* Definers::                    
+* Chunk::                       
+@end menu
+
+@node  Language constructs, Definers, Cocytus, Cocytus
+@comment  node-name,  next,  previous,  up
+@subsection Language constructs
+
+In L, new language constructs can be defined, and existing language
+constructs can be redefined.  There are many cases where this may be
+useful:
+
+@itemize
+@item
+If you have a processor with special instructions, you need to create
+some backend-specific language constructs to exploit them.
+
+@item
+In general, every addition to the language that need some assembly
+manipulations require a new language construct.
+@end itemize
+
+L defines a few language constructs that, taken alone, make L
+approximatively as expressive as C.  To have full expressiveness, you
+need macros and expanders, that are defined in the next section
+@ref{Malebolge}.
+
+The standard language constructs are the following:
+
+@subsubsection Constructs for local structure
+
+@deffn {Language construct} seq (form1..., form_n)
+@code{seq} Executes each of its subforms in turn, and returns the
+result of the last one.  @code{seq} must have at least one form.
+
+L's standard syntax for this construct is @code{,}:
+@example
+x = 3, y = 4, x * y
+@end example
+
+has for abstract syntax tree:
+
+@example
+(seq (= x 3)
+     (= y 4)
+     (*#Int x y))
+@end example
+
+that has for result @code{12}.
+@end deffn
+
+@deffn {Language construct} block (form1..., form_n)
+@code{block} acts like @code{seq}, except that it also begins a new
+block of code.  All subsequent @code{let} definitions have a scope
+that ends at the end of the current block.  Block must have at least
+one form, like seq.
+
+Note that L's blocks can return a value, unlike C ones.  The syntax
+for L blocks thus differs from C's (even GNU C's) one:
+
+@example
+let Int a = @{ let Int sum = 0;
+               for(let Int i = 0; i <= 10; i++)
+                 @{ sum += i; @}
+               sum @};
+@end example
+
+This code creates two local variables to do a local calculation,
+before returning a result.  This is particularly handy in combination
+with macros.
+@end deffn
+
+@deffn {Language construct} let (type_form, variable_name)
+@code{let} creates a new local variable that exists from its
+declaration until the end of the block.
+
+A @code{let} form can be used as a lvalue, like in the construct:
+
+@example
+let Int i = 3;
+@end example
+
+that has for abstract syntax tree:
+
+@example
+(= (let Int i) 3)
+@end example
+
+but it cannot be used as a rvalue.
+@end deffn
+
+@subsubsection Constructs for global structure
+
+@deffn {Language construct} define (definition_type name rest)
+@code{define} defines NAME as being a DEFINITION_TYPE with value REST.
+This special form just really calls the definer associated with
+DEFINITION_TYPE, with parameters DEFINITION_TYPE, NAME, and REST.
+
+Exemple of DEFINITION_TYPE are @code{function} (for defining new
+functions) @code{type} (for creating new types), @code{expander},
+@code{thread-local} (unimplemented), @code{global} for thread-local
+and global variables.
+
+See @ref{Definers} for the details.
+@end deffn
+
+
+@subsubsection Constructs for changing flow of control
+
+@deffn {Language construct} goto (label_name) UNIMPLEMENTED
+@code{goto} branches to the label LABEL_NAME.  For the goto to be
+valid, the following condition must be met:
+
+The label must appear in a scope ``accessible'' by the goto
+instruction, i.e. either the current scope or any parent enclosing
+scope.  It is an error to jump to a label to an unreachable scope.
+@end deffn
+
+@deffn {Language construct} return (value) UNIMPLEMENTED
+Aborts the execution of the current function and returns to the
+caller, with return value VALUE.
+@end deffn
+
+@subsubsection Constructs for iteration
+
+You will notice that L does not have any of the standard constructs
+for iteration built-in, like C @code{for}, @code{while}, or @code{do
+... while}.  These can be defined by userlibraries; so a standard
+library defines them, but they are not part of the language.
+
+@deffn {Language construct} loop (form)
+Repeatly execute forms, until it reaches one of @code{break},
+@code{continue}, or one of the two preceding change of flow of control
+commands @code{goto} (if the label is outside of the loop) or
+@code{return}.
+@end deffn
+
+@deffn {Language construct} break ()
+@code{break} exits the current loop; i.e., acts as if the enclosing
+loop was executed
+@end deffn
+
+@deffn {Language construct} continue ()
+@code{continue} continues the execution at the beginning of the loop.
+@end deffn
+
+@subsubsection Construct for affectation
+
+L can be close to hardware, and thus is an imperative language, in the
+sense that it defines an imperative construct, @code{=}.  By
+restricting its use, you can obtain a fully functional language if you
+prefer; this is discussed in further sections.
+
+@deffn {Language construct} = (assignee expression)
+@code{=} affects the value of EXPRESSION to ASSIGNEE, that must be a
+correct lvalue.
+@end deffn
+
+@subsubsection Constructs for pointer manipulation
+
+L permits the use of pointers; not doing so result in a huge
+performance penalty as seen in the ``modern'' languages, and give up
+all hope to do low level programming.  L is so an unsafe language.
+
+However, L make it easy to hide the use of pointers behing safe
+constructs; if you make the usage of these constructs mandatory (which
+is not feasible by now), you transform L into a safe, AND efficient,
+language.
+
+@deffn {Language construct} ref
+@end deffn
+
+@deffn {Language construct} deref
+
+
+@code{deref} can be used as an lvalue
+@end deffn
+
+@subsubsection Constructs for structure manipulation
+
+@subsubsection Construct for aggregating several values together
+
+@deffn {Language construct} tuple expression_1 ... expression_n
+L has a builtin notion of tuple, that is quite different from what is
+called tuple in many different languages.
+
+L's tuple only purpose is to consider several values at once. In
+particular, @emph{no special assumption is made about the location of
+the components of the tuple}.  Unlike the structure, tuple components
+are not placed contiguously in memory, for instance.
+
+The following code:
+@example
+(block (let Int a)
+       (let Int b)
+       (tuple a b))
+@end example
+
+does not do anything, for instance.
+
+Tuples are really useful when it comes to @emph{simultaneous
+affectations}. For instance:
+
+@example
+(a,b) = (b,a);
+@end example
+
+exchange the values in @code{a} and @code{b}.  As there is no
+assumption behind the memory placement of the tuple, potentially
+optimized instructions can be used here; for instance if @code{a} and
+@code{b} where stored in registers, the above example could have used
+the x86 instruction @code{xchg}, which is never used by a normal C
+compiler.
+
+L defines the order of evaluation of the expressions in a tuple to be
+from left to right.  Unlike C programs, L programs can rely on this
+fact.
+
+It is also important to notice that all expressions of the tuple are
+evaluated before the assignment takes place.  This is what makes the
+above example to work; as opposed to sequential affectation.
+@end deffn
+
+
+@subsubsection Construct for function calling
+
+funcall: calls a function.  Takes a tuple as an argument, returns a
+tuple: thus we have multiple return values (this alleviates many use
+of pointers).
+
+UNIMPLEMENTED: partial affectation of a tuple, using _:
+
+@example
+(x,_,color) = f(i);  f: (Float,optional Float, Color)<-(Int);
+(x,y,_) = f(i);   f: (Float,Float,optional Color)<-(Int);
+(x,y) = f(i);   f: (Float,Float,optional Color)<-(Int);
+x = f(i);   f: (Float,optional Float,optional Color)<-(Int);
+@end example
+
+@node  Definers, Chunk, Language constructs, Cocytus
+@comment  node-name,  next,  previous,  up
+@subsection Definers
+
+Definers are used to define new global values.  Standard L cocytus
+package provides several standard definers:
+
+@deffn {Definer type} function
+This definer makes it possible to define new functions, that can later
+be compiled. 
+@end deffn
+
+@deffn {Definer type} type
+With this definer, you can create new types
+@end deffn
+
+
+L's style encourage creation of new definer.  For instance, imagine
+that you are developping a PCI device driver interface.  Then, a
+device driver should look like:
+
+@example
+pci_device_driver my_driver
+@{
+  name: "my-driver";
+  probe: my_probe_function;
+  remove: my_remove_function;
+  suspend: my_suspend_function;
+  resume: my_resume_function;
+@}
+
+Error_Code my_probe_function(Pci_Info inf)
+@{ ... @}
+@end example
+
+Any change of interface would be immediately known at compile time:
+for instance, if a suspend is deprecated, the definer can warn the
+developper when it is called; and so on.
+
+UNIMPLEMENTED This is also how Cocytus backends should be declared:
+@example
+Cocytus_Backend pretty_GNU_C_backend
+@{
+  let: pgc_compile_let;
+  =: pgc_compile_assign;
+
+@}
+@end example
+
+A warning or error message could then be issued when a Cocytus backend
+does not follow a change in Cocytus; or does not fully implement it
+for instance.
+
+Finally, the ability to add new definers make it possible to transform
+L into a declarative language, or more generally use declarative
+constructs, so writing what you want to have instead of writing how to
+obtain it.
+
+@node  Chunk,  , Definers, Cocytus
+@comment  node-name,  next,  previous,  up
+@subsection Chunk
+
+Cocytus is compiled by chunks.  If you reference something, it has to
+be defined in the same chunk, or already defined in a previous chunk.
+
+@node  Malebolge,  , Cocytus, L presentation
+@comment  node-name,  next,  previous,  up
+@section Malebolge
+TO_WRITE
+
+
+@menu
+* Type classes::                
+* Defining new macros::         
+* Creating new expanders::      
+* Defining coercions::          
+@end menu
+
+@node  Type classes, Defining new macros, Malebolge, Malebolge
+@comment  node-name,  next,  previous,  up
+@subsection Type classes
+
+@node  Defining new macros, Creating new expanders, Type classes, Malebolge
+@comment  node-name,  next,  previous,  up
+@subsection Defining new macros
+
+@node  Creating new expanders, Defining coercions, Defining new macros, Malebolge
+@comment  node-name,  next,  previous,  up
+@subsection Creating new expanders
+
+@node  Defining coercions,  , Creating new expanders, Malebolge
+@comment  node-name,  next,  previous,  up
+@subsection Defining coercions
+
+@bye

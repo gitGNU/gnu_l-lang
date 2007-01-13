@@ -1,4 +1,4 @@
-## Makefile.am -- Makefile template for L
+## Makefile.am -- Makefile template for L documentation
 # Copyright (C) 2007 Matthieu Lemerre.
 #
 # This file is part of the L Programming Language.
@@ -18,6 +18,4 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301
 # USA.
 
-SUBDIRS = src doc
-AM_CFLAGS = -g -O0
-DEFAULT_INCLUDES = ${top_srcdir}/src/include
+info_TEXINFOS = documentation.texi

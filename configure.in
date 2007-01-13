@@ -18,5 +18,6 @@ AC_OUTPUT(Makefile
 	  src/std/Makefile
 	  src/compiler/jit/Makefile
 	  src/expander/Makefile
+	  doc/Makefile
 )
 

@@ -1,3 +1,9 @@
+2007-01-13  Matthieu Lemerre  <racin@free.fr>
+
+	* doc: New directory, holding L's documentation.
+	* configure.in: Added doc/Makefile
+	* Makefile.am: Added doc
+
 2007-01-06  Matthieu Lemerre  <racin@free.fr>
 
 	* Initial public release
