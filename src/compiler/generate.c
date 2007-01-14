@@ -72,7 +72,7 @@ TODO:
 #include "../objects/pair.h" 
 #include "../objects/symbol.h" 
 #include "../objects/fixnum.h" 
-#include "../objects/string.h" 
+#include <l/string.h>
 #include "../objects/function.h" 
 #include "../objects/hash.h" 
 

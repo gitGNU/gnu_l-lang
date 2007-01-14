@@ -1,4 +1,4 @@
-/* string.h - Operation on strings.
+/* string.h - String handling.
    Copyright (C) 2007 Matthieu Lemerre <racin@free.fr>
 
    This file is part of the L programming language.
@@ -18,30 +18,45 @@
    write to the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
    Boston, MA  02110-1301  USA.  */
 
-#ifndef _MY_STRING_H
-#define _MY_STRING_H
+#ifndef _L_STRING_H
+#define _L_STRING_H
 
-//#include "object.h"
+#include <l/type.h>
 
-#include "../compiler/type.h"
-
-typedef struct string {
-  char *value;
+typedef struct string
+{
+  unsigned int length;
+  char content[0];
 } *string_t;
 
-/* Initialize the pair subsystem.  */
-void
-init_string (void);
+typedef string_t String;
+
+#include <string.h>
+
+/* Creates a L String from a C char *.  */
+static inline String
+make_heap_string (const char *chars)
+{
+  unsigned int str_len = strlen (chars);
+  String string = xmalloc (str_len + sizeof(struct string));
+  string->length = str_len;
+  memcpy (string->content, chars, str_len);
+  return string;
+}
+
+
+/* Creates a L String from the first N strings a C char *.  */
+static inline String
+maken_heap_string (const char *chars, unsigned int n)
+{
+  String string = xmalloc (n + sizeof(struct string));
+  string->length = n;
+  memcpy (string->content, chars, n);
+  return string;
+}
+
+
 
 extern const Type __type_string;
-
-#if 0
-#define MAKE_STRING(str)				\
-  ({string_t st = CREATE_OBJECT (string);		\
-    st->value = str;					\
-    st;})
-#endif
-
-
 
 #endif

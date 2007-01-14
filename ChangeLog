@@ -1,3 +1,17 @@
+2007-01-14  Matthieu Lemerre  <racin@free.fr>
+
+	* src/include/type.h : New location for the old compiler/type.h
+	file.
+	* src/include/string.h : New string structure.
+	* src/objects/string.h: Removed file
+	* src/compiler/type.h: Removed file
+	All including files changes.
+	
+	* src/std/xml.c: Use string_t instead of char *.
+	* src/parser/parse.c (get_next_token): Now creates a string_t
+	* src/parser/form.c (string_form): Now takes a string_t instead of
+	char *.
+
 2007-01-13  Matthieu Lemerre  <racin@free.fr>
 
 	* doc: New directory, holding L's documentation.

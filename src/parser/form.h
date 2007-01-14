@@ -203,7 +203,6 @@ typedef union form_type
 } form_type_t;
 
 #include "../objects/pair.h"
-#include "../objects/string.h"
 
 #define Define_Form(struct_name, macro)		\
   typedef struct struct_name			\

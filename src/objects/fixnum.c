@@ -23,8 +23,7 @@
 #include "fixnum.h"
 #include "symbol.h"
 #include "../memory/memory.h"
-//#include "type.h"
-#include "../compiler/type.h"
+#include <l/type.h>
 #include <string.h>
 #include "namespace.h"
 

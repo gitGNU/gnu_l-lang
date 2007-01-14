@@ -23,7 +23,7 @@
 
 
 //#include "object.h"
-#include "../compiler/type.h"
+#include <l/type.h>
 
 /* XXX: est ce qu'il faut creer une structure pour ca? */
 typedef struct int_object

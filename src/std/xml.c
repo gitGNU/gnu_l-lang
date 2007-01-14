@@ -132,6 +132,7 @@ contain ('stuff' 'toto'). */
 #include <ctype.h> /* We should use isalpha etc... instead.  */
 #include <assert.h>
 #include <l/sys/panic.h>
+#include <l/string.h>
 
 /* XML parser.  */
 
@@ -141,7 +142,7 @@ xml_parse_compound_form (Read_Buffer buf);
 symbol_t
 xml_parse_id (Read_Buffer buf);
 
-char *
+string_t
 xml_parse_string_or_number (Read_Buffer buf);
 
 
@@ -312,7 +313,7 @@ xml_parse_id (Read_Buffer buf)
     }
 }
 
-char *
+string_t
 xml_parse_string_or_number (Read_Buffer buf)
 {
   char *first = buf->current;
@@ -325,7 +326,7 @@ xml_parse_string_or_number (Read_Buffer buf)
 
   buf->current = current;
   
-  return strndup (first, current - first);
+  return maken_heap_string (first, current - first);
 }
 
 /* An XML data structure and functions.  */
@@ -354,7 +355,7 @@ typedef struct xml_leaf
   {
     int number;
 
-    char *string;
+    string_t string;
   };
 
 } *xml_leaf_t;
@@ -383,7 +384,7 @@ typedef xml_interior_node_t XML_Interior_Node;
    implies that XML_Node data structure should be opaque.  */
 
 XML_Node
-make_xml_string_node(char *string)
+make_xml_string_node(string_t string)
 {
   XML_Leaf xl = MALLOC(xml_leaf);
 
@@ -509,7 +510,7 @@ print_xml_rec(int indent, XML_Node node)
       XML_Leaf leaf = node;
       assert(leaf->type == XML_Leaf_String);
 
-      printf("%s\n", leaf->string);
+      printf("%s\n", strndup (leaf->string->content, leaf->string->length));
     }
   else
     {
@@ -570,7 +571,7 @@ print_xml(XML_Node node)
 
 
 #include <l/expand.h>
-#include "../compiler/type.h"
+#include <l/type.h>
 
 static struct my_type XML_Node___;
 Type TYPE(XML_Node) = &XML_Node___;

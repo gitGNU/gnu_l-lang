@@ -18,8 +18,7 @@
    write to the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
    Boston, MA  02110-1301  USA.  */
 
-
-#include "string.h"
+#include <l/string.h>
 #include "symbol.h"
 #include "../memory/memory.h"
 #include "type.h"

@@ -21,7 +21,7 @@
 #ifndef SYMBOL_H
 #define SYMBOL_H
 
-#include "../compiler/type.h"
+#include <l/type.h>
 #include "hash.h"
 
 /* For now, a symbol is still a pointer; later it will be just an

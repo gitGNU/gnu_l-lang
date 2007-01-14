@@ -47,8 +47,8 @@
 #include "form.h"
 #include "buffer.h"
 #include "../objects/symbol.h" 
-#include "../objects/fixnum.h" 
-#include "../objects/string.h" 
+#include "../objects/fixnum.h"
+#include <l/string.h>
 #include "../objects/pair.h" 
 
 /* For the final implementation :
@@ -251,7 +251,7 @@ struct token
     int integer;
     symbol_t symbol;
     symbol_t id;
-    char *string;
+    string_t string;
   };
 };
 
@@ -415,7 +415,8 @@ get_next_token (void)
     }
   else if(result_scanning == STRING_TK)
     {
-      current_token.string = strndup (start+1, scanner_pointer - start - 2);
+      current_token.string = maken_heap_string (start + 1,
+						scanner_pointer - start - 2);
       current_token.type = STRING_RTK;
     }
   

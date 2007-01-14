@@ -60,7 +60,7 @@
 
 
 #include "../parser/form.h"
-#include "type.h"
+#include <l/type.h>
 #include <string.h>
 #include <assert.h>
 

@@ -28,6 +28,7 @@
 #include "../objects/type.h"
 #include "../objects/fixnum.h"
 #include "../compiler/c-to-l.h"
+#include <l/string.h>
 
 #include <l/sys/panic.h>
 
@@ -68,7 +69,7 @@ symbol_form (symbol_t value)
 }
 
 string_form_t
-string_form (char *value)
+string_form (string_t value)
 {
   string_form_t sform = new_form (string);
   sform->value = value;

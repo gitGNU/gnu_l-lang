@@ -29,7 +29,7 @@
 #include <Judy.h>
 #include "../../objects/symbol.h"
 //#include "../../objects/type.h"
-#include "../type.h"
+#include <l/type.h>
 #include "../../memory/code.h"
 #include "../backend.h"
 #include "lightning-extended.h"

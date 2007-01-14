@@ -47,6 +47,8 @@
 
 #include <assert.h>
 
+#include <l/string.h>
+
 #include "../objects/pair.h"
 #include "../objects/type.h"
 #include "../objects/fixnum.h"
