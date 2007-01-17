@@ -767,8 +767,8 @@ void lispify_rec (form_t form, int indent, int cur_indent)
 	}
       else if(is_form (form, string_form))
 	{
-	  char *string = ((string_form_t) form)->value;
-	  printf ("\"%s\"", string);
+	  string_t string = ((string_form_t) form)->value;
+	  printf ("\"%s\"", strndup (string->content, string->length));
 	}
       else if(is_form(form, expanded_form))
 	{
