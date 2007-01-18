@@ -382,6 +382,9 @@ expand_lambda(generic_form_t form)
 expanded_form_t
 expand_block(generic_form_t form)
 {
+  if(form->form_list == NULL)
+    panic ("Blocks cannot be empty\n"); /* Or empty blocks could be void.  */
+    
   new_block();
 
   /* MAP expand on the forms; return the type of the last one.  */

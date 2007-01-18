@@ -1,4 +1,4 @@
-/* init_library.c - 
+/* output.h - Output functions
    Copyright (C) 2007 Matthieu Lemerre <racin@free.fr>
 
    This file is part of the L programming language.
@@ -18,13 +18,21 @@
    write to the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
    Boston, MA  02110-1301  USA.  */
 
+#ifndef _OUTPUT_H
+#define _OUTPUT_H
 
-void
-init_library ()
-{
-  init_list ();
-  init_xml ();
-  init_output ();
-  init_print ();
-  
-}
+#include <l/string.h>
+
+typedef struct output_descriptor *output_descriptor_t;
+
+/* Later, we will write also a multi-threaded aware version.  */
+void print_string (string_t string);
+
+/* Print a string to a different output descriptor.  A with_output_to
+   macro should do this.  */
+void print_string_to_output_descriptor (string_t string,
+					output_descriptor_t od);
+
+
+
+#endif

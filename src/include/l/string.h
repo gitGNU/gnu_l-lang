@@ -23,10 +23,15 @@
 
 #include <l/type.h>
 
+/* Having the content of the string not coded in it allows for sharing
+   of substrings.  But beware of memory reclamation!  I suggest that
+   Strings should use a special-purpose String garbage collector
+   designed to cope with this problem.  */
 typedef struct string
 {
   unsigned int length;
-  char content[0];
+  char *content;
+  //  char content[0];
 } *string_t;
 
 typedef string_t String;
@@ -39,8 +44,10 @@ make_heap_string (const char *chars)
 {
   unsigned int str_len = strlen (chars);
   String string = xmalloc (str_len + sizeof(struct string));
+  char *string_start = (char *) string  + sizeof(struct string);
   string->length = str_len;
-  memcpy (string->content, chars, str_len);
+  string->content = string_start;
+  memcpy (string_start, chars, str_len);
   return string;
 }
 
@@ -50,8 +57,10 @@ static inline String
 maken_heap_string (const char *chars, unsigned int n)
 {
   String string = xmalloc (n + sizeof(struct string));
+  char *string_start = (char *) string  + sizeof(struct string);
   string->length = n;
-  memcpy (string->content, chars, n);
+  string->content = string_start;
+  memcpy (string_start, chars, n);
   return string;
 }
 

@@ -33,7 +33,7 @@ typedef struct read_buffer
 
 typedef read_buffer_t Read_Buffer;
 
-inline char
+static inline char
 buffer_getchar (Read_Buffer buffer)
 {
   if(buffer->current >= buffer->end)
@@ -42,7 +42,7 @@ buffer_getchar (Read_Buffer buffer)
   return *buffer->current++;
 }
 
-inline char
+static inline char
 buffer_nextchar (Read_Buffer buffer)
 {
   if(buffer->current >= buffer->end)
@@ -56,7 +56,7 @@ buffer_nextchar (Read_Buffer buffer)
 //{
 //}
 
-inline Read_Buffer
+static inline Read_Buffer
 Read_Buffer_From_String (char *string)
 {
   Read_Buffer buf = MALLOC (read_buffer);

@@ -1,3 +1,21 @@
+2007-01-18  Matthieu Lemerre  <racin@free.fr>
+
+	* src/std/print.c : New file.
+	* src/std/output.c: New file.
+	* src/std/init_library.c (init_library): Calls also init_output() and init_print()
+	* src/std/Makefile.am (libl_std_la_SOURCES): added output.c and print.c
+
+	* src/parser/parse.c (l_parse_statement): New function
+	* src/parser/buffer.h : Changed inline functions to static inline.
+	* src/include/l/std/output.h: New file.
+	* src/include/l/string.h (struct string): a String and its content
+	are not forced to be allocated at the same place; fixed other
+	files to take this into account.
+
+	* src/expander/expand.c (expand_block): Added a check on blocks not being empty.
+	* src/compiler/c-to-l.h: added the TYPE_ macro
+	* src/Makefile.am (L_LDADD): Added -lm
+
 2007-01-17  Matthieu Lemerre  <racin@free.fr>
 
 	* src/parser/form.c (lispify_rec): Use string_t instead of char *.

@@ -30,7 +30,7 @@ L_LDADD =    objects/libl-objects.la \
              expander/libl-expand.la \
 	     memory/libl-memory.la lexer/libl-lexer.a  \
 	     std/libl-std.la  \
-	     -lJudy
+	     -lJudy -lm
 
 
 L_LDFLAGS = -lJudy

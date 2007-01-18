@@ -1909,6 +1909,16 @@ l_parse_expression (Read_Buffer buf)
   return tf;
 }
 
+form_t
+l_parse_statement (Read_Buffer buf)
+{
+  scanner_pointer = buf->current;
+  parse_initialize ();
+  form_t tf = parse_statement ();
+  buf->current = scanner_pointer;
+  return tf;
+}
+
 
 /* Yet another hacky function.  */
 symbol_t

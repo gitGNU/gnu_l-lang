@@ -20,7 +20,7 @@
 
 lib_LTLIBRARIES = libl-std.la
 
-libl_std_la_SOURCES =  init_library.c xml.c list.c
+libl_std_la_SOURCES =  init_library.c xml.c list.c output.c print.c
 
 
 #bin_PROGRAMS = test

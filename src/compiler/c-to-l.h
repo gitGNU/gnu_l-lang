@@ -42,6 +42,8 @@ compile_function_call (generic_form_t form);
  } while(0)
 
 
+#define TYPE_(string) intern_type (string_to_type_form (string))
+
 #define DEFINE_C_FUNCTION2(name1_, name2_, type_string)			\
   do {									\
     									\
