@@ -23,7 +23,7 @@
 
 #include "form.h"
 #include "buffer.h"
-
+#include <l/string.h>
 
 /* Hooking into the parser.  */
 
@@ -35,12 +35,8 @@ void
 define_parse (symbol_t symbol, parse_hook_function_t function);
 
 
-form_t
-parse (char *string, unsigned int length);
-
 list_t
-parse_file (char *file_name);
-
+parse (String s);
 
 /* Functions usable in parsing code.  */
 

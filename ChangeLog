@@ -1,3 +1,18 @@
+2007-01-20  Matthieu Lemerre  <racin@free.fr>
+
+	* src/parser/parse.c (parse): New parser entry point, takes a
+	String argument.
+	(parse_file): Removed function.
+	Fixed header parse.h
+
+	* src/include/l/string.h (make_heap_string): Changed to have a
+	trailing 0.
+	
+	* src/main.c (main): Now calls eval_file.
+	(maken_heap_string): Same thing.
+	* src/eval.c (eval): New file.
+	* src/Makefile.am (L_SOURCES): added eval.c
+
 2007-01-18  Matthieu Lemerre  <racin@free.fr>
 
 	* src/std/print.c : New file.

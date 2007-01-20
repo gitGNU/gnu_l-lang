@@ -43,11 +43,13 @@ static inline String
 make_heap_string (const char *chars)
 {
   unsigned int str_len = strlen (chars);
-  String string = xmalloc (str_len + sizeof(struct string));
+
+  /* For compatibility with C, we still put a trailing 0.  */
+  String string = xmalloc (str_len + sizeof(struct string) + 1);
   char *string_start = (char *) string  + sizeof(struct string);
   string->length = str_len;
   string->content = string_start;
-  memcpy (string_start, chars, str_len);
+  memcpy (string_start, chars, str_len + 1);
   return string;
 }
 
@@ -56,11 +58,11 @@ make_heap_string (const char *chars)
 static inline String
 maken_heap_string (const char *chars, unsigned int n)
 {
-  String string = xmalloc (n + sizeof(struct string));
+  String string = xmalloc (n + sizeof(struct string) + 1);
   char *string_start = (char *) string  + sizeof(struct string);
   string->length = n;
   string->content = string_start;
-  memcpy (string_start, chars, n);
+  memcpy (string_start, chars, n + 1);
   return string;
 }
 

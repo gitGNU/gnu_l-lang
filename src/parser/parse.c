@@ -1529,63 +1529,37 @@ parse_atomic (form_t *form)
 }
 
 
-form_t
-parse (char *string, unsigned int length)
-{
-  scanner_pointer = string;
 
+#include <l/string.h>
+
+/* Takes a string, parses it as a whole, and return the abstract
+   syntax forest (list of forms).  */
+list_t parse (String string)
+{
+  scanner_pointer = string->content;
+
+  /* For now, because of the lexer, we need the string to be 0-terminated.  */
+  assert (string->content[string->length] == 0);
+
+  
   parse_initialize ();
-  
-  form_t form = parse_all ();
-  
-  //  write_form_to_xml (form);
-
-  return form;
-}
-
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <sys/mman.h>
-
-/* Returns the list of forms belonging to the file.  */
-list_t
-parse_file (char *file_name)
-{
-  unsigned int fd = open (file_name, O_RDONLY);
-  struct stat the_stat;
-
-  stat (file_name, &the_stat);
-  off_t length_ = the_stat.st_size;
-
-  char *string = mmap (0, length_, PROT_READ, MAP_SHARED, fd, 0);
-
-  assert (string != (void *) -1);
-
-  char *copy_string = string;
 
   list_t list;
   list_t *list_ptr = &list;
-
-  scanner_pointer = string;
-
-  parse_initialize ();
-
   do {
     form_t form = parse_all ();//parse (scanner_pointer, length_);
 
     *list_ptr = MALLOC (pair);
     CAR (*list_ptr) = form;
     list_ptr = &CDR (*list_ptr);
-  } while (scanner_pointer < string + length_);
+  } while (scanner_pointer < string->content + string->length);
 
   *list_ptr = NULL;
-  assert (string == copy_string);
-  munmap (string, length_);
-  close (fd);
-
   return list;
 }
+
+/* TODO: parse_with_parser, to parse a string with a different
+parser.  */
 
 
 /* The subgrammar for types.  We should also have our own lexer (for

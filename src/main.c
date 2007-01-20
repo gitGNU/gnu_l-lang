@@ -28,6 +28,7 @@
 #include <l/expand.h>
 #include <assert.h>
 #include "objects/function.h"
+#include <l/string.h>
 
 //typedef void (*void_to_void_t)(void);
 typedef int (*void_to_int_t)(void);
@@ -39,33 +40,12 @@ main (int argc, char **argv)
 {
   init ();
 
+  
+  //  eval (make_heap_string ("Int test() { 2 }"));
   assert (argc > 1);
 
-  list_t form_list = parse_file (argv[1]);
+  eval_file (argv[1]);
 
-  FOREACH (element, form_list)
-    {
-      form_t form = CAR (element);
-      lispify (form);//write_form_to_xml (form);
-    }
-
-  list_t to_compile = analyze (form_list);
-  
-  FOREACH (element, to_compile)
-    {
-      form_t form = CAR (element);
-      //write_form_to_xml (form);
-      expanded_form_t expand_info = expand(form);
-
-      /* XXX: strip the expanded form.  */
-      form_t expanded_form = expand_info->return_form;
-
-      printf("EXPANDED FORM\n");
-      lispify(expand_info);
-      generate (expanded_form);
-    }
-
-  //  function_t odd_function = symbol_value (SYMBOL (odd));
   function_t test_function = gethash (SYMBOL (test), function_hash);//symbol_value (SYMBOL (test));
 
   function_t toto_function = gethash (SYMBOL (fact), function_hash);

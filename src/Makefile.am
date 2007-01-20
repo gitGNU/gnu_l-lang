@@ -21,7 +21,7 @@
 SUBDIRS = memory lexer compiler expander parser std objects
 
 bin_PROGRAMS = L
-L_SOURCES = main.c init.c
+L_SOURCES = main.c init.c eval.c
 
 L_LDADD =    objects/libl-objects.la \
 	     memory/libl-memory.la \
