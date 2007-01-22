@@ -21,8 +21,6 @@
 
 #include <Judy.h>
 #include "../../objects/symbol.h"
-#include "../../objects/type.h"
-#include "../../objects/fixnum.h"
 #include "../../memory/code.h"
 #include "../backend.h"
 #include "lightning-extended.h"

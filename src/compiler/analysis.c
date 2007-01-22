@@ -51,7 +51,6 @@
 
 #include "../objects/pair.h"
 #include "../objects/type.h"
-#include "../objects/fixnum.h"
 #include "../objects/function.h"
 #include "../parser/form.h"
 

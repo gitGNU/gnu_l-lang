@@ -20,7 +20,7 @@
 
 lib_LTLIBRARIES = libl-objects.la
 
-libl_objects_la_SOURCES = function.c pair.c symbol.c fixnum.c string.c namespace.c 
+libl_objects_la_SOURCES = pair.c symbol.c namespace.c 
 
 CFLAGS = -g -O0 
 AM_CFLAGS = -g -O0 -Wall

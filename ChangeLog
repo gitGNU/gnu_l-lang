@@ -1,5 +1,18 @@
 2007-01-22  Matthieu Lemerre  <racin@free.fr>
 
+	Little additional cleanup.
+
+	* src/objects/fixnum.c : File removed.
+        * src/objects/fixnum.h : File removed.
+        * src/objects/function.c : File removed.
+        * src/objects/object.h : File removed.
+        * src/objects/string.c : File removed.
+
+	Fixed includes.
+
+
+2007-01-22  Matthieu Lemerre  <racin@free.fr>
+
 	Cleaned up the type handling.
 	
 	* src/compiler/type.c (type_hash): removed hash table.

@@ -47,7 +47,6 @@
 #include "form.h"
 #include "buffer.h"
 #include "../objects/symbol.h" 
-#include "../objects/fixnum.h"
 #include <l/string.h>
 #include "../objects/pair.h" 
 

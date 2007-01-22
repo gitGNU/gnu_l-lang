@@ -26,7 +26,6 @@
 #include "../objects/pair.h"
 #include "../objects/symbol.h"
 #include "../objects/type.h"
-#include "../objects/fixnum.h"
 #include "../compiler/c-to-l.h"
 #include <l/string.h>
 
