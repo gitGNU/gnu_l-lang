@@ -66,7 +66,7 @@ extern Pvoid_t _object_type;
     JLI (p_value, _object_type, (Word_t) alloc);			\
     assert (*p_value == NULL);/* Sinon ca veut dire qu'on a mal nettoye */ \
     *p_value = &(alloc->info);						\
-    alloc->info = TYPE(type);						\
+    /*    alloc->info = TYPE(type);*/					\
     /*    alloc->object = 0;*/ 		/* XXX: put type info. Il suffit */ \
     /*d'avoir un enum avec les differents */				\
     /*			   types? */					\

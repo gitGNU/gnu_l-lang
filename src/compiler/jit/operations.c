@@ -89,7 +89,7 @@ add_int_locations_constant_any (location_t loc1, location_t loc2)
   switch(low_loc2->location_type)
     {
     case CONSTANT:
-      return constant_value (TYPE (int_object),
+      return constant_value (TYPE ("Int")),
 			     add_int_constant_constant (value1,
 							low_loc2->value));
       
@@ -116,7 +116,7 @@ add_int_locations_constant_any (location_t loc1, location_t loc2)
 
 	add_int_constant_register (value1, reg2->reg);
 
-	location_t retloc = temporary_location (TYPE (int_object), reg2);
+	location_t retloc = temporary_location (TYPE ("Int"), reg2);
 
 	register_locations[reg2->reg] = retloc;
 
@@ -164,7 +164,7 @@ add_int_locations_register_reuse_any (location_t loc1, location_t loc2)
       }
     }
 
-  assert (loc1->type == TYPE (int_object));
+  assert (loc1->type == TYPE ("Int"));
   return loc1;
 }
 
@@ -192,7 +192,7 @@ add_int_locations (location_t loc1, location_t loc2)
     default:
       {
 	low_location_t low_loc= registerize (loc1->low_location);
-	location_t new_loc = temporary_location (TYPE (int_object), low_loc);
+	location_t new_loc = temporary_location (TYPE ("Int"), low_loc);
 
 	add_int_locations_register_reuse_any (new_loc, loc2);
 	
@@ -259,7 +259,7 @@ name_##_int_locations_constant_any (location_t loc1, location_t loc2)	\
   switch(low_loc2->location_type)					\
     {									\
     case CONSTANT:							\
-      return constant_value (TYPE (int_object),				\
+      return constant_value (TYPE ("Int"),				\
 			     name_##_int_constant_constant (value1,	\
 							low_loc2->value)); \
 									\
@@ -286,7 +286,7 @@ name_##_int_locations_constant_any (location_t loc1, location_t loc2)	\
 									\
 	name_##_int_constant_register (value1, reg2->reg);		\
 									\
-	location_t retloc = temporary_location (TYPE (int_object), reg2); \
+	location_t retloc = temporary_location (TYPE ("Int"), reg2); \
 									\
 	register_locations[reg2->reg] = retloc;				\
 									\
@@ -334,7 +334,7 @@ name_##_int_locations_register_reuse_any (location_t loc1, location_t loc2)	\
       }									\
     }									\
 									\
-  assert (loc1->type == TYPE (int_object));				\
+  assert (loc1->type == TYPE ("Int"));				\
   return loc1;								\
 }									\
 									\
@@ -362,7 +362,7 @@ name_##_int_locations (location_t loc1, location_t loc2)		\
     default:								\
       {									\
 	low_location_t low_loc= registerize (loc1->low_location);	\
-	location_t new_loc = temporary_location (TYPE (int_object), low_loc); \
+	location_t new_loc = temporary_location (TYPE ("Int"), low_loc); \
 									\
 	name_##_int_locations_register_reuse_any (new_loc, loc2);	\
 									\

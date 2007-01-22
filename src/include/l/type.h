@@ -111,17 +111,8 @@ typedef base_type_t Base_Type;
 
 #undef TYPE_CONTENT
 
-
-/* For base types. */
-#define TYPE(type_name)				\
-  __type_##type_name
-
-
-
 /* Base types.  */
 
-extern const Type TYPE(void);
+Type TYPE (const char *type_name);
 
-/* Deprecated.  */
-extern hash_table_t type_hash;
 #endif

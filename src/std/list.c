@@ -265,8 +265,8 @@ print_int_list(pair_t list)
 void
 init_list(void)
 {
-  DEFINE_C_FUNCTION2 ("alloc_cons_cell", alloc_cons_cell, "void * <- ()");
-  DEFINE_C_FUNCTION2 ("print_int_list", print_int_list, "void <- (List(Int))");
+  DEFINE_C_FUNCTION2 ("alloc_cons_cell", alloc_cons_cell, "Void * <- ()");
+  DEFINE_C_FUNCTION2 ("print_int_list", print_int_list, "Void <- (List(Int))");
 
   define_expander(SYMBOL(cons), expand_cons);
   define_expander(SYMBOL(list), expand_list);

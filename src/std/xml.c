@@ -573,8 +573,8 @@ print_xml(XML_Node node)
 #include <l/expand.h>
 #include <l/type.h>
 
-static struct my_type XML_Node___;
-Type TYPE(XML_Node) = &XML_Node___;
+//static struct my_type XML_Node___;
+//Type TYPE(XML_Node) = &XML_Node___;
 
 void
 init_xml ()
@@ -584,10 +584,11 @@ init_xml ()
   //  DEFINE_GENERIC ("XML", compile_xml);
   define_expander(SYMBOL(XML), expand_xml);
 
-  DEFINE_TYPE ("XML_Node", TYPE (XML_Node), sizeof(void *), __alignof (void*));
+  //  DEFINE_TYPE ("XML_Node", TYPE (XML_Node), sizeof(void *), __alignof (void*));
+  define_type_string ("XML_Node", sizeof(void *), __alignof__ (void *), NULL);
   DEFINE_C_FUNCTION(make_xml_interior_node, "XML_Node<-(Symbol,Int,List(XML_Node))");
   DEFINE_C_FUNCTION(make_xml_string_node, "XML_Node<-(String)");
-  DEFINE_C_FUNCTION(print_xml, "void<-(XML_Node)");
+  DEFINE_C_FUNCTION(print_xml, "Void<-(XML_Node)");
 
 ////
 ////  

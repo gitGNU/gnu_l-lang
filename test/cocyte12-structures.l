@@ -1,5 +1,5 @@
 //Test declaration and usage of structure
-int test ()
+Int test ()
 {
   let Int n = 3;
   let struct { Int x; Int y; } point;

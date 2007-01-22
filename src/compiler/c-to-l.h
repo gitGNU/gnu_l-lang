@@ -75,21 +75,4 @@ compile_function_call (generic_form_t form);
  } while(0)
 
 
-
-#define DEFINE_TYPE_SYMBOL(symbol__, type__, size__, alignment__)	\
-  do {									\
-    /*type__->definer = definer__;*/					\
-    type__->size = size__;						\
-    type__->alignment = alignment__;					\
-    type__->type_form = base_type_form (symbol__);			\
-									\
-    puthash (symbol__, type__, type_hash);				\
-  } while(0)
-
-#define DEFINE_TYPE(name__, type__, size__, alignment__)	\
-  DEFINE_TYPE_SYMBOL (intern (name__), type__, size__, alignment__)
-
-//#define DEFINE_C_TYPE(name__, string__) //For defining C structures
-//etc... into L.
-
 #endif

@@ -113,27 +113,7 @@ typedef void (*definer_t)(symbol_t, symbol_t, form_t);
 void
 define_type (symbol_t define_symbol, symbol_t name, type_form_t type_form)
 {
-  print_type (type_form);
-
-  Type new_type = MALLOC (base_type);
-
-  /* We first make the new type, for recursive types.  We put false
-     sizes and alignments; they shouldn't be used anyway.  */
-  //  DEFINE_TYPE_SYMBOL (name, new_type, -1, -1);
-  /*Type new_type = */
-  pre_create_type (base_type_form (name));
-  
-  Type type = intern_type (type_form);
-
-  //  new_type->size = type->size;
-  //  new_type->alignment = type->alignment;
-
-  if(type->size & ~(~0L >> 1))
-    compile_error ("Error: Defining a recursive type that does not go through a pointer\n");
-
-  //puthash (name, new_type, type_hash);
-  DEFINE_TYPE_SYMBOL (name, new_type, type->size, type->alignment);
-  
+  define_type_type_form (id_form (name), -1, -1, type_form);
 }
 
 void
@@ -143,7 +123,8 @@ define_type_alias (symbol_t define_symbol, symbol_t name,
   //XXX: recursive type aliases? No that does not mean anything.
   Type type = intern_type (type_form);
 
-  puthash (name, type, type_hash);
+  panic ("TODO\n");
+  // puthash (name, type, type_hash);
 }
 
 
@@ -420,19 +401,15 @@ init_analysis ()
   DEFINE_DEFINER ("type_alias", define_type_alias);
   DEFINE_DEFINER ("generic", define_generic);
 
-  
-  DEFINE_TYPE ("int", TYPE (int_object), sizeof(int), __alignof__ (int));
-  DEFINE_TYPE ("Int", TYPE (int_object), sizeof(int), __alignof__ (int));
-  /* XXX ca on l'a fait en dur deja */
-  DEFINE_TYPE ("Bool", TYPE (bool), sizeof(int), __alignof__ (int));
-  DEFINE_TYPE ("Type", TYPE (type), -1, -1); 
-  DEFINE_TYPE ("Function", TYPE (function), -1, -1);
+  define_type_string ("Int", sizeof(int), __alignof__ (int), NULL);
+  define_type_string ("Bool", sizeof(int), __alignof__ (int), NULL); 
+  define_type_string ("Type", sizeof(int), __alignof__ (int), NULL);
+  define_type_string ("Function", sizeof(int), __alignof__ (int), NULL);
+  define_type_string ("Symbol", sizeof(int), __alignof__ (int), NULL);
+  define_type_string ("String", sizeof(int), __alignof__ (int), NULL);
 
-  DEFINE_TYPE ("Symbol", TYPE (quoted_symbol), sizeof(int), __alignof (int));
-  DEFINE_TYPE ("String", TYPE (string), sizeof(int), __alignof (int));
-
-  /* XXX: void is not really the () type : because we allow (int) to
+    /* XXX: void is not really the () type : because we allow (int) to
      coerce into void? Or is it? */
-  DEFINE_TYPE("void", TYPE(void), 0, 0);
+  define_type_string ("Void", -1, -1, NULL); /* Void has no size.  */
 
 }

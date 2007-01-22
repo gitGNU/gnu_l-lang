@@ -108,7 +108,7 @@ compile (expanded_form_t expform)
     {
       if (is_form (form, int_form))
 	{
-	  return constant_value (TYPE (int_object), ((int_form_t) form)->value);
+	  return constant_value (TYPE ("Int"), ((int_form_t) form)->value);
 	}
       else if (is_form (form, id_form))
 	{
@@ -116,11 +116,11 @@ compile (expanded_form_t expform)
 	}
       else if (is_form (form, quoted_symbol_form))
 	{
-	  return constant_value (TYPE (quoted_symbol), ((quoted_symbol_form_t) form)->value);
+	  return constant_value (TYPE ("Symbol"), ((quoted_symbol_form_t) form)->value);
 	}
       else if(is_form (form, string_form))
 	{
-	  return constant_value (TYPE (string), ((string_form_t) form)->value);
+	  return constant_value (TYPE ("String"), ((string_form_t) form)->value);
 	}
       else panic ("Form compilation unimplemented\n");
     }
@@ -319,7 +319,7 @@ compile_let (generic_form_t form)
   /* Return void location.  */
   location_t location = void_location ();
 
-  location->type = TYPE (void);
+  location->type = TYPE ("Void");
   
   return location;
 }
@@ -839,7 +839,7 @@ compile_break (generic_form_t form)
   goto_label (current_loops->end_label);
 
   location_t loc = void_location ();
-  location_type (loc) = TYPE (void);
+  location_type (loc) = TYPE ("Void");
   
   return loc;
 }
@@ -850,7 +850,7 @@ compile_continue (generic_form_t form)
   goto_label (current_loops->start_label);
 
   location_t loc = void_location ();
-  location_type (loc) = TYPE (void);
+  location_type (loc) = TYPE ("Void");
   return loc;
 }
 
@@ -924,7 +924,7 @@ compile_boolean (expanded_form_t expform)
 
   location_t loc = compile(expform);
 
-  type_check(TYPE(bool), location_type(loc));
+  type_check(TYPE("Bool"), location_type(loc));
 
   location_t loc2 = constant_value(location_type(loc), 0);
   
@@ -1006,7 +1006,7 @@ compile_if (generic_form_t form)
       free_location (then_loc);
 
       location_t loc = void_location ();
-      location_type (loc) = TYPE (void);
+      location_type (loc) = TYPE ("Void");
       return loc;
     }
 }
@@ -1037,13 +1037,13 @@ compile_##name_ (generic_form_t form)					\
   location_t loc1 = compile (first_arg);				\
   location_t loc2 = compile (second_arg);				\
 									\
-  assert (loc1->type == TYPE (int_object));				\
-  assert (loc2->type == TYPE (int_object));				\
+  assert (loc1->type == TYPE ("Int"));				\
+  assert (loc2->type == TYPE ("Int"));				\
 									\
   /* XXX: check type, and try to coerce into int, unsigned int, or float?.  */ \
   location_t result = name_##_int_locations (loc1, loc2);		\
 									\
-  assert (result->type == TYPE (int_object));				\
+  assert (result->type == TYPE ("Int"));				\
 									\
   if(result == loc1 || result == loc2)					\
     assert (result->ref_count == 2);					\
@@ -1161,10 +1161,10 @@ init_generate (void)
   DEFINE_C_FUNCTION (test_function, "Int<-Int");
 
   /* XXX: the type Form is defined twice */
-  extern Type TYPE (Form);
-  DEFINE_TYPE ("Form", TYPE (Form), sizeof(form_t), __alignof__ (form_t));
+  //  extern Type TYPE (Form);
+  define_type_string ("Form", sizeof(void *), __alignof__ (void *), NULL);
 
-  DEFINE_C_FUNCTION (compile, "int <- Form");
+  DEFINE_C_FUNCTION (compile, "Int <- Form");
 
 }
 

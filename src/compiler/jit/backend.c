@@ -242,7 +242,7 @@ free_location (location_t location)
       //      printf ("Free location : locations left = %d\n", locations_created);
       if(location->compound_location)
 	{
-	  assert (location->type == TYPE (void));
+	  assert (location->type == TYPE ("Void"));
 	  return;
 	}
       if(location->low_location->location_type == REGISTER)

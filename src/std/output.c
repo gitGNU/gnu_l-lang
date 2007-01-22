@@ -237,13 +237,13 @@ init_output (void)
 
   current_output_descriptor = stdout_output_descriptor;
 
-  DEFINE_C_FUNCTION2 ("print_String", print_string, "void <- (String)");
-  DEFINE_C_FUNCTION (flush, "void <- ()");
+  DEFINE_C_FUNCTION2 ("print_String", print_string, "Void <- (String)");
+  DEFINE_C_FUNCTION (flush, "Void <- ()");
   
   /* For now, maybe_flush is just like flush; but with
      maybe_flush,flushing must be done only if the stream is
      interactive.  */
-  DEFINE_C_FUNCTION2 ("maybe_flush", flush, "void <- ()");
+  DEFINE_C_FUNCTION2 ("maybe_flush", flush, "Void <- ()");
 }
 
 void

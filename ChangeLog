@@ -1,3 +1,38 @@
+2007-01-22  Matthieu Lemerre  <racin@free.fr>
+
+	Cleaned up the type handling.
+	
+	* src/compiler/type.c (type_hash): removed hash table.
+	(make_type): Now quits properly when given an unknown type.
+	(intern_type): Removed the special case that used the type_hash.
+	(TYPE): New function.
+	(define_type_type_form): New function.
+	(define_type_string): New function.
+	* src/include/l/type.h (TYPE): Removed macro. Added TYPE function.
+
+	* src/compiler/generate.c: Use new function TYPE.  Replaced int by
+	Int, void by Void.
+	* src/compiler/jit/backend.c (free_location): Likewise.
+	* src/compiler/jit/operations.c : Likewise.
+	* src/parser/form.c: Likewise.
+	* src/std/list.c: Likewise.
+	* src/std/output.c: Likewise.
+	* src/std/print.c: Likewise.
+	* src/std/xml.c: Likewise.
+	* test/cocyte12-structures.l: Likewise.
+	* test/cocyte15-rec-types.l: Likewise.
+	
+	* src/objects/object.h (CREATE_OBJECT): Removed use of TYPE.
+	* src/objects/symbol.h: Likewise.
+	* src/objects/type.h: Likewise.
+	
+	* src/compiler/c-to-l.h (DEFINE_TYPE_SYMBOL, DEFINE_TYPE): Removed
+	macros.
+	* src/compiler/analysis.c (init_analysis): Replace DEFINE_TYPE by
+	define_type_string.
+	(define_type_alias): Triggers a panic.
+	(define_type): Uses define_type_type_form.
+
 2007-01-20  Matthieu Lemerre  <racin@free.fr>
 
 	* src/parser/parse.c (parse): New parser entry point, takes a

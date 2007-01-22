@@ -33,12 +33,6 @@ typedef struct symbol
 
 typedef symbol_t Symbol;
 
-
-
-extern const Type TYPE(symbol);
-extern const Type TYPE(quoted_symbol);
-
-
 
 /* Interning symbols.  */ 
 

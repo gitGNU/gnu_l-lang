@@ -190,6 +190,6 @@ init_print (void)
   
   define_printer (TYPE_ ("String"), SYMBOL (print_String));
 
-  DEFINE_C_FUNCTION (print_Int, "void <- Int");
+  DEFINE_C_FUNCTION (print_Int, "Void <- Int");
   define_printer (TYPE_ ("Int"), SYMBOL (print_Int));
 }

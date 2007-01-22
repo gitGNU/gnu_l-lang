@@ -23,10 +23,11 @@
 
 typedef struct type *type_t;
 
+#if 0
 /* For base types. */
 #define TYPE(type_name)				\
   __type_##type_name
-
+#endif
 #if 0
 #define DEFINE_TYPE(name__, type__)				\
   {									\

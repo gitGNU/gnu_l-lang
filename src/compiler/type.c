@@ -390,7 +390,6 @@ Type intern_type (struct type_form * form);
 
 /* A hash symbol->Type_Maker */
 MAKE_STATIC_HASH_TABLE (make_type_hash);
-MAKE_STATIC_HASH_TABLE (type_hash);
 
 
 Type
@@ -520,7 +519,12 @@ get_pointed_type (Pointer_Type type)
 Type
 make_type (generic_form_t form)
 {
-  assert (is_form (form, generic_form));
+  if(!is_form (form, generic_form))
+    {
+      /* We are using an unknown type.  */
+      assert (is_form (form, id_form));
+      panic ("Type %s is not known\n", asprint_type (form));
+    }
 
   
   symbol_t head = ((generic_form_t) form)->head;
@@ -559,24 +563,6 @@ Type intern_type (struct type_form * form)
       return *PValue;
     }
 
-  //  panic("CURRENT: retirer le type_hash, utiliser un champ de base type pour ca.  Pour avoir les List(Int)\n");
-  /*XXX: remove this later.  Type_hash is useless, what we need is to
-    fill string_to_type when creating new base types.  */
-  if(is_form (form, id_form))
-    {
-      symbol_t symbol_type = ((id_form_t) form)->value;
-      Type  type = gethash (symbol_type, type_hash);
-
-      /* XXX: we should just use lazy type evaluation, and create the
-	 type when needed.  */
-      if(type == NULL)
-	compile_error ("Unknown type or not yet defined: %s\n", symbol_type->name);
-      return type;
-    }
-
-  //  printf ("MAKING TYPE:");
-  //  lispify (form);
-
   Type type = make_type (form);
 
   assert(type->size != 0);
@@ -586,6 +572,11 @@ Type intern_type (struct type_form * form)
   *PValue = type;
 
   return type;
+}
+
+Type TYPE (const char *name)
+{
+  return intern_type (string_to_type_form (name));
 }
 
 /* This creates a type according to the type form, but:
@@ -637,6 +628,58 @@ Base_Type pre_create_type (struct type_form *form)
 }
 
 
+/* Defines a new type.  COMES_FROM may be NULL; if not, the new type
+   should have the same sizes and alignments than the old one. */
+
+Type define_type_type_form (type_form_t tf, unsigned int size,
+			    unsigned int alignment, type_form_t comes_from)
+{
+  Base_Type new_type = pre_create_type (tf);
+
+  Type old_type = NULL;
+  
+  if(comes_from)
+    {
+      old_type = intern_type (comes_from);
+
+      /* This detects that the size of the type couldn't be
+	 calculated.  But for now, it catches too much errors, because
+	 the struct it uses could be defined later.  */
+      if(old_type->size & ~(~0L >> 1))
+	compile_error ("Error: Defining a recursive type that"
+		       "does not go through a pointer\n");
+
+      /* Size and alignment should not be passed when a originator
+	 form is given.  */
+      size = old_type->size;
+      alignment = old_type->alignment;
+    }
+
+  new_type->origin_type = old_type;
+  new_type->size = size;
+  new_type->alignment = alignment;
+
+  return new_type;
+  
+    /* First, pre_creates the type.  Hum in fact, to support doubly
+       recursive structure definitions, this step should be done
+       earlier, at analysis time.  Or maybe we could patch types.  No
+       no.
+
+       What we should do if: is we depend on a type that is not yet
+       defined, just precreate the current one; and make it completly
+       later (put it into a patch list).
+
+       */
+}
+
+Type define_type_string (char *name, unsigned int size,
+			 unsigned int alignment, type_form_t comes_from)
+{
+  type_form_t tf = string_to_type_form (name);
+  define_type_type_form (tf, size, alignment, comes_from);
+  
+}
 
 
 

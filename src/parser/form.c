@@ -457,19 +457,19 @@ sexp_to_form (object_t obj)
 {
   type_t type = TYPE_OF (obj);
 
-  if(type == TYPE (int_object))
+  if(type == TYPE ("Int"))
     {
       int_object_t io = (int_object_t) obj;
       return (form_t) int_form (io->value);
     }
   
-  if(type == TYPE (symbol))
+  if(type == TYPE ("Symbol"))
     {
       symbol_t symbol = (symbol_t) obj;
       return (form_t) symbol_form (symbol);
     }
 
-  if(type == TYPE (pair))
+  if(type == TYPE ("Pair"))
     {
       pair_t pair = (pair_t) obj;
       assert (TYPE_OF (pair->car) == TYPE (symbol));
@@ -900,10 +900,12 @@ void
 init_form (void)
 {
   #undef Form
-  DEFINE_TYPE ("Form", TYPE (Form), sizeof(form_t), __alignof__ (form_t));
+  /* Form is already defined in generate.  */
+  //  define_type_string ("Form", sizeof(void *), __alignof__ (void *), NULL);
+  //  DEFINE_TYPE ("Form", TYPE (Form), sizeof(form_t), __alignof__ (form_t));
 
-  DEFINE_C_FUNCTION (print_form, "int<-Form");
-  DEFINE_C_FUNCTION2 ("Int_Form", int_form, "Form<-int");
+  DEFINE_C_FUNCTION (print_form, "Int<-Form");
+  DEFINE_C_FUNCTION2 ("Int_Form", int_form, "Form<-Int");
   DEFINE_C_FUNCTION2 ("Symbol_Form", symbol_form, "Form<-Symbol");
 
   DEFINE_C_FUNCTION2 ("loop_form", loop_form, "Form<-(Form)");
@@ -912,8 +914,8 @@ init_form (void)
   DEFINE_C_FUNCTION2 ("seq_form2", seq_form2, "Form<-(Form,Form)");
 
   
-  DEFINE_C_FUNCTION2 ("ith_form", ith_form, "Form<-(Form,int)");
-  DEFINE_C_FUNCTION2 ("print_form", print_form, "void<-(Form)");
+  DEFINE_C_FUNCTION2 ("ith_form", ith_form, "Form<-(Form,Int)");
+  DEFINE_C_FUNCTION2 ("print_form", print_form, "Void<-(Form)");
 
   
   //DEFINE_C_FUNCTION2 ("seq_form", seq_form, "Form<-Form");

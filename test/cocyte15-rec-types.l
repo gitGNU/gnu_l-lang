@@ -31,7 +31,7 @@ type Int_List2 = struct
 //		    Int y; };
 //		
 
-int
+Int
 test ()
 {
   let struct { Int head; Int_List tail; }* i;
