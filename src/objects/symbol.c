@@ -20,18 +20,9 @@
 
 #include "symbol.h"
 #include "../memory/memory.h"
-#include "type.h"
 #include <string.h>
 #include "namespace.h"
 #include "hash.h"
-
-struct type __type_symbol_;
-
-const Type __type_symbol = &__type_symbol_;
-
-struct type __type_quoted_symbol_;
-
-const Type __type_quoted_symbol = &__type_quoted_symbol_;
 
 static unsigned int sym_nb = 0;
 

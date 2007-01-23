@@ -50,7 +50,6 @@
 #include <l/string.h>
 
 #include "../objects/pair.h"
-#include "../objects/type.h"
 #include "../objects/function.h"
 #include "../parser/form.h"
 
@@ -390,7 +389,6 @@ do {								\
   puthash (intern (string__), function__, definer_hash);	\
  } while(0)
 
-extern accesser_t without_accessor;
 
 void
 init_analysis ()

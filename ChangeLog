@@ -1,3 +1,16 @@
+2007-01-23  Matthieu Lemerre  <racin@free.fr>
+
+	Another cleanup pass.
+
+	* src/objects/type.h: Removed file.
+	* src/objects/pair.c: Cleaned up all useless functions.
+	* src/objects/symbol.c: Likewise.
+	
+	* src/compiler/generate.c (struct_accessor): Likewise.
+	* src/compiler/analysis.c (init_analysis): Remove useless declaration.
+	* src/parser/form.c: Likewise.
+
+
 2007-01-22  Matthieu Lemerre  <racin@free.fr>
 
 	Little additional cleanup.

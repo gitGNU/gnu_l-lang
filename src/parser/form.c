@@ -25,7 +25,6 @@
 
 #include "../objects/pair.h"
 #include "../objects/symbol.h"
-#include "../objects/type.h"
 #include "../compiler/c-to-l.h"
 #include <l/string.h>
 
@@ -863,12 +862,6 @@ print_form (form_t form)
 {
   lispify (form);
 }
-
-static struct type __type_Form_;
-
-const Type __type_Form = &__type_Form_;
-
-extern accesser_t without_accessor;
 
 
 form_t

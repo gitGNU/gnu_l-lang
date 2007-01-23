@@ -68,7 +68,6 @@ TODO:
 #include "backend.h"
 #include "../parser/form.h"
 
-#include "../objects/type.h"
 #include "../objects/pair.h" 
 #include "../objects/symbol.h" 
 #include <l/string.h>
@@ -733,8 +732,6 @@ type_does_not_have_accessor (Type type, form_t form)
   compile_error ("Type %s does not have accessor\n",asprint_type (type));
 }
 
-accesser_t without_accessor = {.accesser_function = type_does_not_have_accessor,
-			       .data = NULL};
 
 #if 0
 location_t

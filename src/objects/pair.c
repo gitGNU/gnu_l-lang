@@ -19,80 +19,7 @@
    Boston, MA  02110-1301  USA.  */
 
 #include "pair.h"
-#include "symbol.h"
-#include "../memory/memory.h"
-#include "type.h"
 #include <string.h>
-#include "namespace.h"
-
-struct type __type_pair_;
-
-const struct type *__type_pair = &__type_pair_;
-
-extern symbol_table_t l_symbol_table; 
-
-/* XXX: on devrait faire une fonction "normale" et une fonction pretty
-   print. */
-
-#if 0
-static void
-write_pair (object_t pair_)
-{
-  DEBUG_CHECK_TYPE (pair_, pair);
-  pair_t pair = (pair_t) pair_;
-  pair_t curpair;
-  
-  printf ("(");
-  curpair = pair;
-  while(TYPE_OF (curpair->next) == TYPE (pair))
-    {
-      write_object (curpair->car);
-      printf (" ");
-      curpair = curpair->next;
-    }
-
-  write_object (curpair->car);
-
-  if (curpair->next)
-    {
-      printf (" . ");
-      write_object (curpair->next);
-    }
-  else
-    {
-      printf (")\n");
-    }
-//  
-//  
-//  
-//  if(TYPE_OF (pair->car) == TYPE (pair))
-//    printf ("\n");
-//  printf ("(");
-//  write_object (pair->car);
-//  if(pair->cdr == NULL)
-//    {
-//      printf (")\n");
-//      return;
-//    }
-//  
-//  if(TYPE_OF (pair->cdr) != TYPE (pair))
-//    printf (" . ");
-//  
-//  write_object (pair->cdr);
-//  printf (")");
-}
-#endif
-
-void
-init_pair (void)
-{
-  char *string = strdup ("pair");
-  
-  symbol_t pair = intern_into (string, l_namespace);
-  //__type_pair_.name = pair;
-  //__type_pair_.writer = write_pair;
-  __type_pair_.size = sizeof (struct pair);
-}
 
 
 
