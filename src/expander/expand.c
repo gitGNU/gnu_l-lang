@@ -92,6 +92,7 @@
 */
 
 #include <l/expand.h>
+#include <l/sys/type.h>
 
 #include <assert.h>
 

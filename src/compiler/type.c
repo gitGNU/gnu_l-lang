@@ -60,7 +60,7 @@
 
 
 #include "../parser/form.h"
-#include <l/type.h>
+#include <l/sys/type.h>
 #include <string.h>
 #include <assert.h>
 
@@ -98,8 +98,6 @@ buffer_puts (Buffer buffer, char *str)
 
 /* Type form printing function.  */
 
-typedef void (*Type_Printer)(Buffer, form_t);
-
 /* A symbol->Type_Printer hash. */
 MAKE_STATIC_HASH_TABLE (print_type_hash);
 
@@ -126,7 +124,7 @@ bprint_type (Buffer buffer, form_t form)
   Type_Printer tp = (Type_Printer) gethash (head, print_type_hash);
 
   if(tp == NULL)
-    panic ("Unknown type generator: %s\n", head->name);
+    panic ("Unknown type printer: %s\n", head->name);
 
   tp (buffer, (form_t) form);
 
@@ -265,79 +263,6 @@ asprint_type (form_t form)
 }
 
 
-#if 0
-/* Minimum type making.  */
-
-/* A Min_Type_Maker returns the Type it made, and a list of types to
-   finish later */
-typedef Type (*Min_Type_Maker)(generic_form_t, list_t *);
-
-Type intern_type (struct type_form * form);
-
-/* A hash symbol->Min_Type_Maker */
-MAKE_STATIC_HASH_TABLE (make_type_min_hash);
-
-
-Type
-min_make_type (generic_form_t form, list_t *to_make_list)
-{
-  assert (is_form (form, generic_form));
-  
-  symbol_t head = ((generic_form_t) form)->head;
-
-  Min_Type_Maker tm = gethash (head, make_type_min_hash);
-
-  if(tm == NULL)
-    panic ("Unknown type generator: %s\n", head->name);
-
-  return tm (form, to_make_list);
-}
-
-
-Type
-min_make_tuple_type (generic_form_t form, list_t *to_make_list)
-{
-  compile_error ("Error in type: shouldn't be reached.\n");
-}
-
-Type
-min_make_function_type (generic_form_t form, list_t *to_make_list)
-{
-  compile_error ("Error in type: shouldn't be reached.\n");
-}
-
-Type
-min_make_pointer_type (generic_form_t form, list_t *to_make_list)
-{
-  Pointer_Type type = MALLOC (pointer_type);
-
-  form_t type_form = CDR (CAR (form->form_alist));
-
-  type->size = sizeof(void*);
-  type->alignment = __alignof__ (void *);
-  type->type_form = form;
-  
-  type->pointed_type = NULL;
-
-  type->type_type = POINTER_TYPE;
-
-  *to_make_list = CONS (type, *to_make_list);
-  
-  return type;
-}
-
-Type
-make_type_struct (generic_form_t form);
-
-Type
-min_make_struct_type_min (generic_form_t form, list_t *to_make_list)
-{
-  return make_type_struct (form);
-}
-
-
-
-#endif
   
 
 
@@ -384,15 +309,13 @@ min_make_struct_type_min (generic_form_t form, list_t *to_make_list)
    -On utilise la fonction intern_type pour construire le type.
 */
 
-typedef Type (*Type_Maker)(generic_form_t);
-
 Type intern_type (struct type_form * form);
 
 /* A hash symbol->Type_Maker */
 MAKE_STATIC_HASH_TABLE (make_type_hash);
 
 
-Type
+static Type
 make_type_tuple (generic_form_t form)
 {
   tuple_type_t type = MALLOC (tuple_type);
@@ -417,7 +340,7 @@ make_type_tuple (generic_form_t form)
   
 }
 
-Type
+static Type
 make_type_function (generic_form_t form)
 {
   form_t return_form = CAR (form->form_list);
@@ -434,7 +357,7 @@ make_type_function (generic_form_t form)
   return type;
 }
 
-Type
+static Type
 make_type_struct (generic_form_t form)
 {
   Struct_Type type = MALLOC (struct_type);
@@ -473,7 +396,7 @@ make_type_struct (generic_form_t form)
   return type;
 }
 
-Type
+static Type
 make_type_pointer (generic_form_t form)
 {
   Pointer_Type type = MALLOC (pointer_type);
@@ -491,7 +414,7 @@ make_type_pointer (generic_form_t form)
   return type;
 }
 
-Type
+static Type
 make_type_label (generic_form_t form)
 {
   id_form_t label = CAR (form->form_list);
@@ -516,7 +439,7 @@ get_pointed_type (Pointer_Type type)
   return type->pointed_type;
 }
 
-Type
+static Type
 make_type (generic_form_t form)
 {
   if(!is_form (form, generic_form))
@@ -586,7 +509,8 @@ Type TYPE (const char *name)
     - It does not calculate size and alignement, just indicate that
       they are unknown.
    */
-Base_Type pre_create_type (struct type_form *form)
+static Base_Type
+pre_create_type (struct type_form *form)
 {
   printf ("Pre creating\n");
   lispify (form);
@@ -631,8 +555,9 @@ Base_Type pre_create_type (struct type_form *form)
 /* Defines a new type.  COMES_FROM may be NULL; if not, the new type
    should have the same sizes and alignments than the old one. */
 
-Type define_type_type_form (type_form_t tf, unsigned int size,
-			    unsigned int alignment, type_form_t comes_from)
+Type
+define_type_type_form (type_form_t tf, unsigned int size,
+		       unsigned int alignment, type_form_t comes_from)
 {
   Base_Type new_type = pre_create_type (tf);
 
@@ -660,17 +585,6 @@ Type define_type_type_form (type_form_t tf, unsigned int size,
   new_type->alignment = alignment;
 
   return new_type;
-  
-    /* First, pre_creates the type.  Hum in fact, to support doubly
-       recursive structure definitions, this step should be done
-       earlier, at analysis time.  Or maybe we could patch types.  No
-       no.
-
-       What we should do if: is we depend on a type that is not yet
-       defined, just precreate the current one; and make it completly
-       later (put it into a patch list).
-
-       */
 }
 
 Type define_type_string (char *name, unsigned int size,
@@ -678,211 +592,31 @@ Type define_type_string (char *name, unsigned int size,
 {
   type_form_t tf = string_to_type_form (name);
   define_type_type_form (tf, size, alignment, comes_from);
-  
 }
 
 
 
-/* XXX: temporary, should be defined in L.  Needed for generic
-   definition.  */
 
-/* XXX: we need recursive types to do it in fact; we can't do it
-   otherwise.  In fact, a List(Int) is a BASE_TYPE pointing to a
-   recursive struct.  The operations on lists make the necessary
-   casts.  */
-
-/* List(Int) is defined as:
-
-   type List(Int) = struct { Int car; List(Int) cdr; } *;
-*/
-Type
-make_type_List (generic_form_t form)
+void
+define_type_constructor (Symbol name,
+			 Type_Printer print_function,
+			 Type_Maker make_function)
 {
-  Base_Type the_type = pre_create_type(form);
-
-  form_t type_listed = CAR(form->form_list);
-
-  form_t value_form = 
-    generic_form_symbol(SYMBOL(pointer),
-			CONS(generic_form_symbol(SYMBOL(struct),
-						 CONS(label_form_symbol(SYMBOL(head),
-									type_listed),
-						      CONS(label_form_symbol(SYMBOL(tail),
-									     form),
-							   NULL))),
-			     NULL));
-
-/* Note that List(Int) is not an alias to the struct, but a different
-   type; this makes usage of acessor macros for list elements
-   mandatory.
-
-   This isn't necessasrily cumbersome; the form
-   let first -> second -> rest = list
-   is quite elegant.  */
-
-
-  Type type = intern_type (value_form);
-  
-  assert(!(type->size & ~(~0L >> 1)));
-
-  /* Due to the fact that we use symbols as indexes for type hash,
-     we must use a generated symbol in the type hash.
-
-     Instead, we should not use the type hash at all, and use the
-     "pointed type" function in the BASE_TYPE.  */
-
-  /* XXX: make the_type points to type.  */
-  assert(the_type->type_type == BASE_TYPE);
-
-  /* XXX: Make a function derive_new_type or smthg.  */
-  the_type->origin_type = type;
-  the_type->size = type->size;
-  the_type->alignment = type->alignment;
-
-
-//  DEFINE_TYPE_SYMBOL (name, new_type, type->size, type->alignment);
-
-  //panic ("To implement\n");
-  return the_type;
+  puthash (name, print_function, print_type_hash);
+  puthash (name, make_function, make_type_hash);
 }
-
-
-
-
-
-
-
-
-
-
-
-#define DEFINE_TYPE_CREATOR(name)		\
-  do {						\
-    puthash (SYMBOL (name), bprint_type_##name, print_type_hash);	\
-    puthash (SYMBOL (name), make_type_##name, make_type_hash);		\
-  } while(0)
 
 void
 new_init_type ()
 {
-  DEFINE_TYPE_CREATOR (tuple);
-  DEFINE_TYPE_CREATOR (function);
-  DEFINE_TYPE_CREATOR (struct);
-  DEFINE_TYPE_CREATOR (pointer);
-  DEFINE_TYPE_CREATOR (label);
-  
-  puthash (SYMBOL (List), bprint_type_misc, print_type_hash);
-  puthash (SYMBOL (List), make_type_List, make_type_hash);
+  define_type_constructor (SYMBOL (tuple),
+			   bprint_type_tuple, make_type_tuple);
+  define_type_constructor (SYMBOL (function), bprint_type_function,
+			   make_type_function);
+  define_type_constructor (SYMBOL (struct),
+			   bprint_type_struct, make_type_struct);
+  define_type_constructor (SYMBOL (pointer),
+			   bprint_type_pointer, make_type_pointer);
+  define_type_constructor (SYMBOL (label),
+			   bprint_type_label, make_type_label);
 }
-
-
-
-
-
-
-
-
-
-
-#if 0
-/* The algorithm for creating types has two pass:
-
-   1/First pass: we compute the size and alignement for each type
-   defined, for which they are not yet computed.
-
-   2/We construct the type.
-
-As each recursive type must pass through a pointer indirection, we are
-guaranteed to finish.
-
-Ex: 
-type Int_List = struct { int i; Int_List next; } *;    Immediatly finds that Int_List is of size 4, then constructs it.
-type Int_List2 = struct { int i; Int_List2 *next; };   Finds that Int_List2 *is of size 4, then constructs Int_List.
-*/
-
-/* Takes a form alist and gives back the size and the alignment.  */
-
-/* XXX: takes also the type for which it is used.  */
-typedef unsigned int (*size_alignment_function_t)(type_t, unsigned int *, generic_form_t);
-
-typedef struct type_constructor
-{
-  size_alignment_function_t get_size_alignment;
-}  *Type_Generator;
-
-/* A hash Symbol->Type_Generator */
-MAKE_STATIC_HASH_TABLE (type_generator_hash);
-
-/*XXX: appeler ces functions des type generators. Voir la page de cforall*/
-
-
-/* Size and alignement functions.  */
-
-unsigned int
-compile_type_get_size_alignment(unsigned int *p_alignment, form_t form)
-{
-  if(is_form(form, atomic_form))
-    {
-      if(!is_form(form, id_form))
-	compile_error("Cannot get size and alignment of %s\n", lispify(form));
-
-      symbol_t symbol = ((id_form_t) id)->value;
-      type_t type = gethash(symbol, type_hash);  /* XXX: Non, il peut y avoir des variables temporaires?*/
-
-      *p_alignment = type->alignment;
-      return type->size;
-    }
-
-  assert(is_form(form, generic_form));
-  
-  symbol_t head = ((generic_form_t) form)->head;
-
-  Type_Generator tg = gethash(head, type_generator_hash);
-
-  if(tg == NULL)
-    compile_error("Unknown type generator: %s\n", head->name);
-
-  return tg->get_size_alignment(p_alignment, form);
-}
-
-/* XXX: Some of these base functions are architecture-dependent.  */
-unsigned int
-compile_indirection_size_alignment(unsigned int *p_alignment, form_t form)
-{
-  *p_alignment = __alignof__(void *);
-  return sizeof(void *);
-}
-
-unsigned int
-compile_tuple_size_alignment(unsigned int *p_alignment, form_t form)
-{
-  compile_error("Invalid use of tuple\n");
-}
-
-unsigned int
-compile_struct_size_alignment(unsigned int *p_alignment, form_t form)
-{
-  /* XXX: Si on peut calculer sa taille, alors on peut calculer
-l'offset de tous les champs.  Le calcul des offsets de tous les champs
-peut donc se faire ici */
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-void
-new_init_type()
-{
-  
-}
-#endif

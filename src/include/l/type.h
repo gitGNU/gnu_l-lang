@@ -1,4 +1,4 @@
-/* type.h - 
+/* type.h - User-visible type handling.
    Copyright (C) 2006 Matthieu Lemerre <racin@free.fr>
 
    This file is part of the L programming language.
@@ -22,97 +22,29 @@
 #define _MY_TYPE_H
 
 #include "../objects/hash.h"
-
-typedef enum { STRUCT_TYPE, FUNCTION_TYPE, TUPLE_TYPE,
-	       BASE_TYPE, POINTER_TYPE } type_type_t;
-
-
-#define TYPE_CONTENT						\
-{								\
-  type_type_t type_type;					\
-								\
-  /* Type form of the type.  */					\
-  struct type_form *type_form;					\
-								\
-  /* Size of the type, if meaningful.  */			\
-  unsigned int size;							\
-								\
-  /* Alignment constraints of the type, if meaningful.  */	\
-  unsigned int alignment;					\
-}
-
-struct my_type TYPE_CONTENT;
+#include "../objects/symbol.h"
 
 typedef struct my_type *Type;
 
-
-
-typedef struct tuple_type
-{
-  struct TYPE_CONTENT;
-  /* Number of elements;  */
-  unsigned int length;
-  Type *fields;
-} *tuple_type_t;
-
-typedef tuple_type_t Tuple_Type;
-
-
-
-typedef struct function_type
-{
-  struct TYPE_CONTENT;
-  Type return_type;
-  Tuple_Type parameters_type;
-} *function_type_t;
-
-typedef function_type_t Function_Type;
-
-
-
-typedef struct offset_type
-{
-  unsigned int offset;
-  Type type;
-} *offset_type_t;
-
-typedef struct struct_type
-{
-  struct TYPE_CONTENT;
-  hash_table_t field_hash;
-} *struct_type_t;
-
-typedef struct_type_t Struct_Type;
-
-
-
-typedef struct pointer_type
-{
-  struct TYPE_CONTENT;
-
-  Type pointed_type;
-} *pointer_type_t;
-
-typedef pointer_type_t Pointer_Type;
-
-typedef struct base_type
-{
-  struct TYPE_CONTENT;
-
-  void *misc_data;
-
-  /* The type from which it is defined.  Maybe NULL if there isn't, or
-     itself (only for Word8, Word16 and Word32) */
-  Type origin_type;
-} *base_type_t;
-
-typedef base_type_t Base_Type;
-  
-
-#undef TYPE_CONTENT
-
-/* Base types.  */
-
+/* Get a type from a C string.  */
 Type TYPE (const char *type_name);
+
+
+/* Type constructor handling, e.g. List(Int)  */
+
+typedef void (*Type_Printer)(Buffer, form_t);
+typedef Type (*Type_Maker)(generic_form_t);
+
+int i;
+/* Defines a new type constructon for symbol NAME, with printer PRINT_FUNCTION
+   (default bprint_type_misc) and maker MAKE_FUNCTION  */
+void
+define_type_constructor (Symbol name,
+			 Type_Printer print_function,
+			 Type_Maker make_function);
+
+
+/* Prints the generic type form in the buffer in a generic way.  */
+void bprint_type_misc (Buffer, generic_form_t);
 
 #endif

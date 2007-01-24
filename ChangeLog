@@ -1,3 +1,15 @@
+2007-01-24  Matthieu Lemerre  <racin@free.fr>
+
+	Yet another cleanup.
+	
+	* src/compiler/type.c: Cleaned up the file.
+	* src/include/l/sys/type.h: New file.
+	* src/include/l/type.h: Cleaned up, splitted with sys/type.h.
+	Fix some source files to use sys/type.h.
+	* src/objects/symbol.h: Fixed a circular header dependency.
+	* src/std/list.c (make_type_List): Moved from compiler/type.c
+	(init_list): Use new type constructor interface.
+
 2007-01-23  Matthieu Lemerre  <racin@free.fr>
 
 	Another cleanup pass.

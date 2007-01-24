@@ -22,7 +22,7 @@
 #ifndef _FUNCTION_H
 #define _FUNCTION_H
 
-#include <l/type.h>
+#include <l/sys/type.h>
 #include "pair.h"
 #include "symbol.h"
 #include "hash.h"

@@ -21,9 +21,6 @@
 #ifndef SYMBOL_H
 #define SYMBOL_H
 
-#include <l/type.h>
-#include "hash.h"
-
 /* For now, a symbol is still a pointer; later it will be just an
    integer.  */
 typedef struct symbol
@@ -32,6 +29,9 @@ typedef struct symbol
 } *symbol_t;
 
 typedef symbol_t Symbol;
+
+#include <l/type.h>
+#include "hash.h"
 
 
 /* Interning symbols.  */ 

@@ -261,15 +261,48 @@ print_int_list(pair_t list)
   printf(")\n");
 }
 
+/* List(Int) is defined as:
+
+   type List(Int) = struct { Int car; List(Int) cdr; } *;
+*/
+Type
+make_type_List (generic_form_t form)
+{
+  form_t type_listed = CAR(form->form_list);
+  
+  form_t defining_type_form = 
+    generic_form_symbol(SYMBOL(pointer),
+			CONS(generic_form_symbol(SYMBOL(struct),
+						 CONS(label_form_symbol(SYMBOL(head),
+									type_listed),
+						      CONS(label_form_symbol(SYMBOL(tail),
+									     form),
+							   NULL))),
+			     NULL));
+  Base_Type the_type = define_type_type_form (form, -1, -1, defining_type_form);
+
+  assert(the_type->type_type == BASE_TYPE);
+
+/* Note that List(Int) is not an alias to the struct, but a different
+   type; this makes usage of acessor macros for list elements
+   mandatory.
+
+   This isn't necessasrily cumbersome; the form
+   let first -> second -> rest = list
+   is quite elegant.  */
+
+  return the_type;
+}
+
 
 void
 init_list(void)
 {
+  define_type_constructor (SYMBOL (List), bprint_type_misc, make_type_List);
+  
   DEFINE_C_FUNCTION2 ("alloc_cons_cell", alloc_cons_cell, "Void * <- ()");
   DEFINE_C_FUNCTION2 ("print_int_list", print_int_list, "Void <- (List(Int))");
 
   define_expander(SYMBOL(cons), expand_cons);
   define_expander(SYMBOL(list), expand_list);
-  //  DEFINE_GENERIC("cons", compile_cons);
-  //  DEFINE_GENERIC("list", compile_list);
 }
