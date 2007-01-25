@@ -18,6 +18,12 @@
    write to the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
    Boston, MA  02110-1301  USA.  */
 
+/* Type handling is common to the compiler and expander part.  The
+   difference is that the compiler part ensures test equality when
+   necessary (function calls and affectations), whereas the expander
+   part allows subtyping and coercion.  */
+
+
 //XXX: reexpliquer
 /* Type handling needs three type of operations.
 
@@ -247,7 +253,7 @@ print_type (form_t form)
 }
 
 char *
-asprint_type (form_t form)
+asprint_type_form (form_t form)
 {
   struct buffer buf;
   
@@ -260,6 +266,13 @@ asprint_type (form_t form)
   bprint_type (&buf, form);
 
   return the_buf;
+}
+
+
+char *
+asprint_type (Type t)
+{
+  asprint_type_form (t->type_form);
 }
 
 
@@ -357,6 +370,8 @@ make_type_function (generic_form_t form)
   return type;
 }
 
+#include <l/access.h>
+
 static Type
 make_type_struct (generic_form_t form)
 {
@@ -393,6 +408,8 @@ make_type_struct (generic_form_t form)
 
   type->type_type = STRUCT_TYPE;
   type->field_hash = field_hash;
+
+  define_accesser (type, struct_accesser);
   return type;
 }
 
@@ -411,6 +428,8 @@ make_type_pointer (generic_form_t form)
 
   type->type_type = POINTER_TYPE;
 
+  define_accesser (type, pointer_accesser);
+  
   return type;
 }
 
@@ -446,7 +465,7 @@ make_type (generic_form_t form)
     {
       /* We are using an unknown type.  */
       assert (is_form (form, id_form));
-      panic ("Type %s is not known\n", asprint_type (form));
+      panic ("Type %s is not known\n", asprint_type_form (form));
     }
 
   

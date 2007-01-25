@@ -127,7 +127,7 @@ form_t expand_print (generic_form_t form) {
 	Symbol symb = gethash (type, printer_hash);
 	
 	if(!symb)
-	  panic ("no printer found for %s\n", asprint_type (type->type_form));
+	  panic ("no printer found for %s\n", asprint_type (type));
 
 	*mapped_form_list_ptr = CONS (generic_form_symbol (symb,
 							   CONS (expform, NULL)),

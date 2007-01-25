@@ -175,7 +175,7 @@ type_check (Type to, Type from)
   if(from != to)
     panic ("Type mismatch: trying to make an expression"
 	   " of type |%s| in place of something of type |%s|\n",
-	   asprint_type (from->type_form), asprint_type (to->type_form));
+	   asprint_type (from), asprint_type (to));
 }
 
 #include <l/expand.h>
@@ -566,8 +566,8 @@ compile_function_call (generic_form_t form)
   
     for(int i = 0; i < function->nb_arguments; i++)
     {
-      char *type_loc = asprint_type (location_type (locations[i])->type_form);
-      char *type_fields = asprint_type (fields[i]->type_form);
+      char *type_loc = asprint_type (location_type (locations[i]));
+      char *type_fields = asprint_type (fields[i]);
 
       if(location_type (locations[i]) != fields[i])
 	compile_error ("Type mismatch in funcall %s : passing a %s instead of a %s "
@@ -686,8 +686,8 @@ compile_function_call (generic_form_t form)
       
     for(int i = 0; i < function->nb_arguments; i++)
     {
-      char *type_loc = asprint_type (location_type (locations[i])->type_form);
-      char *type_fields = asprint_type (fields[i]->type_form);
+      char *type_loc = asprint_type (location_type (locations[i]));
+      char *type_fields = asprint_type (fields[i]);
 
       if(location_type (locations[i]) != fields[i])
 	compile_error ("Type mismatch in funcall %s : passing a %s instead of a %s "

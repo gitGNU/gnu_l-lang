@@ -361,8 +361,8 @@ expand_lambda(generic_form_t form)
      type.  */
   if(return_type != expanded_body->type)
     panic("Function body's return type (%s) does not match"
-	  "the given return type(%s)\n", asprint_type(return_type_form),
-	  asprint_type(expanded_body->type->type_form));
+	  "the given return type(%s)\n", asprint_type_form(return_type_form),
+	  asprint_type(expanded_body->type));
 
   /* Create the function type form.  */
   type_form_t function_form = function_type_form(return_type_form, parameters);
@@ -471,8 +471,8 @@ expand_assign(generic_form_t form)
   /* XXX: Type checking should be performed here, with eventual
      coersion, and subtyping verification.  */
   if(expanded_expression->type != expanded_assignee->type)
-    panic("Type mismatch: %s and %s", asprint_type(expanded_expression->type->type_form),
-	  asprint_type(expanded_assignee->type->type_form));
+    panic("Type mismatch: %s and %s", asprint_type(expanded_expression->type),
+	  asprint_type(expanded_assignee->type));
 
   return create_expanded_form(generic_form_symbol(intern("="),
 						  CONS(expanded_assignee,
@@ -594,7 +594,7 @@ expand_binary_operator(generic_form_t form)
 
   Type type = exp_arg1->type;
 
-  char *type_representation = asprint_type(type->type_form);
+  char *type_representation = asprint_type(type);
   char *newstring = malloc(2 + strlen(type_representation));
   newstring[0] = head->name[0];
   newstring[1] = '_';
@@ -631,7 +631,7 @@ expand_if(generic_form_t form)
   expanded_form_t exp_cond_form = expand(condition_form);
 
   if(exp_cond_form->type != intern_type(base_type_form(SYMBOL(Bool))))
-    panic("Type mismatch: Bool expected, %s given\n", asprint_type(exp_cond_form->type->type_form));
+    panic("Type mismatch: Bool expected, %s given\n", asprint_type(exp_cond_form->type));
 
   expanded_form_t exp_then_form = expand(then_form);
   expanded_form_t exp_else_form = NULL;
@@ -668,8 +668,8 @@ expand_equal(generic_form_t form)
   if(exp_arg1->type != exp_arg2->type)
     {
       panic("Type mismatch in ==: arg1 = %s, arg2 = %s\n",
-	    asprint_type(exp_arg1->type->type_form),
-	    asprint_type(exp_arg2->type->type_form));
+	    asprint_type(exp_arg1->type),
+	    asprint_type(exp_arg2->type));
     }
 
   return create_expanded_form(generic_form_symbol(intern("=="),
@@ -692,8 +692,8 @@ expand_different(generic_form_t form)
   if(exp_arg1->type != exp_arg2->type)
     {
       panic("Type mismatch in ==: arg1 = %s, arg2 = %s\n",
-	    asprint_type(exp_arg1->type->type_form),
-	    asprint_type(exp_arg2->type->type_form));
+	    asprint_type(exp_arg1->type),
+	    asprint_type(exp_arg2->type));
     }
 
   return create_expanded_form(generic_form_symbol(intern("!="),
@@ -857,113 +857,6 @@ expand_deref(generic_form_t form)
 			      pointed_type);
 }
 
-
-
-
-/* Access.  */
-
-/* Here we should act depending on the type of the accessed form.  */
-
-/* We would use define_attribute(type, attribute_name) to express how
-   a precise attribute is computed (when used as an rvalue).
-
-   We should only be able to precise what to do by default; this would
-   be useful for instance for hashes.  */
-
-/* If the type is a base type derived from a structure, insert a cast
-   to the pointed type.  (later : only if the attribute is public)  */
-
-/* If the type is a pointer to something, retry with a deref.  */
-
-form_t
-selector_accesser;
-
-form_t
-hash_accesser;
-
-form_t
-array_accesser;
-
-/* Differentiates named type (like Point, or Bananas) from constructed
-   types (like Hash(Symbol, Int), or List(Int), or Array(Int, 10)).
-   For the laters, call the accessser parametrized by Hash, List, or
-   Array.
-
-   For the former also: this may be useful e.g. for structures with
-   some attributes stored in hash tables.
-*/
-form_t base_type_accesser;
-
-expanded_form_t
-struct_accesser(Struct_Type type,
-		expanded_form_t accessed,
-		expanded_form_t accessor)
-{
-  assert(type->type_type == STRUCT_TYPE);
-
-  symbol_form_t accessor_symbol_form = accessor->return_form;
-  if(!is_form(accessor_symbol_form, quoted_symbol_form))
-    {
-      panic("Struct accessors must be constant symbols\n");
-    }
-  
-  symbol_t accessor_symbol = accessor_symbol_form->value;
-  offset_type_t offset_type = gethash(accessor_symbol, type->field_hash);
-
-  return create_expanded_form(generic_form_symbol(intern("[]_Struct"),
-						  CONS(accessed,
-						       CONS(accessor,
-							    NULL))),
-			      offset_type->type);
-}
-
-/* If we try an access on a pointer, automatically add a deref.  This
-   eliminates the need of the C -> operation, makes the code clearer
-   and more general (hence, more generic macros can be made).  */
-expanded_form_t
-pointer_accesser(Pointer_Type type,
-		 expanded_form_t accessed,
-		 expanded_form_t accessor)
-{
-  assert(type->type_type == POINTER_TYPE);
-
-  Type pointed_type = get_pointed_type(type);
-  
-  /* XXX: should not be struct_accesser, but any accesser.  */
-  return struct_accesser(pointed_type,
-			 create_expanded_form(generic_form_symbol(SYMBOL(deref),
-								  CONS(accessed, NULL)),
-					      pointed_type),
-			 accessor);
-}
-
-    
-
-
-expanded_form_t
-expand_access(generic_form_t form)
-{
-  form_t accessed = CAR (form->form_list);
-  
-  form_t accessor = CAR (form->form_list->next);
-
-  expanded_form_t expanded_accessed = expand(accessed);
-  expanded_form_t expanded_accessor = expand(accessor);
-
-  Type accessed_type = expanded_accessed->type;
-  /* We should rather have, for each type, an accessor function (in a
-     hash) that takes the type and an accessor as an argument, and
-     acts along.  */
-  if(accessed_type->type_type == STRUCT_TYPE)
-    return struct_accesser(accessed_type, expanded_accessed, expanded_accessor);
-
-  if(accessed_type->type_type == POINTER_TYPE)
-    return pointer_accesser(accessed_type, expanded_accessed, expanded_accessor);
-
-  panic("Not yet implemented\n");
-}
-
-
 
 /* Expander definition and  initialisation.  */
 
@@ -988,7 +881,6 @@ init_expand (void)
   define_expander(SYMBOL(continue), expand_continue);
 
   define_expander(intern("="), expand_assign);
-  define_expander(intern("[]"), expand_access);
   define_expander(SYMBOL(ref), expand_ref);
   define_expander(SYMBOL(deref), expand_deref);
 
@@ -1013,4 +905,5 @@ expand info so that the cocyte compiler has a normal tree. In the
 future, the cocyte compiler will take the expanded tree as its
 input.  */
 
-  }
+  init_access ();
+}

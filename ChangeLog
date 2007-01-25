@@ -1,3 +1,26 @@
+2007-01-25  Matthieu Lemerre  <racin@free.fr>
+
+	Enhanced accesser, and asprint_type cleanup.
+	
+	* src/expander/Makefile.am (libl_expand_la_SOURCES): Add access.c
+	* src/expander/access.c : New file.
+	(expand_access, pointer_accesser, struct_accesser): moved from
+	expand.c.
+	(define_accesser): New function.
+	(init_access): New function.
+	(accesser_hash): New hash table.
+	(expand_access): Now use the accesser_hash.
+	* src/expander/expand.c (init_expand): Now calls init_access. 
+	* src/compiler/type.c (make_type_struct): Set the created type to
+	use the struct accesser.
+	(make_type_pointer): Set it to use the pointer accesser.
+	* src/include/l/access.h: New file.
+
+	* src/compiler/type.c (asprint_type): Now takes a Type argument.
+	(asprint_type_form): Old asprint_type function.
+	Fixed all callers.
+
+
 2007-01-24  Matthieu Lemerre  <racin@free.fr>
 
 	Yet another cleanup.
