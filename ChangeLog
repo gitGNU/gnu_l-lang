@@ -1,5 +1,17 @@
 2007-01-27  Matthieu Lemerre  <racin@free.fr>
 
+	Hash table support.
+
+	* src/objects/hash.h Moved relevant definitions to ...
+	* src/include/l/sys/hash.h Here. Fixed includes.
+
+	* test/malebolge05-hash.l : New file.
+	* src/std/hash.c : New file.
+	* src/std/init_library.c (init_library): Calls init_hash().
+	* src/std/Makefile.am (libl_std_la_SOURCES): add hash.c
+
+2007-01-27  Matthieu Lemerre  <racin@free.fr>
+
 	Square brackets handling and lexer/parser bug fixes.
 	
 	* src/parser/parse.c : Change to handle the square brackets.

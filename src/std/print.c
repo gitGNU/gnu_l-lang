@@ -21,7 +21,7 @@
 #include <l/std/output.h> /* For print_string.  */
 #include <l/expand.h> /* For print_string.  */
 #include <l/sys/panic.h> /* For print_string.  */
-#include "../objects/hash.h"
+#include <l/sys/hash.h>
 #include "../compiler/c-to-l.h"
 #include "../parser/parse.h"
 

@@ -21,7 +21,7 @@
 #ifndef _MY_TYPE_H
 #define _MY_TYPE_H
 
-#include "../objects/hash.h"
+#include <l/sys/hash.h>
 #include "../objects/symbol.h"
 
 typedef struct my_type *Type;

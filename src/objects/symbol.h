@@ -31,7 +31,7 @@ typedef struct symbol
 typedef symbol_t Symbol;
 
 #include <l/type.h>
-#include "hash.h"
+#include <l/sys/hash.h>
 
 
 /* Interning symbols.  */ 

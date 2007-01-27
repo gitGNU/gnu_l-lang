@@ -27,7 +27,7 @@
    redefined.  */
 
 #include <Judy.h>
-#include "../../objects/hash.h"
+#include <l/sys/hash.h>
 #include "../../objects/pair.h"
 #include "../../objects/symbol.h"
 #include "../../memory/code.h"

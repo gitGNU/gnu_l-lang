@@ -25,7 +25,7 @@
 #include <l/sys/type.h>
 #include "pair.h"
 #include "symbol.h"
-#include "hash.h"
+#include <l/sys/hash.h>
 #include "../parser/form.h"
 
 

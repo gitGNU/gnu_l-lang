@@ -72,7 +72,7 @@ TODO:
 #include "../objects/symbol.h" 
 #include <l/string.h>
 #include "../objects/function.h" 
-#include "../objects/hash.h" 
+#include <l/sys/hash.h>
 
 #include "c-to-l.h"
 

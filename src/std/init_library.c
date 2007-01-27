@@ -26,5 +26,5 @@ init_library ()
   init_xml ();
   init_output ();
   init_print ();
-  
+  init_hash ();
 }

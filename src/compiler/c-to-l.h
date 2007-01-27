@@ -22,7 +22,7 @@
 #define _C_TO_L_H
 
 #include "../objects/function.h"
-#include "../objects/hash.h"
+#include <l/sys/hash.h>
 #include "backend.h"
 #include "../parser/form.h"
 #include <l/expand.h>
