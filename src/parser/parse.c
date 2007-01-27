@@ -200,6 +200,8 @@ typedef enum token_type
     AMPERSAND_TK,
     OPEN_BRACE_TK,
     CLOSE_BRACE_TK,
+    OPEN_SQUARE_BRACKET_TK,
+    CLOSE_SQUARE_BRACKET_TK,
     FUNCTION_TYPE_TK,
     COMMENT_TK,
     ALL_TK = COMMENT_TK} token_type_t;
@@ -239,6 +241,8 @@ typedef enum reduced_token_type
     EQUAL_RTK,
     OPEN_BRACE_RTK,
     CLOSE_BRACE_RTK,
+    OPEN_SQUARE_BRACKET_RTK,
+    CLOSE_SQUARE_BRACKET_RTK,
     FUNCTION_TYPE_RTK,
   } reduced_token_type_t;
 
@@ -359,6 +363,14 @@ get_next_token (void)
   else if(result_scanning == CLOSE_BRACE_TK)
     {
       current_token.type = CLOSE_BRACE_RTK;
+    }
+  else if(result_scanning == OPEN_SQUARE_BRACKET_TK)
+    {
+      current_token.type = OPEN_SQUARE_BRACKET_RTK;
+    }
+  else if(result_scanning == CLOSE_SQUARE_BRACKET_TK)
+    {
+      current_token.type = CLOSE_SQUARE_BRACKET_RTK;
     }
   else if(result_scanning == FUNCTION_TYPE_TK)
     {
@@ -532,10 +544,12 @@ init_parser (void)
 					   "!",
 					   ",",
 					   ";",
-					   "[.]",
+					   "\\.",
 					   "&",
 					   "{",
 					   "}",
+					   "\\[",
+					   "\\]",
 					   "<-",
 					   "//.*\n"
 					   );
@@ -1364,12 +1378,18 @@ parse_postfix_expression (form_t *form)
 	  statement_or_expression_t se = parse_tuple (&tuple_form);
 	  cur_form = function_form_tuple (cur_form, tuple_form);
 	}
-      if (accept (DOT_RTK)) /* a.x is a shortcut for a['x'] */
+      else if (accept (DOT_RTK)) /* a.x is a shortcut for a['x'] */
 	{
 	  expect (ID_RTK);
 
-	  *form = access_form (cur_form, symbol_form (current_token.symbol));
-	  return EXPRESSION;
+	  cur_form = access_form (cur_form, symbol_form (current_token.symbol));
+	  //	  return EXPRESSION; /* XXX: isn't that wrong.  */
+	}
+      else if (accept (OPEN_SQUARE_BRACKET_RTK))
+	{
+	  form_t expression = parse_expression ();
+	  cur_form = access_form (cur_form, expression);
+	  expect (CLOSE_SQUARE_BRACKET_RTK);
 	}
 
       
@@ -1377,7 +1397,7 @@ parse_postfix_expression (form_t *form)
       //	if (accept (OPEN_BRACKET
       //	if (accept (DOT
 
-      break;
+      else break;
 	
     }
 

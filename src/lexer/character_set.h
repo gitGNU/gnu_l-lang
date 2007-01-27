@@ -48,6 +48,9 @@ character_set_t
 parse_character_set (char *textual_representation, char **new_ptr);
 
 character_set_t
+single_char_character_set (char c);
+
+character_set_t
 copy_character_set (character_set_t char_set);
 
 character_set_t

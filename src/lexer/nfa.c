@@ -291,7 +291,11 @@ parse_regexp (char *regexp)
 	case '\\':
 	  current++; 		/* Le prochain charactere doit etre
 				   traite normalement. */
-	
+	  char_set = single_char_character_set (*current);
+	  current++;
+	  automaton2 = thompson_char_set (char_set);
+	  PUSH (automaton2, stack);
+	  break;
 	  
 	default: char_set = parse_character_set (current, &current);
 	  //	  automaton1 = POP (stack);

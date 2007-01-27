@@ -1,5 +1,16 @@
 2007-01-27  Matthieu Lemerre  <racin@free.fr>
 
+	Square brackets handling and lexer/parser bug fixes.
+	
+	* src/parser/parse.c : Change to handle the square brackets.
+	(parse_postfix_expression): Corrected a bug in '.' handling.
+	* src/lexer/character_set.c (single_char_character_set): New
+	function.
+	* src/lexer/nfa.c (parse_regexp): Corrected an error in the 
+	handling of '\'.
+
+2007-01-27  Matthieu Lemerre  <racin@free.fr>
+
 	Left expanders and left accessers support.
 
 	* src/include/l/access.h: Now handles the left accessers too.
