@@ -1,5 +1,10 @@
 2007-01-27  Matthieu Lemerre  <racin@free.fr>
 
+	* test/malebolge05-hash.l (test): Just adds another test with
+	Hash(Int, Int).
+
+2007-01-27  Matthieu Lemerre  <racin@free.fr>
+	
 	Hash table support.
 
 	* src/objects/hash.h Moved relevant definitions to ...

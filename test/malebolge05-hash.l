@@ -17,7 +17,9 @@ Int test ()
 
   if(s.h.foo == s.h['bar'])
     print ("Works inside a struct : OK\n");
+
+  let Hash (Int, Int) hash_int = Hash (Int, Int);
+  hash_int[3] = 25;
+  hash_int[3]
     
-  s.h.bar;
-  s.h['toto']
 }
