@@ -465,20 +465,11 @@ expand_assign(generic_form_t form)
      or let assignee -> expression -> -| = form.form_list;
   */
 
-  expanded_form_t expanded_assignee = expand(assignee);
   expanded_form_t expanded_expression = expand(expression);
+  expanded_form_t expanded_assignee = left_expand(assignee,
+						  expanded_expression);
 
-  /* XXX: Type checking should be performed here, with eventual
-     coersion, and subtyping verification.  */
-  if(expanded_expression->type != expanded_assignee->type)
-    panic("Type mismatch: %s and %s", asprint_type(expanded_expression->type),
-	  asprint_type(expanded_assignee->type));
-
-  return create_expanded_form(generic_form_symbol(intern("="),
-						  CONS(expanded_assignee,
-						       CONS(expanded_expression,
-							    NULL))),
-			      expanded_assignee->type);
+  return expanded_assignee;
 }
 
 
@@ -905,5 +896,7 @@ expand info so that the cocyte compiler has a normal tree. In the
 future, the cocyte compiler will take the expanded tree as its
 input.  */
 
+  init_left_expand ();
   init_access ();
+  
 }

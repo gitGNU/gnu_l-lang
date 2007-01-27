@@ -45,4 +45,25 @@ pointer_accesser(Type type,
 		 expanded_form_t accessed,
 		 expanded_form_t accessor);
 
+
+/* Left accessers.  */
+
+/* Order: accessed, accessor, expression.  */
+typedef form_t (*Left_Accesser)(Type, expanded_form_t,
+				expanded_form_t, expanded_form_t);
+
+void
+define_left_accesser(symbol_t symbol, Left_Accesser expander);
+
+expanded_form_t
+struct_left_accesser(Type type_,
+		     expanded_form_t accessed,
+		     expanded_form_t accessor,
+		     expanded_form_t expression);
+
+expanded_form_t
+pointer_left_accesser(Type type_,
+		      expanded_form_t accessed,
+		      expanded_form_t accessor,
+		      expanded_form_t expression);
 #endif

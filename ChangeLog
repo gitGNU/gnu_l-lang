@@ -1,3 +1,32 @@
+2007-01-27  Matthieu Lemerre  <racin@free.fr>
+
+	Left expanders and left accessers support.
+
+	* src/include/l/access.h: Now handles the left accessers too.
+	* src/include/l/expand.h: Handles also the left expanders.
+
+	* src/expander/left-expand.c: New file.
+	
+	* src/expander/expand.c (expand_assign): Now calls left_expand.
+	(init_expand): Calls the left expander initialisation function.
+	
+	* src/expander/access.c (define_left_accesser)
+	(left_expand_access, struct_left_accesser)
+	(pointer_left_accesser): New functions.
+	(left_accesser_hash): New hash table.
+	(init_access): Now defines the left expander for [].
+
+	* src/expander/Makefile.am (libl_expand_la_SOURCES): added
+	left-expand.c
+
+	* src/compiler/type.c (make_type_struct): Register the type
+	left accesser to use struct_left_accesser.
+	(make_type_pointer): Use pointer_left_accesser.
+
+	* test/malebolge01-pointer-access.l: Test auto deref when used as
+	a lvalue.
+	
+
 2007-01-25  Matthieu Lemerre  <racin@free.fr>
 
 	Enhanced accesser, and asprint_type cleanup.

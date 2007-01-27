@@ -12,5 +12,6 @@ test ()
   if(point.x != (*point).x)
     test_function(point.y);
 
+  point.y = 5;
   point.x + point.y
 }

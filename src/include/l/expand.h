@@ -66,4 +66,12 @@ define_expander(symbol_t symbol, expander_t expander);
 expanded_form_t
 expand_function(generic_form_t form);
 
+
+/* Left expansion.  */
+  
+typedef form_t (*left_expander_t)(form_t, expanded_form_t);
+
+void
+define_left_expander(symbol_t symbol, left_expander_t expander);
+
 #endif

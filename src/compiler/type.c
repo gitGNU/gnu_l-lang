@@ -410,6 +410,7 @@ make_type_struct (generic_form_t form)
   type->field_hash = field_hash;
 
   define_accesser (type, struct_accesser);
+  define_left_accesser (type, struct_left_accesser);
   return type;
 }
 
@@ -429,6 +430,7 @@ make_type_pointer (generic_form_t form)
   type->type_type = POINTER_TYPE;
 
   define_accesser (type, pointer_accesser);
+  define_left_accesser (type, pointer_left_accesser);
   
   return type;
 }
