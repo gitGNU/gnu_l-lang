@@ -21,7 +21,7 @@
 #ifndef _L_STRING_H
 #define _L_STRING_H
 
-#include <l/type.h>
+#include "../../memory/memory.h"
 
 /* Having the content of the string not coded in it allows for sharing
    of substrings.  But beware of memory reclamation!  I suggest that
@@ -67,7 +67,21 @@ maken_heap_string (const char *chars, unsigned int n)
 }
 
 
+/* Creates a wrapper string arounds a given string, for use in C
+   programs.  */
+#define STRING(c)				\
+  ({ String s = alloca (sizeof(c));		\
+    s->content = c;				\
+    s->length = strlen (c);			\
+    s; })
 
-extern const Type __type_string;
+
+/* Creates a C string from a L string.  Must be explicitly freed.  */
+static inline char*
+make_C_string_from_L_string (String s)
+{
+  char *cs = malloc (s->length + 1);
+  return memcpy (cs, s->content, s->length + 1);
+}
 
 #endif

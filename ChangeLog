@@ -1,3 +1,21 @@
+2007-01-28  Matthieu Lemerre  <racin@free.fr>
+
+	Hash_String table support.
+
+	* test/malebolge05-hash.l (test): Test Hash_Strings too.
+
+	* src/std/hash.c (expand_hash_string, hash_string_accesser)
+	(hash_string_left_accesser, make_type_Hash_String): New functions.
+	(init_hash): use the above functions.
+	
+	* src/include/l/sys/hash.h (make_hash_string_table)
+	(gethash_string, puthash_string): New functions.
+	(hash_string_table_t): New type.
+
+	* src/include/l/string.h (make_C_string_from_L_string): Function
+	for L->C strings.
+	(STRING): New macro, for C->L strings.
+
 2007-01-27  Matthieu Lemerre  <racin@free.fr>
 
 	* test/malebolge05-hash.l (test): Just adds another test with

@@ -57,7 +57,39 @@ puthash (void * key, void * value, hash_table_t table)
   *PValue = (Word_t) value;
   return value;
 }
+
+/* Hash strings.  */
 
+#include <l/string.h>
+
+typedef void ** hash_string_table_t;
+
+static inline hash_string_table_t
+make_hash_string_table (void)
+{
+  hash_string_table_t ht = xmalloc (sizeof(hash_table));
+  *ht = NULL;
+  return ht;
+}
+
+#include <Judy.h>
+
+static inline void *
+gethash_string (String key, hash_string_table_t table)
+{
+  PWord_t Pvalue;
+  JHSG (Pvalue, *table, key->content, key->length);
+  return (Pvalue ? *Pvalue : 0);
+}
+
+static inline void *
+puthash_string (String key, void * value, hash_string_table_t table)
+{
+  PWord_t PValue;
+  JHSI (PValue, *table, key->content, key->length);
+  *PValue = (Word_t) value;
+  return value;
+}
 
 
 #endif

@@ -18,8 +18,20 @@ Int test ()
   if(s.h.foo == s.h['bar'])
     print ("Works inside a struct : OK\n");
 
+  //Test for another key type.
   let Hash (Int, Int) hash_int = Hash (Int, Int);
   hash_int[3] = 25;
-  hash_int[3]
+  hash_int[3];
+
+
+  //Test Hashstrings.
+  
+  let Hash_String (Int) stable = Hash_String (Int);
+  
+  let Int i;
+  
+  i = stable["toto"];
+  stable["tata"] = stable["toto"] = 3;
+  stable["tata"]
     
 }

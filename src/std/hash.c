@@ -55,7 +55,6 @@ expand_hash (generic_form_t form)
   return new_type_form;
 }
 
-
 form_t
 hash_accesser(Type type,
 	      expanded_form_t accessed,
@@ -94,7 +93,6 @@ hash_accesser(Type type,
 									   CONS (casted_hash,
 										 NULL))),
 						NULL)));
-  lispify (all);
   return all;
 }
 
@@ -143,7 +141,6 @@ hash_left_accesser(Type type,
 					  CONS (casted_expression,
 						CONS (casted_hash,
 						      NULL))));
-  lispify (all);
   return all;
 }
 
@@ -163,8 +160,112 @@ make_type_Hash (generic_form_t form)
   
   return the_type;
 }
+
+/* Hash strings.  */
 
 
+/* Transforms Hash_String(To_Type) into
+   (Hash_String(From_Type,To_Type)) make_hash_string_table();
+*/
+generic_form_t
+expand_hash_string (generic_form_t form)
+{
+  type_form_t new_type_form = generic_form_symbol (SYMBOL (cast),
+						   CONS (form,
+							 CONS (generic_form_symbol (SYMBOL (make_hash_string_table),
+										    NULL),
+							       NULL)));
+  return new_type_form;
+}
+
+form_t
+hash_string_accesser(Type type,
+		     expanded_form_t accessed,
+		     expanded_form_t accessor)
+{
+  type_form_t tf = type->type_form;
+  generic_form_t gf = tf;
+
+  assert (is_form (gf, generic_form));
+  assert (gf->head == SYMBOL (Hash_String));
+  
+  type_form_t to_form = CAR (gf->form_list);
+
+  /* Needed only when we will directly create an expanded form.  
+     Type to_type = intern_type (to_form); */
+
+  type_check (TYPE ("String"), accessor->type);
+
+  form_t casted_hash = generic_form_symbol (SYMBOL (cast),
+					    CONS (id_form (SYMBOL (Hash_String_Table)),
+						  CONS (accessed, NULL)));
+
+  form_t all = generic_form_symbol (SYMBOL (cast),
+				    CONS (to_form,
+					  CONS (generic_form_symbol (SYMBOL (gethash_string),
+								     CONS (accessor,
+									   CONS (casted_hash,
+										 NULL))),
+						NULL)));
+  return all;
+}
+
+form_t
+hash_string_left_accesser(Type type,
+			  expanded_form_t accessed,
+			  expanded_form_t accessor,
+			  expanded_form_t expression)
+{
+  type_form_t tf = type->type_form;
+  generic_form_t gf = tf;
+
+  assert (is_form (gf, generic_form));
+  assert (gf->head == SYMBOL (Hash_String));
+  
+  type_form_t to_form = CAR (gf->form_list);
+
+  /* Needed only when we will directly create an expanded form.  
+     Type to_type = intern_type (to_form); */
+
+  type_check (TYPE ("String"), accessor->type);
+
+  form_t casted_hash = generic_form_symbol (SYMBOL (cast),
+					    CONS (id_form (SYMBOL (Hash_String_Table)),
+						  CONS (accessed, NULL)));
+
+
+  form_t casted_expression = generic_form_symbol (SYMBOL (cast),
+						  CONS (generic_form_symbol (SYMBOL (pointer),
+									     CONS (id_form (SYMBOL (Void)),
+										   NULL)),
+							CONS (expression, NULL)));
+
+  form_t all = generic_form_symbol (SYMBOL (puthash_string),
+				    CONS (accessor,
+					  CONS (casted_expression,
+						CONS (casted_hash,
+						      NULL))));
+  return all;
+}
+
+
+/* Create a type given a type form (Hash_String To_Type_Form).  */
+Type
+make_type_Hash_String (generic_form_t form)
+{
+  type_form_t defining_type_form = base_type_form (SYMBOL (Hash_String_Table));
+  Base_Type the_type = define_type_type_form (form, -1, -1, defining_type_form);
+
+  assert(the_type->type_type == BASE_TYPE);
+
+  define_accesser (the_type, hash_string_accesser);
+  define_left_accesser (the_type, hash_string_left_accesser);
+  /* Create the accessor and left accessor for the type.  */
+  
+  return the_type;
+}
+
+
 
 void
 init_hash (void)
@@ -176,7 +277,7 @@ init_hash (void)
 
   /* XXX: gethash should also tell if there was a value or not.  */
   DEFINE_C_FUNCTION (gethash, "Void * <- (Void *, Hash_Table)");
-  DEFINE_C_FUNCTION (puthash, "Void <- (Void *, Void *, Hash_Table)");
+  DEFINE_C_FUNCTION (puthash, "Void * <- (Void *, Void *, Hash_Table)");
 
   /* XXX: remove should also work: remove(table['toto'] would remove
      the entry 'toto' from the table.  */
@@ -184,7 +285,17 @@ init_hash (void)
   define_expander (SYMBOL (Hash), expand_hash);
    
   define_type_constructor (SYMBOL (Hash), bprint_type_misc, make_type_Hash);
+
+  /* Hash strings.  */
+  eval_cstring ("type Hash_String_Table = Void *;");
+  DEFINE_C_FUNCTION (make_hash_string_table, "Hash_String_Table <- ()");
+
+  DEFINE_C_FUNCTION (gethash_string, "Void * <- (String, Hash_String_Table)");
+  DEFINE_C_FUNCTION (puthash_string, "Void * <- (String, Void *, Hash_String_Table)");
+
+  define_expander (SYMBOL (Hash_String), expand_hash_string);
+  define_type_constructor (SYMBOL (Hash_String),
+			   bprint_type_misc,
+			   make_type_Hash_String);
   
-  /* There should also be a Hash_String constructor, for hashes built
-     from strings.  */
 }
