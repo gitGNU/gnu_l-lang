@@ -299,6 +299,7 @@ move_between_low_locations_funparm_any (low_location_t from,
 
       move_between_low_locations_funparm_register (from, reg);
       move_between_low_locations_register_indirection (reg, to);
+      free_data_register (reg->reg);
     }
 }
 

@@ -50,8 +50,10 @@ main (int argc, char **argv)
 
   function_t toto_function = gethash (SYMBOL (fact), function_hash);
   //  function_t odd_function = symbol_value (SYMBOL (odd));
+
+  assert (test_function);
   void_to_int_t test = test_function->address;
-  
+
   printf ("ICI: test =%p \n", test);
   int result = test ();
 

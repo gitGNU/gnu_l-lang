@@ -1,3 +1,17 @@
+2007-01-31  Matthieu Lemerre  <racin@free.fr>
+
+	Compiler bug fixed and some checks added.
+
+	* src/compiler/jit/low-location.c (move_between_low_locations_funparm_any): 
+	Fix a bug that prevented a temporary register to be freed when not
+	used anymore.
+	
+	* src/main.c (main): Added a check that fails if the test()
+	function does not exists.
+
+	* src/eval.c (eval): Comment added; remove it to see the compiled
+	function.
+
 2007-01-28  Matthieu Lemerre  <racin@free.fr>
 
 	Hash_String table support.

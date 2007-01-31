@@ -75,6 +75,7 @@ eval (String s)
   FOREACH (element, expanded_form_list)
     {
       form_t form = CAR (element);
+      //      lispify (form);
       generate (form);
     }
 }
