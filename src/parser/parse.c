@@ -202,6 +202,8 @@ typedef enum token_type
     CLOSE_BRACE_TK,
     OPEN_SQUARE_BRACKET_TK,
     CLOSE_SQUARE_BRACKET_TK,
+    DOLLAR_TK,
+    DOLLAR_SPLICE_TK,
     FUNCTION_TYPE_TK,
     COMMENT_TK,
     ALL_TK = COMMENT_TK} token_type_t;
@@ -243,6 +245,7 @@ typedef enum reduced_token_type
     CLOSE_BRACE_RTK,
     OPEN_SQUARE_BRACKET_RTK,
     CLOSE_SQUARE_BRACKET_RTK,
+    DOLLAR_RTK,
     FUNCTION_TYPE_RTK,
   } reduced_token_type_t;
 
@@ -371,6 +374,13 @@ get_next_token (void)
   else if(result_scanning == CLOSE_SQUARE_BRACKET_TK)
     {
       current_token.type = CLOSE_SQUARE_BRACKET_RTK;
+    }
+  else if(result_scanning == DOLLAR_TK || result_scanning == DOLLAR_SPLICE_TK)
+    {
+      char *name = strndup (start, scanner_pointer - start);
+      current_token.id = intern (name);
+      current_token.type = DOLLAR_RTK;
+      free (name);
     }
   else if(result_scanning == FUNCTION_TYPE_TK)
     {
@@ -550,6 +560,8 @@ init_parser (void)
 					   "}",
 					   "\\[",
 					   "\\]",
+					   "$",
+					   "$@",
 					   "<-",
 					   "//.*\n"
 					   );
@@ -938,6 +950,14 @@ parse_macro (form_t *form)
   if(next_token.type == OPEN_BRACE_RTK)
     {
       return parse_block (form);
+    }
+  if(next_token.type == DOLLAR_RTK)
+    {
+      symbol_t symbol = next_token.id;
+      accept (DOLLAR_RTK);
+      form_t exp_form = parse_expression ();
+      *form = generic_form_symbol (symbol, CONS (exp_form, NULL));
+      return EXPRESSION;
     }
   else if (next_token.type == ID_RTK)
     {
@@ -1912,6 +1932,15 @@ l_parse_statement (Read_Buffer buf)
   return tf;
 }
 
+statement_or_expression_t
+l_parse_statement_or_expression (form_t *form, Read_Buffer buf)
+{
+  scanner_pointer = buf->current;
+  parse_initialize ();
+  statement_or_expression_t se = parse_statement_or_expression (form);
+  buf->current = scanner_pointer;
+  return se;
+}
 
 /* Yet another hacky function.  */
 symbol_t

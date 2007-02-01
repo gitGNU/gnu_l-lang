@@ -1,3 +1,22 @@
+2007-02-01  Matthieu Lemerre  <racin@free.fr>
+
+	New set of functions and macros for manipulating L forms from L.
+	
+	* test/malebolge06-form.l: New test file.
+	
+	* src/include/l/form.h: New file.
+	
+	* src/std/init_library.c (init_library): Call init_form().
+	* src/std/l-form.c: New file.
+	* src/std/list.c (expand_list): Remove call to lispify().
+	* src/std/Makefile.am (libl_std_la_SOURCES): add l-form.c.
+
+	* src/parser/parse.c: Changed the lexer and parser to handle $ and $@.
+	(l_parse_statement_or_expression): New function.
+	* src/parser/form.c (init_form): Move some function definitions to
+	L to l-form.c.
+	
+
 2007-01-31  Matthieu Lemerre  <racin@free.fr>
 
 	Compiler bug fixed and some checks added.

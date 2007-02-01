@@ -891,15 +891,6 @@ ith_form (generic_form_t form, int i)
 void
 init_form (void)
 {
-  #undef Form
-  /* Form is already defined in generate.  */
-  //  define_type_string ("Form", sizeof(void *), __alignof__ (void *), NULL);
-  //  DEFINE_TYPE ("Form", TYPE (Form), sizeof(form_t), __alignof__ (form_t));
-
-  DEFINE_C_FUNCTION (print_form, "Int<-Form");
-  DEFINE_C_FUNCTION2 ("Int_Form", int_form, "Form<-Int");
-  DEFINE_C_FUNCTION2 ("Symbol_Form", symbol_form, "Form<-Symbol");
-
   DEFINE_C_FUNCTION2 ("loop_form", loop_form, "Form<-(Form)");
   DEFINE_C_FUNCTION2 ("if_form", if_form, "Form<-(Form,Form,Form)");
   DEFINE_C_FUNCTION2 ("break_form", break_form, "Form<-()");
@@ -909,15 +900,7 @@ init_form (void)
   DEFINE_C_FUNCTION2 ("ith_form", ith_form, "Form<-(Form,Int)");
   DEFINE_C_FUNCTION2 ("print_form", print_form, "Void<-(Form)");
 
-  
-  //DEFINE_C_FUNCTION2 ("seq_form", seq_form, "Form<-Form");
-  //  DEFINE_C_FUNCTION2 ("if_form", seq_form, "Form<-Form");
-
-
-  
   /* XXX: it would be cool to have something to transform a generic
      that takes a infinite number of arguments into a function that
      takes the list as its argument.  */
-
-  
 }

@@ -231,7 +231,7 @@ expand_list(generic_form_t form)
 //					   NULL))));
 //  lispify(block);
 
-  lispify(cons_form);
+//  lispify(cons_form);
   return cons_form;
   
   //  location_t car_arg = compile(CAR(form->form_list));  
