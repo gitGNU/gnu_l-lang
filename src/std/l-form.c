@@ -19,7 +19,7 @@
    Boston, MA  02110-1301  USA.  */
 
 #include <assert.h>
-#include "form.h"
+#include <l/form.h>
 #include "../compiler/c-to-l.h"
 
 void

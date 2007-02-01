@@ -1,5 +1,13 @@
 2007-02-01  Matthieu Lemerre  <racin@free.fr>
 
+	Corrected a few things not commited in previous revision.
+	
+	* test/malebolge06-form.l: add f Form.
+
+	* src/std/l-form.c:  Fix include.
+
+2007-02-01  Matthieu Lemerre  <racin@free.fr>
+
 	New set of functions and macros for manipulating L forms from L.
 	
 	* test/malebolge06-form.l: New test file.
