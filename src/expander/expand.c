@@ -472,6 +472,33 @@ expand_assign(generic_form_t form)
   return expanded_assignee;
 }
 
+expanded_form_t
+expand_tuple (generic_form_t form)
+{
+  assert (form->head == SYMBOL (tuple));
+  
+  list_t new_form_list;
+  list_t type_list;
+  {
+    list_t *new_form_list_ptr = &new_form_list;
+    list_t *type_list_ptr = &type_list;
+    FOREACH (element, form->form_list)
+      {
+	expanded_form_t expform= expand (CAR (element));
+	
+	*new_form_list_ptr = CONS (expform, NULL);
+	new_form_list_ptr = &((*new_form_list_ptr)->next);
+
+	*type_list_ptr = CONS (expform->type->type_form, NULL);
+	type_list_ptr = &((*type_list_ptr)->next);
+      }
+    *new_form_list_ptr = NULL;
+    *type_list_ptr = NULL;
+  }
+
+  return create_expanded_form (new_tuple_form (new_form_list),
+			       intern_type (tuple_type_form (type_list)));
+}
 
 
 /* Function call.  */
@@ -538,7 +565,6 @@ expand_function(generic_form_t form)
   return create_expanded_form(generic_form_symbol(SYMBOL(funcall), expanded_form_list),
 			      return_type);
 }
-
 
 //expanded_form_t
 //expand_overload();
@@ -872,6 +898,7 @@ init_expand (void)
   define_expander(SYMBOL(continue), expand_continue);
 
   define_expander(intern("="), expand_assign);
+  define_expander(SYMBOL (tuple), expand_tuple);
   define_expander(SYMBOL(ref), expand_ref);
   define_expander(SYMBOL(deref), expand_deref);
 

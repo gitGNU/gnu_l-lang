@@ -354,7 +354,8 @@ move_between_low_locations (low_location_t from, low_location_t to)
   else panic ("Unimplemented\n");
 }
 
-/* XXX: registerize also locations, not only low_locations ?  */
+/* Be careful and watch if your calls to registerize should set
+   register_location too.  */
 low_location_t
 registerize (low_location_t loc)
 {

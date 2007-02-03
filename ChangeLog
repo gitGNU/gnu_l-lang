@@ -1,5 +1,43 @@
 2007-02-03  Matthieu Lemerre  <racin@free.fr>
 
+	Basic tuple support & little form cleanup.
+	
+	* test/cocyte16-basic-tuple.l : New test file.
+
+	* src/parser/parse.c (parse_primary_expression): Removed old
+	assertion that prevented parsing of tuples of more than 1
+	component.
+
+	* src/parser/form.h : Remove form definitions of obsolete forms.
+
+	* src/parser/form.c (void_form): Changed body to use generic_form
+	instead of obsolete tuple_form.
+ 
+	* src/expander/left-expand.c (left_expand_tuple): New function. Added in the
+	initialisation.
+
+	* src/expander/expand.c (expand_tuple): New function. Added in the
+	initialisation.
+
+	* src/compiler/jit/backend.c (compound_location): Changed function
+	body.
+	(copy_location): New function.
+	(void_location): Now use the standard compound_location.
+	(spill): Added somme assertions.
+	(move_between_compound_locations): New function.
+	(move_between_locations): Check if locations is compound, then
+	calls move_between_compound_locations.
+	(free_location): Added support to compound_locations.
+	(free_location): Commented out a wrong assertion.
+
+	* src/compiler/generate.c (compile_tuple): New function.  Added in
+	the initialisation.
+
+	* src/compiler/backend.h (struct location): New fields
+	location_length, locations for compound location.
+
+2007-02-03  Matthieu Lemerre  <racin@free.fr>
+
 	* src/include/l/sys/hash.h (gethash): Add casts to suppress some
 	warnings.
 	(gethash_string): Likewise.

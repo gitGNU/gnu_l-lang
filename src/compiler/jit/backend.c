@@ -88,6 +88,7 @@ stack_location (Type type, memory_block_t mb)
   return location;
 }
 
+/* Creates a temporary location for lloc.  The content is not copied!  */
 location_t
 temporary_location (Type type, low_location_t lloc)
 {
@@ -98,14 +99,30 @@ temporary_location (Type type, low_location_t lloc)
   return loc;
 }
 
+/* Makes a copy of a location; this location can then be erased, its
+   contents are still accessible by the copy.  */
 location_t
-compound_location (list_t alist)
+copy_location (location_t location)
 {
-  panic ("not implemented, alist should be a list or an array\n");
-  //XXX: intern tuples types
+  low_location_t reg = registerize (location->low_location);
+  location_t loc = temporary_location (location->type,
+				       reg);
+  register_locations[reg->reg] = loc;
+  return loc;
+}
+
+location_t
+compound_location (unsigned int len, location_t *locations)
+{
+  /* We don't need to fill the type: the type of the componud location
+     is a tuple type of all the individual locations.  We then just
+     need to know that a location is a compound location to check its
+     type against other compound locations. */
+  
   location_t location = NEW_LOCATION (NULL);
   location->compound_location = 1;
-  location->location_alist = alist;
+  location->location_length = len;
+  location->locations = locations;
 
   return location;
 }
@@ -117,7 +134,8 @@ void_location (void)
 {
   location_t location = NEW_LOCATION (NULL);
   location->compound_location = 1;
-  location->location_alist = NULL;
+  location->location_length = 0;
+  location->locations = (void *) -1;
 
   return location;
   //  return compound_location (NULL);
@@ -139,14 +157,19 @@ typedef struct spill_alist
     struct spill_alist *next;
   } *spill_alist_t;
 */
-  
+
+/* A path info registers in each code path, what registers are used.
+   This is useful when two paths are merged, e.g. at a label of a
+   jump.  */
 /* XXX: in fact, should be attached to block info? No not really. */
 typedef struct path_info
 {
   /* A word, set to 1 if the register has been spilled.  */
   unsigned int registers_spilled;
 
-  /* List of spilled registers, to unspill at the end of the if.  */
+  /* List of spilled registers, to unspill at the end of the if.
+     XXX: in fact, there is no reason to index it by register.
+     */
   location_t spilled_locations[DATA_REGISTER_NUMBER];
   //  spill_alist_t spill_alist;
   
@@ -169,7 +192,10 @@ spill (register_t reg)
   
   
   location_t to_spill_location = register_locations[reg];
-
+  assert (to_spill_location);
+  assert (to_spill_location->low_location->location_type == REGISTER);
+  assert (to_spill_location->low_location->reg == reg);
+  
   to_spill_location->spilled_location = 1;
   to_spill_location->spilled_register = reg;
 
@@ -196,11 +222,51 @@ spill (register_t reg)
   free_data_register (reg);
 }
 
+static void
+move_between_compound_locations (location_t from, location_t to)
+{
+  assert (from->compound_location && to->compound_location);
+
+  assert (from->location_length == to->location_length);
+  
+  /* The solution we use is to allocate a bunch of temporary locations
+     to hold the results of to; and then move all that to from.
+
+     In the future, this would be optimised once converted to SSA
+     form.  */
+  location_t temporary_locations[from->location_length];
+
+  for(int i = 0; i < from->location_length; i++)
+    {
+      assert (!(to->locations[i]->compound_location));
+      
+      temporary_locations[i] = copy_location (from->locations[i]);
+    }
+
+  /* We move from the end to the beginning to minimize spilling,
+     because spilling is done LRU style.  */
+
+  for(int i = from->location_length - 1; i >= 0; i--)
+    {
+      move_between_locations (temporary_locations[i], to->locations[i]);
+      free_location (temporary_locations[i]);
+    }
+}
+
 /* XXX: Here, when registerizing a location, the new registerized
    version would be written here.  */
 void
 move_between_locations (location_t from, location_t to)
 {
+  if(from->compound_location ^ to->compound_location)
+    panic ("Trying to move between a compound and a non compound location\n");
+  
+  if(to->compound_location == 1)
+    {
+      move_between_compound_locations (from, to);
+      return;
+    }
+  
   move_between_low_locations (from->low_location, to->low_location);
 }
 
@@ -242,7 +308,11 @@ free_location (location_t location)
       //      printf ("Free location : locations left = %d\n", locations_created);
       if(location->compound_location)
 	{
-	  assert (location->type == TYPE ("Void"));
+	  assert (!location->spilled_location);
+	  for(int i = 0; i < location->location_length; i++)
+	    free_location (location->locations[i]);
+
+	  //	  free (location->locations);
 	  return;
 	}
       if(location->low_location->location_type == REGISTER)
@@ -254,7 +324,12 @@ free_location (location_t location)
       if(location->spilled_location)
 	{
 	  path_info_list->registers_spilled &= ~(1 << location->spilled_register);
-	  assert (path_info_list->spilled_locations[location->spilled_register]);
+
+	  /* This case happens, for instance if two locations on the
+	     same register are spilled in the same path, then
+	     path_info_list->spilled_locations[] is set to NULL once
+	     for each location.  */
+	  //assert (path_info_list->spilled_locations[location->spilled_register]);
 	  path_info_list->spilled_locations[location->spilled_register] = NULL; /* Not really useful. */
 		  
 	}

@@ -160,13 +160,10 @@ access_form (form_t form, form_t param)
 }
 
 /* Void is a tuple_form with zero value.  */
-tuple_form_t
-void_form ()
+generic_form_t
+void_form (void)
 {
-  tuple_form_t tuple_form = new_form (tuple);
-  tuple_form->head = intern ("tuple");
-  tuple_form->form_list = NULL;
-  tuple_form->length = 0;
+  generic_form_t tuple_form = generic_form_symbol (SYMBOL (tuple), NULL);
   return tuple_form;  
 }
 

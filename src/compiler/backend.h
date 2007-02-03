@@ -62,8 +62,14 @@ struct location
     struct memory_block *mb;
 
     /* For compound locations. */
-    list_t location_alist;
+    struct
+    {
+      /* Length of the compound location.  */
+      unsigned int location_length;
 
+      /* An array of LEN locations.  */
+      location_t *locations;
+    };
   };
 };
 
@@ -107,7 +113,7 @@ free_location (location_t location);
 
 /* Create a new compound location.  */
 location_t
-compound_location (list_t alist);
+compound_location (unsigned int len, location_t *locations);
 
 
 /* Begin generating a function.  PARAMETERS is a tuple.  */

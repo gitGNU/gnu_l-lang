@@ -134,20 +134,6 @@ enum form_type_
     unknown_compound_form_type = DEFINE_FORM_TYPE (0, compound_form_type, 1, 1),
     known_compound_form_type = DEFINE_FORM_TYPE (1, compound_form_type, 1, 1),
 
-    function_form_type = DEFINE_FORM_TYPE (0, unknown_compound_form_type, 1, 2),
-    macro_form_type = DEFINE_FORM_TYPE (1, unknown_compound_form_type, 1, 2),
-    
-    let_form_type = DEFINE_FORM_TYPE (0, known_compound_form_type, 2, 4),
-    define_form_type = DEFINE_FORM_TYPE (1, known_compound_form_type, 2, 4),
-    block_form_type = DEFINE_FORM_TYPE (2, known_compound_form_type, 2, 4),
-    lambda_form_type = DEFINE_FORM_TYPE (3, known_compound_form_type, 2, 4),
-    seq_form_type = DEFINE_FORM_TYPE (4, known_compound_form_type, 2, 4),
-    equal_form_type = DEFINE_FORM_TYPE (5, known_compound_form_type, 2, 4),
-    if_form_type = DEFINE_FORM_TYPE (6, known_compound_form_type, 2, 4),
-    tuple_form_type = DEFINE_FORM_TYPE (7, known_compound_form_type, 2, 4),
-    loop_form_type = DEFINE_FORM_TYPE (8, known_compound_form_type, 2, 4),
-    break_form_type = DEFINE_FORM_TYPE (9, known_compound_form_type, 2, 4),
-    continue_form_type = DEFINE_FORM_TYPE (10, known_compound_form_type, 2, 4),
     generic_form_type = DEFINE_FORM_TYPE (11, known_compound_form_type, 2, 4),
   };
 
@@ -169,20 +155,6 @@ enum
     unknown_compound_form_type_mask = DEFINE_FORM_TYPE_MASK (0, compound_form_type_mask, 1, 1),
     known_compound_form_type_mask = DEFINE_FORM_TYPE_MASK (1, compound_form_type_mask, 1, 1),
 
-    function_form_type_mask = DEFINE_FORM_TYPE_MASK (0, unknown_compound_form_type_mask, 1, 2),
-    macro_form_type_mask = DEFINE_FORM_TYPE_MASK (1, unknown_compound_form_type_mask, 1, 2),
-
-    let_form_type_mask = DEFINE_FORM_TYPE_MASK (0, known_compound_form_type_mask, 2, 4),
-    define_form_type_mask = DEFINE_FORM_TYPE_MASK (1, known_compound_form_type_mask, 2, 4),
-    block_form_type_mask = DEFINE_FORM_TYPE_MASK (2, known_compound_form_type_mask, 2, 4),
-    lambda_form_type_mask = DEFINE_FORM_TYPE_MASK (3, known_compound_form_type_mask, 2, 4),
-    seq_form_type_mask = DEFINE_FORM_TYPE_MASK (4, known_compound_form_type_mask, 2, 4),
-    equal_form_type_mask = DEFINE_FORM_TYPE_MASK (5, known_compound_form_type_mask, 2, 4),
-    if_form_type_mask = DEFINE_FORM_TYPE_MASK (6, known_compound_form_type_mask, 2, 4),
-    tuple_form_type_mask = DEFINE_FORM_TYPE_MASK (7, known_compound_form_type_mask, 2, 4),
-    loop_form_type_mask = DEFINE_FORM_TYPE_MASK (8, known_compound_form_type_mask, 2, 4),
-    break_form_type_mask = DEFINE_FORM_TYPE_MASK (9, known_compound_form_type_mask, 2, 4),
-    continue_form_type_mask = DEFINE_FORM_TYPE_MASK (10, known_compound_form_type_mask, 2, 4),
     generic_form_type_mask = DEFINE_FORM_TYPE_MASK (11, known_compound_form_type_mask, 2, 4),
   };
 
@@ -459,20 +431,6 @@ Define_Form (type_form, Type_Form);
 
 Define_Form (compound_form, Compound_Form);
 Define_Form (unknown_compound_form, Unknown_Compound_Form);
-Define_Form (function_form, Function_Form);
-Define_Form (macro__form, Macro_Form);
-Define_Form (known_compound_form, Known_Compound_Form);
-Define_Form (let_form, Let_Compound_Form);
-Define_Form (define_form, Define_Compound_Form);
-Define_Form (block_form, Block_Compound_Form);
-Define_Form (lambda_form, Lambda_Compound_Form);
-Define_Form (seq_form, Seq_Compound_Form);
-Define_Form (equal_form, Equal_Compound_Form);
-Define_Form (if_form, If_Compound_Form);
-Define_Form (tuple_form, Tuple_Compound_Form);
-Define_Form (loop_form, Loop_Compound_Form);
-Define_Form (break_form, Break_Compound_Form);
-Define_Form (continue_form, Continue_Compound_Form);
 Define_Form (generic_form, Generic_Compound_Form);
 
 #define new_form(type)				\

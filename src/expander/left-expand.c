@@ -97,8 +97,37 @@ left_expand_deref (generic_form_t form, expanded_form_t expression)
 								NULL))));
 }
 
+expanded_form_t
+left_expand_tuple (generic_form_t form, expanded_form_t expression)
+{
+  /* XXX: all tuples with '_' should not be in the resulting tuple.
+     Same for "optional" arguments.  */
+
+
+  /* XXX: also for things like (hash['i'], hash['j']) = ..., it should
+     be expanded.  In these case, we are forced to use a temporary
+     variable to hold the result, i.e:
+
+     let temp = 3+4;
+     ...
+     puthash(i, tetmp);
+
+     That's no big deal, it will be eliminated when we have ssa form.
+
+     */
+  expanded_form_t exp_form = expand_tuple (form);
+
+  type_check (exp_form->type, expression->type);
+  
+  return create_expanded_form (generic_form_symbol (intern ("="),
+						    CONS (exp_form,
+							  CONS (expression,
+								NULL))));
+}
+
 void
 init_left_expand (void)
 {
   define_left_expander (SYMBOL (deref), left_expand_deref);
+  define_left_expander (SYMBOL (tuple), left_expand_tuple);
 }

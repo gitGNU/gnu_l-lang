@@ -1511,7 +1511,6 @@ parse_primary_expression (form_t *form)
       generic_form_t tuple_form;
       statement_or_expression_t se = parse_tuple (&tuple_form);
       assert (se == EXPRESSION);
-      assert (tuple_form->form_list_length == 1);
 
       /* If the tuple was single, we can extract it.
 	 Because single values are tuple of arity one.

@@ -99,6 +99,8 @@ compile_function_call (generic_form_t form);
 location_t
 compile (expanded_form_t expform)
 {
+  /* XXX: we could pass the type as another argument, to avoid
+     recomputing it.  */
   assert(is_form(expform, expanded_form));
   form_t form = expform->return_form;
 
@@ -514,6 +516,25 @@ compile_function_call_unknown_function (generic_form_t form)
   
 }
 #endif
+
+location_t
+compile_tuple (generic_form_t form)
+{
+  int tuple_len = length (form->form_list);
+
+  location_t *locations = malloc (sizeof(location_t) * tuple_len);
+  {
+    int i = 0;
+    FOREACH (element, form->form_list)
+      {
+	locations[i++] = compile (CAR (element));
+      }
+  }
+
+  location_t tuple_location = compound_location (tuple_len, locations);
+
+  return tuple_location;
+}
 
 
 /* Compile a call to a function already generated.  */
@@ -1133,6 +1154,7 @@ init_generate (void)
   DEFINE_GENERIC ("ref", compile_ref);
   DEFINE_GENERIC ("seq", compile_seq);
   DEFINE_GENERIC ("funcall", compile_function_call);
+  DEFINE_GENERIC ("tuple", compile_tuple);
 
   DEFINE_GENERIC ("loop", compile_loop);
   DEFINE_GENERIC ("break", compile_break);
