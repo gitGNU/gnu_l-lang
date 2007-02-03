@@ -46,7 +46,7 @@ gethash (void * key, hash_table_t table)
 {
   PWord_t Pvalue;
   JLG (Pvalue, *table, (Word_t) key);
-  return (Pvalue ? *Pvalue : 0);
+  return (Pvalue ? (void *) *Pvalue : (void *) 0);
 }
 
 static inline void *
@@ -79,7 +79,7 @@ gethash_string (String key, hash_string_table_t table)
 {
   PWord_t Pvalue;
   JHSG (Pvalue, *table, key->content, key->length);
-  return (Pvalue ? *Pvalue : 0);
+  return (Pvalue ? (void *) *Pvalue : (void *) 0);
 }
 
 static inline void *
