@@ -1,3 +1,10 @@
+2007-02-05  Matthieu Lemerre  <racin@free.fr>
+	
+        Corrected a bug that caused non-word stack allocations to overlap.
+	
+	* src/compiler/jit/stack.c (allocate_memory_block): Returns an
+	offset that points to the beginning of the allocation zone.
+ 
 2007-02-03  Matthieu Lemerre  <racin@free.fr>
 
 	Basic tuple support & little form cleanup.

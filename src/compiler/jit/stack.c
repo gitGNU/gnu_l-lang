@@ -141,7 +141,9 @@ allocate_memory_block (unsigned int size)
 
   /* Allocate a new block.  */
   memory_block_t mb = MALLOC (memory_block);
-  mb->offset = min_offset_used;
+
+  /* Asserts that the stack grows downward.  */
+  mb->offset = min_offset_used - size;
   mb->size = size;
 
   mb->next = used_list;
