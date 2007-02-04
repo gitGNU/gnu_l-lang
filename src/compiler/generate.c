@@ -138,7 +138,7 @@ compile (expanded_form_t expform)
      function, that take a list and pass all the arguments in the
      stack, according to the function type.  */
 
-   return generic->compile (form);
+  return generic->compile (form, expform->type);
 }
 
 
@@ -535,6 +535,44 @@ compile_tuple (generic_form_t form)
 
   return tuple_location;
 }
+
+/* Creates a struct "compound literal".  */
+location_t
+compile_struct (generic_form_t form, Type struct_type)
+{
+  /* XXX: Here we see again that recomputing the type isn't really
+     needed, and lengthy. Here we could assert that the type was
+     fine, and check it after.  */
+  location_t loc = create_anonymous_stack_variable (struct_type);
+
+  
+  FOREACH(element, form->form_list)
+    {
+      expanded_form_t expform = CAR (element);
+      generic_form_t genform = expform->return_form;
+      assert (is_form (genform, generic_form));
+      assert (genform->head == SYMBOL (label));
+      assert (genform->form_list && genform->form_list->next
+	      && !genform->form_list->next->next);
+
+      id_form_t id_form = CAR (genform->form_list);
+      assert (is_form (id_form, id_form));
+      Symbol field_name = id_form->value;
+
+      location_t field_loc = get_struct_field (loc, field_name);
+      
+      expanded_form_t expform3 = CAR (genform->form_list->next);
+      location_t loc = compile (expform3);
+
+      move_between_locations (loc, field_loc);
+
+      free_location (loc);
+      free_location (field_loc);
+    }
+
+  return loc;
+}
+
 
 
 /* Compile a call to a function already generated.  */
@@ -1154,6 +1192,7 @@ init_generate (void)
   DEFINE_GENERIC ("ref", compile_ref);
   DEFINE_GENERIC ("seq", compile_seq);
   DEFINE_GENERIC ("funcall", compile_function_call);
+  DEFINE_GENERIC ("struct", compile_struct);
   DEFINE_GENERIC ("tuple", compile_tuple);
 
   DEFINE_GENERIC ("loop", compile_loop);

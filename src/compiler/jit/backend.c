@@ -222,6 +222,28 @@ spill (register_t reg)
   free_data_register (reg);
 }
 
+/* Move between big locations move things bigger than a word.  */
+static
+move_between_big_locations (location_t from, location_t to)
+{
+  assert (from->type == to->type);
+  assert (from->low_location->location_type == INDIRECTION);
+  assert (to->low_location->location_type == INDIRECTION);
+
+  for(int i = 0; i < from->type->size; i += sizeof(int))
+    {
+      low_location_t from_low_location = indirection (from->low_location->offset + i,
+						      from->low_location->loc);
+      low_location_t to_low_location = indirection (to->low_location->offset + i,
+						    to->low_location->loc);
+      move_between_low_locations (from_low_location, to_low_location);
+    }
+
+  /* We create temporary "small" locations, and access them
+     individually.  */
+}
+
+
 static void
 move_between_compound_locations (location_t from, location_t to)
 {
@@ -266,6 +288,9 @@ move_between_locations (location_t from, location_t to)
       move_between_compound_locations (from, to);
       return;
     }
+
+  if(to->type->size > sizeof(int))
+    move_between_big_locations (from, to);
   
   move_between_low_locations (from->low_location, to->low_location);
 }
@@ -505,6 +530,14 @@ delete_block (void)
    - Quand on fait un registerize, c'est la qu'on peut decider de
      mettre une variable dans un registre.
 */
+
+location_t
+create_anonymous_stack_variable (Type type)
+{
+  memory_block_t block = allocate_memory_block (type->size);
+  location_t location = stack_location (type, block);
+  return location;
+}
 
 
 /* When type is NULL, we allocate the stack space on the first

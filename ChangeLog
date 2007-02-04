@@ -1,5 +1,29 @@
 2007-02-05  Matthieu Lemerre  <racin@free.fr>
-	
+
+	* test/cocyte17-struct-copy.l: New test file.
+
+	* src/parser/parse.c: New COLON token.
+	(parse_labelled_expression): New grammar rule.
+	(parse_tuple): Now use parse_labelled_expression instead of simple
+	expression.
+
+	* src/expander/expand.c (expand_struct): New expander.
+	(init_expand): Initialize it.
+
+	* src/compiler/jit/backend.c (move_between_big_locations): New
+	function.
+	(move_between_locations): Add call to move_between_big_locations
+	if needed.
+	(create_anonymous_stack_variable): New function.
+	* src/compiler/generate.c (compile): Now pass the type as an
+	argument to compilers.
+	(compile_struct): New compiler. 
+	(init_generate): Initialize it.
+	* src/objects/function.h: Add support for passing types too.
+
+
+2007-02-05  Matthieu Lemerre  <racin@free.fr>
+
         Corrected a bug that caused non-word stack allocations to overlap.
 	
 	* src/compiler/jit/stack.c (allocate_memory_block): Returns an

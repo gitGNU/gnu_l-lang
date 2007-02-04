@@ -500,6 +500,57 @@ expand_tuple (generic_form_t form)
 			       intern_type (tuple_type_form (type_list)));
 }
 
+/* struct(x:exp1, y:exp2) creates a (stack) structure of type struct
+   {typeof(exp1) x; typeof(exp2) y; }; */
+expanded_form_t
+expand_struct (generic_form_t form)
+{
+    /* MAP expand on the forms; return the type of the last one.  */
+  list_t component_list;
+  list_t type_form_list;
+  
+  list_t *component_list_ptr = &component_list;
+  list_t *type_form_list_ptr = &type_form_list;
+
+  FOREACH(element, form->form_list)
+    {
+      generic_form_t genform = CAR (element);
+      assert (is_form (genform, generic_form));
+      assert (genform->head == SYMBOL (label));
+      assert (genform->form_list && genform->form_list->next
+	      && !genform->form_list->next->next);
+
+      id_form_t id_form = CAR (genform->form_list);
+      assert (is_form (id_form, id_form));
+      //      Symbol label_symb = 
+
+      expanded_form_t expform = expand (CAR (genform->form_list->next));
+      *type_form_list_ptr = CONS (label_form (id_form,
+					      expform->type->type_form),
+				  NULL);
+      type_form_list_ptr = &((*type_form_list_ptr)->next);
+      
+      *component_list_ptr = CONS(create_expanded_form (label_form (id_form,
+								   expform),
+						       expform->type),
+				 NULL);
+      component_list_ptr = &((*component_list_ptr)->cdr);
+    }
+  
+  *type_form_list_ptr = NULL;
+  *component_list_ptr = NULL;
+
+  type_form_t struct_type_form = generic_form_symbol (SYMBOL (struct),
+						      type_form_list);
+
+  Type struct_type = intern_type (struct_type_form);
+  
+  /* The final type is the last one.  */
+  return create_expanded_form(generic_form_symbol (SYMBOL (struct),
+						   component_list),
+			      struct_type);
+}
+
 
 /* Function call.  */
 
@@ -898,6 +949,7 @@ init_expand (void)
   define_expander(SYMBOL(continue), expand_continue);
 
   define_expander(intern("="), expand_assign);
+  define_expander(SYMBOL (struct), expand_struct);
   define_expander(SYMBOL (tuple), expand_tuple);
   define_expander(SYMBOL(ref), expand_ref);
   define_expander(SYMBOL(deref), expand_deref);

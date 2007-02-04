@@ -100,7 +100,7 @@ typedef struct compiling_function
 } *compiling_function_t;
 #endif
 
-typedef struct location* (*GenericCompile)(void *form/*, void *function_info*/);
+typedef struct location* (*GenericCompile)(void *form, Type t/*, void *function_info*/);
 
 /* XXX: could take further arguments, like the generic it is
    compiling.  */

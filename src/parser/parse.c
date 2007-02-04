@@ -196,6 +196,7 @@ typedef enum token_type
     NOT_TK,
     COMMA_TK,
     SEMICOLON_TK,
+    COLON_TK,
     DOT_TK,
     AMPERSAND_TK,
     OPEN_BRACE_TK,
@@ -239,6 +240,7 @@ typedef enum reduced_token_type
     CLOSE_PAREN_RTK,
     COMMA_RTK,
     SEMICOLON_RTK,
+    COLON_RTK,
     DOT_RTK,
     EQUAL_RTK,
     OPEN_BRACE_RTK,
@@ -354,6 +356,10 @@ get_next_token (void)
   else if(result_scanning == SEMICOLON_TK)
     {
       current_token.type = SEMICOLON_RTK;
+    }
+  else if(result_scanning == COLON_TK)
+    {
+      current_token.type = COLON_RTK;
     }
   else if(result_scanning == DOT_TK)
     {
@@ -554,6 +560,7 @@ init_parser (void)
 					   "!",
 					   ",",
 					   ";",
+					   ":",
 					   "\\.",
 					   "&",
 					   "{",
@@ -1293,6 +1300,29 @@ parse_statement_not_macro ()
 
 #endif
 
+/* The grammar for a labelled expression is normally
+   expression | label ':' expression
+   with label being an id.  But it is simpler parsing
+   expression | expression ':' expression instead,
+   and checking that we got an id in the first expression.
+*/
+static form_t
+parse_labelled_expression ()
+{
+  form_t form = parse_expression ();
+
+  if(next_token.type == COLON_RTK)
+    {
+      assert (current_token.type == ID_RTK);
+      assert (is_form (form, id_form));
+      accept (COLON_RTK);
+      form_t new_form = parse_expression ();
+
+      return label_form (form, new_form);
+    }
+  return form;
+}
+
 static form_t
 parse_expression ()
 {
@@ -1450,7 +1480,7 @@ parse_tuple (form_t *form)
     {
 
       *tuple_content_ptr = MALLOC (pair);
-      (*tuple_content_ptr)->car = parse_expression ();
+      (*tuple_content_ptr)->car = parse_labelled_expression ();
       tuple_content_ptr = &((*tuple_content_ptr)->next);
       
       if (accept (COMMA_RTK))
