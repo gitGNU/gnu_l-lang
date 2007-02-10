@@ -1,5 +1,19 @@
 2007-02-10  Matthieu Lemerre  <racin@free.fr>
 
+	Bug when unifying Void locations in the compiler; 
+	catch when big locations are being unified.
+		
+	* test/cocyte18-bool-values.l: Test unification of void locations.
+
+	* src/compiler/jit/backend.c (make_unifiable_location): Don't do
+	anything for a void location.  Refuse to treat big locations.
+	(unify_location): Don't unify void locations.
+
+	* src/compiler/generate.c (compile_if): Add a type check:
+	else.type == then.type.
+
+2007-02-10  Matthieu Lemerre  <racin@free.fr>
+
 	Boolean bug fix.
 	
 	* test/cocyte18-bool-values.l: New test file.
