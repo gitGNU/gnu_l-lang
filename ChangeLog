@@ -1,5 +1,29 @@
 2007-02-10  Matthieu Lemerre  <racin@free.fr>
 
+	Minor corrections:
+	
+	* src/include/l/string.h (STRING): The STRING wrapper now uses
+	compound literals instead of alloca. Thus STRING can safely be
+	used in loops.
+	* src/std/print.c (print_Symbol): New printer. Initialised.
+
+	Implementation of functions that return void:
+
+	* src/compiler/jit/backend.c (return_function_value): Do nothing
+	if return value is void.
+	* src/parser/parse.c (parse_function_definition): remove assertion.
+
+	Implementation of unary minus:
+	
+	* src/parser/parse.c (parse_unary_expression): Handle the unary
+	minus.
+	* src/expander/expand.c (expand_unary_operator): New expander.
+	Initialized.
+	* src/compiler/generate.c (compile_unary_minus_Int): New
+	function. Initialized.
+
+2007-02-10  Matthieu Lemerre  <racin@free.fr>
+
 	Bug fixes.
 	
 	* src/std/l-form.c (expand_form_rec): Fixed a bug that prevented

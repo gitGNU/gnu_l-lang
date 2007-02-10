@@ -1113,6 +1113,22 @@ DEFINE_OP (add)
 DEFINE_OP (mul)
 DEFINE_OP (sub)
 
+/* We compile -b as 0 - b.  */
+location_t
+compile_unary_minus_Int( generic_form_t form)
+{
+  assert( form->form_list && !form->form_list->next);
+
+  location_t arg = compile( CAR( form->form_list));
+  
+  location_t loc1 = constant_value( TYPE( "Int"), 0);
+  location_t res = sub_int_locations( loc1, arg);
+  free_location( arg);
+  free_location( loc1);
+
+  return res;
+}
+
 
 /* XXX: ++ and -- are really simple to do now.
 
@@ -1179,6 +1195,7 @@ init_generate (void)
   DEFINE_GENERIC ("+_Int", compile_add);
   DEFINE_GENERIC ("*_Int", compile_mul);
   DEFINE_GENERIC ("-_Int", compile_sub);
+  DEFINE_GENERIC ("unary_minus_Int", compile_unary_minus_Int);
 
   
   DEFINE_GENERIC ("=", compile_assign);

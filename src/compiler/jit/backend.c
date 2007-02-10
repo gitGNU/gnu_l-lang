@@ -594,14 +594,15 @@ get_location (symbol_t id)
 void
 return_function_value (location_t location)
 {
-
   /* XXX: What about compound locations?  */
-
-
-  /* XXX: free REG_RET? */
-  low_location_t ll = register_location (REG_RET);
-
-  move_between_low_locations (location->low_location, ll);
+  if( !location->type == TYPE( "Void"))
+    {
+      /* XXX: free REG_RET? */
+      low_location_t ll = register_location (REG_RET);
+      
+      move_between_low_locations (location->low_location, ll);
+      
+    }
   
   /* Restore the stack pointer */
   jit_addi_i (JIT_SP, JITE_FP, JITE_OFFSET_FROM_LOCAL_ARG);

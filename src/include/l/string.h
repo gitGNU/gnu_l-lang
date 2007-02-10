@@ -69,11 +69,8 @@ maken_heap_string (const char *chars, unsigned int n)
 
 /* Creates a wrapper string arounds a given string, for use in C
    programs.  */
-#define STRING(c)				\
-  ({ String s = alloca (sizeof(c));		\
-    s->content = c;				\
-    s->length = strlen (c);			\
-    s; })
+#define STRING( c)				\
+  (&(struct string){strlen( c), c})
 
 
 /* Creates a C string from a L string.  Must be explicitly freed.  */

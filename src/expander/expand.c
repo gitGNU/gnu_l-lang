@@ -702,6 +702,38 @@ expand_binary_operator(generic_form_t form)
 			      type);
 }
 
+expanded_form_t
+expand_unary_operator( generic_form_t form)
+{
+  symbol_t head = form->head;
+
+  /* We take only one arguments.  */
+  assert(form->form_list && !form->form_list->next);
+
+  form_t arg1 = CAR(form->form_list);
+
+  expanded_form_t exp_arg1 = expand(arg1);
+
+  Type type = exp_arg1->type;
+
+  symbol_t new_head;
+  
+  if( type == TYPE( "Int"))
+    {
+      new_head = SYMBOL( unary_minus_Int);
+    }
+  else if( type == TYPE( "Float"))
+    {
+      new_head = SYMBOL( unary_minus_Float);
+    }
+  else panic( "Unary operator applied to an unknown type\n");
+  
+  return create_expanded_form(generic_form_symbol(new_head,
+						  CONS(exp_arg1,NULL)),
+			      type);
+}
+
+
 
 /* Conditionals.  */
 
@@ -995,6 +1027,8 @@ init_expand (void)
   define_expander(intern("*"), expand_binary_operator);
   define_expander(intern("/"), expand_binary_operator);
 
+  define_expander(intern("unary_minus"), expand_unary_operator);
+  
   define_expander(SYMBOL(let), expand_let);
   //  define_expander(SYMBOL(toto), expand_function);
   /* After we have expanded everything, for now we should strip the

@@ -196,6 +196,15 @@ print_Int (int i)
 }
 
 /* print_Word: prints into hexadecimal.  */
+void
+print_Symbol( Symbol s)
+{
+  print_string( STRING( "'"));
+  print_string( STRING( s->name));
+  print_string( STRING( "'"));
+}
+
+
 
 void
 init_print (void)
@@ -212,4 +221,6 @@ init_print (void)
 
   DEFINE_C_FUNCTION (print_Int, "Void <- Int");
   define_printer (TYPE_ ("Int"), SYMBOL (print_Int));
+  DEFINE_C_FUNCTION (print_Symbol, "Void <- Symbol");
+  define_printer (TYPE_ ("Symbol"), SYMBOL (print_Symbol));
 }

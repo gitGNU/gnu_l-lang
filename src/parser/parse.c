@@ -920,7 +920,7 @@ parse_function_definition ()
   form_t block;
 
   statement_or_expression_t se = parse_block (&block);
-  assert (se == EXPRESSION);
+  // assert (se == EXPRESSION);
 
   return define_form (intern ("function"),
 		      name,
@@ -1401,10 +1401,23 @@ parse_unary_expression (form_t *form)
 	  *form = function_form (operator_form, CONS (second_form, NULL));
 	  return se;
 	}
+      else parse_error("Invalid unary token\n");
     }
+  else if(accept( ADDITIVE_RTK))
+    {
+      if( current_token.id == intern( "-"))
+	{
+	  form_t operator_form = id_form (intern("unary_minus"));
+	  form_t second_form;
+	  statement_or_expression_t se = parse_unary_expression (&second_form);
+	  *form = function_form (operator_form, CONS (second_form, NULL));
+	  return se;
+	}
+      else parse_error("Invalid unary token\n");
+    }
+  
   /*XXX: unary minus, ampersand */
-    
-    return parse_postfix_expression (form);
+  return parse_postfix_expression (form);
 }
 
 /* Exemple de derecursivisation a gauche.  */
