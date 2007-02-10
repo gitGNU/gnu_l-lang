@@ -1,5 +1,18 @@
 2007-02-10  Matthieu Lemerre  <racin@free.fr>
 
+	Boolean bug fix.
+	
+	* test/cocyte18-bool-values.l: New test file.
+	
+	* src/compiler/jit/low-location.c (move_between_low_locations_constant_register):
+	Make this function non static; used by bes_to_location.
+	* src/compiler/jit/backend.c (bes_to_location): New function.
+	* src/compiler/generate.c (DEFINE_BOOLEAN_OP): Implemented. Calls
+	bes_to_location.
+
+	
+2007-02-10  Matthieu Lemerre  <racin@free.fr>
+
 	Better derived type support : creators and accessers, some more
 	errors catched.
 

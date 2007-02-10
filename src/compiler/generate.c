@@ -944,7 +944,7 @@ compile_##name (generic_form_t form)					\
 									\
   /* XXX: we should use Cmovcc if possible.  */				\
 									\
-  panic ("Not yet implemented\n");					\
+  return bes_to_location( bes);						\
 }
 
 DEFINE_BOOLEAN_OP (eq)

@@ -181,7 +181,7 @@ move_between_low_locations_register_any (low_location_t from,
 }
 
 
-static void
+void
 move_between_low_locations_constant_register (low_location_t from,
 					      low_location_t to)
 {

@@ -1104,3 +1104,26 @@ cast_location(Type type, location_t loc)
       return loc;
     }
 }
+
+/* Takes a boolean switch, and transforms that to a register location
+   that contains 1 if the jump was true, else 0.  */
+location_t
+bes_to_location( boolean_expression_switch_t bes)
+{
+  /* Allocate a register location.  */
+  low_location_t reg = any_register_location ();
+  location_t loc = temporary_location( TYPE( "Bool"), reg);
+  register_locations[reg->reg] = loc;
+
+  put_label_here( bes->true_jump);
+  move_between_low_locations_constant_register( constant_value_location( 1),
+						reg);
+  forward_label_t end_label = make_forward_label();
+  goto_label( end_label);
+  
+  put_label_here( bes->false_jump);
+  move_between_low_locations_constant_register( constant_value_location( 0),
+						reg);
+  put_label_here( end_label);
+  return loc;
+}
