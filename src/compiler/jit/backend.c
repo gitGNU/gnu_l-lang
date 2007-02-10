@@ -595,7 +595,7 @@ void
 return_function_value (location_t location)
 {
   /* XXX: What about compound locations?  */
-  if( !location->type == TYPE( "Void"))
+  if( location->type != TYPE( "Void"))
     {
       /* XXX: free REG_RET? */
       low_location_t ll = register_location (REG_RET);

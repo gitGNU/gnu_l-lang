@@ -1,5 +1,8 @@
 2007-02-10  Matthieu Lemerre  <racin@free.fr>
 
+	* src/compiler/jit/backend.c (return_function_value): Fixed
+	previously introduced bug when return value is void.
+
 	Minor corrections:
 	
 	* src/include/l/string.h (STRING): The STRING wrapper now uses
