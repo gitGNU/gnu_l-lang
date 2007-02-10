@@ -958,6 +958,14 @@ DEFINE_BOOLEAN_SWITCH_MAKER (le, ge)
 location_t
 make_unifiable_location (location_t loc)
 {
+  /* If the location is void, we won't unify it and don't have
+     anything to do.  */
+  if( loc->type == TYPE( "Void"))
+    return loc;
+
+  if( loc->type->size != sizeof( int))
+    panic( "Different branches of a Int can only return a word for now.\n");
+  
   /* XXX: use a register for this.  Mais on peut avoir a faire un
      spill, c'est embetant.  Il faudrait merger cette fonction avec
      join_execution_path_branch.  */
@@ -978,7 +986,14 @@ make_unifiable_location (location_t loc)
 void
 unify_location (location_t loc1, location_t loc2)
 {
-  move_between_locations (loc2, loc1);
+  assert( loc1->type == loc2->type);
+  if( loc1->type != TYPE( "Void"))
+    {
+      /* We cannot move big locations for now; this has already been checked in
+	 make_unifiable_location, so we can use assert.  */
+      assert( loc1->type == sizeof( int));
+      move_between_locations (loc2, loc1);
+    }
   free_location (loc2);
 }
 

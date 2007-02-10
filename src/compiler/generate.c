@@ -1049,6 +1049,7 @@ compile_if (generic_form_t form)
       location_t else_loc = compile (else_form);
 
       /* Unify the locations.  */
+      type_check( then_loc->type, else_loc->type);
       unify_location (unified_loc, else_loc);
       put_label_here (end_label);
 
