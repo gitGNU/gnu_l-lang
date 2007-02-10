@@ -153,23 +153,43 @@ void
 print_Int (int i)
 {
 #define BASE 10
-#define MAX_NUM_LEN 10 /* log_base(2 ^ 32) */
+#define MAX_NUM_LEN 11 /* log_{base}(2 ^ 32) + 1 (for the minus sign)*/
   String s = alloca (sizeof(struct string) + MAX_NUM_LEN);
 
   char *string_start = (char *) s  + sizeof(struct string);
+
+  int j;
   
-  int j = MAX_NUM_LEN - 1;
-  do
+  if( i >= 0)
     {
-      int k = i % 10;
-      string_start[j] = '0' + k; /* Does not work when base > 10.  */
-      j--;
-      i = i/BASE;
-    } while(i);
-
-  s->length = (MAX_NUM_LEN - 1) -j;
+      j = MAX_NUM_LEN - 1;
+      do
+	{
+	  int k = i % 10;
+	  string_start[j] = '0' + k; /* Does not work when base > 10.  */
+	  j--;
+	  i = i/BASE;
+	} while(i);
+    }
+  else
+    {
+      /* We want to correctly print 0b100...00 */
+      unsigned int new_i = - (i/10);
+      j = MAX_NUM_LEN - 2;
+      do
+	{
+	  int k = new_i % 10;
+	  string_start[j] = '0' + k; /* Does not work when base > 10.  */
+	  j--;
+	  new_i = new_i/BASE;
+	} while(new_i);
+      string_start[MAX_NUM_LEN - 1] = '0' -(i%10);
+      string_start[j--] = '-';
+    }
+    
+  s->length = (MAX_NUM_LEN - 1) - j;
   s->content = string_start + j + 1;
-
+  
   print_string (s);
   #undef BASE
   #undef MAX_NUM_LEN

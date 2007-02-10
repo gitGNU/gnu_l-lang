@@ -1,5 +1,9 @@
 2007-02-10  Matthieu Lemerre  <racin@free.fr>
 
+	* src/std/print.c (print_Int): Now can print all negative numbers.
+
+2007-02-10  Matthieu Lemerre  <racin@free.fr>
+
 	Bug when unifying Void locations in the compiler; 
 	catch when big locations are being unified.
 		
