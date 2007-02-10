@@ -72,7 +72,7 @@ expand_form_rec (generic_form_t form)
       if(is_form (form, id_form))
 	return generic_form_symbol (SYMBOL (Id_Form), CONS (symbol_form (((id_form_t)form)->value), NULL));
 
-      if(is_form (form, symbol_form))
+      if(is_form (form, quoted_symbol_form))
 	return generic_form_symbol (SYMBOL (Symbol_Form), CONS (form, NULL));
 
       if(is_form (form, float_form))
