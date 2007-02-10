@@ -175,8 +175,7 @@ void
 type_check (Type to, Type from)
 {
   if(from != to)
-    panic ("Type mismatch: trying to make an expression"
-	   " of type |%s| in place of something of type |%s|\n",
+    panic ("Type mismatch: %s given, %s expected\n",
 	   asprint_type (from), asprint_type (to));
 }
 

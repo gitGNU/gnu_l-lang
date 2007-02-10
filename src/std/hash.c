@@ -272,6 +272,8 @@ init_hash (void)
 {
   /* These functions are needed so that the macros can work; but they
      should not be used directly.  */
+  /* We should have: type Hash_Table = Pointer, with Pointer being a
+     Word on most machines.  */
   eval_cstring ("type Hash_Table = Void *;");
   DEFINE_C_FUNCTION (make_hash_table, "Hash_Table <- ()");
 

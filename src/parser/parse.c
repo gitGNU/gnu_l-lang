@@ -1803,13 +1803,13 @@ type_form_t parse_indirection_type_form(void)
 {
   type_form_t type_form = parse_tuple_type_form();
 
-  if(accept(MULTIPLICATIVE_RTK))
+  while (accept(MULTIPLICATIVE_RTK))
     {
       if(current_token.symbol != intern("*"))
 	{
 	  panic("Parse error\n");
 	}
-      return indirection_type_form(type_form);
+      type_form = indirection_type_form(type_form);
     }
 
   return type_form;

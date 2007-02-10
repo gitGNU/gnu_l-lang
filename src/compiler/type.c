@@ -67,6 +67,7 @@
 
 #include "../parser/form.h"
 #include <l/sys/type.h>
+#include <l/sys/creator.h>
 #include <string.h>
 #include <assert.h>
 
@@ -411,6 +412,7 @@ make_type_struct (generic_form_t form)
 
   define_accesser (type, struct_accesser);
   define_left_accesser (type, struct_left_accesser);
+  define_creator (type, struct_creator);
   return type;
 }
 
@@ -431,6 +433,22 @@ make_type_pointer (generic_form_t form)
 
   define_accesser (type, pointer_accesser);
   define_left_accesser (type, pointer_left_accesser);
+
+        /* For a pointer, it depends on what you point on.
+	 type Fries = Potato *;
+	 let Fries f = Fries( Potato( 4)); should work
+	 let Fries f = Fries( 4); should not.
+
+	 type Fries_Ptr = Potato **;
+	 let Fries_Ptr f = Fries_Ptr( Potato( 4)); take the same argument as Fries
+	     
+	 type Point = struct { Int x; Int y;} *;
+	 let Point p = Point( x:3, y:4);
+      */
+  if( type->pointed_type->type_type == BASE_TYPE)
+    define_creator (type, indirect_pointer_creator);
+  else define_creator (type, direct_pointer_creator);
+
   
   return type;
 }

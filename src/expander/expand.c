@@ -289,8 +289,23 @@ insert_id(symbol_t symbol, Type type)
 {
   id_info_t ii = MALLOC(id_info);
   ii->type = type;
-  
+
+  /* Check if id is already present.  */
+  {
+    block_t cur_block = block_list;
+    id_info_t id_info;
+    while(cur_block)
+      {
+	if((id_info = gethash(symbol, cur_block->id_table)))
+	  {
+	    panic( "ID %s shadows an existing identifier\n", symbol->name);
+	    /* Later, it should be permitted to shadow an id when
+	       told explicitely, but only in a new scope( and id_table).  */
+	  }
+	cur_block = cur_block->next;
+      }
   puthash(symbol, ii, block_list->id_table);
+  }
 }
 
 
@@ -549,6 +564,17 @@ expand_struct (generic_form_t form)
   return create_expanded_form(generic_form_symbol (SYMBOL (struct),
 						   component_list),
 			      struct_type);
+}
+
+expanded_form_t
+expand_label (generic_form_t form)
+{
+  expanded_form_t expform = expand (CAR (form->form_list->next));
+  id_form_t id_form = CAR (form->form_list);
+  assert (is_form (id_form, id_form));
+
+  return create_expanded_form (label_form (id_form, expform),
+			       expform->type);
 }
 
 
@@ -855,7 +881,7 @@ expand_cast(generic_form_t form)
   /* XXX: type_form should be of type type? */
   return create_expanded_form(generic_form_symbol(SYMBOL(cast),
 						  CONS(create_expanded_form(type_form,
-									    NULL),
+									    TYPE ("Type")),
 						       CONS(exp, NULL))),
 			      type);
 }
@@ -950,6 +976,7 @@ init_expand (void)
 
   define_expander(intern("="), expand_assign);
   define_expander(SYMBOL (struct), expand_struct);
+  define_expander(SYMBOL (label), expand_label);
   define_expander(SYMBOL (tuple), expand_tuple);
   define_expander(SYMBOL(ref), expand_ref);
   define_expander(SYMBOL(deref), expand_deref);

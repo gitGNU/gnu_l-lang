@@ -1,4 +1,4 @@
-/* init_library.c - 
+/* creator.h - Creator handling.
    Copyright (C) 2007 Matthieu Lemerre <racin@free.fr>
 
    This file is part of the L programming language.
@@ -18,16 +18,31 @@
    write to the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
    Boston, MA  02110-1301  USA.  */
 
+#ifndef _CREATOR_H
+#define _CREATOR_H
+
+#include <l/sys/creator.h>
+
+/* A creator is expected to return an expanded form.  */
+/* XXX: a creator prend un form en argument, et pas un expanded form:
+   sinon ca marche pas pour les trucs comme alloc:gc, et puis de toute
+   facon c'est moins general.
+
+   Par contre il est raisonable de demander que les forms en sortie du
+   creator sont bien expandees.
+
+   Finalement, c'est une liste de form que ca prend, vu qu'on ne se
+   soucie pas du nom par lequelle il est appelle.
+
+   */
+   
+typedef expanded_form_t (*creator_t)(Type, list_t);
+typedef creator_t Creator;
+
+Creator
+get_creator( Type t);
 
 void
-init_library ()
-{
-  init_creator ();
+define_derived_creator( Base_Type t, Symbol name);
 
-  init_list ();
-  init_xml ();
-  init_output ();
-  init_print ();
-  init_hash ();
-  init_l_form ();
-}
+#endif

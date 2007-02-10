@@ -57,6 +57,8 @@
 #include "analysis.h"
 
 #include <l/sys/panic.h>
+#include <l/access.h>
+#include <l/creator.h>
 
 /*__thread*/ analysis_t current_analysis;
 
@@ -111,7 +113,15 @@ typedef void (*definer_t)(symbol_t, symbol_t, form_t);
 void
 define_type (symbol_t define_symbol, symbol_t name, type_form_t type_form)
 {
-  define_type_type_form (id_form (name), -1, -1, type_form);
+  Base_Type t = define_type_type_form (id_form (name), -1, -1, type_form);
+
+  assert (t->type_type == BASE_TYPE);
+  
+  /*  Does not really belong here, but more to a "high-level type
+     definition processing" part of the compiler.  */
+  define_derived_creator( t, name);
+  define_accesser (t, derived_accesser);
+  define_left_accesser (t, derived_left_accesser);
 }
 
 void

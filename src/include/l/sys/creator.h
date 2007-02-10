@@ -1,4 +1,4 @@
-/* init_library.c - 
+/* creator.h - Creator definitions internal to the compiler.
    Copyright (C) 2007 Matthieu Lemerre <racin@free.fr>
 
    This file is part of the L programming language.
@@ -18,16 +18,22 @@
    write to the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
    Boston, MA  02110-1301  USA.  */
 
+#ifndef _SYS_CREATOR_H
+#define _SYS_CREATOR_H
 
-void
-init_library ()
-{
-  init_creator ();
+#include <l/type.h>
+#include <l/form.h>
 
-  init_list ();
-  init_xml ();
-  init_output ();
-  init_print ();
-  init_hash ();
-  init_l_form ();
-}
+expanded_form_t
+struct_creator( Type type, list_t form);
+
+expanded_form_t
+pointer_creator( Type type, list_t form);
+
+expanded_form_t
+direct_pointer_creator( Type type_, list_t argument_list);
+
+expanded_form_t
+indirect_pointer_creator( Type type_, list_t argument_list);
+
+#endif

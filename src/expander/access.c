@@ -44,6 +44,7 @@ expand_access(generic_form_t form)
 
   if(accesser == NULL)
     {
+      /* XXX: try to see if there is a virtual attribute for the type.  */
       panic ("There isn't any accessor for type %s\n",
 	     asprint_type (accessed_type));
     }
@@ -57,6 +58,12 @@ void
 define_accesser (Type type, Accesser accesser)
 {
   puthash (type, accesser, accesser_hash);
+}
+
+static Accesser
+get_accesser (Type type)
+{
+  return gethash (type, accesser_hash);
 }
 
 #include <l/sys/type.h>
@@ -106,6 +113,24 @@ pointer_accesser(Type type_,
 			 accessor);
 }
 
+/* Accesser for derived types, such as
+   type Point = struct { Int x; Int y; }; */
+expanded_form_t
+derived_accesser (Type type_,
+		  expanded_form_t accessed,
+		  expanded_form_t accessor)
+{
+  Base_Type type = type_;
+  assert (type->type_type == BASE_TYPE);
+
+  expanded_form_t new_accessed = expand (generic_form_symbol (SYMBOL (cast),
+							      CONS (type->origin_type->type_form,
+								    CONS (accessed,
+									  NULL))));
+  Accesser acc = get_accesser (type->origin_type);
+  return acc (type->origin_type, new_accessed, accessor);
+}
+
 
 /* Left accesser handling.  */
 
@@ -113,9 +138,15 @@ pointer_accesser(Type type_,
 MAKE_STATIC_HASH_TABLE (left_accesser_hash);
 
 void
-define_left_accesser(symbol_t symbol, Left_Accesser expander)
+define_left_accesser(Type type, Left_Accesser expander)
 {
-  puthash(symbol, expander, left_accesser_hash);
+  puthash(type, expander, left_accesser_hash);
+}
+
+static Left_Accesser
+get_left_accesser (Type type)
+{
+  return gethash (type, left_accesser_hash);
 }
 
 
@@ -196,6 +227,27 @@ pointer_left_accesser(Type type_,
 			      accessor,
 			      expression);
 }
+
+
+/* Accesser for derived types, such as
+   type Point = struct { Int x; Int y; }; */
+expanded_form_t
+derived_left_accesser (Type type_,
+		       expanded_form_t accessed,
+		       expanded_form_t accessor,
+		       expanded_form_t expression)
+{
+  Base_Type type = type_;
+  assert (type->type_type == BASE_TYPE);
+
+  expanded_form_t new_accessed = expand (generic_form_symbol (SYMBOL (cast),
+							      CONS (type->origin_type->type_form,
+								    CONS (accessed,
+									  NULL))));
+  Left_Accesser lacc = get_left_accesser (type->origin_type);
+  return lacc (type->origin_type, new_accessed, accessor, expression);
+}
+
 
 
 

@@ -1,3 +1,38 @@
+2007-02-10  Matthieu Lemerre  <racin@free.fr>
+
+	Better derived type support : creators and accessers, some more
+	errors catched.
+
+	* test/malebolge07-creator.l: New test file.
+
+	* src/std/init_library.c (init_library): Initialise the creator.
+	* src/std/Makefile.am (libl_std_la_SOURCES): Added creator.c
+	* src/std/creator.c: New file.
+	* src/include/l/sys/creator.h: New file.
+	* src/include/l/creator.h: New file.
+	* src/expander/expand.c (expand_label): New expander. Initialized.
+
+	* src/expander/access.c (get_accesser, get_left_accesser):
+	New (private) functions.
+	(derived_accesser, derived_left_accesser): New accesser, for
+	derived types.
+	(define_left_accesser): Corrected type of the argument
+
+	* src/compiler/type.c (make_type_struct): Associates the structure
+	type with a creator.
+	(make_type_pointer): Same for the pointer type.
+	* src/compiler/analysis.c (define_type): Creates a creator, an
+	accesser, and a left accesser for the created type.
+
+		
+	* src/parser/parse.c (parse_indirection_type_form): Corrected a
+	bug that prevented types like Int ** to be parsed.
+	
+	* src/expander/expand.c (insert_id): Check if id already present,
+	or if it shadows an existing identifier.
+
+	* src/compiler/generate.c (type_check): Better error message.
+
 2007-02-05  Matthieu Lemerre  <racin@free.fr>
 
 	* test/cocyte17-struct-copy.l: New test file.
