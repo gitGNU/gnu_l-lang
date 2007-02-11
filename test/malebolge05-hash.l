@@ -1,7 +1,7 @@
 //Test hashing.
 Int test ()
 {
-  let Hash (Symbol, Int) table = Hash (Symbol, Int);
+  let table:Hash( Symbol, Int) = Hash( Symbol, Int);
 
   //Test affectations.  Test that it returns the affected value.  
   table.foo = table.bar = 8;
@@ -12,23 +12,23 @@ Int test ()
   if(table.foo == table['foo'])
     print ("Both syntax are the same : OK\n");
 
-  let struct { Hash (Symbol, Int) h; } s;
+  let s:struct { h:Hash( Symbol, Int); };
   s.h = table;
 
   if(s.h.foo == s.h['bar'])
     print ("Works inside a struct : OK\n");
 
   //Test for another key type.
-  let Hash (Int, Int) hash_int = Hash (Int, Int);
+  let hash_int:Hash( Int, Int) = Hash( Int, Int);
   hash_int[3] = 25;
   hash_int[3];
 
 
   //Test Hashstrings.
   
-  let Hash_String (Int) stable = Hash_String (Int);
+  let stable:Hash_String( Int) = Hash_String( Int);
   
-  let Int i;
+  let i:Int;
   
   i = stable["toto"];
   stable["tata"] = stable["toto"] = 3;

@@ -6,12 +6,12 @@ type Index = Int;
 //Int is just an alias for int; they are the same type.
 //typealias Int = int;
 
-// Thus let Int i = 3 is correct.
+// Thus let i:Int = 3 is correct.
 
 //define int i = 3;
 
-Index correct (Int n)
-{ let Index i; // = Index(23);
+Index correct (n:Int)
+{ let i:Index; // = Index(23);
   i }
 
 //Index incorrect (int n)
@@ -54,7 +54,7 @@ Index correct (Int n)
 //  t
 //}
 
-Int square (Int n)
+Int square (n:Int)
 {
   n * n
 }
@@ -62,7 +62,7 @@ Int square (Int n)
 
 Int test ()
 {
-  let Int p = square (8);
+  let p:Int = square (8);
   p
 }
 
@@ -77,13 +77,13 @@ Int test ()
 //Note the *.  It is important.  Maybe we will have a shortcut for
 //struct {...} * for newcomers; like record.
 type Point = struct
-	     { Int x;
-	       Int y; } *;
+	     { x:Int;
+	       y:Int; } *;
 
 
 
 //Point
-//add_point (Point a, Point b)
+//add_point (a:Point, b:Point)
 //{
 //  let Point c = Point(); /* Just allocates a Point.  */
 //  c.x = a.x + b.x; /* We don't differenciate -> and . */

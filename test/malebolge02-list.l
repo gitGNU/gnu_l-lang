@@ -37,7 +37,8 @@
 //
 
 //type Int = int;
-type Int_List = struct { Int head; Int_List tail; } *;
+type Int_List = struct { head:Int; 
+                         tail:Int_List; } *;
 
 List(Int) test()
 {
@@ -48,7 +49,7 @@ List(Int) test()
   //  let List(Int) li = list(1, 2);
   //  let List(Int) li = cons(2, cons(1, cast(List(Int), 0)));
 
-  let List(Int) li = list(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
+  let li:List(Int) = list(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
 			  14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
 			  25, 26, 27, 28, 29, 30, 31, 32, 33);
 

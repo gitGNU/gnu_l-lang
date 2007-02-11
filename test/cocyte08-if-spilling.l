@@ -1,10 +1,10 @@
 //Tests spilling in different branches of an if.
 Int test ()
 {
-  let Int i = 4;
-  let Int j = 5;
+  let i:Int = 4;
+  let j:Int = 5;
 
-  let Int c = 3;
+  let c:Int = 3;
   
    1 + j;
    1 + j;

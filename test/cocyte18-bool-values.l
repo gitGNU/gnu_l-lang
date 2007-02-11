@@ -1,14 +1,14 @@
 //Test booleans are correct values.
 
 Bool
-function (Int i)
+function (i:Int)
 {
   i <= 4
 }
 
 //Ensures that print is really void.
 Void
-void_function (String message)
+void_function (message:String)
 {
   cast (Void, print (message))
 }
@@ -17,7 +17,7 @@ void_function (String message)
 Bool
 test ()
 {
-  let Int i = 4;
+  let i:Int = 4;
   print (cast (Int, i < 3));
   print (cast (Int, i > 3));
 

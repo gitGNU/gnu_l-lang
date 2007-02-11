@@ -284,7 +284,7 @@ remove_block(void)
      on?  */
 }
 
-static void
+void
 insert_id(symbol_t symbol, Type type)
 {
   id_info_t ii = MALLOC(id_info);
@@ -449,15 +449,19 @@ expand_seq(generic_form_t form)
 expanded_form_t
 expand_let(generic_form_t form)
 {
-  type_form_t type_form = CAR (form->form_list);
-  id_form_t id_form = CAR (form->form_list->next);
+  type_form_t type_form = CAR (form->form_list->next);
+  id_form_t id_form = CAR (form->form_list);
 
   symbol_t id = id_form->value;
   Type type = intern_type(type_form);
 
   insert_id(id, type);
 
-  return create_expanded_form(let_form(type_form, id),
+  /* ID should be expanded.  */
+  return create_expanded_form(generic_form_symbol( SYMBOL( let),
+						   CONS( id_form,
+							 CONS( type_form,
+							       NULL))),
 			      type);
 }
 

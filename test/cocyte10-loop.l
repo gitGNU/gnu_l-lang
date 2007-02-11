@@ -1,8 +1,8 @@
 //Tests loop by computing a factorial iteratively.
-Int fact (Int n)
+Int fact (n:Int)
 {
-  let Int i = 0;
-  let Int result = 1;
+  let i:Int = 0;
+  let result:Int = 1;
   loop
    { i = i + 1;
      result = result * i;

@@ -270,8 +270,8 @@ generic_form_t
 let_form (type_form_t type, symbol_t name/*, expression_form_t initial_value*/)
 {
   list_t list = NULL;
-  PUSH (id_form (name), list);
   PUSH (type, list);
+  PUSH (id_form (name), list);
 
   return generic_form_symbol (intern ("let"), list);
 }

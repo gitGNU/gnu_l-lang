@@ -5,7 +5,7 @@ Int toto () { 3 }
 
 Int test ()
 {
-  let Int i = toto ();
+  let i:Int = toto ();
   i
-    }
+}
  

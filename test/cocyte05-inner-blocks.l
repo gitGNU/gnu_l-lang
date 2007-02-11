@@ -2,11 +2,11 @@
 //stack location.
 Int test ()
 {
-  let Int c = { let Int a = 3;
-		let Int b = 4;
+  let c:Int = { let a:Int = 3;
+		let b:Int = 4;
 		a + b};
 
-  let Int d = { let Int e = c + c;
+  let d:Int = { let e:Int = c + c;
   		e };
   1 - d // doit renvoyer -13
 }

@@ -340,8 +340,8 @@ create_pointed_form( Pointer_Type pointer_type,
   id_form_t temp_id_form = id_form( gensym( "pointer_alloc"));
 
   form_t let_f = generic_form_symbol( SYMBOL( let),
-				      CONS( pointer_type_form,
-					    CONS( temp_id_form,
+				      CONS( temp_id_form,
+					    CONS( pointer_type_form,
 						  NULL)));
 
   form_t alloc_form = generic_form_symbol( intern( "="),
@@ -366,7 +366,9 @@ create_pointed_form( Pointer_Type pointer_type,
 						  CONS( temp_id_form,
 							NULL)));
 
-  form_t all_form = generic_form_symbol( SYMBOL( block),
+  /* XXX: we should destroy the temporary pointer_alloc at the end of
+     this block.  */
+  form_t all_form = generic_form_symbol( SYMBOL( seq),
 					 CONS( let_f,
 					       CONS( alloc_form,
 						     CONS( assign_form,

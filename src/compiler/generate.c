@@ -295,32 +295,25 @@ location_t
 compile_let (generic_form_t form)
 {
   /* XXX: should location_table management be done here?  */
-
-  type_form_t type_form = CAR (form->form_list);
-  Type type = NULL;
-
-  assert(type_form);
-  if(type_form)
-    {
-      //     assert (is_form (type_form, type_form));
-
-      type = intern_type (type_form);
-    }
-
-  id_form_t id_form = CAR (form->form_list->next);
+  assert( form->form_list && form->form_list->next);
+  
+  id_form_t id_form = CAR (form->form_list);
   assert (is_form (id_form, id_form));
-
   symbol_t id = id_form->value;
   
-  /* If there is no type symbol, we just pass NULL.  */
+  
+  type_form_t type_form = CAR (form->form_list->next);
+  assert(type_form);
+
+  if( form->form_list->next->next)
+    panic( "Kinds  are not yet handled\n");
+  
+  Type type = intern_type (type_form);
+  
   create_stack_variable (type, id);
 
-  /* Return void location.  */
-  location_t location = void_location ();
-
-  location->type = TYPE ("Void");
-  
-  return location;
+  /* Return the location of the variable.  */
+  return get_location( id);
 }
 
 location_t

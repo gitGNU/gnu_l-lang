@@ -144,7 +144,7 @@ form_t expand_print (generic_form_t form) {
     *mapped_form_list_ptr = NULL;
   }
 
-  return block_form (mapped_form_list);
+  return seq_form (mapped_form_list);
 }
 
 /* Some common printers.  */

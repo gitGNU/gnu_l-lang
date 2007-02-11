@@ -2,10 +2,10 @@
 Int
 test ()
 {
-  let Int x = 3;
-  let Int *px = &x;
+  let x:Int = 3;
+  let px:Int * = &x;
 
-  let Int y = *px;
+  let y:Int = *px;
   test_function (*px);
   //let int y = *px;
 

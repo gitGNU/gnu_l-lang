@@ -1,5 +1,36 @@
 2007-02-11  Matthieu Lemerre  <racin@free.fr>
 
+	Let are now expressions, type declaration optional in let a =
+	... idioms, change of parsing rule for variable declarations.
+
+	* src/parser/parse.c (parse_error): Now indicates where there is a
+	problem.
+	(parse_variable_declaration): Change grammar rule: use x:Int
+	instead of Int x.
+	(parse_let): Change grammar rule, use let x:Int (or just let x)
+	instead of let Int x.  Also, let is now an expression.
+
+	* src/parser/form.c (let_form): Change the order between types and
+	id when creating let forms.
+	* src/expander/left-expand.c (left_expand_let): New expander, 
+	initialised.
+	* src/expander/expand.c (insert_id): insert_id isn't static, so
+	that left_expand_let can use it directly.
+	(expand_let): Change the order between type and id in a letform.
+
+	* src/compiler/generate.c (compile_let): Let are now expressions,
+	change the return type.  In a let form, type is now after the
+	variable.
+
+	* test/malebolge08-let-wo-type.l: New test file.
+	* test/* : Use new parsing rules.
+
+	* src/std/creator.c (create_pointed_form): Does not introduce a
+	new scope.
+	* src/std/print.c: Likewise.
+	
+2007-02-11  Matthieu Lemerre  <racin@free.fr>
+
 	* src/compiler/jit/backend.c (unify_location): Fixed an assert
 	in if expressions.
 	

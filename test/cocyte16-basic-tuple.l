@@ -1,15 +1,15 @@
 //Basic tuple support.
 Int test ()
 {
-  let Int a;
-  let Int b;
-  let Int c;
-  let Int d;
-  let Int e;
-  let Int f;
-  let Int g;
+  let a:Int;
+  let b:Int;
+  let c:Int;
+  let d:Int;
+  let e:Int;
+  let f:Int;
+  let g:Int;
 
-  let struct { Int x; Int y; } p;
+  let p:struct { x:Int; y:Int; };
   
   (a, b) = (3, 2);
 

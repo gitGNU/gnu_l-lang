@@ -3,13 +3,13 @@
 
 
 type Int_List = struct
-		{ Int head;
-		  Int_List tail; } *;
+		{ head:Int;
+		  tail:Int_List; } *;
   
 //Note that the position of the pointer has changed.
 type Int_List2 = struct
-		 { Int head;
-		   Int_List2 *tail; }*;
+		 { head:Int;
+		   tail: Int_List2 *; }*;
 
 
 //doubly-recursive types. Don't work for now.
@@ -34,8 +34,8 @@ type Int_List2 = struct
 Int
 test ()
 {
-  let struct { Int head; Int_List tail; }* i;
-  let Int_List b;
+  let i:struct { head:Int; tail:Int_List; }*;
+  let b:Int_List;
 
   if((*i).tail == b) 0 else 1
 

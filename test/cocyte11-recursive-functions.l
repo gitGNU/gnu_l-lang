@@ -1,7 +1,7 @@
 // Recursive factorial with a if-statement
-Int fact2 (Int n)
+Int fact2 (n:Int)
 {
-  let Int a; 
+  let a:Int; 
   if( n == 0)
     a = 1;
   else
@@ -10,7 +10,7 @@ Int fact2 (Int n)
 }
 
 //Recursive factorial with a if expression
-Int fact (Int n)
+Int fact (n:Int)
 {
   if (n > 1) 
     n * fact (n - 1)
