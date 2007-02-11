@@ -213,8 +213,9 @@ typedef enum token_type
 
 typedef int (*Pchar_ui_to_Pvoid_t)(void **, char *, size_t);
 
-#define parse_error(string, args...)						\
-  do {printf (string, ## args); asm("int $3"); exit (1);} while(0)
+#define parse_error(string, args...)					\
+  do {printf ("Parse error in %s" string, scanner_pointer, ## args);	\
+      asm("int $3"); exit (1);} while(0)
 
 
 static char *scanner_pointer; 
@@ -809,12 +810,14 @@ parse_type ()
 static form_t
 parse_variable_declaration ()
 {
+  expect( ID_RTK);
+  symbol_t id = current_token.id;
+
+  expect( COLON_RTK); 
   //  variable_declaration_t vd = MALLOC (variable_declaration);
   form_t type = parse_type_form ();
-  
-  expect (ID_RTK);
 
-  return label_form_symbol (current_token.id, type);
+  return label_form_symbol (id, type);
 }
 
 
@@ -1115,6 +1118,9 @@ parse_if (form_t *form)
    Mais en general, on pourra utiliser juste let; le type specifier
    permet de rendre le code plus lisible et de faire des verifications
    en plus, c'est tout.
+
+   object_declaration := 'let' id {':' type? {':' kind_list}? }?  
+   kind_list = kind | kind ',' kind_list;
    
    */
 static statement_or_expression_t
@@ -1124,14 +1130,34 @@ parse_let (form_t *form)
 
   assert (current_token.id == SYMBOL (let));
 
-  type_form_t type = parse_type_form ();
-  //  symbol_t type = parse_type ();
   expect (ID_RTK);
 
   symbol_t name = current_token.id;
 
-  form_t letform = let_form (type, name);
-  
+  if( accept( COLON_RTK))
+    {
+      type_form_t type = parse_type_form ();
+      if( accept( COLON_RTK))
+	{
+	  panic( "Kinds are not supported for now\n");
+	}
+
+      *form = generic_form_symbol( SYMBOL( let),
+				   CONS( id_form( name),
+					 CONS( type,
+					       NULL)));
+      return EXPRESSION;
+
+    }
+
+  *form = generic_form_symbol( SYMBOL( let),
+			       CONS( id_form( name),
+				     NULL));
+  return EXPRESSION;
+  //  symbol_t type = parse_type ();
+
+
+#if 0  
   if(accept (ASSIGNMENT_RTK))
     {
       form_t exp = parse_expression ();
@@ -1142,10 +1168,12 @@ parse_let (form_t *form)
 
   /* COMA */
   expect (SEMICOLON_RTK);
-
-  *form = letform;
-  return STATEMENT;
   
+  *form = letform;
+  return EXPRESSION;//STATEMENT;
+#endif
+
+  panic( "Here\n");
   //  return let_form (NULL
   //  printf ("YEAH LET\n");
   
@@ -1602,7 +1630,7 @@ parse_atomic (form_t *form)
       return EXPRESSION;
     }
 
-  panic ("Atomic expected\n");
+  parse_error ("Atomic expected\n");
   //STRING_RTK, FLOAT_RTK 
   
   /*  XXX: parse null expression here? */
