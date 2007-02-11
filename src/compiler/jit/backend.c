@@ -992,7 +992,7 @@ unify_location (location_t loc1, location_t loc2)
     {
       /* We cannot move big locations for now; this has already been checked in
 	 make_unifiable_location, so we can use assert.  */
-      assert( loc1->type == sizeof( int));
+      assert( loc1->type->size == sizeof( int));
       move_between_locations (loc2, loc1);
     }
   free_location (loc2);

@@ -1,3 +1,8 @@
+2007-02-11  Matthieu Lemerre  <racin@free.fr>
+
+	* src/compiler/jit/backend.c (unify_location): Fixed an assert
+	in if expressions.
+	
 2007-02-10  Matthieu Lemerre  <racin@free.fr>
 
 	* src/compiler/jit/backend.c (return_function_value): Fixed
