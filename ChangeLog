@@ -1,3 +1,22 @@
+2007-02-13  Matthieu Lemerre  <racin@free.fr>
+
+	Some changes in the parser and in L grammar.
+	
+	* src/parser/parse.c (parse_foreach): new macro parsed.
+	(parse_statement_or_expression): Now parse_label_expression is
+	called first (thus, ':' is less prioritary operator).
+	(parse_continue): Now is an expression.  Little hack so that
+	continue: is parsed as a normal label.
+	(parse_label_expression): Renamed from parse_labelled_expression.
+	Now accepts any kind of expression left of the ':'.
+	(parse_foreach): 
+
+	(parse_tuple): tuple component are now regular expressions, not
+	labelled_expression (but as label expressions are expressions,
+	they can still be expressions)
+	
+	* src/parser/form.h (is_form): Fixed a bug in the macro.
+
 2007-02-11  Matthieu Lemerre  <racin@free.fr>
 
 	Let are now expressions, type declaration optional in let a =

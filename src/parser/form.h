@@ -439,7 +439,7 @@ Define_Form (generic_form, Generic_Compound_Form);
     form;})
 
 #define is_form(form, form_type_)					\
-  ((form->form_type.all & form_type_##_type_mask) == form_type_##_type)
+  (((form)->form_type.all & form_type_##_type_mask) == form_type_##_type)
 
 
 //form_t

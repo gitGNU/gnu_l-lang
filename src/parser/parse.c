@@ -502,6 +502,8 @@ static statement_or_expression_t parse_continue (form_t *form);
 
 static statement_or_expression_t parse_while (form_t *form);
 
+static statement_or_expression_t parse_foreach( form_t *form);
+
 static statement_or_expression_t parse_type_declaration (form_t *form);
 
 type_form_t parse_type_form (void);
@@ -584,6 +586,7 @@ init_parser (void)
 
   /* A macro, could be added later.  */
   define_parse (SYMBOL (while), parse_while);
+  define_parse (SYMBOL (foreach), parse_foreach);
 
 }
 
@@ -690,6 +693,10 @@ parse_atomic (form_t *form);
 static statement_or_expression_t
 parse_assignment_expression (form_t *form);
 
+static statement_or_expression_t
+parse_label_expression (form_t *form);
+
+
 static form_t
 parse_function_definition ();
 
@@ -776,7 +783,7 @@ static statement_or_expression_t
 parse_statement_or_expression (form_t *form)
 {
   /* XXX: parser le NULL statement.  */
-  statement_or_expression_t se = parse_assignment_expression (form);
+  statement_or_expression_t se = parse_label_expression (form);
   if(se == STATEMENT)
     return STATEMENT;
   else if (accept (SEMICOLON_RTK))
@@ -1193,38 +1200,6 @@ parse_loop (form_t *form)
   return STATEMENT;
 }
 
-/* while is a demo (and a standard) macro.  */
-/* while will be defined like this:
-   macro while '(' @(Expression exp) ')' @(Statement stat)
-   {
-     @loop(@seq(@if(@!(exp), @break),
-                stat))
-   }
-*/   
-static statement_or_expression_t
-parse_while (form_t *form)
-{
-  expect (ID_RTK);
-  assert (current_token.id == intern ("while"));
-
-  expect (OPEN_PAREN_RTK);
-  form_t exp = parse_expression ();
-  expect (CLOSE_PAREN_RTK);
-
-  form_t stat = parse_statement ();
-
-  list_t form_list = CONS (if_form (function_form (id_form (SYMBOL (!)),
-						   CONS (exp, NULL)),
-				    break_form (),
-				    NULL),
-			   CONS (stat, NULL));
-  *form = loop_form (seq_form (form_list));
-  
-  return STATEMENT;
-  
-}
-
-
 /* XXX: break and continue should be only keywords in the "loop"
    sublanguage, and should be translated to gotos.  */
 
@@ -1249,9 +1224,19 @@ parse_continue (form_t *form)
 {
   expect (ID_RTK);
   assert (current_token.id == intern ("continue"));
-  expect (SEMICOLON_RTK);
+  if(next_token.type == COLON_RTK)
+    {
+      /* Little hack: if we are used as a label,
+	 then return a simple id label, instead of a continue form.*/
+      *form = id_form( SYMBOL( continue));
+      return EXPRESSION;
+    }
+  //
+  //  }
+  //  expect (SEMICOLON_RTK);
   *form = continue_form ();
-  return STATEMENT;
+  //  return STATEMENT;
+  return EXPRESSION;
 }
 
 /* XXX: un 'skip' statement pour ne pas re-evaluer la condition dans
@@ -1328,29 +1313,7 @@ parse_statement_not_macro ()
 
 #endif
 
-/* The grammar for a labelled expression is normally
-   expression | label ':' expression
-   with label being an id.  But it is simpler parsing
-   expression | expression ':' expression instead,
-   and checking that we got an id in the first expression.
-*/
-static form_t
-parse_labelled_expression ()
-{
-  form_t form = parse_expression ();
-
-  if(next_token.type == COLON_RTK)
-    {
-      assert (current_token.type == ID_RTK);
-      assert (is_form (form, id_form));
-      accept (COLON_RTK);
-      form_t new_form = parse_expression ();
-
-      return label_form (form, new_form);
-    }
-  return form;
-}
-
+/* XXX: Should call parse_statement_or_expression.  */
 static form_t
 parse_expression ()
 {
@@ -1369,11 +1332,44 @@ parse_expression ()
     }
 #endif
   form_t form;
-  statement_or_expression_t se = parse_assignment_expression (&form);
+  //  statement_or_expression_t se = parse_label_expression (&form);
+    statement_or_expression_t se = parse_statement_or_expression (&form);
   parse_error_if_message (se == STATEMENT,
 			  "Statement given, expression expected\n");
   return form;
 };
+
+
+
+/* In L, a label can be any expression; it is not mandatory that it is
+   an ID. The "colon" is then an operator/separator with a very low
+   priority, which is right-associative.
+
+   One may think that for instance, let (i:Int) and (let i):Int would
+   conflict; but notice that L grammar is defined as a PEG and is then
+   unambiguous; and parsing macros is prioritary over parsing
+   expressions.
+*/
+static statement_or_expression_t
+parse_label_expression (form_t *form)
+{
+  statement_or_expression_t se;
+  se = parse_assignment_expression (form);
+
+  if(next_token.type == COLON_RTK)
+    {
+      /* XXX: for now, mais on peut le riterer. */
+      //      assert (current_token.type == ID_RTK);
+      //      assert (is_form (*form, id_form));
+      accept (COLON_RTK);
+      form_t new_form;
+      se = parse_label_expression (&new_form);
+      
+      *form = label_form (*form, new_form);
+    }
+  return se;
+}
+
 
 
 static statement_or_expression_t
@@ -1521,7 +1517,7 @@ parse_tuple (form_t *form)
     {
 
       *tuple_content_ptr = MALLOC (pair);
-      (*tuple_content_ptr)->car = parse_labelled_expression ();
+      (*tuple_content_ptr)->car = parse_expression ();
       tuple_content_ptr = &((*tuple_content_ptr)->next);
       
       if (accept (COMMA_RTK))
@@ -1959,7 +1955,62 @@ type_form_t parse_base_type (void)
 //  return tf;
 }
 #endif
+
+/* Parsers that don't belong here, but are here while there isn't a
+   good interface to the L lexer and L parser.  */
 
+/* while is a demo (and a standard) macro.  */
+/* while will be defined like this:
+   macro while '(' @(Expression exp) ')' @(Statement stat)
+   {
+     @loop(@seq(@if(@!(exp), @break),
+                stat))
+   }
+*/   
+static statement_or_expression_t
+parse_while (form_t *form)
+{
+  expect (ID_RTK);
+  assert (current_token.id == intern ("while"));
+
+  expect (OPEN_PAREN_RTK);
+  form_t exp = parse_expression ();
+  expect (CLOSE_PAREN_RTK);
+
+  form_t stat = parse_statement ();
+
+  list_t form_list = CONS (if_form (function_form (id_form (SYMBOL (!)),
+						   CONS (exp, NULL)),
+				    break_form (),
+				    NULL),
+			   CONS (stat, NULL));
+  *form = loop_form (seq_form (form_list));
+  
+  return STATEMENT;
+}
+
+static statement_or_expression_t
+parse_foreach( form_t *form)
+{
+  expect( ID_RTK);
+  assert( current_token.id == SYMBOL( foreach));
+
+  expect( OPEN_PAREN_RTK);
+  form_t iterator = parse_expression();
+  expect( ID_RTK);
+  assert( current_token.id == SYMBOL( in));
+  form_t collection = parse_expression();
+  expect( CLOSE_PAREN_RTK);
+
+  form_t body = parse_statement();
+
+  *form = generic_form_symbol( SYMBOL( foreach),
+			       CONS( iterator,
+				     CONS( collection,
+					   CONS( body,
+						 NULL))));
+  return STATEMENT;
+}
 
 
 
