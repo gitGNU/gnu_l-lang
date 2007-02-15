@@ -1,3 +1,10 @@
+2007-02-15  Matthieu Lemerre  <racin@free.fr>
+
+	* src/parser/parse.c (parse_expression): Reverted change of 13/02,
+	which caused parse_expression to call
+	parse_statement_or_expression instead of calling directly
+	parse_label_expression, which caused a parse bug in cocyte07-if.l
+
 2007-02-13  Matthieu Lemerre  <racin@free.fr>
 
 	Some changes in the parser and in L grammar.

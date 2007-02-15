@@ -1332,8 +1332,8 @@ parse_expression ()
     }
 #endif
   form_t form;
-  //  statement_or_expression_t se = parse_label_expression (&form);
-    statement_or_expression_t se = parse_statement_or_expression (&form);
+  statement_or_expression_t se = parse_label_expression (&form);
+  //    statement_or_expression_t se = parse_statement_or_expression (&form);
   parse_error_if_message (se == STATEMENT,
 			  "Statement given, expression expected\n");
   return form;
