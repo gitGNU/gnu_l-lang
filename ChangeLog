@@ -1,3 +1,15 @@
+2007-02-24  Matthieu Lemerre  <racin@free.fr>
+
+	Change in the compiler; new "expected type" argument.
+	
+	* src/expander/access.c (pointer_left_accesser): Bug fix for a bug
+	that appeared with the expected type.
+	
+	* src/compiler/jit/backend.c (void_location): Now void_locations
+	are of type Void.
+	* src/generate.c: compile_* functions now take an "expected type"
+	argument.
+
 2007-02-15  Matthieu Lemerre  <racin@free.fr>
 
 	* src/parser/parse.c (parse_expression): Reverted change of 13/02,

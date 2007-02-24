@@ -132,11 +132,11 @@ compound_location (unsigned int len, location_t *locations)
 location_t
 void_location (void)
 {
-  location_t location = NEW_LOCATION (NULL);
+  location_t location = NEW_LOCATION (TYPE( "Void"));
   location->compound_location = 1;
   location->location_length = 0;
   location->locations = (void *) -1;
-
+  
   return location;
   //  return compound_location (NULL);
   //  location_t location = temporary_location (TYPE (void), NULL);

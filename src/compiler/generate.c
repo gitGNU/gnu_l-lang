@@ -18,6 +18,25 @@
    write to the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
    Boston, MA  02110-1301  USA.  */
 
+
+/* Note: this compiler performs type checking too, and does not rely
+   on expander information.  Thus, even if the expander typing
+   information is incorrect, it detects typing error.
+
+   XXX: en fait, on devrait avoir un backend "typecheck" plutot pour
+   ca, et qui serait utile que pour debugguer( et pour recuperer du
+   code comme ca), car normalement le malebolge fournit des types
+   corrects.  C'est assez pratique de connaitre son type a l'avance.
+
+   Le cocyte devrait prendre des expanded forms en entree.
+
+   Et seul expand.c devrait renvoyer des "expanded forms"; en tout cas
+   ca ne serait pas a l'utilisateur de typer les expanded forms, ca
+   c'est sur.
+
+   */
+
+
 /* This generate :
 
    - Uses compile_branch_aware for compiling branches, if etc...
@@ -61,6 +80,13 @@ TODO:
   A posteriori is necessary for efficiency; for instance, when
   compiling named blocks.
 
+
+  For the next generate:
+  - The goal is to produce very fastly a relatively efficient code.
+  
+  - Do not typecheck; this has already been done.  Use types as a hint
+    to discard some computations.
+  
 */
    
 
@@ -90,14 +116,27 @@ MAKE_STATIC_HASH_TABLE (function_hash);
 #include <l/expand.h>
 
 location_t
-compile (expanded_form_t form);
+compile (expanded_form_t form, Type expected_type);
 
 location_t
 compile_function_call (generic_form_t form);
 
 
+/* We pass the expected type as an argument. This is useful in several
+   cases:
+   - If the result is discarded, no need to compute it
+   - Some things are incorrect when used in non void context, like
+     setting a label.
+   - Compiling conditionals become much more easy.
+   - It facilitates typing of expressions like 3 + (4 + goto foo) (if
+     we enable them).
+
+   This is more a hint to help the compiler take good decisions; for
+   instance, no need to compute an addition if the context is void,
+   and so on.  In particular, it cannot be used to typecheck.
+*/
 location_t
-compile (expanded_form_t expform)
+compile (expanded_form_t expform, Type expected_type)
 {
   /* XXX: we could pass the type as another argument, to avoid
      recomputing it.  */
@@ -138,10 +177,10 @@ compile (expanded_form_t expform)
      function, that take a list and pass all the arguments in the
      stack, according to the function type.  */
 
-  return generic->compile (form, expform->type);
+  return generic->compile (form, /*expform->type*/expected_type);
 }
 
-
+#if 0
 /* XXX: not yet implemented
 
    This function is really useful for high_level optimisation.
@@ -170,6 +209,7 @@ compile_discard (form_t form, unsigned int bitfield)
   panic ("Not yet implemented\n");
   compile (form);
 }
+#endif
 
 void
 type_check (Type to, Type from)
@@ -187,7 +227,7 @@ compile_function (symbol_t define_symbol, symbol_t name, expanded_form_t expform
   generic_form_t form = expform->return_form;
   assert (define_symbol == SYMBOL (function));
 
-  form_t return_type = CAR (form->form_list);
+  form_t return_type_form = CAR (form->form_list);
   generic_form_t parameters = CAR (form->form_list->next);
   generic_form_t body = CAR (form->form_list->next->next);
   
@@ -195,7 +235,8 @@ compile_function (symbol_t define_symbol, symbol_t name, expanded_form_t expform
 
   // XXX: if void, calls compile_branche_discard_results instead.
   // */
-  location_t return_loc = compile (body);
+  Type return_type = intern_type( return_type_form);
+  location_t return_loc = compile (body, return_type);
 
   //  type_t given_return_type = intern_type (form->type->return_type);
   // check_type(given_return_type, return_loc->type);
@@ -205,7 +246,7 @@ compile_function (symbol_t define_symbol, symbol_t name, expanded_form_t expform
   free_location (return_loc);
 
   //  form_t type = function_type_form (return_type, parameters);
-  form_t type = return_type;
+  form_t type = return_type_form;
   
   function_t fn = generate_function_end ();
   //  fn->type = intern_type (type);
@@ -254,7 +295,7 @@ compile_define (generic_form_t form)
 /* Standard special forms.  */
 
 location_t
-compile_seq (generic_form_t form)
+compile_seq (generic_form_t form, Type expected_type)
 {
   list_t args = form->form_list;
 
@@ -266,7 +307,7 @@ compile_seq (generic_form_t form)
   
   while (args->next)
     {
-      location_t return_location = compile (args->car);
+      location_t return_location = compile (args->car, TYPE( "Void"));
 
       /* All but the last location are used.  */
       free_location (return_location);
@@ -274,17 +315,17 @@ compile_seq (generic_form_t form)
       args = args->next;
     }
 
-  location_t return_location = compile (args->car);
+  location_t return_location = compile (args->car, expected_type);
 
   return return_location;
 }
 
 location_t
-compile_block (generic_form_t form)
+compile_block (generic_form_t form, Type expected_type)
 {
   create_block ();
   
-  location_t loc = compile_seq (form);
+  location_t loc = compile_seq (form, expected_type);
   
   delete_block ();
 
@@ -292,7 +333,7 @@ compile_block (generic_form_t form)
 }
 
 location_t
-compile_let (generic_form_t form)
+compile_let (generic_form_t form, Type expected_type)
 {
   /* XXX: should location_table management be done here?  */
   assert( form->form_list && form->form_list->next);
@@ -317,15 +358,17 @@ compile_let (generic_form_t form)
 }
 
 location_t
-compile_assign (generic_form_t form)
+compile_assign (generic_form_t form, Type expected_type)
 {
-  form_t assignee = CAR (form->form_list);
+  expanded_form_t assignee = CAR (form->form_list);
   
-  form_t expression = CAR (form->form_list->next);
+  expanded_form_t expression = CAR (form->form_list->next);
 
-  location_t exp_loc = compile (expression);
+  assert( expression->type == assignee->type);
+  /* Here we rely on correct type information from the expander.  */
+  location_t exp_loc = compile (expression, expression->type);
 
-  location_t ass_loc = compile (assignee);
+  location_t ass_loc = compile (assignee, assignee->type);
 
   type_check (location_type (ass_loc), location_type (exp_loc));
   
@@ -364,12 +407,23 @@ compile_assign (generic_form_t form)
    We could use that for the coercion mecanism.
 */
 location_t
-compile_ref (generic_form_t form)
+compile_ref (generic_form_t form, Type expected_type )
 {
   /* XXX: we don't check that we can compute the address.  */
   form_t expression = CAR (form->form_list);
 
-  location_t exp_loc = compile (expression);
+  
+  if(expected_type == TYPE( "Void"))
+    {
+      location_t exp_loc = compile (expression, TYPE( "Void"));
+      /* XXX: check that we can get the address of exp_loc.  */
+      free( exp_loc);
+      return void_location();
+    }
+
+  /* Either we expect a pointer, or we don't expect anything.  */
+  assert( expected_type->type_type == POINTER_TYPE);
+  location_t exp_loc = compile (expression, get_pointed_type( expected_type));
 
   location_t address = get_address_of(exp_loc);
 
@@ -384,12 +438,21 @@ compile_ref (generic_form_t form)
 
 /* Most pointers operations will be hidden in the malebolge  */
 location_t
-compile_deref (generic_form_t form)
+compile_deref (generic_form_t form, Type expected_type)
 {
   /* XXX: we don't check that we can compute the address.  */
   form_t expression = CAR (form->form_list);
 
-  location_t exp_loc = compile (expression);
+  if(expected_type == TYPE( "Void"))
+    {
+      location_t exp_loc = compile (expression, TYPE( "Void"));
+      if(location_type (exp_loc)->type_type != POINTER_TYPE)
+	compile_error ("Only a pointer can be dereferenced\n");
+      free( exp_loc);
+      return void_location();
+    }
+
+  location_t exp_loc = compile (expression, get_pointer_type( expected_type));
 
   if(location_type (exp_loc)->type_type != POINTER_TYPE)
     compile_error ("Only a pointer can be dereferenced\n");
@@ -412,7 +475,7 @@ compile_deref (generic_form_t form)
    rather use convert/coerce that performs type checking and type
    transformation. */
 location_t
-compile_cast (generic_form_t form)
+compile_cast (generic_form_t form, Type expected_type)
 {
   expanded_form_t exp_type_form = CAR(form->form_list);
   type_form_t type_form = exp_type_form->return_form;
@@ -422,9 +485,10 @@ compile_cast (generic_form_t form)
  //    panic("First argument to cast sould be a typeform\n");
  //
  // type_form = base_type_form(((symbol_form_t) type_form)->value);
-  form_t expression = CAR (form->form_list->next);
+  expanded_form_t expression = CAR (form->form_list->next);
 
-  location_t exp_loc = compile(expression);
+  /* XXX: we just expect something type-compatible (i.e., of the same size) */
+  location_t exp_loc = compile(expression, expression->type);
 
   location_t new_loc = cast_location(intern_type(type_form), exp_loc);
   
@@ -510,18 +574,28 @@ compile_function_call_unknown_function (generic_form_t form)
 #endif
 
 location_t
-compile_tuple (generic_form_t form)
+compile_tuple (generic_form_t form, Tuple_Type expected_type)
 {
   int tuple_len = length (form->form_list);
-
   location_t *locations = malloc (sizeof(location_t) * tuple_len);
-  {
+  
+  if(expected_type == TYPE( "Void"))
+    {
     int i = 0;
     FOREACH (element, form->form_list)
       {
-	locations[i++] = compile (CAR (element));
+	locations[i++] = compile (CAR (element), TYPE( "Void"));
       }
-  }
+    return void_location();
+    }
+  
+  assert( expected_type->type_type == TUPLE_TYPE);
+  assert( expected_type->length == tuple_len);
+  int i = 0;
+  FOREACH (element, form->form_list)
+    {
+      locations[i++] = compile (CAR (element), expected_type->fields[i]); 
+    }
 
   location_t tuple_location = compound_location (tuple_len, locations);
 
@@ -530,14 +604,58 @@ compile_tuple (generic_form_t form)
 
 /* Creates a struct "compound literal".  */
 location_t
-compile_struct (generic_form_t form, Type struct_type)
+compile_struct (generic_form_t form, Struct_Type expected_type)
 {
+  Type regular_get_expected_type( Symbol field_name)
+  {
+    Type t = gethash( field_name, expected_type->field_hash);
+    if(t == NULL)
+      panic( "Error: the expected type does not match the wanted type\n");
+    return t;
+  }
+
+  location_t loc;
+
+  void regular_move_to_loc( location_t from, Symbol field_name)
+  {
+    location_t field_loc = get_struct_field (loc, field_name);
+    move_between_locations( from, field_loc);
+    free_location( field_loc);
+  }
+  
+  Type void_get_expected_type( Symbol field_name)
+  {
+    return TYPE( "Void");
+  }
+
+  void void_move_to_loc( location_t from, Symbol field_name)
+  {
+    return;
+  }
+  
+  Type (*get_expected_type)(Symbol);
+  Type (*move_to_loc)(location_t, Symbol);
+
+  
+  if(expected_type == TYPE( "Void"))
+    {
+      /* XXX: compile every constituent in void context.  */
+      get_expected_type = void_get_expected_type;
+      move_to_loc = void_move_to_loc;
+      loc = void_location();
+    }
+  else
+    {
+      assert( expected_type->type_type == STRUCT_TYPE);
+      get_expected_type = regular_get_expected_type;
+      move_to_loc = regular_move_to_loc;
+      loc = create_anonymous_stack_variable (expected_type);
+    }
+  
+  
   /* XXX: Here we see again that recomputing the type isn't really
      needed, and lengthy. Here we could assert that the type was
      fine, and check it after.  */
-  location_t loc = create_anonymous_stack_variable (struct_type);
-
-  
   FOREACH(element, form->form_list)
     {
       expanded_form_t expform = CAR (element);
@@ -551,17 +669,12 @@ compile_struct (generic_form_t form, Type struct_type)
       assert (is_form (id_form, id_form));
       Symbol field_name = id_form->value;
 
-      location_t field_loc = get_struct_field (loc, field_name);
-      
       expanded_form_t expform3 = CAR (genform->form_list->next);
-      location_t loc = compile (expform3);
-
-      move_between_locations (loc, field_loc);
-
-      free_location (loc);
-      free_location (field_loc);
+      location_t new_loc = compile (expform3, get_expected_type( field_name));
+      move_to_loc( new_loc, field_name);
+      
+      free_location (new_loc);
     }
-
   return loc;
 }
 
@@ -598,12 +711,15 @@ compile_function_call (generic_form_t form)
     int i = 0;
     FOREACH (element, args)
       {
-	locations[i++] = compile (CAR (element));
+	if(i >= function->nb_arguments)
+	  {
+	    compile_error ( "Too many arguments given\n");
+	  }
+	
+	locations[i] = compile (CAR (element),
+				function->type->parameters_type->fields[i]);
+	i++;
       }
-
-    if(i != function->nb_arguments)
-      compile_error ("Wrong number of arguments: %d passed, %d expected\n",
-		     i, function->nb_arguments);
   }
 
 
@@ -804,13 +920,17 @@ struct_accessor (location_t loc, form_t form)
 #endif
 
 location_t
-compile_access (generic_form_t form)
+compile_access (generic_form_t form, Type expected_type)
 {
-  form_t accessed_form = CAR (form->form_list);
+  expanded_form_t exp_accessed_form = CAR (form->form_list);
 
   expanded_form_t exp_accessor_form = CAR (form->form_list->next);
 
-  location_t accessed_location = compile (accessed_form);
+  if(expected_type == TYPE( "Void"))
+    return compile( exp_accessed_form, TYPE( "Void"));
+
+  location_t accessed_location = compile (exp_accessed_form,
+					  exp_accessed_form->type);
   //  location_t accessor_location = compile (accessor_form);
 
   Type type = location_type (accessed_location);
@@ -860,7 +980,7 @@ typedef struct loop_info
 
 /* XXX: a loop can have a name or not.  */
 location_t
-compile_loop (generic_form_t form)
+compile_loop (generic_form_t form, Type expected_type)
 {
   loop_info_t loop_info = MALLOC (loop_info);
   loop_info->next = current_loops;
@@ -870,7 +990,7 @@ compile_loop (generic_form_t form)
   loop_info->end_label = make_forward_label ();
 
   /* Now compile the interior of the loop.  */
-  location_t location = compile (CAR (form->form_list));
+  location_t location = compile (CAR (form->form_list), TYPE( "Void"));
 
   /* Check that the inner loop doesn't return a value? */
   free_location (location);
@@ -919,8 +1039,8 @@ compile_##name##_boolean (generic_form_t form)				\
   form_t form1 = CAR (form->form_list);					\
   form_t form2 = CAR (form->form_list->next);				\
 									\
-  location_t loc1 = compile (form1);					\
-  location_t loc2 = compile (form2);					\
+  location_t loc1 = compile (form1, TYPE( "Int"));			\
+  location_t loc2 = compile (form2, TYPE( "Int"));			\
 									\
   boolean_expression_switch_t bes = make_##name##_switch (loc1, loc2);	\
 									\
@@ -931,7 +1051,7 @@ compile_##name##_boolean (generic_form_t form)				\
 }									\
 									\
 location_t								\
-compile_##name (generic_form_t form)					\
+compile_##name (generic_form_t form, Type expected_type)		\
 {									\
   boolean_expression_switch_t bes = compile_##name##_boolean (form);	\
 									\
@@ -969,7 +1089,7 @@ compile_boolean (expanded_form_t expform)
   
   /* Compile as a standard generic.  */
 
-  location_t loc = compile(expform);
+  location_t loc = compile(expform, TYPE( "Bool"));
 
   type_check(TYPE("Bool"), location_type(loc));
 
@@ -1007,7 +1127,7 @@ compile_not (generic_form_t form)
 
 
 location_t
-compile_if (generic_form_t form)
+compile_if (generic_form_t form, Type expected_type)
 {
   form_t expression_form = CAR (form->form_list);
 
@@ -1028,7 +1148,7 @@ compile_if (generic_form_t form)
 
   create_execution_path_branch ();
   /* XXX: il faut spiller de la meme maniere dans les deux branches.  */  
-  location_t then_loc = compile (then_form);
+  location_t then_loc = compile (then_form, expected_type);
   join_execution_path_branch ();
   
   if(else_form)
@@ -1039,7 +1159,7 @@ compile_if (generic_form_t form)
       goto_label (end_label);
       
       put_label_here (bes->false_jump);
-      location_t else_loc = compile (else_form);
+      location_t else_loc = compile (else_form, expected_type);
 
       /* Unify the locations.  */
       type_check( then_loc->type, else_loc->type);
@@ -1075,18 +1195,18 @@ uncompiled_generic (generic_form_t form)
 
 #define DEFINE_OP(name_)						\
 location_t								\
-compile_##name_ (generic_form_t form)					\
+compile_##name_ (generic_form_t form, Type expected_type)		\
 {									\
   /* XXX: call compile_compound?  */					\
 									\
   form_t first_arg = CAR (form->form_list);				\
   form_t second_arg = CAR (form->form_list->next);			\
 									\
-  location_t loc1 = compile (first_arg);				\
-  location_t loc2 = compile (second_arg);				\
+  location_t loc1 = compile (first_arg, TYPE( "Int"));			\
+  location_t loc2 = compile (second_arg, TYPE( "Int"));			\
 									\
-  assert (loc1->type == TYPE ("Int"));				\
-  assert (loc2->type == TYPE ("Int"));				\
+  assert (loc1->type == TYPE ("Int"));					\
+  assert (loc2->type == TYPE ("Int"));					\
 									\
   /* XXX: check type, and try to coerce into int, unsigned int, or float?.  */ \
   location_t result = name_##_int_locations (loc1, loc2);		\
@@ -1108,11 +1228,11 @@ DEFINE_OP (sub)
 
 /* We compile -b as 0 - b.  */
 location_t
-compile_unary_minus_Int( generic_form_t form)
+compile_unary_minus_Int( generic_form_t form, Type expected_type)
 {
   assert( form->form_list && !form->form_list->next);
 
-  location_t arg = compile( CAR( form->form_list));
+  location_t arg = compile( CAR( form->form_list), TYPE( "Int"));
   
   location_t loc1 = constant_value( TYPE( "Int"), 0);
   location_t res = sub_int_locations( loc1, arg);

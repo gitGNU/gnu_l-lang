@@ -222,8 +222,8 @@ pointer_left_accesser(Type type_,
   
   /* XXX: should not be struct_accesser, but any accesser.  */
   return struct_left_accesser(pointed_type,
-			      create_expanded_form (generic_form_symbol(SYMBOL(deref),
-									CONS(accessed, NULL))),
+			      expand (generic_form_symbol(SYMBOL(deref),
+							  CONS(accessed, NULL))),
 			      accessor,
 			      expression);
 }
