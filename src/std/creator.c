@@ -269,13 +269,16 @@ check_struct_parameters( generic_form_t struct_type_form,
 	  panic ("Not enough elements given\n");
 	
 	generic_form_t expression = CAR (element);
-	expanded_form_t expanded_exp = expand (expression);
-	element = element->next;
+	assert( is_form( expression,generic_form));
+	assert( expression->head == SYMBOL( label));
 	
-	/* Get the expanded form's label.  */
-	id_form_t exp_id_form = CAR (expression->form_list);
-	assert (is_form (exp_id_form, id_form));
-	Symbol exp_label = exp_id_form->value;
+	/* Get the form's label.  */
+	id_form_t id_form = CAR (expression->form_list);
+	assert (is_form (id_form, id_form));
+	Symbol label = id_form->value;
+	
+	expanded_form_t expanded_exp = expand (CAR( expression->form_list->next));
+	element = element->next;
 
 	/* Get the type label.  */
 	generic_form_t type_form = CAR (cur_type);
@@ -283,14 +286,17 @@ check_struct_parameters( generic_form_t struct_type_form,
 	assert (is_form (type_id_form, id_form));
 	Symbol type_label = type_id_form->value;
 
-	if(exp_label != type_label)
+	if(label != type_label)
 	  panic ("Label mismatch\n");
 
 	/* Check type.  */
 	type_check (intern_type (CAR (type_form->form_list->next)),
 		    expanded_exp->type);
 	
-	*expression_list_ptr = CONS (expanded_exp, NULL);
+	*expression_list_ptr = CONS ( create_expanded_form(label_form_symbol( label,
+									      expanded_exp),
+							   expanded_exp->type),
+				      NULL);
 	expression_list_ptr = &((*expression_list_ptr)->next);
       }
 

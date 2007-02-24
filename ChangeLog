@@ -1,5 +1,16 @@
 2007-02-24  Matthieu Lemerre  <racin@free.fr>
 
+	* src/expander/expand.c (expand_label): Now returns void: labels
+	expanded regularly are only targets for goto; labels used to name
+	parameters must be extracted manually.
+	
+	* src/std/creator.c (check_struct_parameters): Extracts the label
+	manually.
+
+	* test/cocyte17-struct-copy.l: Completed the test case.
+	
+2007-02-24  Matthieu Lemerre  <racin@free.fr>
+
 	Change in the compiler; new "expected type" argument.
 	
 	* src/expander/access.c (pointer_left_accesser): Bug fix for a bug

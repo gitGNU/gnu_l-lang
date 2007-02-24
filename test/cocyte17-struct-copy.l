@@ -35,6 +35,8 @@ Int test ()
   u = t.p;
 
   print ("u.x", u.x, "u.y", u.y);
-  
+
+  print ("v.x", struct (x:3,y:4).x,
+	 "v.y", struct (x:3,y:4).y);
   q.y
 }

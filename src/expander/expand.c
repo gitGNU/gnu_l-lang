@@ -570,6 +570,10 @@ expand_struct (generic_form_t form)
 			      struct_type);
 }
 
+/* Note: labels serve different purpose in L; but when they are
+   regularly expanded, they are a label for a goto.  Other use cases
+   (such as naming passed parameters to a function or macros) must
+   extract the label directly.  */
 expanded_form_t
 expand_label (generic_form_t form)
 {
@@ -578,7 +582,7 @@ expand_label (generic_form_t form)
   assert (is_form (id_form, id_form));
 
   return create_expanded_form (label_form (id_form, expform),
-			       expform->type);
+			       TYPE( "Void"));
 }
 
 
