@@ -53,9 +53,18 @@ static inline void *
 puthash (void * key, void * value, hash_table_t table)
 {
   PWord_t PValue;
-  JLI (PValue, *table, (Word_t) key);
+  JLI (PValue, (*table), (Word_t) key);
   *PValue = (Word_t) value;
   return value;
+}
+
+/* Returns 1 if the key was present, 0 otherwise.  */
+static inline int
+remhash( void* key, hash_table_t table)
+{
+  int Rc_int;
+  JLD( Rc_int, *table, (Word_t) key);
+  return Rc_int;
 }
 
 /* Hash strings.  */

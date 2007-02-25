@@ -250,6 +250,7 @@ typedef enum reduced_token_type
     CLOSE_SQUARE_BRACKET_RTK,
     DOLLAR_RTK,
     FUNCTION_TYPE_RTK,
+    
   } reduced_token_type_t;
 
 struct token
@@ -419,18 +420,13 @@ get_next_token (void)
     }
   else if(result_scanning == NOT_TK 
 	  || result_scanning == AMPERSAND_TK
-	  || result_scanning == STAR_TK)
+	  || result_scanning == STAR_TK
+	  || result_scanning == AND_TK)
     {
-
-      /* We can't do this since ampersand is used twice and so is
-	 star.  */
-      if(*start == '&')
+      /* We parsed &&.  */
+      if(result_scanning == AND_TK)
 	{
-	  current_token.id = SYMBOL(ref);
-	}
-      else if(*start == '*')
-	{
-	  current_token.id = SYMBOL(deref);
+	  current_token.id = intern( "@get_label");
 	}
       else
 	{
@@ -1626,6 +1622,11 @@ parse_atomic (form_t *form)
       return EXPRESSION;
     }
 
+  /* Nothing worked; thus we got the null expression, that we
+     transcript into an explicit void.  */
+  *form = new_tuple_form(NULL);
+  return EXPRESSION;
+  
   parse_error ("Atomic expected\n");
   //STRING_RTK, FLOAT_RTK 
   

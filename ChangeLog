@@ -1,3 +1,46 @@
+2007-02-25  Matthieu Lemerre  <racin@free.fr>
+
+	Support for labels and gotos, and preliminary support for local
+	species in the expander.  Species are the concepts manipulated in
+	L: they can be macros, functions, variables, labels... anything.
+	Support for null statement, and && unary operator for computed
+	gotos.
+	
+	* src/expander/expand.c (struct id_info): Support for species.
+	(insert_id, expand_id): Adapted to insert any species, not only
+	variables.
+	(expand_label): Insert a label species.
+	(expand_goto): New expander. 
+	(expand_at_get_label): New expander.
+	(init_expand): Initialise the expanders.
+
+	* src/expander/left-expand.c (left_expand_let): Use the species
+	interface too.
+
+	* src/parser/parse.c (parse_atomic): Support for null expressions,
+	L's version of C's null statement.
+	(get_next_token): Now parses the && unary operator, that allows to
+	get the address of a label.
+
+	* src/include/l/sys/hash.h (remhash): New function.
+	
+	* src/compiler/jit/backend.c (struct block): Add a forward_refs
+	hashtable.
+	(create_block): Initialise the hashtable.
+	(delete_block): Now passes the forward references to the enclosing
+	block.
+	(get_label, backend_compile_goto, insert_label): New support functions.
+
+	* src/compiler/generate.c (compile_label, compile_at_get_label)
+	(compile_goto): New generics. @get_label is a new special form of
+	Cocytus to get a label address from a symbol.
+	(init_generate): Intialise them.
+
+	* src/compiler/generate.c (compile_label): New function.
+
+	* src/compiler/analysis.c (init_analysis): New type: Label.
+
+	
 2007-02-24  Matthieu Lemerre  <racin@free.fr>
 
 	* src/expander/expand.c (expand_label): Now returns void: labels

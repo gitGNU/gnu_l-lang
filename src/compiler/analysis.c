@@ -415,8 +415,13 @@ init_analysis ()
   define_type_string ("Symbol", sizeof(int), __alignof__ (int), NULL);
   define_type_string ("String", sizeof(int), __alignof__ (int), NULL);
 
+  /* Label should have a type of -1, like functions, but for now
+     we need them to be of size 0.  */
+  define_type_string ("Label", 0, 0, NULL);
+
     /* XXX: void is not really the () type : because we allow (int) to
      coerce into void? Or is it? */
   define_type_string ("Void", -1, -1, NULL); /* Void has no size.  */
+  //  eval_cstring( "typealias Void = Int;");
 
 }

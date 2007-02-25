@@ -967,6 +967,81 @@ compile_access (generic_form_t form, Type expected_type)
 
 /* Branching: labels, goto, loops ... */
 
+/* Labels and gotos.  */
+
+
+
+
+/* In L, labels are local to a scope, and there is no way to jump to a
+   label from outside the scope.  But you can jump from an enclosing
+   scope to an outside scope.  You can have several labels of the same
+   name in the same function, as long as they are not in the same
+   scope.  
+
+   You can put a label at the end of a block, contrary to C.
+   
+   GNU C-like computed gotos are also allowed.
+
+   @get_label allows to retrieve a label address from a label ID.
+
+   Labels share the variable namespace. */
+
+location_t
+compile_label (generic_form_t form, Type expected_type)
+{
+  if(expected_type != TYPE( "Void"))
+    compile_error( "A label can only be defined in void context\n");
+
+  assert( form->form_list && !form->form_list->next);
+  
+  id_form_t id_form = CAR (form->form_list);
+  assert (is_form (id_form, id_form));
+  symbol_t id = id_form->value;
+
+  insert_label( id);
+  
+  /* Return the location of the variable.  */
+  return void_location();
+}
+
+/* This is used to tell the compiler that the following id is a label,
+   and not a regular variable and getting its address is different
+   than getting the address of a variable.
+   
+   Should go away when the compiler reuses directly the ids of the
+   expander. */
+location_t
+compile_at_get_label( generic_form_t form, Type expected_type)
+{
+  assert( form->form_list && !form->form_list->next);
+  id_form_t id_form = CAR( form->form_list);
+  assert( is_form( id_form, id_form));
+  symbol_t symb = id_form->value;
+
+  return get_label( symb);
+}
+
+location_t
+compile_goto( generic_form_t form, Type expected_type)
+{
+  assert( form->form_list && !form->form_list->next);
+
+  expanded_form_t explabel = CAR( form->form_list);
+  location_t label_location;
+  
+  label_location = compile( CAR( form->form_list),
+			    TYPE( "Label"));
+
+  backend_compile_goto( label_location);
+  free_location( label_location);
+  
+  return void_location();
+}
+
+
+
+/* Loop.  */
+
 typedef struct loop_info
 {
   symbol_t name;  /* Name of the loop, or NULL if not named.  */
@@ -1328,6 +1403,10 @@ init_generate (void)
   DEFINE_GENERIC ("loop", compile_loop);
   DEFINE_GENERIC ("break", compile_break);
   DEFINE_GENERIC ("continue", compile_continue);
+
+  DEFINE_GENERIC ("label", compile_label);
+  DEFINE_GENERIC ("goto", compile_goto);
+  DEFINE_GENERIC ("@get_label", compile_at_get_label);
 
   DEFINE_GENERIC ("if", compile_if);
 

@@ -28,4 +28,7 @@
        breakpoint ();							\
        exit (1); } while(0)
 
+#define compile_error panic
+#define compile_warning panic
+
 #endif

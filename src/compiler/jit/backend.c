@@ -41,6 +41,8 @@
 
 #include <l/sys/panic.h>
 
+#define compile_error panic
+
 /* For debugging purposes.  */
 static int locations_created = 0;
 
@@ -394,6 +396,9 @@ typedef hash_table_t location_table_t;
 typedef struct block
 {
   location_table_t location_table;
+
+  /* Hash table label_name => list( refs_to_patchs).  */
+  hash_table_t forward_refs;
   struct block *next;
 } *block_t;
 
@@ -482,6 +487,7 @@ create_block (void)
 {
   block_t block = MALLOC (block);
   block->location_table = make_hash_table ();
+  block->forward_refs = make_hash_table();
   block->next = block_list;
   block_list = block;
 }
@@ -513,6 +519,37 @@ delete_block (void)
 
   printf ("Bytes freed:%d\n", index);
   
+  /* Move all unresolved forward references to the enclosing scope.  */
+  {
+    hash_table_t ht = block_list->forward_refs;
+    index = 0;
+    
+    JLF( pvalue, *ht, index);
+
+    if(pvalue && !block_list->forward_refs)
+      {
+	/* There are still forward labels, we have reached the
+	   outermost block.  */
+	compile_error( "Undefined label: %s\n", ((Symbol) index)->name);
+      }
+    
+    while(pvalue != NULL)
+      {
+	printf( "Symbol:%s\n", ((Symbol)index)->name);
+	list_t old_refs = gethash( index, block_list->next->forward_refs);
+	list_t refs_to_append = *pvalue;
+
+	list_t element;
+	for(element = refs_to_append; element->next; element = element->next);
+	element->next = old_refs;
+	
+	puthash( index, refs_to_append, block_list->next->forward_refs);
+
+	JLN( pvalue, *ht, index);
+      }
+    JLFA( index, *ht);
+  }
+
   block_list = block_list->next;
 }
 
@@ -558,7 +595,8 @@ void create_stack_variable (Type type, symbol_t name)
   location_t location = stack_location (type, block);
 
   if(gethash (name, block_list->location_table))
-    compile_error ("Error: variable %s shadows a previous definition\n", name->name);
+    compile_error ("Error: a variable %s is already definid in this scope\n",
+		   name->name);
   
   puthash (name, location, block_list->location_table);
 }
@@ -588,6 +626,105 @@ get_location (symbol_t id)
   loc->ref_count ++;
 
   return loc;
+}
+
+
+location_t
+get_label( symbol_t id)
+{
+  location_t loc;
+  
+  for(block_t element = block_list; element; element = element->next)
+    {
+      loc = gethash (id, element->location_table);
+      if(loc)
+	goto label_known;
+    }
+  
+  /* If the label is not yet known, creates a forward label that
+     will be patched later  */
+
+  /* This is a bit hacky, but patching a constant( in possible
+     multiple places) is not handled right now, so this ensure that
+     the patch must be applied only here.  But this makes jumps to
+     forward labels a bit less efficient. */
+
+  low_location_t lloc = any_register_location();
+  void *ref = jite_retain_space_for(jit_movi_ui( corresponding_register[lloc->reg], 0xfefefefe));
+  loc = temporary_location( TYPE( "Label *"), lloc);
+  register_locations[lloc->reg] = loc;
+
+  list_t old_ref_list = gethash( id, block_list->forward_refs);
+  puthash(id, CONS( CONS( ref, lloc->reg), old_ref_list),
+	  block_list->forward_refs);
+  
+  return loc;
+  
+  /* If the label is known, return its address.  */
+
+ label_known:
+  loc->ref_count++;
+  
+  return loc;
+}
+
+void
+backend_compile_goto( location_t loc)
+{
+  assert( loc->low_location->location_type == INDIRECTION
+  	  && loc->low_location->offset == 0);
+  low_location_t lloc = loc->low_location->loc;
+
+  if(lloc->location_type == CONSTANT)
+    jit_jmpi( lloc->value);
+  else if(lloc->location_type == REGISTER)
+    {
+      jit_jmpr( corresponding_register[lloc->reg]);
+    }
+  else
+    {
+      //      assert( lloc->location_type == INDIRECTION
+      //	      && lloc->offset == 0);
+      low_location_t reg = registerize( lloc);
+      jit_jmpr( corresponding_register[reg->reg]);
+      free_data_register( reg->reg);
+    }
+}
+
+/* Insert a label in the current block.  */
+void
+insert_label( symbol_t id)
+{
+  /* Check that label does not already exists.  */
+  for(block_t element = block_list; element; element = element->next)
+    {
+      location_t loc = gethash (id, element->location_table);
+      if(loc)
+	compile_error( "Label %s appears twice in the same scope\n", id->name);
+    }
+
+  
+  list_t *cons_ref_list;
+  if((cons_ref_list = gethash( id, block_list->forward_refs)))
+    {
+      /* We got a forward label attached to this one, Patch all refs to it.  */
+      FOREACH( element, cons_ref_list)
+	{
+	  pair_t cons_ref = CAR( element);
+	  void *ref = CAR( cons_ref);
+	  register_t reg = (register_t) CDR( cons_ref);	  
+
+	  void *current_ip = jit_get_ip().ptr;
+	  jite_occupy_space( ref, jit_movi_ui( corresponding_register[reg],
+					       current_ip));
+      	}
+      remhash( id, block_list->forward_refs);
+    }
+    
+  location_t location = temporary_location( TYPE( "Label *"),
+					    // indirection(0,
+					    constant_value_location( jit_get_ip().vptr));//);
+  puthash (id, location, block_list->location_table);
 }
 
 

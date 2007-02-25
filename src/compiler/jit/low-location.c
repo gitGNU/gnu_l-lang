@@ -355,7 +355,7 @@ move_between_low_locations (low_location_t from, low_location_t to)
 }
 
 /* Be careful and watch if your calls to registerize should set
-   register_location too.  */
+   register_location too, or call free_data_register just after.  */
 low_location_t
 registerize (low_location_t loc)
 {

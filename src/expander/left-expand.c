@@ -156,7 +156,7 @@ left_expand_let( generic_form_t form, expanded_form_t expression)
 
   /* We could also transform the form into
      (seq (let type id) (= type expression)) */ 
-  insert_id(id_form->value, id_type);
+  insert_id(id_form->value, 0, SPECIES_VARIABLE, id_type);
   
   return create_expanded_form (generic_form_symbol (intern ("="),
 						    CONS (exp_let,

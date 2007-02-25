@@ -93,6 +93,7 @@
 
 #include <l/expand.h>
 #include <l/sys/type.h>
+#include <l/sys/panic.h>
 
 #include <assert.h>
 
@@ -246,6 +247,9 @@ expand_define(generic_form_t form)
 
 typedef struct id_info
 {
+  /* Species of the variable.  */
+  Species species;
+  
   /* Type of the variable.  */
   Type type;
 
@@ -284,28 +288,54 @@ remove_block(void)
      on?  */
 }
 
+#include <stdarg.h>
 void
-insert_id(symbol_t symbol, Type type)
+insert_id( symbol_t symbol, int can_shadow, Species species, ...)
 {
-  id_info_t ii = MALLOC(id_info);
-  ii->type = type;
-
-  /* Check if id is already present.  */
-  {
-    block_t cur_block = block_list;
-    id_info_t id_info;
-    while(cur_block)
-      {
-	if((id_info = gethash(symbol, cur_block->id_table)))
-	  {
-	    panic( "ID %s shadows an existing identifier\n", symbol->name);
-	    /* Later, it should be permitted to shadow an id when
-	       told explicitely, but only in a new scope( and id_table).  */
-	  }
-	cur_block = cur_block->next;
-      }
-  puthash(symbol, ii, block_list->id_table);
+  va_list ap;
+  va_start( ap, species);
+  
+  if(can_shadow == 0)
+    {
+      /* Check if id is already present.  */
+      block_t cur_block = block_list;
+      id_info_t id_info;
+      while(cur_block)
+	{
+	  if((id_info = gethash(symbol, cur_block->id_table)))
+	    {
+	      panic( "ID %s shadows an existing identifier\n", symbol->name);
+	      /* Later, it should be permitted to shadow an id when
+		 told explicitely, but only in a new scope( and id_table).  */
+	    }
+	  cur_block = cur_block->next;
+	}
   }
+
+  id_info_t ii = MALLOC(id_info);
+  ii->species = species;
+
+  switch(species)
+    {
+    case SPECIES_VARIABLE:
+      {
+	Type t;
+	t = va_arg( ap, Type);
+	ii->type = t;
+	break;
+      }
+    case SPECIES_LABEL:
+      {
+	
+	break;
+      }
+    default:
+      panic( "Don't know yet how to handle species %d\n", species);
+    }
+  
+  puthash(symbol, ii, block_list->id_table);
+
+  va_end( ap);
 }
 
 
@@ -327,8 +357,25 @@ expand_id(symbol_t symbol)
 
  next:
 
-  return create_expanded_form(id_form(symbol),
-			      id_info->type);
+  switch(id_info->species)
+    {
+    case SPECIES_VARIABLE:
+      return create_expanded_form(id_form(symbol),
+				  id_info->type);
+      
+    case SPECIES_LABEL:
+      /* This is a bit hacky; we can get rid of @get_label when
+	 the compiler can directly reuse the expander's id.  */
+      return create_expanded_form(generic_form_symbol( intern( "@get_label"),
+						       CONS( id_form( symbol),
+							     NULL)),
+				  TYPE( "Label"));
+
+    default:
+      compile_error ( "This species cannot be expanded\n");
+    }
+  
+
 }
 
 
@@ -361,7 +408,7 @@ expand_lambda(generic_form_t form)
       symbol_t id = id_form->value;
       Type type = intern_type(type_form);
 
-      insert_id(id, type);
+      insert_id(id, 0, SPECIES_VARIABLE, type);
     }
   
   expanded_form_t expanded_body = expand(body);
@@ -455,7 +502,7 @@ expand_let(generic_form_t form)
   symbol_t id = id_form->value;
   Type type = intern_type(type_form);
 
-  insert_id(id, type);
+  insert_id(id, 0, SPECIES_VARIABLE, type);
 
   /* ID should be expanded.  */
   return create_expanded_form(generic_form_symbol( SYMBOL( let),
@@ -581,9 +628,77 @@ expand_label (generic_form_t form)
   id_form_t id_form = CAR (form->form_list);
   assert (is_form (id_form, id_form));
 
-  return create_expanded_form (label_form (id_form, expform),
+  insert_id( id_form->value, 1, SPECIES_LABEL);
+
+  return create_expanded_form( generic_form_symbol( SYMBOL( seq),
+						    CONS( create_expanded_form( generic_form_symbol( SYMBOL( label),
+												     CONS( id_form,
+													   NULL)),
+										TYPE( "Void")),
+							  CONS( expform,
+								NULL))),
+			       expform->type);
+}
+
+expanded_form_t
+expand_goto (generic_form_t form)
+{
+  form_t label = CAR( form->form_list);
+
+  expanded_form_t explabel;
+  
+  if(is_form( label, id_form))
+    {
+      explabel = expand( generic_form_symbol( SYMBOL( deref),
+					      CONS( generic_form_symbol( intern( "@get_label"),
+									 CONS( label, NULL)),
+						    NULL)));
+    }
+  else
+    explabel = expand( label);
+
+  assert( explabel->type == TYPE( "Label"));
+  
+  return create_expanded_form (generic_form_symbol( SYMBOL( goto),
+						    CONS( explabel,
+							  NULL)),
 			       TYPE( "Void"));
 }
+
+expanded_form_t
+expand_at_get_label( generic_form_t form)
+{
+  assert( form->form_list && !form->form_list->next);
+  id_form_t sid_form = CAR( form->form_list);
+  Symbol symbol = sid_form->value;
+  
+  block_t cur_block = block_list;
+  id_info_t id_info;
+  while(cur_block)
+    {
+      if((id_info = gethash(symbol, cur_block->id_table)))
+	{
+	  goto next;
+	}
+      cur_block = cur_block->next;
+    }
+  
+  /* THe label was not found, but that's OK, it can be defined later.  */
+  goto end;
+
+ next:
+
+  /*If it was found, it must be a label.  */
+  if( id_info->species != SPECIES_LABEL)
+    panic( "Label was expected, species %d was given", id_info->species);
+
+ end:
+  return create_expanded_form(generic_form_symbol( intern( "@get_label"),
+						   CONS( id_form( symbol),
+							 NULL)),
+			      TYPE( "Label *"));
+}
+
 
 
 /* Function call.  */
@@ -1017,6 +1132,8 @@ init_expand (void)
   define_expander(intern("="), expand_assign);
   define_expander(SYMBOL (struct), expand_struct);
   define_expander(SYMBOL (label), expand_label);
+  define_expander(SYMBOL (goto), expand_goto);
+  define_expander(intern( "@get_label"), expand_at_get_label);
   define_expander(SYMBOL (tuple), expand_tuple);
   define_expander(SYMBOL(ref), expand_ref);
   define_expander(SYMBOL(deref), expand_deref);

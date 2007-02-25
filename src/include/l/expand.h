@@ -74,4 +74,23 @@ typedef form_t (*left_expander_t)(form_t, expanded_form_t);
 void
 define_left_expander(symbol_t symbol, left_expander_t expander);
 
+
+
+/* Creating new ids in a scope.  */
+
+/* New ids local to a scope aren't necessarily variables; they can be
+   macro (like Common Lisp macrolet), or local functions, or local
+   constants...  For now, species are an enum, but this should be
+   changed into a symbol, as it is done for global species.  */
+typedef enum species_t { SPECIES_VARIABLE,
+			 SPECIES_MACRO,
+			 SPECIES_LABEL,
+			 SPECIES_CONSTANT,
+			 SPECIES_FUNCTION } Species;
+
+#include <stdarg.h>
+void
+insert_id( symbol_t symbol, int can_shadow, Species species, ...);
+
+
 #endif
