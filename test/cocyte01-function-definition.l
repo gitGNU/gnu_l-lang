@@ -2,5 +2,6 @@
 Int
 test()
 {
-  3
+  //Also tests the * binary operator.
+  3 * 4
 }

@@ -424,17 +424,27 @@ get_next_token (void)
 	  || result_scanning == AND_TK)
     {
       /* We parsed &&.  */
-      if(result_scanning == AND_TK)
+      switch(result_scanning)
 	{
+	case AND_TK:
 	  current_token.id = intern( "@get_label");
-	}
-      else
-	{
-	  char *name = strndup (start, scanner_pointer - start);
-	  current_token.id = intern (name);
-	  free (name);
-	}
+	  break;
+	  
+	case STAR_TK:
+	  current_token.id = intern( "deref");
+	  break;
 
+	case AMPERSAND_TK:
+	  current_token.id = intern( "ref");
+	  break;
+
+	default:
+	  {
+	    char *name = strndup (start, scanner_pointer - start);
+	    current_token.id = intern (name);
+	    free (name);
+	  }
+	}
       current_token.type = UNARY_RTK;
     }
   else if(result_scanning == STRING_TK)
