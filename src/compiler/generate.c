@@ -417,7 +417,7 @@ compile_ref (generic_form_t form, Type expected_type )
     {
       location_t exp_loc = compile (expression, TYPE( "Void"));
       /* XXX: check that we can get the address of exp_loc.  */
-      free( exp_loc);
+      free_location( exp_loc);
       return void_location();
     }
 
