@@ -503,6 +503,40 @@ make_type (generic_form_t form)
 //MAKE_STATIC_HASH_TABLE (string_to_type_hash);
 static Pvoid_t string_to_type = (Pvoid_t) NULL;
 
+Type
+associate_type_with_type_form( struct type_form *form,
+			       Type type)
+{
+  struct buffer buf;
+    
+  char the_buf[1024];
+
+  buf.start = the_buf;
+  buf.end = the_buf + 1024;
+  buf.current = the_buf;
+
+  bprint_type (&buf, form);
+
+  Type *PValue;
+
+  JSLG (PValue, string_to_type, buf.start);
+
+  if(PValue)
+    {
+      assert (*PValue);
+      return *PValue;
+    }
+ 
+  assert(type->size != 0);
+  JSLI (PValue, string_to_type, buf.start);
+  assert (PValue);
+  assert (*PValue == NULL || *PValue==type); /* XXX: Hack when pre-creating.  */
+  *PValue = type;
+
+  return type;
+}
+
+
 Type intern_type (struct type_form * form)
 {
   struct buffer buf;
@@ -525,8 +559,8 @@ Type intern_type (struct type_form * form)
       return *PValue;
     }
 
-  Type type = make_type (form);
-
+  Type type = make_type( form);
+  
   assert(type->size != 0);
   JSLI (PValue, string_to_type, buf.start);
   assert (PValue);
@@ -535,6 +569,7 @@ Type intern_type (struct type_form * form)
 
   return type;
 }
+
 
 Type TYPE (const char *name)
 {

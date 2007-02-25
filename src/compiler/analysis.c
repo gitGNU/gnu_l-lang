@@ -124,14 +124,14 @@ define_type (symbol_t define_symbol, symbol_t name, type_form_t type_form)
   define_left_accesser (t, derived_left_accesser);
 }
 
+/* A type alias is just another name for the same type.  It is
+   equivalent to C's typedef. */
 void
 define_type_alias (symbol_t define_symbol, symbol_t name,
 		   type_form_t type_form)
 {
-  //XXX: recursive type aliases? No that does not mean anything.
   Type type = intern_type (type_form);
-
-  panic ("TODO\n");
+  associate_type_with_type_form( id_form( name), type);
   // puthash (name, type, type_hash);
 }
 
@@ -421,7 +421,7 @@ init_analysis ()
 
     /* XXX: void is not really the () type : because we allow (int) to
      coerce into void? Or is it? */
-  define_type_string ("Void", -1, -1, NULL); /* Void has no size.  */
-  //  eval_cstring( "typealias Void = Int;");
+  //define_type_string ("Void", -1, -1, NULL); /* Void has no size.  */
+  eval_cstring( "type_alias Void = ();");
 
 }

@@ -1,5 +1,15 @@
 2007-02-25  Matthieu Lemerre  <racin@free.fr>
 
+	Implements type_alias.
+	
+	* src/compiler/type.c (associate_type_with_type_form): New
+	function.
+	* src/compiler/analysis.c (define_type_alias): Now implemented.
+	(init_analysis): Now define Void as an alias to ().
+	* test/cocyte14-types.l: Test type_alias too.
+
+2007-02-25  Matthieu Lemerre  <racin@free.fr>
+
 	* src/parser/parse.c (get_next_token): Reput support for unary
 	operators * and &, broken in last cvs.
 

@@ -3,8 +3,8 @@
 //interverted with an int.  To create an index, you have to do : let i = Index(24);
 type Index = Int;
 
-//Int is just an alias for int; they are the same type.
-//typealias Int = int;
+//Integer is just an alias for Int; they are the same type.
+type_alias Integer = Int;
 
 // Thus let i:Int = 3 is correct.
 
@@ -54,7 +54,7 @@ Index correct (n:Int)
 //  t
 //}
 
-Int square (n:Int)
+Int square (n:Integer)
 {
   n * n
 }
@@ -62,7 +62,8 @@ Int square (n:Int)
 
 Int test ()
 {
-  let p:Int = square (8);
+  let i:Int = 8;
+  let p:Int = square (i);
   p
 }
 
