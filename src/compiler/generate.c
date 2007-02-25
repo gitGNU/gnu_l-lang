@@ -448,7 +448,7 @@ compile_deref (generic_form_t form, Type expected_type)
       location_t exp_loc = compile (expression, TYPE( "Void"));
       if(location_type (exp_loc)->type_type != POINTER_TYPE)
 	compile_error ("Only a pointer can be dereferenced\n");
-      free( exp_loc);
+      free_location( exp_loc);
       return void_location();
     }
 

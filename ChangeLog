@@ -1,5 +1,15 @@
 2007-02-25  Matthieu Lemerre  <racin@free.fr>
 
+	Bug fix when ref/deref was used in void context.
+
+	* src/compiler/generate.c (compile_ref): Change call to free to
+	free_location.
+	(compile_deref): Likewise.
+
+	* test/cocyte20-expected-type.l: New file
+	
+2007-02-25  Matthieu Lemerre  <racin@free.fr>
+
 	Implements type_alias.
 	
 	* src/compiler/type.c (associate_type_with_type_form): New

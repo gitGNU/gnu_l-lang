@@ -10,5 +10,5 @@ Int test ()
 
   *pi; //Void expected type.
 
-
+  3
 }
