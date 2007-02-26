@@ -526,11 +526,11 @@ delete_block (void)
     
     JLF( pvalue, *ht, index);
 
-    if(pvalue && !block_list->forward_refs)
+    if(pvalue && !block_list->next)
       {
-	/* There are still forward labels, we have reached the
+	/* There are still forward labels, but we have reached the
 	   outermost block.  */
-	compile_error( "Undefined label: %s\n", ((Symbol) index)->name);
+	compile_error( "Goto to an undefined label: %s\n", ((Symbol) index)->name);
       }
     
     while(pvalue != NULL)
