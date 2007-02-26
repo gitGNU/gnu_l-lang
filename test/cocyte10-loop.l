@@ -12,8 +12,88 @@ Int fact (n:Int)
   result
 }
 
+Void
+test2 ()
+{
+//
+//  {
+//  let i:Int = 0;
+//  let j:Int = 0;
+//
+//  outer_loop:
+//    loop {
+//      i = i + 1;
+//
+//      loop{
+//	j = j + 1;
+//	if(j == 10)
+//	  {
+//	    if (i == 10)
+//	      break outer_loop;
+//	    break;
+//	  }
+//      }
+//
+//      print( "Not reached\n");
+//    }
+//
+//    print( "i: ", i, "j: ", j, "\n");
+//  }
+
+  {
+  let i:Int = 0;
+    loop
+      {
+	i = i + 1;
+	if (i <= 3)
+	  continue;
+	print( i);
+	break;
+      }
+  }
+  
+  
+  //Expansion of a for (let i = 0, i <= 3, i++) { if (i == 2) continue;}
+
+  {
+  let i:Int = 0;
+    loop
+      {
+	
+	print (i);
+	
+	if (i == 2)
+	  continue;
+	
+	//This defines where the continue; statement will jump; 
+	//default is the beginning of the loop
+	continue:
+	  i = i+1;
+	//  if (not (i <= 3))
+	if (i > 3)
+	  break;
+      }
+  }
+
+ ();
+}
 
 Int test ()
 {
+  //Test continue.
+  let i:Int = 0;
+  loop
+  {
+    i = i+1;
+    if (i <= 10)
+      continue;
+    print ("Hello\n");
+    break;
+  }
+  print (i, "\n");
+
+  test2();
+  print( "\n");
+  
   fact (8) //40320
 }

@@ -1,4 +1,4 @@
-/* expand.c - Handles code expansion.
+/* expand.c - Handles code expansion, and base expanders.
    Copyright (C) 2007 Matthieu Lemerre <racin@free.fr>
 
    This file is part of the L programming language.
@@ -620,24 +620,40 @@ expand_struct (generic_form_t form)
 /* Note: labels serve different purpose in L; but when they are
    regularly expanded, they are a label for a goto.  Other use cases
    (such as naming passed parameters to a function or macros) must
-   extract the label directly.  */
+   extract the label directly.
+
+   Note: labels can have, or not, an argument.
+   */
 expanded_form_t
 expand_label (generic_form_t form)
 {
-  expanded_form_t expform = expand (CAR (form->form_list->next));
+  assert( form->form_list);
   id_form_t id_form = CAR (form->form_list);
   assert (is_form (id_form, id_form));
 
   insert_id( id_form->value, 1, SPECIES_LABEL);
 
-  return create_expanded_form( generic_form_symbol( SYMBOL( seq),
-						    CONS( create_expanded_form( generic_form_symbol( SYMBOL( label),
-												     CONS( id_form,
-													   NULL)),
-										TYPE( "Void")),
-							  CONS( expform,
-								NULL))),
-			       expform->type);
+
+  if(form->form_list->next)
+    {
+      expanded_form_t expform = expand (CAR (form->form_list->next));
+
+      return create_expanded_form( generic_form_symbol( SYMBOL( seq),
+							CONS( create_expanded_form( generic_form_symbol( SYMBOL( label),
+													 CONS( id_form,
+													       NULL)),
+										    TYPE( "Void")),
+							      CONS( expform,
+								    NULL))),
+				   expform->type);
+    }
+  else
+    {
+      return create_expanded_form( generic_form_symbol( SYMBOL( label),
+							CONS( id_form,
+							      NULL)),
+				   TYPE( "Void"));
+    }
 }
 
 expanded_form_t
@@ -1042,40 +1058,6 @@ expand_cast(generic_form_t form)
 }
 
 
-/* Loop conversion.  */
-
-expanded_form_t
-expand_loop(generic_form_t form)
-{
-  form_t expression = CAR(form->form_list);
-  expanded_form_t exp_exp = expand(expression);
-  
-  return create_expanded_form(generic_form_symbol(SYMBOL(loop),
-						  CONS(exp_exp, NULL)),
-			      intern_type(tuple_type_form(NULL)));
-
-}
-
-expanded_form_t
-expand_break(generic_form_t form)
-{
-  return create_expanded_form(generic_form_symbol(SYMBOL(break), NULL),
-			      intern_type(tuple_type_form(NULL)));
-}
-
-expanded_form_t
-expand_continue(generic_form_t form)
-{
-  return create_expanded_form(generic_form_symbol(SYMBOL(continue), NULL),
-			      intern_type(tuple_type_form(NULL)));
-}
-
-
-
-/* expand for, expand while, expand do_while, expand loop.  */
-//form_t expand_while...
-
-
 /* Pointers, referencing and dereferencing.  */
 
 expanded_form_t 
@@ -1125,10 +1107,6 @@ init_expand (void)
   define_expander(SYMBOL(let), expand_let);
   define_expander(SYMBOL(cast), expand_cast);
 
-  define_expander(SYMBOL(loop), expand_loop);
-  define_expander(SYMBOL(break), expand_break);
-  define_expander(SYMBOL(continue), expand_continue);
-
   define_expander(intern("="), expand_assign);
   define_expander(SYMBOL (struct), expand_struct);
   define_expander(SYMBOL (label), expand_label);
@@ -1163,5 +1141,5 @@ input.  */
 
   init_left_expand ();
   init_access ();
-  
+  init_expand_loop();
 }

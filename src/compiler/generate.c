@@ -1040,67 +1040,6 @@ compile_goto( generic_form_t form, Type expected_type)
 
 
 
-/* Loop.  */
-
-typedef struct loop_info
-{
-  symbol_t name;  /* Name of the loop, or NULL if not named.  */
-  backward_label_t start_label; /* Label starting the loop.  */
-  forward_label_t end_label; /* Label ending the loop.  */
-  struct loop_info *next;
-} *loop_info_t;
-
-/* __thread  */ static loop_info_t current_loops;
-
-
-/* XXX: a loop can have a name or not.  */
-location_t
-compile_loop (generic_form_t form, Type expected_type)
-{
-  loop_info_t loop_info = MALLOC (loop_info);
-  loop_info->next = current_loops;
-  current_loops = loop_info;
-
-  loop_info->start_label = make_label_here ();
-  loop_info->end_label = make_forward_label ();
-
-  /* Now compile the interior of the loop.  */
-  location_t location = compile (CAR (form->form_list), TYPE( "Void"));
-
-  /* Check that the inner loop doesn't return a value? */
-  free_location (location);
-
-  goto_label (loop_info->start_label);
-  put_label_here (loop_info->end_label);
-  
-}
-
-location_t
-compile_break (generic_form_t form)
-{
-  goto_label (current_loops->end_label);
-
-  location_t loc = void_location ();
-  location_type (loc) = TYPE ("Void");
-  
-  return loc;
-}
-
-location_t
-compile_continue (generic_form_t form)
-{
-  goto_label (current_loops->start_label);
-
-  location_t loc = void_location ();
-  location_type (loc) = TYPE ("Void");
-  return loc;
-}
-
-/* XXX: the goto construct only allows goto in the forward direction?
-   No that would be another level.  But, it only allows goto to labes
-   in its current block or enclosing block.  */
-
-
 
 
 /* XXX: use a boolean hash.  */
@@ -1377,7 +1316,7 @@ test_function (int i)
 void
 init_generate (void)
 {
-  current_loops = NULL;
+  //  current_loops = NULL;
   //  init_backend ();
 
   DEFINE_GENERIC ("+_Int", compile_add);
@@ -1399,10 +1338,6 @@ init_generate (void)
   DEFINE_GENERIC ("funcall", compile_function_call);
   DEFINE_GENERIC ("struct", compile_struct);
   DEFINE_GENERIC ("tuple", compile_tuple);
-
-  DEFINE_GENERIC ("loop", compile_loop);
-  DEFINE_GENERIC ("break", compile_break);
-  DEFINE_GENERIC ("continue", compile_continue);
 
   DEFINE_GENERIC ("label", compile_label);
   DEFINE_GENERIC ("goto", compile_goto);

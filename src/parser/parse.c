@@ -1232,10 +1232,16 @@ parse_continue (form_t *form)
   assert (current_token.id == intern ("continue"));
   if(next_token.type == COLON_RTK)
     {
-      /* Little hack: if we are used as a label,
-	 then return a simple id label, instead of a continue form.*/
-      *form = id_form( SYMBOL( continue));
-      return EXPRESSION;
+      expect( COLON_RTK);
+      /* if we are used as a label, then return the @set_continue
+	 special form. */
+      *form = generic_form_symbol( intern( "@set_continue"),
+				   NULL);
+
+      form_t newform;
+      statement_or_expression_t se = parse_statement_or_expression( &newform);
+      *form = seq_form (CONS( *form, CONS( newform, NULL)));
+      return se;
     }
   //
   //  }

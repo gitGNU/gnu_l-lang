@@ -1,5 +1,38 @@
 2007-02-26  Matthieu Lemerre  <racin@free.fr>
 
+	Expander now expand loops into jumps to labels; remove support for
+	loops in the compiler.
+	
+	* test/cocyte10-loop.l: Test the use of continue/@set_continue.
+
+	* src/parser/parse.c (parse_continue): If continue is used as a
+	label, then call the @set_continue generic.
+ 
+	* src/parser/form.c (label_form): Now can be called with a NULL
+	second argument.
+
+	* src/expander/expand.c (expand_label): Handle the "label has no
+	argument" case.
+	(expand_loop, expand_break, expand_continue): Removed
+	expanders. Moved to expand-loop.c, with changes to handle loop
+	compilation removal in the compiler.
+	(init_expand): Remove loop, break, continue initialisation.
+	Calls init_expand_loop().
+
+	* src/expander/expand-loop.c: New file.
+
+	* src/expander/Makefile.am (libl_expand_la_SOURCES): Added
+	expand-loop.c
+
+	* src/compiler/generate.c (loop_info): Removed structure.
+	(current_loops): Remove global.
+	(compile_loop, compile_break, compile_continue): Removed
+	functions.
+	(init_generate): Remove initialisation of current_loops, loop,
+	break, continue.
+
+2007-02-26  Matthieu Lemerre  <racin@free.fr>
+
 	Bug fix in detecting gotos to undefined labels.
 	
 	* src/compiler/jit/backend.c (delete_block): Fix use of wrong

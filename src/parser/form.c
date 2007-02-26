@@ -139,9 +139,9 @@ generic_form (id_form_t head, list_t list)
 generic_form_t
 label_form (id_form_t label_, form_t form)
 {
-  //  assert(is_form(label_,symbol_form));
   return generic_form_symbol (SYMBOL (label), CONS (label_,
-						    CONS (form, NULL)));
+						    (form ? CONS (form, NULL)
+						     : NULL)));
 }
 
 generic_form_t
