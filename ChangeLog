@@ -1,5 +1,10 @@
 2007-03-04  Matthieu Lemerre  <racin@free.fr>
 
+	* src/expander/access.c (struct_accesser): Catch a programming
+	error.
+
+2007-03-04  Matthieu Lemerre  <racin@free.fr>
+
 	Foreach support, and basic foreach expansion for list types.
 	
 	* src/std/list.c (make_type_List): Associates the created type to

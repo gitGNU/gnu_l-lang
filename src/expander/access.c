@@ -84,6 +84,8 @@ struct_accesser(Type type_,
   
   symbol_t accessor_symbol = accessor_symbol_form->value;
   offset_type_t offset_type = gethash(accessor_symbol, type->field_hash);
+  if(offset_type == NULL)
+    compile_error( "Unknown accessor: %s\n", accessor_symbol->name);
 
   return create_expanded_form(generic_form_symbol(intern("[]_Struct"),
 						  CONS(accessed,
