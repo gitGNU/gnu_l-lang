@@ -1,4 +1,9 @@
 2007-03-04  Matthieu Lemerre  <racin@free.fr>
+
+	* src/parser/parse.c (get_next_token): Transforms the "\n" into
+	return line characters, etc.
+
+2007-03-04  Matthieu Lemerre  <racin@free.fr>
 	
 	Add parsing of the cast special form.
 

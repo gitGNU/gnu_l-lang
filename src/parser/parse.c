@@ -449,8 +449,44 @@ get_next_token (void)
     }
   else if(result_scanning == STRING_TK)
     {
-      current_token.string = maken_heap_string (start + 1,
-						scanner_pointer - start - 2);
+      /* Transforms the \n into real line return.  */
+      char *newstring = malloc( scanner_pointer - start - 2);
+      char *savnewstring = newstring;
+      for( char *str = start + 1; str < scanner_pointer -1;)
+	{
+	  if(*str == '\\')
+	    {
+	      switch(*(str+1))
+		{
+		case 'n':
+		  *newstring++ = '\n';
+		  break;
+		  
+		case 't':
+		  *newstring++ = '\t';
+		  break;
+
+		case '\\':
+		  *newstring++ = '\\';
+		  break;
+		  
+		case '\'':
+		  *newstring++ = '\'';
+		  break;
+
+		case '\"':
+		  *newstring++ = '\"';
+		  break;
+		}		  
+	      str += 2;
+	      continue;
+	    }
+
+	  *newstring++ = *str++;
+	}
+
+      current_token.string = maken_heap_string (savnewstring,
+						newstring - savnewstring);
       current_token.type = STRING_RTK;
     }
   
