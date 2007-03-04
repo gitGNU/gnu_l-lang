@@ -585,7 +585,29 @@ GC_alloc( size_t size)
 {
   return xmalloc( size);
 }
+
+/* Creator access from L.  */
 
+/* For the moment, we access creators with creator( Int_Form, params)
+   instead of creator( Int_Form)( params).  */
+expanded_form_t
+expand_creator(generic_form_t form)
+{
+  assert( form->form_list);
+  form_t type_form = CAR( form->form_list);
+
+  Type t = intern_type( type_form);
+
+  Creator c = get_creator( t);
+  form_t f = c( t, form->form_list->next);
+  lispify( f);
+  return f;
+  
+}
+
+
+
+
 void
 init_creator ()
 {
@@ -599,4 +621,6 @@ init_creator ()
   define_expander (SYMBOL (Symbol), call_creator_same_name);
 
   DEFINE_C_FUNCTION( GC_alloc, "Void * <- Int");
+  define_expander (SYMBOL (creator), expand_creator);
+
 }

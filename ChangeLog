@@ -1,5 +1,12 @@
 2007-03-04  Matthieu Lemerre  <racin@free.fr>
 
+	Access to creators from L.
+	
+	* src/std/creator.c (expand_creator): New expander.
+	* src/std/creator.c (init_creator): Inited.
+
+2007-03-04  Matthieu Lemerre  <racin@free.fr>
+
 	* src/expander/access.c (struct_accesser): Catch a programming
 	error.
 
