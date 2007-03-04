@@ -508,6 +508,8 @@ static statement_or_expression_t parse_continue (form_t *form);
 
 static statement_or_expression_t parse_while (form_t *form);
 
+static statement_or_expression_t parse_cast (form_t *form);
+
 static statement_or_expression_t parse_foreach( form_t *form);
 
 static statement_or_expression_t parse_type_declaration (form_t *form);
@@ -593,6 +595,7 @@ init_parser (void)
   /* A macro, could be added later.  */
   define_parse (SYMBOL (while), parse_while);
   define_parse (SYMBOL (foreach), parse_foreach);
+  define_parse (SYMBOL (cast), parse_cast);
 
 }
 
@@ -2005,6 +2008,25 @@ parse_while (form_t *form)
   
   return STATEMENT;
 }
+
+static statement_or_expression_t
+parse_cast (form_t *form)
+{
+  expect (ID_RTK);
+  assert (current_token.id == intern ("cast"));
+
+  expect (OPEN_PAREN_RTK);
+  form_t type_form = parse_type_form ();
+  expect( COMMA_RTK);
+  form_t exp = parse_expression();
+  expect (CLOSE_PAREN_RTK);
+
+  *form = generic_form_symbol( SYMBOL( cast),
+			       CONS( type_form,
+				     CONS( exp, NULL)));
+  return EXPRESSION;
+}
+
 
 static statement_or_expression_t
 parse_foreach( form_t *form)

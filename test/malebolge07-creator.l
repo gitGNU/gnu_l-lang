@@ -29,7 +29,7 @@ Index test()
   print( "pp2.x:", pp2.x, "pp2.y:", pp2.y);
 
   //Dereferencing a derived type does not work for now.
-  print( "Ip pointe sur:", *( cast( pointer( Int),
+  print( "Ip pointe sur:", *( cast( Int *,
 				    ip)));
   print( "Ip2 pointe sur:", *( cast( pointer( Int),
 				     ip2)));

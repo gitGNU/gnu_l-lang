@@ -1,4 +1,12 @@
 2007-03-04  Matthieu Lemerre  <racin@free.fr>
+	
+	Add parsing of the cast special form.
+
+	* src/parser/parse.c (parse_cast): New function.
+	* src/parser/parse.c (init_parser): Initialise parse of cast.
+	* test/malebolge07-creator.l (test): Test parsing of Int * in cast
+
+2007-03-04  Matthieu Lemerre  <racin@free.fr>
 
 	Access to creators from L.
 	
