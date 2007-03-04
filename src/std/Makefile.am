@@ -21,7 +21,7 @@
 lib_LTLIBRARIES = libl-std.la
 
 libl_std_la_SOURCES =  init_library.c xml.c list.c output.c print.c hash.c l-form.c \
-		       creator.c
+		       creator.c foreach.c
 
 
 #bin_PROGRAMS = test

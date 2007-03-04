@@ -58,6 +58,7 @@
 #include "../compiler/c-to-l.h"
 #include <assert.h>
 #include <l/sys/panic.h>
+#include <l/expand/foreach.h>
 
 generic_form_t
 list_cons(generic_form_t form)
@@ -261,6 +262,11 @@ print_int_list(pair_t list)
   printf(")\n");
 }
 
+
+form_t
+list_foreach_expander( Symbol loop_name, form_t var_form,
+			expanded_form_t list_form, form_t body);
+
 /* List(Int) is defined as:
 
    type List(Int) = struct { Int car; List(Int) cdr; } *;
@@ -291,6 +297,10 @@ make_type_List (generic_form_t form)
    let first -> second -> rest = list
    is quite elegant.  */
 
+  define_foreach_expander( the_type, list_foreach_expander);
+  
+
+  
   return the_type;
 }
 

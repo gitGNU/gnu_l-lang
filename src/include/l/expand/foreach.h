@@ -1,4 +1,4 @@
-/* init_library.c - 
+/* foreach.h - Foreach and iteration.
    Copyright (C) 2007 Matthieu Lemerre <racin@free.fr>
 
    This file is part of the L programming language.
@@ -18,22 +18,14 @@
    write to the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
    Boston, MA  02110-1301  USA.  */
 
+#ifndef _FOREACH_H
+#define _FOREACH_H
+
+typedef form_t (*Foreach_Expander) ( Symbol loop_name, form_t var_form,
+				     expanded_form_t list_form, form_t body);
 
 void
-init_library ()
-{
-  //  panic( "Changer le nom iteration en foreach, cleanifier un peu le code et les
-  //commentaires, et foreach c'est bon\n");
-  
-  init_creator ();
-  init_foreach();
- 
-  init_list ();
-  init_xml ();
-  init_output ();
-  init_print ();
-  init_hash ();
-  init_l_form ();
- 
-  
-}
+define_foreach_expander (Type type, Foreach_Expander ie);
+
+
+#endif

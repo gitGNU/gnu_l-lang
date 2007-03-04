@@ -1,5 +1,19 @@
 2007-03-04  Matthieu Lemerre  <racin@free.fr>
 
+	Foreach support, and basic foreach expansion for list types.
+	
+	* src/std/list.c (make_type_List): Associates the created type to
+	the foreach expander.
+
+	* src/std/init_library.c (init_library): Initialize foreach.
+
+	* src/std/Makefile.am (libl_std_la_SOURCES): Add foreach.c
+	* src/include/l/expand/foreach.h: New file.
+	* src/std/foreach.c: New file.
+	* test/malebolge09-foreach.l: New test file.
+
+2007-03-04  Matthieu Lemerre  <racin@free.fr>
+
 	Improvements and bugfix in loop expansion.
 	
 	* src/expander/expand-loop.c (create_loop_label): Corrected an
