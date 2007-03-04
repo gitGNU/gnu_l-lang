@@ -54,9 +54,10 @@ create_loop_label( Symbol loop_name, char *additional_string)
   unsigned int add_len = strlen( additional_string);
   
   char *gensym_root = malloc( loop_name_len + add_len + 1);
+  assert( gensym_root);
   memcpy( gensym_root, loop_name->name, loop_name_len);
   memcpy( gensym_root + loop_name_len, additional_string, add_len);
-  gensym_root[loop_name_len + add_len + 1] = 0;
+  gensym_root[loop_name_len + add_len] = 0;
 
   Symbol symb = gensym( gensym_root);
   free( gensym_root);
@@ -123,6 +124,8 @@ expand_loop(generic_form_t form)
 expanded_form_t
 expand_break(generic_form_t form)
 {
+  if (form->form_list)
+    panic( "Loop argument is not supported for now\n");
   return expand( generic_form_symbol( SYMBOL( goto),
 				      CONS( id_form( loop_list->break_label),
 					    NULL)));
@@ -133,6 +136,8 @@ expand_break(generic_form_t form)
 expanded_form_t
 expand_continue( generic_form_t form)
 {
+  if (form->form_list)
+    panic( "Loop argument is not supported for now\n");
   Symbol label_symbol;
 
   struct loop_info *loop = loop_list;
@@ -157,6 +162,9 @@ expand_continue( generic_form_t form)
 expanded_form_t
 expand_at_set_continue( generic_form_t form)
 {
+  /* @set_continue does not take a loop name argument; it sets the
+     label in the current loop.  */
+  assert( !form->form_list);
   struct loop_info *loop = loop_list;
 
   if(loop->continue_label == NULL)

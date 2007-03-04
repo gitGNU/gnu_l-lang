@@ -1,3 +1,13 @@
+2007-03-04  Matthieu Lemerre  <racin@free.fr>
+
+	Improvements and bugfix in loop expansion.
+	
+	* src/expander/expand-loop.c (create_loop_label): Corrected an
+	off-by-one bug.
+	(expand_break): Add a check on the args.
+	(expand_continue): Likewise.
+	(expand_at_set_continue): Likewise.
+
 2007-02-26  Matthieu Lemerre  <racin@free.fr>
 
 	Expander now expand loops into jumps to labels; remove support for
