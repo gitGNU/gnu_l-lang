@@ -1,5 +1,16 @@
 2007-03-05  Matthieu Lemerre  <racin@free.fr>
 
+	Minor corrections in hashes.
+	
+	* src/std/hash.c (hash_left_accesser): Check expression type with
+	the expected type.
+	(hash_left_accesser): Now returns the expression in the right
+	type.
+	(make_type_Hash): Checks that arguments are at least of size of a
+	Pointer.
+
+2007-03-05  Matthieu Lemerre  <racin@free.fr>
+
 	Handles global variables.
 
 	* src/include/l/sys/global.h: New file.

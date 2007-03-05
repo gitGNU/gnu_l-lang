@@ -19,6 +19,7 @@
    Boston, MA  02110-1301  USA.  */
 
 #include <l/sys/hash.h>
+#include <l/sys/panic.h>
 #include "../compiler/c-to-l.h"
 #include <l/type.h>
 #include <assert.h>
@@ -113,11 +114,13 @@ hash_left_accesser(Type type,
   type_form_t to_form = CAR (gf->form_list->next);
 
   Type from_type = intern_type (from_form);
+  Type to_type = intern_type (to_form);
   
   /* Needed only when we will directly create an expanded form.  
      Type to_type = intern_type (to_form); */
 
   type_check (from_type, accessor->type);
+  type_check (to_type, expression->type);
 
   form_t casted_key = generic_form_symbol (SYMBOL (cast),
 					   CONS (generic_form_symbol (SYMBOL (pointer),
@@ -141,7 +144,12 @@ hash_left_accesser(Type type,
 					  CONS (casted_expression,
 						CONS (casted_hash,
 						      NULL))));
-  return all;
+  form_t casted_all = generic_form_symbol( SYMBOL( cast),
+					   CONS( to_form,
+						 CONS( all,
+						       NULL)));
+  
+  return casted_all;
 }
 
 /* Create a type given a type form (Hash From_Type_Form
@@ -149,6 +157,12 @@ hash_left_accesser(Type type,
 Type
 make_type_Hash (generic_form_t form)
 {
+  Type from_type = intern_type( CAR( form->form_list));
+  Type to_type = intern_type( CAR( form->form_list->next));
+  if(from_type->size != sizeof(void*) || to_type->size != sizeof(void*))
+    compile_error( "%s and %s must be of pointer size\n",
+		   asprint_type( from_type), asprint_type( to_type));
+  
   type_form_t defining_type_form = base_type_form (SYMBOL (Hash_Table));
   Base_Type the_type = define_type_type_form (form, -1, -1, defining_type_form);
 
