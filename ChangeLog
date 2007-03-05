@@ -1,3 +1,33 @@
+2007-03-05  Matthieu Lemerre  <racin@free.fr>
+
+	Handles global variables.
+
+	* src/include/l/sys/global.h: New file.
+	* test/cocyte21-globals.l: New test file.
+	
+	* src/parser/parse.c (parse_all): Parse global variables.
+
+	* src/expander/expand.c (expand_define): Handles the definition of
+	global symbols.
+	(block_list): made static to prevent a symbol clash with backend.
+	(expand_id): Now also checks for globals.
+
+	* src/compiler/jit/backend.c (global_location): New function.
+	(create_global_variable): New function.
+	(global_block): Now is the last element of the block list.
+	(block_list): Now is initially global_block. Also made static
+	(generate_function_start): Block list is initially global_block.
+	(generate_function_end): At the end, block list has returned to
+	global_block.
+
+	* src/compiler/generate.c (generate): Compiles global too.
+
+	* src/compiler/analysis.c (init_analysis): Define 'global'
+	definer.
+	(analyze): Let global be compiled.
+	(define_global): New definer.
+	(global_hash): New hash table.
+
 2007-03-04  Matthieu Lemerre  <racin@free.fr>
 
 	* src/parser/parse.c (get_next_token): Transforms the "\n" into
