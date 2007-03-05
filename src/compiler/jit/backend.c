@@ -145,6 +145,17 @@ void_location (void)
   //  return location;
 }
 
+location_t
+global_location( Type type, void *address)
+{
+  assert( locations_created == 0);
+  location_t loc = NEW_LOCATION (type);
+  loc->low_location = indirection(0, constant_value_location( address));
+
+  locations_created--; /* A global location does not count.  */
+  assert( locations_created == 0);
+  return loc;
+}
 
 #define compile_error panic
 
@@ -402,10 +413,14 @@ typedef struct block
   struct block *next;
 } *block_t;
 
-block_t block_list;
+/* The block containing the global values.  */
+static void *global_location_hash_table_;
 
+static struct block global_block_ = {.location_table = &global_location_hash_table_,
+                                     .next = NULL };
+static const block_t global_block = &global_block_;
 
-
+static block_t block_list = &global_block_;
 
 /* Parameters is a tuple form.  */
 void
@@ -415,7 +430,8 @@ generate_function_start (symbol_t name, generic_form_t parameters)
   function_start = allocate_code_space (4096);
   reinit_registers ();
   reinit_stack ();
-  block_list = NULL;
+  assert( block_list == global_block);
+  //  block_list = global_block;
 
   create_block ();
 
@@ -461,7 +477,7 @@ generate_function_end ()
   
   delete_block ();
   
-  assert (block_list == NULL);
+  assert (block_list == global_block);
 
   assert (locations_created == 0);
   
@@ -599,6 +615,15 @@ void create_stack_variable (Type type, symbol_t name)
 		   name->name);
   
   puthash (name, location, block_list->location_table);
+}
+
+void create_global_variable( Type type, symbol_t name)
+{
+  void *address = malloc( type->size);
+  location_t location = global_location( type, address);
+  assert( global_block == block_list);
+  puthash (name, location, global_block->location_table);
+  
 }
 
 /* Retrieve the location associated to symbol ID.  */

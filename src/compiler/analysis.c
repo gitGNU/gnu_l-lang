@@ -57,6 +57,7 @@
 #include "analysis.h"
 
 #include <l/sys/panic.h>
+#include <l/sys/global.h>
 #include <l/access.h>
 #include <l/creator.h>
 
@@ -103,6 +104,9 @@
 		  service (pour du CORBA)
    */
 MAKE_STATIC_HASH_TABLE (definer_hash);
+
+/* A hash Symbol -> Global.  */
+MAKE_STATIC_HASH_TABLE (global_hash);
 extern hash_table_t function_hash;
 extern hash_table_t generic_hash;
 
@@ -205,7 +209,22 @@ void
 define_constant(symbol_t define_symbol, symbol_t name,
 		form_t value)
 {
+  panic( "TODO\n");
 
+}
+
+void
+define_global( symbol_t define_symbol, symbol_t name,
+	       form_t value)
+{
+  Type type = intern_type( value);
+  global_t glob = MALLOC( global);
+  glob->global_type = NORMAL_GLOBAL;
+  glob->type = type;
+  glob->handling_backend = NULL;
+  glob->for_backend = NULL;
+
+  puthash( name, glob, global_hash);
 }
 
 
@@ -335,7 +354,8 @@ analyze (list_t form_list)
 	      name = ((id_form_t) (CAR (gform->form_list->next)))->value;
 	      form_t subform = CAR (gform->form_list->next->next);
 	      
-	      if(type_defined == SYMBOL (function))
+	      if(type_defined == SYMBOL (function)
+		 || type_defined == SYMBOL( global))
 		{
 		  *result_ptr = CONS (form, NULL);
 		  result_ptr = &((*result_ptr)->next);
@@ -404,6 +424,7 @@ void
 init_analysis ()
 {
   DEFINE_DEFINER ("function", define_function);
+  DEFINE_DEFINER ("global", define_global);
   DEFINE_DEFINER ("type", define_type);
   DEFINE_DEFINER ("type_alias", define_type_alias);
   DEFINE_DEFINER ("generic", define_generic);

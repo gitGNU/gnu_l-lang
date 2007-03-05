@@ -227,17 +227,28 @@ expanded_form_t
 expand_define(generic_form_t form)
 {
   symbol_form_t function = CAR(form->form_list);
-  assert(function->value == SYMBOL(function));
+  if(function->value == SYMBOL(function))
+    {
+      symbol_form_t name_form = CAR(form->form_list->next);
+      symbol_t name = name_form->value;
+      
+      form_t lambda_form = CAR(form->form_list->next->next);
+      
+      
+      return create_expanded_form(define_form(SYMBOL(function),
+					      name, expand(lambda_form)),
+				  NULL);
+    }
+    assert( function->value == SYMBOL( global));
+    symbol_form_t name_form = CAR(form->form_list->next);
+    symbol_t name = name_form->value;
 
-  symbol_form_t name_form = CAR(form->form_list->next);
-  symbol_t name = name_form->value;
-
-  form_t lambda_form = CAR(form->form_list->next->next);
-
-
-  return create_expanded_form(define_form(SYMBOL(function),
-					  name, expand(lambda_form)),
-			      NULL);
+    form_t type_form = CAR( form->form_list->next->next);
+    return create_expanded_form(define_form(SYMBOL(global),
+					    name, type_form),
+				NULL);
+    
+      
   //  return create_expanded_form(form, NULL);
   /* XXX: replace the body form by the expanded body form.  *///NO!!
 }
@@ -268,7 +279,7 @@ typedef struct block
   struct block *next;
 } *block_t;
 
-block_t block_list = NULL;
+static block_t block_list = NULL;
 
 static void
 new_block(void)
@@ -339,6 +350,7 @@ insert_id( symbol_t symbol, int can_shadow, Species species, ...)
 }
 
 
+#include <l/sys/global.h>
 
 expanded_form_t
 expand_id(symbol_t symbol)
@@ -353,6 +365,18 @@ expand_id(symbol_t symbol)
 	}
       cur_block = cur_block->next;
     }
+
+  /* Not a local id.  Maybe it is global.  */
+  global_t glob = gethash( symbol, global_hash);
+
+  if(glob)
+    {
+      /* XXX: we could tell the expander this is a global.  */
+      return create_expanded_form( id_form( symbol),
+				   glob->type);
+    }
+    
+  /* This is an error.  */
   panic("Id %s was not found\n", symbol->name);
 
  next:

@@ -745,6 +745,8 @@ parse_label_expression (form_t *form);
 static form_t
 parse_function_definition ();
 
+static form_t
+parse_variable_declaration ();
 
 static void
 parse_initialize (void)
@@ -766,6 +768,21 @@ parse_all ()
       if(next_token.id == SYMBOL (type))
 	{
 	  parse_type_declaration (&form);
+	  return form;
+	}
+      else if(next_token.id == SYMBOL(global))
+	{
+	  expect( ID_RTK);
+
+	  expect( ID_RTK);
+	  symbol_t symbol = current_token.id;
+	  expect( COLON_RTK);
+	  type_form_t type_form = parse_type_form();
+
+	  form = define_form( SYMBOL( global),
+				      symbol,
+				      type_form);
+	  expect( SEMICOLON_RTK);
 	  return form;
 	}
       else if(next_token.id == SYMBOL (type_alias))
