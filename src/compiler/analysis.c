@@ -168,6 +168,9 @@ define_function (symbol_t define_symbol, symbol_t name,
 
   puthash (name, fn, function_hash);
 
+  /* A function also declares a global variable.  */
+  define_global( NULL, name, function_type);
+  
 //  generic_t cfcuf = MALLOC (generic);
 //  cfcuf->compile = compile_function_call;//_unknown_function;
 //  puthash (name, cfcuf, generic_hash);

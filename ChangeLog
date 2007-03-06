@@ -1,3 +1,29 @@
+2007-03-07  Matthieu Lemerre  <racin@free.fr>
+
+	Handles calling of pointer to functions.
+	
+	* test/cocyte22-funcall.l: New test file.
+	 
+	* src/expander/expand.c (expand_function): The first argument to
+	funcall is know the global variable funcalled, not just a symbol.
+	(expand_funcall): New expander.
+	(init_expand): Initialise expand_funcall.
+
+	* src/compiler/jit/backend.c (global_location): Removes some
+	checks: now we have to create a global (the function itself) while
+	creating a function. This is a workaround to handle recursive
+	functions.
+	(generate_function_start): Now returns the function address.
+	(create_global_variable_at): New function.
+	(function_call): Handles the call to register case.
+
+	* src/compiler/generate.c (compile_function): Now creates a global
+	variable.
+	(compile_function_call): get rid of dependency on function_t.
+
+	* src/compiler/analysis.c (define_function): A function now
+	declares also a global variable.
+ 
 2007-03-05  Matthieu Lemerre  <racin@free.fr>
 
 	Minor corrections in hashes.

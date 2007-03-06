@@ -22,3 +22,7 @@ Int test ()
   fact (8);
   fact2 (8)
 }
+
+
+//We should test when test calls fact3, and fact3 is defined below.
+//But this won't work until we can patch access to global variables.

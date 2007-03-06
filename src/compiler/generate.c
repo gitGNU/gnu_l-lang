@@ -221,7 +221,9 @@ type_check (Type to, Type from)
 
 #include <l/expand.h>
 
-void
+#include <l/sys/global.h>
+
+void *
 compile_function (symbol_t define_symbol, symbol_t name, expanded_form_t expform)
 {
   generic_form_t form = expform->return_form;
@@ -231,8 +233,11 @@ compile_function (symbol_t define_symbol, symbol_t name, expanded_form_t expform
   generic_form_t parameters = CAR (form->form_list->next);
   generic_form_t body = CAR (form->form_list->next->next);
   
-  generate_function_start (name, parameters);
-
+  void *fun_address = generate_function_start (name, parameters);
+  
+  global_t glob = gethash( name, global_hash);
+  create_global_variable_at( glob->type, name,
+  			     fun_address);
   // XXX: if void, calls compile_branche_discard_results instead.
   // */
   Type return_type = intern_type( return_type_form);
@@ -686,38 +691,27 @@ compile_function_call (generic_form_t form)
 {
   assert(form->head == SYMBOL(funcall));
 
-  expanded_form_t expanded_symbol_form = CAR(form->form_list);
-  symbol_form_t symbol_form = expanded_symbol_form->return_form;
-  symbol_t head = symbol_form->value;
+  expanded_form_t expanded_function_form = CAR(form->form_list);
+
   list_t args = form->form_list->next;
-	 
-
-  function_t function = gethash (head, function_hash);
-
-  assert (function); /* For now, the function has to be already defined.
-			
-			We can't determine the type of the return
-			anyway for now; so we will have to do a short
-			"generic analysis" which gives the type of the
-			generic, and when the function isn't compiled
-			yet, mark it as to be compiled, and when
-			compiled backpatch every calls to it. */
   
-  assert (function->type->type_type == FUNCTION_TYPE);
-
-  location_t locations[function->nb_arguments];
+  assert (expanded_function_form->type->type_type == FUNCTION_TYPE);
+  Function_Type function_type = expanded_function_form->type;
+  unsigned int nb_arguments = function_type->parameters_type->length;
+  
+  location_t locations[nb_arguments];
 
   {
     int i = 0;
     FOREACH (element, args)
       {
-	if(i >= function->nb_arguments)
+	if(i >= nb_arguments)
 	  {
 	    compile_error ( "Too many arguments given\n");
 	  }
 	
 	locations[i] = compile (CAR (element),
-				function->type->parameters_type->fields[i]);
+				function_type->parameters_type->fields[i]);
 	i++;
       }
   }
@@ -725,21 +719,21 @@ compile_function_call (generic_form_t form)
 
   Type *fields;
 
-  assert (function->type->type_type == FUNCTION_TYPE);
-  assert (function->type->parameters_type->type_type == TUPLE_TYPE);
+  assert (function_type->type_type == FUNCTION_TYPE);
+  assert (function_type->parameters_type->type_type == TUPLE_TYPE);
   
-  fields = ((Tuple_Type) ((Function_Type) function->type)->parameters_type)->fields;
+  fields = ((Tuple_Type) ((Function_Type) function_type)->parameters_type)->fields;
       
   
-    for(int i = 0; i < function->nb_arguments; i++)
+    for(int i = 0; i < nb_arguments; i++)
     {
       char *type_loc = asprint_type (location_type (locations[i]));
       char *type_fields = asprint_type (fields[i]);
 
       if(location_type (locations[i]) != fields[i])
-	compile_error ("Type mismatch in funcall %s : passing a %s instead of a %s "
+	compile_error ("Type mismatch in funcall %s: passing a %s instead of a %s "
 		       "for argument number %d\n",
-		       form->head->name,
+		       lispify( expanded_function_form),
 		       type_loc,
 		       type_fields,
 		       //asprint_type (((Tuple_Type) ((Function_Type) function->type)->parameters_type)->fields[i]),
@@ -754,16 +748,20 @@ compile_function_call (generic_form_t form)
      When is coercion should be left undefined, because coercion
      should have no side effects, so can be performed either here or
      when each individual argument of the called function is compiled.  */
-     
-  location_t loc = function_call (function, function->nb_arguments, locations);
 
+    location_t function_loc = compile( expanded_function_form, function_type);
+    
+  location_t loc = function_call (function_loc,
+				  nb_arguments, locations);
+
+  free_location( function_loc);
   /* Free the passed parameters.  */
-  for(int i = 0; i < function->nb_arguments; i++)
+  for(int i = 0; i < nb_arguments; i++)
     {
       free_location (locations[i]);
     }
   
-  location_type (loc) = ((Function_Type) function->type)->return_type;
+  location_type (loc) = function_type->return_type;
 
   return loc;
   

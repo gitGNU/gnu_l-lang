@@ -117,7 +117,7 @@ compound_location (unsigned int len, location_t *locations);
 
 
 /* Begin generating a function.  PARAMETERS is a tuple.  */
-void
+void *
 generate_function_start (symbol_t name, generic_form_t parameters);
 
 /* End function generation.  */
@@ -138,7 +138,7 @@ return_function_value (location_t location);
 
 
 location_t
-function_call (function_t function, unsigned int loc_size,
+function_call (location_t loc, unsigned int loc_size,
 	       location_t *loc_array);
 
 

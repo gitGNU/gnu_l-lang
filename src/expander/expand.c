@@ -100,6 +100,9 @@
 #define panic(format, ...)						\
   do {fprintf (stderr, "error: " format, ## __VA_ARGS__); asm("int $3"); exit (1); } while(0)
 
+/* This function should also be the only one that does type checking,
+   and more generally to construct expanded forms.  */
+
 
 /* Main functions and helper.  */
 
@@ -798,12 +801,56 @@ expand_function(generic_form_t form)
     *expanded_form_list_ptr = NULL;
   }
 
-  expanded_form_list = CONS(create_expanded_form(symbol_form(function_name),
-						 intern_type(base_type_form(SYMBOL(Symbol)))),
+  expanded_form_list = CONS(//create_expanded_form(id_form(function_name),
+			    //						 intern_type(base_type_form(SYMBOL(Symbol)))),
+			    expand_id( function_name),
 			    expanded_form_list);
 
   return create_expanded_form(generic_form_symbol(SYMBOL(funcall), expanded_form_list),
 			      return_type);
+}
+
+/* Expands funcall( expr, args).  No reorganisation here.  */
+expanded_form_t
+expand_funcall( generic_form_t form)
+{
+  assert( form->form_list);
+  expanded_form_t fun_form = expand( CAR( form->form_list));
+  if(fun_form->type->type_type != FUNCTION_TYPE)
+    {
+      compile_error( "%s is not a function\n", asprint_type( fun_form->type));
+    }
+
+  list_t expform_list;
+  {
+    int i = 0;
+    Tuple_Type parameters = ((Function_Type) fun_form->type)->parameters_type;
+
+    list_t *expform_list_ptr = &expform_list;
+    
+    
+    FOREACH( element, form->form_list->next)
+      {
+	if(i >= parameters->length)
+	  compile_error( "Error: too much parameters given\n");
+
+	expanded_form_t expsubform = expand( CAR( element));
+	type_check( expsubform->type, parameters->fields[i]);
+	
+	(*expform_list_ptr) = CONS( expsubform, NULL);
+	expform_list_ptr = &((*expform_list_ptr)->next);
+	i++;
+      }
+
+    if(i != parameters->length)
+      compile_error( "Error: too few parameters given\n");
+
+    *expform_list_ptr = NULL;
+  }
+  return create_expanded_form( generic_form_symbol( SYMBOL( funcall),
+						    CONS( fun_form,
+							  expform_list)),
+			       ((Function_Type) fun_form->type)->return_type);
 }
 
 //expanded_form_t
@@ -1157,6 +1204,7 @@ init_expand (void)
   define_expander(intern("unary_minus"), expand_unary_operator);
   
   define_expander(SYMBOL(let), expand_let);
+   define_expander(SYMBOL(funcall), expand_funcall);
   //  define_expander(SYMBOL(toto), expand_function);
   /* After we have expanded everything, for now we should strip the
 expand info so that the cocyte compiler has a normal tree. In the

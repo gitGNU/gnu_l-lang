@@ -148,12 +148,12 @@ void_location (void)
 location_t
 global_location( Type type, void *address)
 {
-  assert( locations_created == 0);
+  //  assert( locations_created == 0);
   location_t loc = NEW_LOCATION (type);
   loc->low_location = indirection(0, constant_value_location( address));
 
   locations_created--; /* A global location does not count.  */
-  assert( locations_created == 0);
+  //  assert( locations_created == 0);
   return loc;
 }
 
@@ -423,7 +423,7 @@ static const block_t global_block = &global_block_;
 static block_t block_list = &global_block_;
 
 /* Parameters is a tuple form.  */
-void
+void *
 generate_function_start (symbol_t name, generic_form_t parameters)
 {
   /* XXX: allocate space for the code.  */
@@ -466,6 +466,7 @@ generate_function_start (symbol_t name, generic_form_t parameters)
   assert (current_function);
   current_function->address = function_start;
   //  current_function->name = name;
+  return function_start;
 }
 
 //int min_stack_offset = JITE_OFFSET_FROM_LOCAL_ARG;
@@ -617,13 +618,16 @@ void create_stack_variable (Type type, symbol_t name)
   puthash (name, location, block_list->location_table);
 }
 
+void create_global_variable_at( Type type, symbol_t name, void *address)
+{
+  location_t location = global_location( type, address);
+  //  assert( global_block == block_list);
+  puthash (name, location, global_block->location_table);
+}
+
 void create_global_variable( Type type, symbol_t name)
 {
-  void *address = malloc( type->size);
-  location_t location = global_location( type, address);
-  assert( global_block == block_list);
-  puthash (name, location, global_block->location_table);
-  
+  create_global_variable_at( type, name, malloc( type->size));
 }
 
 /* Retrieve the location associated to symbol ID.  */
@@ -774,23 +778,42 @@ return_function_value (location_t location)
 }
 
 location_t
-function_call (function_t function, unsigned int loc_size,
+function_call (location_t funloc/*function_t function*/, unsigned int loc_size,
 	       location_t *loc_array)
 {
   /* XXX: Save the used registers that can be destroyed by the
      function call (R0, R1, R2).  */
+  Function_Type function_type = funloc->type;
+  assert( function_type->type_type == FUNCTION_TYPE);
+  int nb_arguments = function_type->parameters_type->length;
   
-  assert (loc_size == function->nb_arguments);
-
-  jit_prepare_i (function->nb_arguments);
-
+  assert (loc_size == nb_arguments);
+  
   /* XXX: use these registers too.  */
-  
   assert (register_locations[REG_R0] == NULL);
   assert (register_locations[REG_R1] == NULL);
   assert (register_locations[REG_R2] == NULL);
+
+  assert( funloc->low_location->location_type == INDIRECTION);
+  if(funloc->low_location->loc->location_type != CONSTANT)
+    {
+      if(funloc->low_location->loc->location_type != REGISTER)
+	{
+	  low_location_t reg = registerize( funloc->low_location->loc);
+	  jit_movr_ui( corresponding_register[REG_R0],
+		       corresponding_register[reg->reg]);
+	  free_data_register( reg->reg);
+	}
+      else
+	{
+	  jit_movr_ui( corresponding_register[REG_R0],
+		       corresponding_register[funloc->low_location->loc->reg]);
+	}
+    }
   
-  for(int i = function->nb_arguments - 1; i >= 0; i--)
+  jit_prepare_i (nb_arguments);
+
+  for(int i = nb_arguments - 1; i >= 0; i--)
     {
       low_location_t from = loc_array[i]->low_location;
 
@@ -813,12 +836,20 @@ function_call (function_t function, unsigned int loc_size,
   /* Get the pointer address.  */
   void *ref = jit_get_ip ().vptr;
 
-  jit_finish (function->address);
+  if( funloc->low_location->location_type == INDIRECTION
+      && funloc->low_location->loc->location_type == CONSTANT)
+    {
+      jit_finish (funloc->low_location->loc->value);
 
-  record_symbol_needed (current_function->name, ref, function->name);
-  
-  /* XXX: if not yet compiled, put it in the to patch list.  */
-  low_location_t reg = any_register_location ();
+      //record_symbol_needed (current_function->name, ref, function->name);
+    }
+  else
+    {
+      jit_finishr( corresponding_register[REG_R0]);
+    }
+      
+      /* XXX: if not yet compiled, put it in the to patch list.  */
+      low_location_t reg = any_register_location ();
 
   jit_retval (corresponding_register[reg->reg]);
 
