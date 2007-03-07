@@ -26,6 +26,7 @@
 #include "backend.h"
 #include "../parser/form.h"
 #include <l/expand.h>
+#include <l/sys/global.h>
 
 extern hash_table_t generic_hash;
 extern hash_table_t function_hash;
@@ -46,22 +47,18 @@ compile_function_call (generic_form_t form);
 
 #define DEFINE_C_FUNCTION2(name1_, name2_, type_string)			\
   do {									\
-    									\
-    function_t fn = MALLOC (function);					\
-    									\
-    fn->address = name2_;						\
-    fn->type = intern_type (string_to_type_form (type_string));		\
-    fn->has_default_value = 0;						\
-    fn->nb_arguments = (fn->type->parameters_type->type_type		\
-			== TUPLE_TYPE ?					\
-			((Tuple_Type) fn->type->parameters_type)->length \
-			: 1);						\
-    symbol_t c_function_name = intern (name1_);				\
-    fn->name = c_function_name;						\
 									\
-    puthash (c_function_name, fn, function_hash);			\
+    global_t global = MALLOC( global);					\
+    global->global_type = NORMAL_GLOBAL;				\
+    global->type = intern_type( string_to_type_form( type_string));	\
+    global->handling_backend = NULL;					\
+    global->for_backend = name2_;					\
+    symbol_t symbol = intern( name1_);					\
+    puthash( symbol, global, global_hash);				\
+    create_global_variable_at( global->type, symbol, name2_);		\
+									\
     /*DEFINE_GENERIC_SYMBOL (c_function_name, compile_function_call); */\
-    define_expander(c_function_name, expand_function);			\
+    define_expander(symbol, expand_function);				\
   } while(0)
 
 #define DEFINE_C_FUNCTION(name_, type_string)	\

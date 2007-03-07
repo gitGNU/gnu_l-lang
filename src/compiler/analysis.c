@@ -107,7 +107,6 @@ MAKE_STATIC_HASH_TABLE (definer_hash);
 
 /* A hash Symbol -> Global.  */
 MAKE_STATIC_HASH_TABLE (global_hash);
-extern hash_table_t function_hash;
 extern hash_table_t generic_hash;
 
 typedef void (*definer_t)(symbol_t, symbol_t, form_t);
@@ -159,14 +158,6 @@ define_function (symbol_t define_symbol, symbol_t name,
 
   
   form_t function_type = function_type_form (return_type, parameters);
-  
-  function_t fn = MALLOC (function);
-  fn->name = name;
-  fn->type = intern_type (function_type); 
-  fn->has_default_value = 0;
-  fn->nb_arguments = length (parameters->form_list);
-
-  puthash (name, fn, function_hash);
 
   /* A function also declares a global variable.  */
   define_global( NULL, name, function_type);
@@ -322,10 +313,7 @@ define_generic (symbol_t define_symbol, symbol_t name,
   
   generate (df);
 
-  function_t function = gethash (new_symbol, function_hash);
-  
-
-  DEFINE_GENERIC_SYMBOL (name, function->address);
+  //  DEFINE_GENERIC_SYMBOL (name, function->address);
 
   
   

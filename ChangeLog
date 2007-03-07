@@ -1,5 +1,26 @@
 2007-03-07  Matthieu Lemerre  <racin@free.fr>
 
+	DEFINE_FUNCTION use globals instead of functions (and works
+	again); remove use of function_t.
+
+	* src/objects/function.h (struct function): Removed definition and
+	general file cleanup.
+	
+	* src/compiler/analysis.c (function_type_form): Remove use of
+	functions.
+	(generate, define_generic): Likewise.
+	* src/compiler/generate.c (compile_function): Likewise.
+	* src/compiler/jit/backend.c (generate_function_start)
+	(generate_function_end): Likewise.
+	* src/expander/expand.c (expand_function): Likewise.
+	
+	(compile_function): Update the global.
+
+	* src/main.c (eval_file): Use globals instead of functions.
+	* src/compiler/c-to-l.h (DEFINE_C_FUNCTION2): Likewise.
+
+2007-03-07  Matthieu Lemerre  <racin@free.fr>
+
 	Handles calling of pointer to functions.
 	
 	* test/cocyte22-funcall.l: New test file.

@@ -121,7 +121,7 @@ void *
 generate_function_start (symbol_t name, generic_form_t parameters);
 
 /* End function generation.  */
-void *
+void
 generate_function_end (void);
 
 /* Beginning of a new block.  */

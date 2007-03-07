@@ -109,7 +109,6 @@ TODO:
 
 MAKE_STATIC_HASH_TABLE (generic_hash);
 //MAKE_STATIC_HASH_TABLE (type_hash);
-MAKE_STATIC_HASH_TABLE (function_hash);
 
 //XXX: generics should be called "language constructs"
 
@@ -238,6 +237,7 @@ compile_function (symbol_t define_symbol, symbol_t name, expanded_form_t expform
   global_t glob = gethash( name, global_hash);
   create_global_variable_at( glob->type, name,
   			     fun_address);
+  glob->for_backend = fun_address;
   // XXX: if void, calls compile_branche_discard_results instead.
   // */
   Type return_type = intern_type( return_type_form);
@@ -253,16 +253,7 @@ compile_function (symbol_t define_symbol, symbol_t name, expanded_form_t expform
   //  form_t type = function_type_form (return_type, parameters);
   form_t type = return_type_form;
   
-  function_t fn = generate_function_end ();
-  //  fn->type = intern_type (type);
-  //  fn->has_default_value = 0;
-
-  //  fn->nb_arguments = length (parameters->form_alist);
-
-  /* XXX: put either the adress of the function, or the form? */
-  // fn
-
-  puthash (name, fn, function_hash);
+  generate_function_end ();
 
   DEFINE_GENERIC_SYMBOL (name, compile_function_call);
 }

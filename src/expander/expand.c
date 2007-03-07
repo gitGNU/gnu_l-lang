@@ -769,11 +769,11 @@ expand_function(generic_form_t form)
   
 
   /* XXX: retrieve function name from function.  */
-  function_t function = gethash (head, function_hash);
-  assert(function);
-
+  global_t global = gethash( head, global_hash);
+  
   symbol_t function_name = head;
-  Function_Type function_type = function->type;
+//  Function_Type function_type = function->type;
+  Function_Type function_type = global->type;
 
   assert(function_type->type_type == FUNCTION_TYPE);
 

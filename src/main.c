@@ -33,8 +33,7 @@
 //typedef void (*void_to_void_t)(void);
 typedef int (*void_to_int_t)(void);
 
-extern hash_table_t function_hash;
-
+#include <l/global.h>
 int
 main (int argc, char **argv)
 {
@@ -46,13 +45,8 @@ main (int argc, char **argv)
 
   eval_file (argv[1]);
 
-  function_t test_function = gethash (SYMBOL (test), function_hash);//symbol_value (SYMBOL (test));
-
-  function_t toto_function = gethash (SYMBOL (fact), function_hash);
-  //  function_t odd_function = symbol_value (SYMBOL (odd));
-
-  assert (test_function);
-  void_to_int_t test = test_function->address;
+  void_to_int_t test = get_global_address( SYMBOL( test));
+  assert( test);
 
   printf ("ICI: test =%p \n", test);
   int result = test ();

@@ -400,8 +400,6 @@ void *function_start;
 
 void *allocate_stack_space_ptr;
 
-function_t current_function;
-
 typedef hash_table_t location_table_t;
 
 typedef struct block
@@ -414,7 +412,7 @@ typedef struct block
 } *block_t;
 
 /* The block containing the global values.  */
-static void *global_location_hash_table_;
+static void *global_location_hash_table_ = NULL;
 
 static struct block global_block_ = {.location_table = &global_location_hash_table_,
                                      .next = NULL };
@@ -461,17 +459,12 @@ generate_function_start (symbol_t name, generic_form_t parameters)
 								 0xe0e0e0e0));
   /* XXX: init parameters.  */
 
-
-  current_function = gethash (name, function_hash);//MALLOC (function);
-  assert (current_function);
-  current_function->address = function_start;
-  //  current_function->name = name;
   return function_start;
 }
 
 //int min_stack_offset = JITE_OFFSET_FROM_LOCAL_ARG;
 
-void *
+void 
 generate_function_end ()
 {
   join_execution_path_branch ();
@@ -493,10 +486,9 @@ generate_function_end ()
   finish_code (function_start);
 
   /* Patches all calls to redefine the function call.  */
-  link_symbol_address (current_function->name, function_start);
+  //link_symbol_address (current_function->name, function_start);
   
-  
-  return current_function;
+  return;
 }
 
 void

@@ -18,8 +18,8 @@
    write to the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
    Boston, MA  02110-1301  USA.  */
 
-#ifndef _GLOBAL_H
-#define _GLOBAL_H
+#ifndef _SYS_GLOBAL_H
+#define _SYS_GLOBAL_H
 
 /* A hash Symbol -> Global.  */
 extern hash_table_t global_hash;
@@ -47,6 +47,5 @@ typedef struct global
   /* Backend-specific info.  */
   void *for_backend;
 } *global_t;
-
 
 #endif
