@@ -3,6 +3,8 @@
 	DEFINE_FUNCTION use globals instead of functions (and works
 	again); remove use of function_t.
 
+	* src/include/global.h: New file.
+	
 	* src/objects/function.h (struct function): Removed definition and
 	general file cleanup.
 	
