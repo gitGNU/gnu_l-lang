@@ -1145,19 +1145,23 @@ compile_if (generic_form_t form, Type expected_type)
 
   put_label_here (bes->true_jump);
 
-  /* XXX: on devrait peut etre faire start_then; start else; end else;
-  ca serait bien pour la generation de code C et meme pour le jit, on
-  ferait des trucs differents si il y a un else ou non.  */
-
-  create_execution_path_branch ();
-  /* XXX: il faut spiller de la meme maniere dans les deux branches.  */  
+  /* If needed, this is where the result will be saved.  */
+  location_t if_loc;
+  if(else_form)
+    {
+      if(expected_type != TYPE( "Void"))
+	if_loc = create_anonymous_stack_variable( expected_type);
+      else if_loc = void_location();
+    }
+  
   location_t then_loc = compile (then_form, expected_type);
-  join_execution_path_branch ();
   
   if(else_form)
     {
-      location_t unified_loc = make_unifiable_location (then_loc);
-      /* Make then_loc unifiable.  */
+      if(if_loc->type != TYPE( "Void"))
+	move_between_locations( then_loc, if_loc);
+      free_location( then_loc);
+
       forward_label_t end_label = make_forward_label ();
       goto_label (end_label);
       
@@ -1166,10 +1170,12 @@ compile_if (generic_form_t form, Type expected_type)
 
       /* Unify the locations.  */
       type_check( then_loc->type, else_loc->type);
-      unify_location (unified_loc, else_loc);
+      if(if_loc->type != TYPE( "Void"))
+	move_between_locations( else_loc, if_loc);
+      free_location( else_loc);
+      
       put_label_here (end_label);
-
-      return (unified_loc);
+      return if_loc;
     }
   else
     {
@@ -1364,6 +1370,7 @@ init_generate (void)
   /* XXX: */
 
   DEFINE_C_FUNCTION (test_function, "Int<-Int");
+  DEFINE_C_FUNCTION (exit, "Void<-Int");
 
   /* XXX: the type Form is defined twice */
   //  extern Type TYPE (Form);

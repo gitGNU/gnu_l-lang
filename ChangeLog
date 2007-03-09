@@ -1,3 +1,22 @@
+2007-03-09  Matthieu Lemerre  <racin@free.fr>
+
+	Stop using the path_info structure in the compiler, which is
+	unneeded thanks to the expected type parameter.
+	
+	* src/compiler/jit/backend.c (struct path_info) removed structure.
+	(path_info_list): Removed global.
+	(registers_spilled, spilled_locations): New globals (were inside
+	path_info before).  Changed all functions to use the new globals
+	and not use path_info_list.
+	(make_unifiable_location, unify_location)
+	(create_execution_path_branch, join_execution_path_branch): Removed functions.
+	(create_anonymous_stack_variable): Does not allocate void locations.
+
+	* src/compiler/generate.c (compile_if): Remove calls to
+	create_execution_path_branch etc.  Use expected type to
+        allocate the return location.	
+	(init_generate): Define the exit function.
+
 2007-03-07  Matthieu Lemerre  <racin@free.fr>
 
 	DEFINE_FUNCTION use globals instead of functions (and works

@@ -171,27 +171,15 @@ typedef struct spill_alist
   } *spill_alist_t;
 */
 
-/* A path info registers in each code path, what registers are used.
-   This is useful when two paths are merged, e.g. at a label of a
-   jump.  */
-/* XXX: in fact, should be attached to block info? No not really. */
-typedef struct path_info
-{
   /* A word, set to 1 if the register has been spilled.  */
-  unsigned int registers_spilled;
+static  unsigned int registers_spilled;
 
   /* List of spilled registers, to unspill at the end of the if.
      XXX: in fact, there is no reason to index it by register.
      */
-  location_t spilled_locations[DATA_REGISTER_NUMBER];
+static  location_t spilled_locations[DATA_REGISTER_NUMBER];
   //  spill_alist_t spill_alist;
-  
-  
-  struct path_info *next;
-} *path_info_t;
 
-/* XXX: A list isn't appropriate for storing paths.  */
-static path_info_t path_info_list = NULL;
 
 void
 spill (register_t reg)
@@ -199,9 +187,7 @@ spill (register_t reg)
   assert (reg >= 0);
   assert (register_locations[reg] != NULL);
 
-  assert (path_info_list);
-  
-  path_info_list->registers_spilled |= (1 << reg);
+  registers_spilled |= (1 << reg);
   
   
   location_t to_spill_location = register_locations[reg];
@@ -212,7 +198,7 @@ spill (register_t reg)
   to_spill_location->spilled_location = 1;
   to_spill_location->spilled_register = reg;
 
-  path_info_list->spilled_locations[reg] = to_spill_location;
+  spilled_locations[reg] = to_spill_location;
   
   if(to_spill_location == 0x80596a8 || to_spill_location == 0x8059720)
     asm("int $3");
@@ -361,14 +347,14 @@ free_location (location_t location)
 	}
       if(location->spilled_location)
 	{
-	  path_info_list->registers_spilled &= ~(1 << location->spilled_register);
+	  registers_spilled &= ~(1 << location->spilled_register);
 
 	  /* This case happens, for instance if two locations on the
 	     same register are spilled in the same path, then
 	     path_info_list->spilled_locations[] is set to NULL once
 	     for each location.  */
 	  //assert (path_info_list->spilled_locations[location->spilled_register]);
-	  path_info_list->spilled_locations[location->spilled_register] = NULL; /* Not really useful. */
+	  spilled_locations[location->spilled_register] = NULL; /* Not really useful. */
 		  
 	}
       //      if(location->automatic_variable)
@@ -433,8 +419,6 @@ generate_function_start (symbol_t name, generic_form_t parameters)
 
   create_block ();
 
-  create_execution_path_branch ();
-  
   jit_prolog (length (parameters->form_list));
   
   {
@@ -467,8 +451,6 @@ generate_function_start (symbol_t name, generic_form_t parameters)
 void 
 generate_function_end ()
 {
-  join_execution_path_branch ();
-  
   delete_block ();
   
   assert (block_list == global_block);
@@ -580,6 +562,14 @@ delete_block (void)
 location_t
 create_anonymous_stack_variable (Type type)
 {
+  /* For compound variables: we allocate a set of locations.  */
+  if(type->type_type == TUPLE_TYPE)
+    {
+      /* Only Void is handled for now.  */
+      assert( type == TYPE( "Void"));
+      return void_location();
+    }
+      
   memory_block_t block = allocate_memory_block (type->size);
   location_t location = stack_location (type, block);
   return location;
@@ -1140,101 +1130,6 @@ DEFINE_BOOLEAN_SWITCH_MAKER (gt, lt)
 DEFINE_BOOLEAN_SWITCH_MAKER (ge, le)
 DEFINE_BOOLEAN_SWITCH_MAKER (lt, gt)
 DEFINE_BOOLEAN_SWITCH_MAKER (le, ge)
-
-location_t
-make_unifiable_location (location_t loc)
-{
-  /* If the location is void, we won't unify it and don't have
-     anything to do.  */
-  if( loc->type == TYPE( "Void"))
-    return loc;
-
-  if( loc->type->size != sizeof( int))
-    panic( "Different branches of a Int can only return a word for now.\n");
-  
-  /* XXX: use a register for this.  Mais on peut avoir a faire un
-     spill, c'est embetant.  Il faudrait merger cette fonction avec
-     join_execution_path_branch.  */
-
-  low_location_t lloc = loc->low_location;
-
-  if(lloc->location_type == REGISTER)
-    return loc;
-  else
-    {
-      low_location_t reg = registerize (lloc);
-      location_t ret_loc = temporary_location (loc->type, reg);
-      free_location (loc);
-      return ret_loc;
-    }
-}
-
-void
-unify_location (location_t loc1, location_t loc2)
-{
-  assert( loc1->type == loc2->type);
-  if( loc1->type != TYPE( "Void"))
-    {
-      /* We cannot move big locations for now; this has already been checked in
-	 make_unifiable_location, so we can use assert.  */
-      assert( loc1->type->size == sizeof( int));
-      move_between_locations (loc2, loc1);
-    }
-  free_location (loc2);
-}
-
-/* If we spill register in an alternative path, it should be done also
-on the other.
-
-Right now we try not to touch the spilling stuff in an alternative,
-and nothing else need to be done.
-
-We should check that the stack and register is the same after.
-*/
-
-/* The goal of these two functions is that on one branch, nothing
-change (like locations of the variables, spilling locations etc) so
-that we can compile the two branches and merge them. */
-void create_execution_path_branch (void)
-{
-  path_info_t ai = MALLOC (path_info);
-
-  ai->registers_spilled = 0;
-
-  for(int i = 0; i < DATA_REGISTER_NUMBER; i++)
-    ai->spilled_locations[i] = NULL;
-  
-  ai->next = path_info_list;
-  path_info_list = ai;
-
-  /* XXX: si tous les registres sont occupes, on doit en liberer un
-     pour mettre le resultat.  Ou alors on peut aussi le mettre sur la
-     pile.*/
-     
-}
-
-/* Attention: on a besoin d'au moins un registre pour y mettre le
-   resultat.  */
-void
-join_execution_path_branch (void)
-{
-  if (path_info_list->registers_spilled != 0)
-    {
-      for(int i = 0; i < DATA_REGISTER_NUMBER; i++)
-	{
-	  location_t sl = path_info_list->spilled_locations[i];
-	  if(sl)
-	    {
-	      low_location_t lloc = register_location (sl->spilled_register);
-	      move_between_low_locations_any_register (sl->low_location,
-						       lloc);
-	      sl->low_location = lloc;
-	      sl->spilled_register = 0;
-	    }
-	}
-    }
-      path_info_list = path_info_list->next;
-}
 
 
 /* Misc.  */
