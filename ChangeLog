@@ -1,3 +1,12 @@
+2007-03-10  Matthieu Lemerre  <racin@free.fr>
+
+	Implements list.head and list.tail
+	
+	* src/std/list.c (make_type_List): Uses the derive accesser and
+	left_accesser.
+	* test/malebolge02-list.l (test): Test it.
+	* test/malebolge01-pointer-access.l: The test is more precise.
+
 2007-03-09  Matthieu Lemerre  <racin@free.fr>
 
 	Stop using the path_info structure in the compiler, which is

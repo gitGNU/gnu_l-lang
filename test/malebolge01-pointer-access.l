@@ -13,5 +13,6 @@ test ()
     test_function(point.y);
 
   point.y = 5;
-  point.x + point.y
+  print ("Point.y :", point.y, "\n");
+  point.x
 }

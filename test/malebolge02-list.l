@@ -83,6 +83,14 @@ List(Int) test()
 //
 //
   print_int_list(li);
+
+  print( li.head);
+  print( li.tail.head);
+  li.head = 24;
+  print_int_list(li);
+  li.tail = cast( List( Int), 0);
+  print_int_list( li);
+
 //
 					   
   //  li = cons(1, li);

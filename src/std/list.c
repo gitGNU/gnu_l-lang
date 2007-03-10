@@ -39,6 +39,14 @@
    The test of emptiness will be more like C or Lisp:
 
    if(list) ... or if(list == -|)
+
+
+   In fact, we will use <- instead of -> (because it is left
+   associative); and lists will have a .node and .next operation; the
+   later will give the remaining of thi list, and the former a pointer
+   to a node, that can coerce into the content of the node.  Useful in
+   foreach for instance.
+   
 */
 
 /* Translates list(1 2 3 4) into the actual list.  */
@@ -59,6 +67,8 @@
 #include <assert.h>
 #include <l/sys/panic.h>
 #include <l/expand/foreach.h>
+#include <l/access.h>
+
 
 generic_form_t
 list_cons(generic_form_t form)
@@ -298,7 +308,10 @@ make_type_List (generic_form_t form)
    is quite elegant.  */
 
   define_foreach_expander( the_type, list_foreach_expander);
-  
+
+  /* We should use our own expander that checks for NULL.  */
+  define_accesser( the_type, derived_accesser);
+  define_left_accesser( the_type, derived_left_accesser);
 
   
   return the_type;
