@@ -11,7 +11,7 @@ Int test ()
 	 "\nand the result of 3*3 is : ", 3*3, "\n");
 
   //To bufferize, use the buffered keyword.  It accumulates results in
-  //a buffer, and send it when it wants.
+  //a buffer, and send it when it wants, or explicit flush.
   buffered {
     print ("This is not sent right now.");
     print ("\n Neither is this \n");
@@ -35,5 +35,8 @@ Int test ()
     }
     print ("Back to buffered\n");
   }
+
+  //Test some formatters.
+  print ("Toto\n", 25:hex, "\n", 25, "\n", 25:dec, "\n");
   (2)
 }

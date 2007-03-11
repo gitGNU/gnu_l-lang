@@ -18,10 +18,49 @@
    write to the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
    Boston, MA  02110-1301  USA.  */
 
+
+/* The print library is optimised for ease of use and fast printing.
+   No temporary string manipulation should be necessary; all printing
+   is done directly in the current output buffer; the buffer is then
+   sent at once only when "flush" is encountered.
+
+   Printing use the type of the argument to retrieve how it is
+   printed.  For a type to be printable, a "printer" has to be
+   recorded, which is a special kind of expander.
+
+   Additionnally, arguments of prints may be accompagned by formatting
+   instructions.
+
+   For instance, print( "Hello|", 25,"|" 5:bin, "|",
+                        list( 255, 31):format_list( hex, ", "))
+    would print
+
+    "Hello|25|101|ff, 1f
+
+    because it is expanded into
+
+    print_String( "Hello|");
+    print_Int( 25);
+    print_String( "|");
+    print_Int_Bin( 5);
+    print_String( "|");
+    {
+      let temp_list_ = list( 255, 31);
+      print_Int_Hex( temp_list_.head);
+      foreach( let temp_ in temp_list_.tail)
+        {
+          print_String( ", ");
+          print_Int_Hex( temp_);
+        }
+    }
+*/
+  
+
 #include <l/std/output.h> /* For print_string.  */
 #include <l/expand.h> /* For print_string.  */
 #include <l/sys/panic.h> /* For print_string.  */
 #include <l/sys/hash.h>
+#include <l/std/print.h>
 #include "../compiler/c-to-l.h"
 #include "../parser/parse.h"
 
@@ -89,6 +128,7 @@ parse_unbuffered (form_t *form, Read_Buffer buf)
 }
 
 
+
 /* A hash Type->symbol.  Symbol may name a function, a macro
    ... anything expandable.  */
 MAKE_STATIC_HASH_TABLE (printer_hash);
@@ -96,9 +136,9 @@ MAKE_STATIC_HASH_TABLE (printer_hash);
 /* Defines printing for type TYPE to be done by calling expander named
    by SYMBOL.   */
 void
-define_printer (Type type, symbol_t symbol)
+define_printer (Type type, Printer printer)
 {
-  puthash (type, symbol, printer_hash);
+  puthash (type, printer, printer_hash);
 }
 
 
@@ -122,16 +162,31 @@ form_t expand_print (generic_form_t form) {
       {
 	
 	form_t subform = CAR (element);
-	expanded_form_t expform = expand (subform);
+	expanded_form_t expform;
+	form_t formatter;
+	
+	if(is_form( subform, generic_form)
+	   && ((generic_form_t) subform)->head == intern( "label"))
+	  {
+	    /* There is a formatter.  */
+	    list_t form_list = ((generic_form_t) subform)->form_list;
+	    expform = expand( CAR( form_list));
+	    formatter = CAR( form_list->next);
+	  }
+	else
+	  {
+	    expform = expand (subform);
+	    formatter = NULL;
+	  }
+	
 	Type type = expform->type;
-	Symbol symb = gethash (type, printer_hash);
+	Printer symb = gethash (type, printer_hash);
 	
 	if(!symb)
 	  panic ("no printer found for %s\n", asprint_type (type));
 
-	*mapped_form_list_ptr = CONS (generic_form_symbol (symb,
-							   CONS (expform, NULL)),
-				      NULL);
+	*mapped_form_list_ptr = CONS (symb( expform, formatter), NULL);
+	
 	mapped_form_list_ptr = &((*mapped_form_list_ptr)->next);
       }
 
@@ -149,8 +204,77 @@ form_t expand_print (generic_form_t form) {
 
 /* Some common printers.  */
 
+form_t
+String_printer(expanded_form_t exp, form_t formatter)
+{
+  if(formatter != NULL)
+    panic( "No formatter exists for String\n");
+  
+  return generic_form_symbol( SYMBOL( print_String),
+			      CONS( exp, NULL));
+}
+
+form_t
+Int_printer( expanded_form_t exp, form_t formatter)
+{
+  Symbol symb;
+  
+  if(formatter == NULL)
+    {
+      symb = SYMBOL( print_Int_Dec);
+      goto next;
+    }
+  else if(is_form( formatter, id_form))
+    {
+      Symbol format = ((id_form_t) formatter)->value;
+      if(format == SYMBOL( dec))
+	{
+	  symb = SYMBOL( print_Int_Dec);
+	  goto next;
+	}
+      else if(format == SYMBOL( hex))
+	{
+	  symb = SYMBOL( print_Int_Hex);
+	  goto next;
+	}
+      else if(format == SYMBOL( bin))
+	{
+	  symb = SYMBOL( print_Int_Bin);
+	  goto next;
+	}
+    }
+  compile_error( "Unknown formatter\n");
+
+ next:
+  return generic_form_symbol( symb,
+			      CONS( exp, NULL));
+}
+
 void
-print_Int (int i)
+print_Int_Hex( unsigned int i)
+{
+  const char *nums = "0123456789abcdef";
+  String string = alloca( sizeof(struct string) + 10);
+  char *s = (char *) string  + sizeof(struct string);
+  s[0] = '0';
+  s[1] = 'x';
+  memset( s+2, '0', 8);
+
+  char *ps = s + 9;
+  while(i)
+    {
+      int k = i & 0xf;
+      *ps-- = nums[k];
+      i >>= 4;
+    }
+
+  string->length = 10;
+  string->content = s;
+  print_string( string);
+}
+
+void
+print_Int_Dec (int i)
 {
 #define BASE 10
 #define MAX_NUM_LEN 11 /* log_{base}(2 ^ 32) + 1 (for the minus sign)*/
@@ -216,11 +340,12 @@ init_print (void)
   define_parse (SYMBOL (buffered), parse_buffered);
   define_parse (SYMBOL (unbuffered), parse_unbuffered);
 
+  define_printer (TYPE ("String"), String_printer);
+  define_printer (TYPE ("Int"), Int_printer);
+  DEFINE_C_FUNCTION (print_Int_Dec, "Void <- Int");
+  DEFINE_C_FUNCTION (print_Int_Hex, "Void <- Int");
   
-  define_printer (TYPE_ ("String"), SYMBOL (print_String));
-
-  DEFINE_C_FUNCTION (print_Int, "Void <- Int");
-  define_printer (TYPE_ ("Int"), SYMBOL (print_Int));
-  DEFINE_C_FUNCTION (print_Symbol, "Void <- Symbol");
-  define_printer (TYPE_ ("Symbol"), SYMBOL (print_Symbol));
+  //  define_printer (TYPE_ ("Int"), SYMBOL (print_Int));
+  //  DEFINE_C_FUNCTION (print_Symbol, "Void <- Symbol");
+  //  define_printer (TYPE_ ("Symbol"), SYMBOL (print_Symbol));
 }

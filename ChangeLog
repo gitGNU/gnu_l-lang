@@ -1,3 +1,19 @@
+2007-03-11  Matthieu Lemerre  <racin@free.fr>
+
+	Add formatters to the printing interface.
+	
+	* test/malebolge04-print.l: Test formatters.
+
+	* src/std/print.c (define_printer): Now takes a Printer as an argument.
+	(expand_print): Checks for formatters (specified using a label).
+	Call the printer.
+	(String_printer): New printer.
+	(Int_printer): New printer.
+	(print_Int_Hex): New function, callable from L.
+	(print_Int_Dec): New name for print_Int.
+	(init_print): Initialize all this.
+	* src/include/l/std/print.h: New file. Defines a Printer.
+
 2007-03-10  Matthieu Lemerre  <racin@free.fr>
 
 	Implements list.head and list.tail
