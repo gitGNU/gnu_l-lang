@@ -1,5 +1,11 @@
 2007-03-16  Matthieu Lemerre  <racin@free.fr>
 
+	Bug fix.
+	
+	* src/eval.c (expand_form_list): Renamed from expand_list to
+	prevent a name clash, which malebolge02 and 09 to fault.
+	Changed callers (in the same file).
+	
 	Set of corrections.
 	
 	* src/std/init_library.c (init_library): Init print first; print

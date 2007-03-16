@@ -59,7 +59,7 @@ parse_file( char *file_name)
 }
 
 list_t
-expand_list( list_t to_compile)
+expand_form_list( list_t to_compile)
 {
   /* Now, expand all forms.
 
@@ -108,7 +108,7 @@ eval_file (char *file_name)
 
   list_t to_compile = analyze (form_list);
   
-  list_t expanded_form_list = expand_list( to_compile);
+  list_t expanded_form_list = expand_form_list( to_compile);
 
   generate_list( expanded_form_list);
 }
@@ -130,7 +130,7 @@ eval (String s)
   list_t to_compile = analyze (form_list);
   
 
-  list_t expanded_form_list = expand_list( to_compile);
+  list_t expanded_form_list = expand_form_list( to_compile);
 
   generate_list( expanded_form_list);
 
