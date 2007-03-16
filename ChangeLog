@@ -1,3 +1,29 @@
+2007-03-16  Matthieu Lemerre  <racin@free.fr>
+
+	Set of corrections.
+	
+	* src/std/init_library.c (init_library): Init print first; print
+	does not depend on anything, and many other libraries define a printer.
+	
+	* src/std/output.c (make_output_descriptor_write_file): New
+	function, accessible from L.
+	
+	(init_output): Avoid the use of log2f. 
+	
+	* src/eval.c: Change the order of functions to create more
+	intermediary ones.
+	* src/include/l/string.h (make_C_string_from_L_string): put a
+	final 0.
+	* src/compiler/generate.c (compile_function_call): Does not print
+	the function name.
+	* src/compiler/analysis.c (analysis_define_global) Renamed from
+	define_global, made static.
+	* src/compiler/c-to-l.h (c_define_global): New function.
+	* src/std/print.c (Symbol_Printer): New printer.
+	(print_Symbol): Does not print the surrounding ''.
+	(init_print): Initialise the symbol printer.
+	* src/parser/parse.c (get_next_token): Parse correctly 0x80000000.
+
 2007-03-11  Matthieu Lemerre  <racin@free.fr>
 
 	Add formatters to the printing interface.

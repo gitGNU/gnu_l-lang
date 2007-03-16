@@ -72,4 +72,21 @@ compile_function_call (generic_form_t form);
  } while(0)
 
 
+static inline void
+c_define_global( Symbol name, char *type_string, void *address)
+{
+  Type type = intern_type( string_to_type_form( type_string));
+  global_t glob = MALLOC( global);
+  glob->global_type = NORMAL_GLOBAL;
+  glob->type = type;
+  glob->handling_backend = NULL;
+  glob->for_backend = address;
+
+  /* For the expander.  */
+  puthash( name, glob, global_hash);
+
+  /* For the generator.  */
+  create_global_variable_at( type, name, address);
+}
+
 #endif

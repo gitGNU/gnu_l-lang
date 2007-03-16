@@ -28,10 +28,10 @@ init_library ()
   init_creator ();
   init_foreach();
  
+  init_print ();
   init_list ();
   init_xml ();
   init_output ();
-  init_print ();
   init_hash ();
   init_l_form ();
  

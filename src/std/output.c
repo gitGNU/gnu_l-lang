@@ -220,7 +220,18 @@ make_unix_fd_output_descriptor (int fd)
   return od;
 }
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
+output_descriptor_t
+make_output_descriptor_write_file( String file_name)
+{
+  char *c_file_name = make_C_string_from_L_string( file_name);
+  unlink( c_file_name);
+  int fd = open( c_file_name, O_CREAT|O_WRONLY);
+  return make_unix_fd_output_descriptor( fd);
+}
 
 #include <math.h>
 void
@@ -228,7 +239,16 @@ init_output (void)
 {
   page_size = getpagesize ();
 
-  log2_page_size = (unsigned int) log2f ((float) page_size);
+  {
+    unsigned int ps = page_size;
+    log2_page_size = 0;
+    while(ps)
+      {
+	ps >>= 1;
+	log2_page_size++;
+      }
+    log2_page_size--;
+  }
   /* Declare the type output descriptor, and the functions to read and
      write to them.  */
   
@@ -244,6 +264,13 @@ init_output (void)
      maybe_flush,flushing must be done only if the stream is
      interactive.  */
   DEFINE_C_FUNCTION2 ("maybe_flush", flush, "Void <- ()");
+
+  eval_cstring( "type Output_Descriptor = Void *;");
+  c_define_global( SYMBOL( current_output_descriptor),
+		   "Output_Descriptor", &current_output_descriptor);
+
+  DEFINE_C_FUNCTION( make_output_descriptor_write_file,
+		     "Output_Descriptor <- String");
 }
 
 void

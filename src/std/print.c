@@ -250,6 +250,16 @@ Int_printer( expanded_form_t exp, form_t formatter)
 			      CONS( exp, NULL));
 }
 
+form_t
+Symbol_printer( expanded_form_t exp, form_t formatter)
+{
+  if(formatter != NULL)
+    panic( "No formatter exists for Symbol\n");
+  
+  return generic_form_symbol( SYMBOL( print_Symbol),
+			      CONS( exp, NULL));
+}
+
 void
 print_Int_Hex( unsigned int i)
 {
@@ -323,9 +333,9 @@ print_Int_Dec (int i)
 void
 print_Symbol( Symbol s)
 {
-  print_string( STRING( "'"));
+  // print_string( STRING( "'"));
   print_string( STRING( s->name));
-  print_string( STRING( "'"));
+  //  print_string( STRING( "'"));
 }
 
 
@@ -342,10 +352,11 @@ init_print (void)
 
   define_printer (TYPE ("String"), String_printer);
   define_printer (TYPE ("Int"), Int_printer);
+  define_printer (TYPE ("Symbol"), Symbol_printer);
   DEFINE_C_FUNCTION (print_Int_Dec, "Void <- Int");
   DEFINE_C_FUNCTION (print_Int_Hex, "Void <- Int");
   
   //  define_printer (TYPE_ ("Int"), SYMBOL (print_Int));
-  //  DEFINE_C_FUNCTION (print_Symbol, "Void <- Symbol");
+  DEFINE_C_FUNCTION (print_Symbol, "Void <- Symbol");
   //  define_printer (TYPE_ ("Symbol"), SYMBOL (print_Symbol));
 }

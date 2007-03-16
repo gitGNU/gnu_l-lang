@@ -78,7 +78,9 @@ static inline char*
 make_C_string_from_L_string (String s)
 {
   char *cs = malloc (s->length + 1);
-  return memcpy (cs, s->content, s->length + 1);
+  memcpy (cs, s->content, s->length);
+  cs[s->length] = 0;
+  return cs;
 }
 
 #endif

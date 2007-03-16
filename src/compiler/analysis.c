@@ -145,6 +145,10 @@ compile_function_call_unknown_function (generic_form_t form);
 location_t
 compile_function_call (generic_form_t form);
 
+static void
+analysis_define_global( symbol_t define_symbol, symbol_t name,
+	       form_t value);
+
 #include <l/expand.h>
 void
 define_function (symbol_t define_symbol, symbol_t name,
@@ -160,7 +164,7 @@ define_function (symbol_t define_symbol, symbol_t name,
   form_t function_type = function_type_form (return_type, parameters);
 
   /* A function also declares a global variable.  */
-  define_global( NULL, name, function_type);
+  analysis_define_global( NULL, name, function_type);
   
 //  generic_t cfcuf = MALLOC (generic);
 //  cfcuf->compile = compile_function_call;//_unknown_function;
@@ -207,9 +211,9 @@ define_constant(symbol_t define_symbol, symbol_t name,
 
 }
 
-void
-define_global( symbol_t define_symbol, symbol_t name,
-	       form_t value)
+static void
+analysis_define_global( symbol_t define_symbol, symbol_t name,
+			form_t value)
 {
   Type type = intern_type( value);
   global_t glob = MALLOC( global);
@@ -415,7 +419,7 @@ void
 init_analysis ()
 {
   DEFINE_DEFINER ("function", define_function);
-  DEFINE_DEFINER ("global", define_global);
+  DEFINE_DEFINER ("global", analysis_define_global);
   DEFINE_DEFINER ("type", define_type);
   DEFINE_DEFINER ("type_alias", define_type_alias);
   DEFINE_DEFINER ("generic", define_generic);

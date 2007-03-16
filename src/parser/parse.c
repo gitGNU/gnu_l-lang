@@ -311,7 +311,8 @@ get_next_token (void)
      */
   if(result_scanning == DECIMAL_TK)
     {
-      current_token.integer = atoi (start);
+      /* Atoi has some troubles with 0x80000000.  */
+      current_token.integer = (unsigned int) atoll (start);
       current_token.type = DECIMAL_RTK;
     }
   else if(result_scanning == ID_TK)

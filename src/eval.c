@@ -29,23 +29,38 @@
 #include "parser/parse.h"
 #include <assert.h>
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <sys/mman.h>
 
-void
-eval (String s)
+list_t
+parse_file( char *file_name)
 {
-  /* First run the parser.  */
-  list_t form_list = parse (s);
+  unsigned int fd = open (file_name, O_RDONLY);
+  struct stat the_stat;
 
-  /* Launch the analyzer.  But this is wrong.  We should just launch
-     the cocyte compiler on the form list after expansion and
-     transformation. The cocyte compiler would know only type
-     declarations and function definitions.
+  stat (file_name, &the_stat);
+  off_t length_ = the_stat.st_size;
 
-     One of the transformations would be to put top level forms into a
-     temporary function to execute it.  */
-     
-  list_t to_compile = analyze (form_list);
+  char *string = mmap (0, length_, PROT_READ, MAP_SHARED, fd, 0);
+
+  /* XXX: for now, make arrangements so that the string is zero
+     terminated.  This copies the buffer.  */
+  assert (string != (void *) -1);
+
+  String s = make_heap_string (string);
+
+  list_t form_list = parse( s);
   
+  munmap (string, length_);
+  close (fd);
+  return form_list;
+}
+
+list_t
+expand_list( list_t to_compile)
+{
   /* Now, expand all forms.
 
      Here also, expand should take a form list as an argument; this
@@ -68,7 +83,12 @@ eval (String s)
 
     *expanded_form_list_ptr = NULL;
   }
+  return expanded_form_list;
+}
 
+void
+generate_list( list_t expanded_form_list)
+{
   /* Now, compiles all the created forms.  Same as before: should take
      a form list as an argument.
   */
@@ -77,7 +97,43 @@ eval (String s)
       form_t form = CAR (element);
       //      lispify (form);
       generate (form);
-    }
+    }  
+}
+
+
+void
+eval_file (char *file_name)
+{
+  list_t form_list = parse_file( file_name);
+
+  list_t to_compile = analyze (form_list);
+  
+  list_t expanded_form_list = expand_list( to_compile);
+
+  generate_list( expanded_form_list);
+}
+
+void
+eval (String s)
+{
+  /* First run the parser.  */
+  list_t form_list = parse (s);
+
+  /* Launch the analyzer.  But this is wrong.  We should just launch
+     the cocyte compiler on the form list after expansion and
+     transformation. The cocyte compiler would know only type
+     declarations and function definitions.
+
+     One of the transformations would be to put top level forms into a
+     temporary function to execute it.  */
+     
+  list_t to_compile = analyze (form_list);
+  
+
+  list_t expanded_form_list = expand_list( to_compile);
+
+  generate_list( expanded_form_list);
+
 }
 
 /* This is useful from C code.  */
@@ -85,33 +141,4 @@ void
 eval_cstring (char *string)
 {
   eval (make_heap_string (string));
-}
-
-
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <sys/mman.h>
-
-void
-eval_file (char *file_name)
-{
-  unsigned int fd = open (file_name, O_RDONLY);
-  struct stat the_stat;
-
-  stat (file_name, &the_stat);
-  off_t length_ = the_stat.st_size;
-
-  char *string = mmap (0, length_, PROT_READ, MAP_SHARED, fd, 0);
-
-  /* XXX: for now, make arrangements so that the string is zero
-     terminated.  This copies the buffer.  */
-  assert (string != (void *) -1);
-
-  String s = make_heap_string (string);
-
-  eval (s);
-  
-  munmap (string, length_);
-  close (fd);
 }

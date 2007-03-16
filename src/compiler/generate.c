@@ -722,13 +722,16 @@ compile_function_call (generic_form_t form)
       char *type_fields = asprint_type (fields[i]);
 
       if(location_type (locations[i]) != fields[i])
-	compile_error ("Type mismatch in funcall %s: passing a %s instead of a %s "
-		       "for argument number %d\n",
-		       lispify( expanded_function_form),
-		       type_loc,
-		       type_fields,
-		       //asprint_type (((Tuple_Type) ((Function_Type) function->type)->parameters_type)->fields[i]),
-		       i);
+	{
+	  printf( "In ");
+	  lispify( expanded_function_form);
+	  compile_error ("Type mismatch: passing a %s instead of a %s "
+			 "for argument number %d\n",
+			 type_loc,
+			 type_fields,
+			 //asprint_type (((Tuple_Type) ((Function_Type) function->type)->parameters_type)->fields[i]),
+			 i);
+	}
     }
   
   
