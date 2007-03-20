@@ -688,21 +688,24 @@ expand_goto (generic_form_t form)
 {
   form_t label = CAR( form->form_list);
 
-  expanded_form_t explabel;
+  form_t explabel;
+  symbol_t goto_type;
   
   if(is_form( label, id_form))
     {
-      explabel = expand( generic_form_symbol( SYMBOL( deref),
-					      CONS( generic_form_symbol( intern( "@get_label"),
-									 CONS( label, NULL)),
-						    NULL)));
+      goto_type = intern( "@goto_constant");
+      explabel = label;
     }
   else
-    explabel = expand( label);
+    {
+      goto_type = intern( "@goto_variable");
+      explabel = expand( label);
+      assert( ((expanded_form_t)explabel)->type == TYPE( "Label"));
+    }
 
-  assert( explabel->type == TYPE( "Label"));
   
-  return create_expanded_form (generic_form_symbol( SYMBOL( goto),
+  
+  return create_expanded_form (generic_form_symbol( goto_type,
 						    CONS( explabel,
 							  NULL)),
 			       TYPE( "Void"));

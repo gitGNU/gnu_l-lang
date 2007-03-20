@@ -1,3 +1,17 @@
+2007-03-20  Matthieu Lemerre  <racin@free.fr>
+
+	Generators now handle goto differently: there is goto_constant and
+	goto_variable.
+	
+	* src/expander/expand.c (expand_goto): Separates goto into
+	compile_goto_constant and compile_goto_variable.
+	* src/compiler/jit/backend.c (backend_compile_goto_constant): New
+	function.
+	(backend_compile_goto_variable): Old backend_compile_goto.
+	* src/compiler/generate.c (compile_goto_constant)
+	(compile_goto_variable): Split compile_goto into these.
+	@goto_constant and @goto_variable correspond to these.
+
 2007-03-16  Matthieu Lemerre  <racin@free.fr>
 
 	Bug fix.

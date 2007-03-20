@@ -680,7 +680,30 @@ get_label( symbol_t id)
 }
 
 void
-backend_compile_goto( location_t loc)
+backend_compile_goto_constant( Symbol symb)
+{
+  /* XXX: improve this: we should jump directly to the right place.  */
+  location_t loc = get_label( symb);
+  low_location_t lloc = loc->low_location;
+
+  if(lloc->location_type == CONSTANT)
+    jit_jmpi( lloc->value);
+  else if(lloc->location_type == REGISTER)
+    {
+      jit_jmpr( corresponding_register[lloc->reg]);
+    }
+  else
+    {
+      low_location_t reg = registerize( lloc);
+      jit_jmpr( corresponding_register[reg->reg]);
+      free_data_register( reg->reg);
+    }
+  free_location( loc);
+}
+
+
+void
+backend_compile_goto_variable( location_t loc)
 {
   assert( loc->low_location->location_type == INDIRECTION
   	  && loc->low_location->offset == 0);

@@ -1014,7 +1014,20 @@ compile_at_get_label( generic_form_t form, Type expected_type)
 }
 
 location_t
-compile_goto( generic_form_t form, Type expected_type)
+compile_goto_constant( generic_form_t form, Type expected_type)
+{
+  assert( form->form_list && !form->form_list->next);
+  id_form_t id_label = CAR( form->form_list);
+  assert( is_form( id_label, id_form));
+  Symbol id = id_label->value;
+
+  backend_compile_goto_constant( id);
+
+  return void_location();
+}
+
+location_t
+compile_goto_variable( generic_form_t form, Type expected_type)
 {
   assert( form->form_list && !form->form_list->next);
 
@@ -1023,8 +1036,7 @@ compile_goto( generic_form_t form, Type expected_type)
   
   label_location = compile( CAR( form->form_list),
 			    TYPE( "Label"));
-
-  backend_compile_goto( label_location);
+  backend_compile_goto_variable( label_location);
   free_location( label_location);
   
   return void_location();
@@ -1353,7 +1365,8 @@ init_generate (void)
   DEFINE_GENERIC ("tuple", compile_tuple);
 
   DEFINE_GENERIC ("label", compile_label);
-  DEFINE_GENERIC ("goto", compile_goto);
+  DEFINE_GENERIC ("@goto_constant", compile_goto_constant);
+  DEFINE_GENERIC ("@goto_variable", compile_goto_variable);
   DEFINE_GENERIC ("@get_label", compile_at_get_label);
 
   DEFINE_GENERIC ("if", compile_if);
