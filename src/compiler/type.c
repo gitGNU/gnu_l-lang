@@ -586,8 +586,8 @@ Type TYPE (const char *name)
 static Base_Type
 pre_create_type (struct type_form *form)
 {
-  printf ("Pre creating\n");
-  lispify (form);
+  // printf ("Pre creating\n");
+  //  lispify (form);
   struct buffer buf;
     
   char the_buf[1024];

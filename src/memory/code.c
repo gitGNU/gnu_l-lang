@@ -39,8 +39,8 @@ allocate_code_space (size_t size)
 void
 finish_code (void *ptr)
 {
-  printf ("ptr %p JIT_GET_IP.ptr %p diff %x\n", ptr, jit_get_ip ().ptr,
-	  (char *) jit_get_ip ().ptr - (char *) ptr);
+  // printf ("ptr %p JIT_GET_IP.ptr %p diff %x\n", ptr, jit_get_ip ().ptr,
+  //	  (char *) jit_get_ip ().ptr - (char *) ptr);
   jit_flush_code (ptr, jit_get_ip ().ptr);
   xrealloc (ptr, (char *) jit_get_ip ().ptr - (char *) ptr);
 }

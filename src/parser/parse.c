@@ -2114,11 +2114,11 @@ parse_foreach( form_t *form)
 type_form_t
 string_to_type_form (char *string)
 {
-  printf ("STRING TO TYPE FORM %s\n", string);
+  //  printf ("STRING TO TYPE FORM %s\n", string);
   scanner_pointer = string;
   parse_initialize ();
   type_form_t tf = parse_type_form ();
-  lispify (tf);
+  //  lispify (tf);
   return tf;
 }
 

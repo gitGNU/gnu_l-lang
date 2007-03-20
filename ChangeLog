@@ -1,5 +1,11 @@
 2007-03-20  Matthieu Lemerre  <racin@free.fr>
 
+	Remove remaining debug output.
+
+	* src/parser/parse.c (string_to_type_form): Remove output.
+	* src/compiler/type.c (pre_create_type): Likewise.
+	* src/memory/code.c (finish_code): Likewise.
+
 	Generators now handle goto differently: there is goto_constant and
 	goto_variable.
 	
