@@ -120,6 +120,9 @@ flush_output_descriptor (output_descriptor_t output_descriptor)
     }
 }
 
+/* Not implemented for now.*/
+void maybe_flush(void) __attribute__((alias( "flush")));
+  
 void
 flush (void)
 {
@@ -128,7 +131,7 @@ flush (void)
 
 
 /* Later, we will write also a multi-threaded aware version.  */
-void print_string (string_t string)
+void print_String (string_t string)
 {
   output_descriptor_t output_descriptor = current_output_descriptor;
   output_buffer_t output_buffer = output_descriptor->current_output_buffer;
@@ -186,12 +189,12 @@ void print_string (string_t string)
 
 /* Print a string to a different output descriptor.  A with_output_to
    macro should do this.  */
-void print_string_to_output_descriptor (string_t string,
+void print_String_to_output_descriptor (string_t string,
 					output_descriptor_t od)
 {
   output_descriptor_t save_od = current_output_descriptor;
   current_output_descriptor = od;
-  print_string (string);
+  print_String (string);
   current_output_descriptor = save_od;
 }
 
@@ -257,7 +260,7 @@ init_output (void)
 
   current_output_descriptor = stdout_output_descriptor;
 
-  DEFINE_C_FUNCTION2 ("print_String", print_string, "Void <- (String)");
+  DEFINE_C_FUNCTION (print_String, "Void <- (String)");
   DEFINE_C_FUNCTION (flush, "Void <- ()");
   
   /* For now, maybe_flush is just like flush; but with

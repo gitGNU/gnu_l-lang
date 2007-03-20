@@ -280,7 +280,7 @@ print_Int_Hex( unsigned int i)
 
   string->length = 10;
   string->content = s;
-  print_string( string);
+  print_String( string);
 }
 
 void
@@ -324,7 +324,7 @@ print_Int_Dec (int i)
   s->length = (MAX_NUM_LEN - 1) - j;
   s->content = string_start + j + 1;
   
-  print_string (s);
+  print_String (s);
   #undef BASE
   #undef MAX_NUM_LEN
 }
@@ -334,7 +334,7 @@ void
 print_Symbol( Symbol s)
 {
   // print_string( STRING( "'"));
-  print_string( STRING( s->name));
+  print_String( STRING( s->name));
   //  print_string( STRING( "'"));
 }
 

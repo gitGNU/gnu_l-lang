@@ -1,5 +1,13 @@
 2007-03-20  Matthieu Lemerre  <racin@free.fr>
 
+	Change print_String to print_string.
+	
+	* src/std/output.c (maybe_flush): Symbol alias to flush.
+	(print_string): Renamed from print_String. Replace callers and
+	headers.
+	(print_string_to_output_descriptor): Renamed from
+	print_String_to_output_descriptor.
+
 	Remove remaining debug output.
 
 	* src/parser/parse.c (string_to_type_form): Remove output.

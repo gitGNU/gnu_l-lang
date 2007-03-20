@@ -26,11 +26,11 @@
 typedef struct output_descriptor *output_descriptor_t;
 
 /* Later, we will write also a multi-threaded aware version.  */
-void print_string (string_t string);
+void print_String (string_t string);
 
 /* Print a string to a different output descriptor.  A with_output_to
    macro should do this.  */
-void print_string_to_output_descriptor (string_t string,
+void print_String_to_output_descriptor (string_t string,
 					output_descriptor_t od);
 
 

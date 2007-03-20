@@ -1013,6 +1013,7 @@ compile_at_get_label( generic_form_t form, Type expected_type)
   return get_label( symb);
 }
 
+/* Should be named goto_label instead? */
 location_t
 compile_goto_constant( generic_form_t form, Type expected_type)
 {
