@@ -61,6 +61,8 @@ parse_file( char *file_name)
 list_t
 expand_form_list( list_t to_compile)
 {
+  return expand_all( to_compile);
+#if 0  
   /* Now, expand all forms.
 
      Here also, expand should take a form list as an argument; this
@@ -74,7 +76,7 @@ expand_form_list( list_t to_compile)
     FOREACH (element, to_compile)
       {
 	form_t form = CAR (element);
-	expanded_form_t expanded_form = expand(form);
+	expanded_form_t expanded_form = expand_define(form);
 	
 	//	form_t expanded_form = expand_info->return_form;
 	*expanded_form_list_ptr = CONS (expanded_form->return_form, NULL);
@@ -84,6 +86,7 @@ expand_form_list( list_t to_compile)
     *expanded_form_list_ptr = NULL;
   }
   return expanded_form_list;
+  #endif
 }
 
 void

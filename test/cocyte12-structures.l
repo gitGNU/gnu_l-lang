@@ -12,5 +12,6 @@ Int test ()
 
   point.x = n;
   point.y = n;
-  test_function (point.x + point.y) //58
+  print (point.x + point.y, "\n"); //58
+  point.y
 }

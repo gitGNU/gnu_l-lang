@@ -221,44 +221,7 @@ expand (form_t form)
 
 
 
-/* Standard expanders.  At least these must return an
-   expanded_form_t.  */
-
-/* XXX: in real, define isn't an expander.  It should start at lambda.
-   Anyway.  */
-expanded_form_t
-expand_define(generic_form_t form)
-{
-  symbol_form_t function = CAR(form->form_list);
-  if(function->value == SYMBOL(function))
-    {
-      symbol_form_t name_form = CAR(form->form_list->next);
-      symbol_t name = name_form->value;
-      
-      form_t lambda_form = CAR(form->form_list->next->next);
-      
-      
-      return create_expanded_form(define_form(SYMBOL(function),
-					      name, expand(lambda_form)),
-				  NULL);
-    }
-    assert( function->value == SYMBOL( global));
-    symbol_form_t name_form = CAR(form->form_list->next);
-    symbol_t name = name_form->value;
-
-    form_t type_form = CAR( form->form_list->next->next);
-    return create_expanded_form(define_form(SYMBOL(global),
-					    name, type_form),
-				NULL);
-    
-      
-  //  return create_expanded_form(form, NULL);
-  /* XXX: replace the body form by the expanded body form.  *///NO!!
-}
-
-
 /* Block and local variable definition.  */
-
 typedef struct id_info
 {
   /* Species of the variable.  */
@@ -1174,7 +1137,6 @@ define_expander(symbol_t symbol, expander_t expander)
 void
 init_expand (void)
 {
-  define_expander(SYMBOL(define), expand_define);
   define_expander(SYMBOL(lambda), expand_lambda);
   define_expander(SYMBOL(block), expand_block);
   define_expander(SYMBOL(seq), expand_seq);

@@ -1,3 +1,17 @@
+2007-03-24  Matthieu Lemerre  <racin@free.fr>
+
+	Definition handling change; aiming to better handle the analysis
+	phase.
+	
+	* src/objects/pair.c (reverse): Bug fix.
+	* src/expander/expand-define.c: New file.
+	* src/expander/expand.c (expand_define): Removed expander.
+	* src/compiler/generate.c (generate): Now takes and expanded_form
+	as an argument.
+	* src/eval.c (expand_form_list): Now just calls expand_all.
+	* src/compiler/analysis.c (analyze): Now outputs all definitions
+	to the expander.
+
 2007-03-20  Matthieu Lemerre  <racin@free.fr>
 
 	Change print_String to print_string.

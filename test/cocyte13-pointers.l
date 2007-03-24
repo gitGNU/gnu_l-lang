@@ -6,7 +6,7 @@ test ()
   let px:Int * = &x;
 
   let y:Int = *px;
-  test_function (*px);
+  print (*px, "\n");
   //let int y = *px;
 
   *px = 4;

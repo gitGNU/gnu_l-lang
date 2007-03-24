@@ -1282,10 +1282,11 @@ compile_unary_minus_Int( generic_form_t form, Type expected_type)
 
 
 
-void generate (generic_form_t form)
+void generate (expanded_form_t form_)
 {
   /* XXX: the form should really be "(compile nom_du_bout_de_code form)"  */
-  
+
+  generic_form_t form = form_->return_form;
   assert (is_form (form, generic_form));
   assert (form->head == SYMBOL (define));
 

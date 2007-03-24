@@ -349,12 +349,8 @@ analyze (list_t form_list)
 	      name = ((id_form_t) (CAR (gform->form_list->next)))->value;
 	      form_t subform = CAR (gform->form_list->next->next);
 	      
-	      if(type_defined == SYMBOL (function)
-		 || type_defined == SYMBOL( global))
-		{
-		  *result_ptr = CONS (form, NULL);
-		  result_ptr = &((*result_ptr)->next);
-		}
+	      *result_ptr = CONS (form, NULL);
+	      result_ptr = &((*result_ptr)->next);
 	      
 	      definer_t definer = gethash (type_defined, definer_hash);
 

@@ -51,9 +51,11 @@ list_t
 reverse (list_t list)
 {
   list_t newlist = NULL;
-
-  FOREACH (element, list)
+  list_t next_element;
+  
+  for(list_t element = list; element; element = next_element)
     {
+      next_element = element->next;
       element->next = newlist;
       newlist = element;
     }
