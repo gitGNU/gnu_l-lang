@@ -1,8 +1,10 @@
 2007-03-24  Matthieu Lemerre  <racin@free.fr>
 
+
 	Definition handling change; aiming to better handle the analysis
 	phase.
 	
+	* src/expander/Makefile.am: add expand-define.c
 	* src/objects/pair.c (reverse): Bug fix.
 	* src/expander/expand-define.c: New file.
 	* src/expander/expand.c (expand_define): Removed expander.
