@@ -5,7 +5,7 @@ expander my_assert( form)
 	  {
 	    print( "Testing Assertion ");
 	    print_form( Form( $condition$));
-	    print( " failed\n");
+	    print( " failed, so this worked.\n");
 	    //exit( 3)
 	  })
 }
