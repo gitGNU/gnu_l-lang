@@ -1,5 +1,16 @@
-2007-03-24  Matthieu Lemerre  <racin@free.fr>
+2007-03-25  Matthieu Lemerre  <racin@free.fr>
 
+	Really handle the recursive types.
+
+	* src/compiler/type.c (define_type_type_form): Handle the fact
+	that interning the types can be splitted.
+	* src/compiler/type.c (is_defining_type, uncomplete_types): New
+	globals.
+	(finish_type_pointer): End part of old make_type_pointer.
+	(make_type_pointer): Splitted in two halves. Does not make the
+	subtype if defining a new type, to handle recursive definitions.
+
+2007-03-24  Matthieu Lemerre  <racin@free.fr>
 
 	Definition handling change; aiming to better handle the analysis
 	phase.

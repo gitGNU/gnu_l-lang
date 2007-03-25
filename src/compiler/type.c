@@ -416,41 +416,72 @@ make_type_struct (generic_form_t form)
   return type;
 }
 
+/* Are we defining types, in which case the handling of pointer types
+   has to be delayed to handle recursive definition. Outside of
+   definitions, it is impossible to have recursive types, so it is
+   safe to define the pointer type immediately.  */
+static int is_defining_type;
+
+/* The list of types that were not made because of recursive types.  */
+static list_t uncomplete_types;
+
+
+/* The handling of pointer types has to be split when handling the definition
+   of a recursive type.   This is the last part.  */
+static Type
+finish_type_pointer( Pointer_Type type)
+{
+  assert( type->type_type == POINTER_TYPE);
+  
+  generic_form_t type_form = type->type_form;
+  form_t pointed_type_form = CAR (type_form->form_list);
+  
+  type->pointed_type = intern_type( pointed_type_form);
+
+  /*  Finish the pointed type.  */
+  define_accesser (type, pointer_accesser);
+  define_left_accesser (type, pointer_left_accesser);
+
+  /* For a pointer, it depends on what you point on.
+     type Fries = Potato *;
+     let Fries f = Fries( Potato( 4)); should work
+     let Fries f = Fries( 4); should not.
+     
+     type Fries_Ptr = Potato **;
+     let Fries_Ptr f = Fries_Ptr( Potato( 4)); take the same argument as Fries
+     
+     type Point = struct { Int x; Int y;} *;
+     let Point p = Point( x:3, y:4);
+  */
+  if( type->pointed_type->type_type == BASE_TYPE)
+    define_creator (type, indirect_pointer_creator);
+  else define_creator (type, direct_pointer_creator);
+
+  return type;
+}
+
+
 static Type
 make_type_pointer (generic_form_t form)
 {
   Pointer_Type type = MALLOC (pointer_type);
 
-  form_t type_form = CAR (form->form_list);
-
   type->size = sizeof(void*);
   type->alignment = __alignof__ (void *);
   type->type_form = form;
-  
-  type->pointed_type = intern_type (type_form);
 
   type->type_type = POINTER_TYPE;
 
-  define_accesser (type, pointer_accesser);
-  define_left_accesser (type, pointer_left_accesser);
+  if(is_defining_type)
+    {
+      type->pointed_type = NULL;
 
-        /* For a pointer, it depends on what you point on.
-	 type Fries = Potato *;
-	 let Fries f = Fries( Potato( 4)); should work
-	 let Fries f = Fries( 4); should not.
-
-	 type Fries_Ptr = Potato **;
-	 let Fries_Ptr f = Fries_Ptr( Potato( 4)); take the same argument as Fries
-	     
-	 type Point = struct { Int x; Int y;} *;
-	 let Point p = Point( x:3, y:4);
-      */
-  if( type->pointed_type->type_type == BASE_TYPE)
-    define_creator (type, indirect_pointer_creator);
-  else define_creator (type, direct_pointer_creator);
-
+      /* We did not calculated the pointed type, so it is yet uncomplete.  */
+      uncomplete_types = CONS( type, uncomplete_types);
+      return type;
+    }
   
-  return type;
+  return finish_type_pointer( type);
 }
 
 static Type
@@ -576,18 +607,10 @@ Type TYPE (const char *name)
   return intern_type (string_to_type_form (name));
 }
 
-/* This creates a type according to the type form, but:
-
-    - It does not recurse
-    
-    - It does not calculate size and alignement, just indicate that
-      they are unknown.
-   */
+/* Interns the type, but does not fill its attributes.  */
 static Base_Type
 pre_create_type (struct type_form *form)
 {
-  // printf ("Pre creating\n");
-  //  lispify (form);
   struct buffer buf;
     
   char the_buf[1024];
@@ -621,7 +644,7 @@ pre_create_type (struct type_form *form)
   assert (PValue);
   assert (*PValue == NULL);
   *PValue = type;
-  
+
   return type;
 }
 
@@ -633,30 +656,56 @@ Type
 define_type_type_form (type_form_t tf, unsigned int size,
 		       unsigned int alignment, type_form_t comes_from)
 {
-  Base_Type new_type = pre_create_type (tf);
+  Base_Type new_type;
 
   Type old_type = NULL;
   
   if(comes_from)
     {
+      /* Now, precalculate the real size of the type.  This makes the
+	 types recursively, unless it encounters a pointer (in which
+	 case the type is made, but the sub types of the pointer is
+	 not made.)  This is necessary for defining recursive types.
+      */
+
+      int save_is_defining_type = is_defining_type;
+      is_defining_type = 1;
+      list_t save_uncomplete_types = uncomplete_types;
+      uncomplete_types = NULL;
+      
       old_type = intern_type (comes_from);
 
-      /* This detects that the size of the type couldn't be
-	 calculated.  But for now, it catches too much errors, because
-	 the struct it uses could be defined later.  */
-      if(old_type->size & ~(~0L >> 1))
-	compile_error ("Error: Defining a recursive type that"
-		       "does not go through a pointer\n");
-
+      new_type = pre_create_type (tf);
       /* Size and alignment should not be passed when a originator
 	 form is given.  */
-      size = old_type->size;
-      alignment = old_type->alignment;
+      new_type->size = old_type->size;
+      new_type->alignment = old_type->alignment;
+      new_type->origin_type = old_type;
+
+      /* Now finish all the uncomplete types.  */
+      /* Note : for handling doubly recursive types, all the uncomplete types
+	 should just be handled at the end, when all types are defined. */
+      list_t this_uncomplete_types = uncomplete_types;
+      uncomplete_types = NULL;
+      is_defining_type = 0;
+      
+      FOREACH( element, this_uncomplete_types)
+	{
+	  Pointer_Type type = CAR( element);
+	  finish_type_pointer( type);
+	}
+      
+      uncomplete_types = save_uncomplete_types;
+      is_defining_type = save_is_defining_type;
+      return new_type;
     }
 
+  new_type = pre_create_type( tf);
   new_type->origin_type = old_type;
   new_type->size = size;
   new_type->alignment = alignment;
+  assert( uncomplete_types == NULL);
+
 
   return new_type;
 }
@@ -683,6 +732,8 @@ define_type_constructor (Symbol name,
 void
 new_init_type ()
 {
+  is_defining_type = 0;
+  uncomplete_types = NULL;
   define_type_constructor (SYMBOL (tuple),
 			   bprint_type_tuple, make_type_tuple);
   define_type_constructor (SYMBOL (function), bprint_type_function,
