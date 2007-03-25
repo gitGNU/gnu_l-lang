@@ -139,188 +139,10 @@ define_type_alias (symbol_t define_symbol, symbol_t name,
 }
 
 
-void *
-compile_function_call_unknown_function (generic_form_t form);
-
-location_t
-compile_function_call (generic_form_t form);
-
+/* Transitional, while moving analysis.c to expand-define.  */
 static void
-analysis_define_global( symbol_t define_symbol, symbol_t name,
-	       form_t value);
-
-#include <l/expand.h>
-void
-define_function (symbol_t define_symbol, symbol_t name,
-		 generic_form_t form)
+do_nothing()
 {
-  form_t return_type = CAR (form->form_list);
-  generic_form_t parameters = CAR (form->form_list->next);
-  form_t body = CAR (form->form_list->next->next);
-
-  /* XXX: construct function type from tuple type.  */
-
-  
-  form_t function_type = function_type_form (return_type, parameters);
-
-  /* A function also declares a global variable.  */
-  analysis_define_global( NULL, name, function_type);
-  
-//  generic_t cfcuf = MALLOC (generic);
-//  cfcuf->compile = compile_function_call;//_unknown_function;
-//  puthash (name, cfcuf, generic_hash);
-  define_expander(name, expand_function);
-  
-  /* XXX: put fn on the to_compile list.  */
-
-  current_analysis->functions = CONS (CONS (name, form), current_analysis->functions);
-  //  panic ("Define_function should define the generic, and the function hash.");
-  //  panic ("Put on the function to compile list.\n");
-}
-
-/* XXX For now it is assumed that generics don't depend on each
-   other,i.e. that all generics are already defined. */
-
-
-/* We need to transform:
-
-def generic whilee(Form condition, Form body)
-{
-  loop_form (seq_form (if_form (condition, break_form (), null),
-		       body))
-}
-
-into:
-
-def function Form<-(Generic_Form _form)
-{
-  let List _form_alist = _form->form_alist;
-  let Form condition = (Form) CDR(CAR(_form_alist));
-  let Form body = (Form) CDR(CAR(CDR((_form_alist))));
-
-  loop_form (seq_form (if_form (condition, break_form (), null),
-		       body));
-
-}
-*/
-void
-define_constant(symbol_t define_symbol, symbol_t name,
-		form_t value)
-{
-  panic( "TODO\n");
-
-}
-
-static void
-analysis_define_global( symbol_t define_symbol, symbol_t name,
-			form_t value)
-{
-  Type type = intern_type( value);
-  global_t glob = MALLOC( global);
-  glob->global_type = NORMAL_GLOBAL;
-  glob->type = type;
-  glob->handling_backend = NULL;
-  glob->for_backend = NULL;
-
-  puthash( name, glob, global_hash);
-}
-
-
-void
-define_generic (symbol_t define_symbol, symbol_t name,
-		generic_form_t form)
-{
-  /* XXX: we should have lazy compilation instead.  */
-
-
-  /* Create a new symbol for the function generic.  */
-  unsigned int str_len = strlen (name->name) + 10;
-  char str[str_len];
-  strcpy (str, name->name);
-  strcat (str, "__generic");
-  symbol_t new_symbol = intern (str);
-
-  /* Create a new body that deconstructs the parameters from the
-     list.  */
-    /* XXX: In the future, generic could be called with the "funcall"
-     function, that take a list and pass all the arguments in the
-     stack, according to the function type.  This step would then be
-     useless.  */
-
-  assert (form->head == SYMBOL (lambda));
-
-  generic_form_t parameters = CAR (form->form_list->next);
-  form_t body = CAR (form->form_list->next->next);
-
-  lispify (parameters);
-  lispify (body);
-
-  assert (parameters->head == SYMBOL (tuple));
-
-
-  generic_form_t new_body;
-  
-  {
-    list_t form_list;
-    list_t *form_list_ptr = &form_list;
-
-    int i = 0;
-    panic ("To reimplement\n");
-#if 0    
-    FOREACH (element, parameters->form_alist)
-      {
-	id_form_t sf = CAR (CAR (element));
-	assert (is_form (sf, id_form));
-	symbol_t symbol = sf->value;
-	
-	form_t type_form = CDR (CAR (element));
-	
-	*form_list_ptr = CONS (let_form (type_form, symbol), NULL);
-	form_list_ptr = &((*form_list_ptr)->next);
-
-	form_t assignement = equal_form (id_form (symbol),
-      				       generic_form_symbol (SYMBOL (ith_form),
-							    CONS (id_form (SYMBOL (__form)),
-								  CONS (int_form (i), NULL))));
-	i++;
-
-	*form_list_ptr = CONS (assignement, NULL);
-	form_list_ptr = &((*form_list_ptr)->next);
-	
-      //      *form_list_ptr = CONS (
-      }
-#endif
-    *form_list_ptr = CONS (body, NULL);
-
-    new_body = block_form (form_list);
-  }
-
-  /* XXX: this is only for macros (currently), not for generics.  */
-  new_body = generic_form_symbol (SYMBOL (compile), CONS (new_body, NULL));
-  
-  list_t lambda_parameters = CONS (id_form (SYMBOL (__form)), base_type_form (SYMBOL (Form)));
-  
-  generic_form_t lf = lambda_form (base_type_form (SYMBOL (Form)),
-				   CONS (lambda_parameters, NULL),
-				   new_body);
-
-  form_t df = define_form (SYMBOL (function), new_symbol, lf);
-
-  lispify (df);
-
-  /* XXX: In the future, generic could be called with the "funcall"
-     function, that take a list and pass all the arguments in the
-     stack, according to the function type.  */
-
-  
-  define_function (define_symbol, new_symbol, form);
-  
-  generate (df);
-
-  //  DEFINE_GENERIC_SYMBOL (name, function->address);
-
-  
-  
 }
 
 
@@ -364,47 +186,6 @@ analyze (list_t form_list)
   return result;
 }
 
-
-
-
-#if 0
-void
-run_analysis (list_t form_list)
-{
-  FOREACH (element, form_list)
-    {
-      form_t form = CAR (element);
-
-      if(is_form (form, generic_form))
-	{
-	  generic_form_t gform = form;
-	  if(gform->head == intern ("define"))
-	    {
-	      /* XXX: we should have define function int->int toto(a)
-		 instead of define function (lambda int toto (int)).
-		 Lambda is useless. */
-
-	      symbol_form_t sf = CDR (CAR (gform->form_alist));
-	      
-	      assert (is_form (sf, symbol_form));
-	      symbol_t type_symbol = sf->value; 
-
-	      if(type_symbol == SYMBOL (function))
-		{
-		  
-		  symbol_form_t name_form = CDR (CAR (gform->form_alist->next));
-		  symbol_t name = name_form->value;
-
-		  lambda_form_t lf = CDR (CAR (gform->form_alist->next->next));
-		}
-	      
-	    }
-	}
-    }
-  
-}
-#endif
-
 #define DEFINE_DEFINER(string__, function__)			\
 do {								\
   puthash (intern (string__), function__, definer_hash);	\
@@ -414,11 +195,13 @@ do {								\
 void
 init_analysis ()
 {
-  DEFINE_DEFINER ("function", define_function);
-  DEFINE_DEFINER ("global", analysis_define_global);
+  //  DEFINE_DEFINER ("function", define_function);
+  DEFINE_DEFINER ("function", do_nothing);
+  DEFINE_DEFINER ("global", do_nothing);
   DEFINE_DEFINER ("type", define_type);
   DEFINE_DEFINER ("type_alias", define_type_alias);
-  DEFINE_DEFINER ("generic", define_generic);
+  //  DEFINE_DEFINER ("generic", define_generic);
+  DEFINE_DEFINER ("expander", do_nothing);
 
   define_type_string ("Int", sizeof(int), __alignof__ (int), NULL);
   define_type_string ("Bool", sizeof(int), __alignof__ (int), NULL); 

@@ -888,15 +888,15 @@ ith_form (generic_form_t form, int i)
 void
 init_form (void)
 {
-  DEFINE_C_FUNCTION2 ("loop_form", loop_form, "Form<-(Form)");
-  DEFINE_C_FUNCTION2 ("if_form", if_form, "Form<-(Form,Form,Form)");
-  DEFINE_C_FUNCTION2 ("break_form", break_form, "Form<-()");
-  DEFINE_C_FUNCTION2 ("seq_form2", seq_form2, "Form<-(Form,Form)");
-
-  
-  DEFINE_C_FUNCTION2 ("ith_form", ith_form, "Form<-(Form,Int)");
-  DEFINE_C_FUNCTION2 ("print_form", print_form, "Void<-(Form)");
-
+//
+//  DEFINE_C_FUNCTION2 ("loop_form", loop_form, "Form<-(Form)");
+//  DEFINE_C_FUNCTION2 ("if_form", if_form, "Form<-(Form,Form,Form)");
+//  DEFINE_C_FUNCTION2 ("break_form", break_form, "Form<-()");
+//  DEFINE_C_FUNCTION2 ("seq_form2", seq_form2, "Form<-(Form,Form)");
+//
+//  
+//  DEFINE_C_FUNCTION2 ("ith_form", ith_form, "Form<-(Form,Int)");
+//  DEFINE_C_FUNCTION2 ("print_form", print_form, "Void<-(Form)");
   /* XXX: it would be cool to have something to transform a generic
      that takes a infinite number of arguments into a function that
      takes the list as its argument.  */

@@ -31,4 +31,8 @@ get_global_address( Symbol name)
   return glob->for_backend;
 }
 
+/* If there is no address, use NULL.  */
+void
+define_global( Symbol name, Type type, void *address);
+
 #endif

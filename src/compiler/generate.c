@@ -235,6 +235,7 @@ compile_function (symbol_t define_symbol, symbol_t name, expanded_form_t expform
   void *fun_address = generate_function_start (name, parameters);
   
   global_t glob = gethash( name, global_hash);
+  assert( glob);
   create_global_variable_at( glob->type, name,
   			     fun_address);
   glob->for_backend = fun_address;
@@ -1389,13 +1390,6 @@ init_generate (void)
 
   DEFINE_C_FUNCTION (test_function, "Int<-Int");
   DEFINE_C_FUNCTION (exit, "Void<-Int");
-
-  /* XXX: the type Form is defined twice */
-  //  extern Type TYPE (Form);
-  define_type_string ("Form", sizeof(void *), __alignof__ (void *), NULL);
-
-  DEFINE_C_FUNCTION (compile, "Int <- Form");
-
 }
 
 

@@ -93,8 +93,7 @@ void
 generate_list( list_t expanded_form_list)
 {
   /* Now, compiles all the created forms.  Same as before: should take
-     a form list as an argument.
-  */
+     a form list as an argument. Should return a list of addresses.  */
   FOREACH (element, expanded_form_list)
     {
       form_t form = CAR (element);

@@ -786,6 +786,21 @@ parse_all ()
 	  expect( SEMICOLON_RTK);
 	  return form;
 	}
+      else if(next_token.id == SYMBOL( expander))
+	{
+	  expect( ID_RTK);
+	  expect( ID_RTK);
+	  symbol_t name = current_token.id;
+	  expect( OPEN_PAREN_RTK);
+	  expect( ID_RTK);
+	  symbol_t param = current_token.id;
+	  expect( CLOSE_PAREN_RTK);
+	  form_t body;
+	  statement_or_expression_t se = parse_statement_or_expression( &body);
+	  form = define_form( SYMBOL( expander), name,
+			      label_form_symbol( param, body));
+	  return form;
+	}
       else if(next_token.id == SYMBOL (type_alias))
 	{
 	  parse_type_declaration (&form);
@@ -1034,8 +1049,9 @@ parse_macro (form_t *form)
   if(next_token.type == DOLLAR_RTK)
     {
       symbol_t symbol = next_token.id;
-      accept (DOLLAR_RTK);
+      expect (DOLLAR_RTK);
       form_t exp_form = parse_expression ();
+      expect( DOLLAR_RTK);
       *form = generic_form_symbol (symbol, CONS (exp_form, NULL));
       return EXPRESSION;
     }

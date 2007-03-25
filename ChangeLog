@@ -1,5 +1,30 @@
 2007-03-25  Matthieu Lemerre  <racin@free.fr>
 
+	Transition from analysis.c to expand-define.c; handling of
+	expander definition and small parse change in form.
+	
+	* test/malebolge10-expanders.c: New test file.
+	* test/malebolge06-form.l: Changed to handle the $...$ and $@
+	... $ forms of backticking.
+	* src/std/l-form.c (init_l_form): Defines a real type for Form.
+	* src/expander/expand-define.c (define_global): New function.
+	(expand_all_function_and_global): Handle definition of functions
+	and globals; much code moved from analysis.c
+	(expand_all_expanders): New function.
+	(expand_all): Returns the expanded definitions.
+	* src/parser/form.c (init_form): Remove all definitions of these
+	functions from L.
+	* src/parser/parse.c (parse_all): Now parses expander definitions.
+	(parse_macro): The backtick facility is now done with two
+	surrounding dollars.
+	* src/compiler/generate.c (compile_function): Added an assertion
+	to prevent an error.
+	(init_generate): Remove definition of compile to L from here, because
+	of the yet-undefined Form.
+	* src/compiler/analysis.c (define_function)
+	(analysis_define_global, define_generic): Removed functions.
+	(do_nothing): Transitional function to replace them.
+
 	Really handle the recursive types.
 
 	* src/compiler/type.c (define_type_type_form): Handle the fact

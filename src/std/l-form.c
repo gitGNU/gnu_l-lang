@@ -184,12 +184,14 @@ void
 init_l_form (void)
 {
   #undef Form
-  /* Form is already defined in generate.  */
-  //  define_type_string ("Form", sizeof(void *), __alignof__ (void *), NULL);
-  //  DEFINE_TYPE ("Form", TYPE (Form), sizeof(form_t), __alignof__ (form_t));
+  eval_cstring( "type Form = struct {"
+		"form_type_: Int;"
+		"head: Symbol;"
+		"garbage_:Int;"
+                "form_list: List( Form); } *;");
+
   define_parse (SYMBOL (Form), form_parse);
   define_expander (SYMBOL (Form), expand_form);
-
   
   DEFINE_C_FUNCTION (print_form, "Int<-Form");
   DEFINE_C_FUNCTION2 ("Int_Form", int_form, "Form<-Int");
