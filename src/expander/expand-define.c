@@ -168,7 +168,7 @@ expand_all_expanders( list_t form_list)
 	id_form_t parameter_namef = CAR( tlabel_form->form_list);
 	assert( is_form( parameter_namef, id_form));
 	form_t parameters = new_tuple_form( CONS( label_form_symbol( parameter_namef->value,
-								     id_form( SYMBOL( Form))),
+								     id_form( SYMBOL( Compound_Form))),
 						  NULL));
 	
 	form_t body = CAR(tlabel_form->form_list->next);

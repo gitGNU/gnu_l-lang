@@ -184,7 +184,11 @@ void
 init_l_form (void)
 {
   #undef Form
+
   eval_cstring( "type Form = struct {"
+		"form_type_: Int;} *;");
+
+  eval_cstring( "type Compound_Form = struct {"
 		"form_type_: Int;"
 		"head: Symbol;"
 		"garbage_:Int;"

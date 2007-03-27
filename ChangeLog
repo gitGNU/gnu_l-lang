@@ -1,3 +1,12 @@
+2007-03-27  Matthieu Lemerre  <racin@free.fr>
+
+	Expanders take a Compound Form instead of a Form as an argument.
+	
+	* src/std/l-form.c (init_l_form): Defines type Compound_Form, and
+	redefines type Form.
+	* src/expander/expand-define.c (expand_all_expanders): Expanders
+	take a Compound_Form instead of a Form as an argument.
+
 2007-03-25  Matthieu Lemerre  <racin@free.fr>
 
 	Transition from analysis.c to expand-define.c; handling of
