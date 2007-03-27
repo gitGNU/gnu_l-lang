@@ -108,9 +108,7 @@ eval_file (char *file_name)
 {
   list_t form_list = parse_file( file_name);
 
-  list_t to_compile = analyze (form_list);
-  
-  list_t expanded_form_list = expand_form_list( to_compile);
+  list_t expanded_form_list = expand_form_list( form_list);
 
   generate_list( expanded_form_list);
 }
@@ -129,10 +127,7 @@ eval (String s)
      One of the transformations would be to put top level forms into a
      temporary function to execute it.  */
      
-  list_t to_compile = analyze (form_list);
-  
-
-  list_t expanded_form_list = expand_form_list( to_compile);
+  list_t expanded_form_list = expand_form_list( form_list);
 
   generate_list( expanded_form_list);
 

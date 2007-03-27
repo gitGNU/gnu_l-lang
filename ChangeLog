@@ -1,5 +1,20 @@
 2007-03-27  Matthieu Lemerre  <racin@free.fr>
 
+	Moved type handling to expand-define, and clean remaining of
+	analysis.c.
+	
+	* src/expander/expand-define.c (global_hash): Moved from
+	analysis.c
+	(define_function): New function.
+	(expand_all_function_and_global): Now uses define_function.
+	(define_type, define_type_alias): Moved from analysis.c
+	(expand_all_types): New function.
+	(expand_all): Call expand_all_types.
+	* src/compiler/analysis.c: Removed everything except
+	initialisation (to remove later).
+	* src/eval.c (eval_file): Removed call to analyze.
+	(eval): Likewise.
+
 	Expanders take a Compound Form instead of a Form as an argument.
 	
 	* src/std/l-form.c (init_l_form): Defines type Compound_Form, and

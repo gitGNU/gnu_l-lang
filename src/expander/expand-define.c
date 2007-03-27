@@ -46,6 +46,10 @@
 /* Functions and globals expansion.  */
 
 #include <l/sys/global.h>
+
+/* A hash Symbol -> Global.  */
+MAKE_STATIC_HASH_TABLE (global_hash);
+
 void
 define_global( symbol_t name, Type type,
 	       void *address)
@@ -59,6 +63,12 @@ define_global( symbol_t name, Type type,
   puthash( name, glob, global_hash);
 }
 
+void
+define_function( Symbol name, Type type, void *address)
+{
+  define_global(  name, type, address);
+  define_expander(name, expand_function);
+}
 
 list_t
 expand_all_function_and_global( list_t form_list)
@@ -99,12 +109,11 @@ expand_all_function_and_global( list_t form_list)
 
 	  form_t return_type = CAR (lambda_form->form_list);
 	  generic_form_t parameters = CAR (lambda_form->form_list->next);
-	  form_t function_type = intern_type( function_type_form (return_type,
+	  Type function_type = intern_type( function_type_form (return_type,
 								  parameters));
 
-	  define_global(  name, function_type, NULL);
-	  define_expander(name, expand_function);
-
+	  define_function( name, function_type, NULL);
+	  
 	  /* XXX Why do we expand this.  */
 	  expform = create_expanded_form(define_form(SYMBOL(function),
 						     name, expand(lambda_form)),
@@ -133,6 +142,7 @@ expand_all_function_and_global( list_t form_list)
 
 
 /* Expand and dynamically compiles the expanders.  */
+
 list_t
 expand_all_expanders( list_t form_list)
 {
@@ -240,6 +250,84 @@ expand_all_expanders( list_t form_list)
 }
 
 
+/* Types.  */
+
+
+#include <l/sys/type.h>
+#include <l/access.h>
+/* XXX: for recursive types: just use a lazy evaluation technique, we
+   transform a type definition to a type only when the type is needed. */
+void
+define_type (symbol_t name, type_form_t type_form)
+{
+  Base_Type t = define_type_type_form (id_form (name), -1, -1, type_form);
+
+  assert (t->type_type == BASE_TYPE);
+  
+  /*  Does not really belong here, but more to a "high-level type
+     definition processing" part of the compiler.  */
+  define_derived_creator( t, name);
+  define_accesser (t, derived_accesser);
+  define_left_accesser (t, derived_left_accesser);
+}
+
+/* A type alias is just another name for the same type.  It is
+   equivalent to C's typedef. */
+void
+define_type_alias (symbol_t name,
+		   type_form_t type_form)
+{
+  Type type = intern_type (type_form);
+  associate_type_with_type_form( id_form( name), type);
+}
+
+list_t
+expand_all_types( list_t form_list)
+{
+    
+  list_t type_form_list;
+  {
+    list_t *type_form_list_ptr = &type_form_list;
+    
+    FOREACH( element, form_list)
+      {
+	generic_form_t df = CAR( element);
+	assert( is_form(  df, generic_form));
+	assert( df->head == SYMBOL( define));
+	
+	id_form_t form_typef = CAR(df->form_list);
+	assert( is_form( form_typef, id_form));
+	Symbol form_type = form_typef->value;
+	assert( form_type == SYMBOL( type)
+		|| form_type == SYMBOL( type_alias));
+		
+	id_form_t name_form = CAR( df->form_list->next);
+	assert( is_form( name_form, id_form));
+	Symbol name = name_form->value;
+
+	generic_form_t type_form = CAR( df->form_list->next->next);
+	
+	form_t exp_type_form = define_form( SYMBOL( form_type),
+					    name,
+					    type_form);
+
+	if(form_type == SYMBOL( type))
+	  define_type( name, type_form);
+	else
+	  define_type_alias( name, type_form);
+	  
+	*type_form_list_ptr = CONS( exp_type_form, NULL);
+	type_form_list_ptr = &((*type_form_list_ptr)->next);
+
+	/* Construct the expander form.  */
+      }
+    *type_form_list_ptr = NULL;
+  }
+
+  return type_form_list;
+}
+
+
 /* Expand all.  */
 
 /* This should split the list of expansions into list of one
@@ -271,6 +359,14 @@ expand_all( list_t form_list)
      should be expanded, then the types, then the expanders, then the
      functions, then the globals.  */
 
+  list_t type_list = gethash( SYMBOL( type), ht);
+  list_t type_alias_list = gethash( SYMBOL( type_alias), ht);
+  type_list = reverse( nconc( type_list, type_alias_list));
+
+  list_t expanded_type_list;
+  if(type_list)
+    expanded_type_list = expand_all_types( type_list);
+  
   
   list_t expander_list = gethash( SYMBOL( expander), ht);
   list_t expanded_expander_list = NULL;
