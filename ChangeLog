@@ -1,3 +1,20 @@
+2007-03-28  Matthieu Lemerre  <racin@free.fr>
+
+	Bug fix in form handling and definition of expanders in the order
+	of their definition.
+
+	* test/malebolge10-expanders.l: Test in order expansion.
+
+	* src/std/l-form.c (expand_form_rec): Removed a bug that made some
+	definitions expanded twice.
+	* src/expander/expand-define.c (expand_function_definition): New
+	function.
+	(expand_all_function_and_global): Use expand_function_definition.
+	(expand_all_expanders): Use expand_function_definition; compile
+	the expanders in order of their definition so that an expander can
+	be used in another expander's function.  
+	(expand_all): Put the expanders to expand list in order.
+
 2007-03-27  Matthieu Lemerre  <racin@free.fr>
 
 	Moved type handling to expand-define, and clean remaining of

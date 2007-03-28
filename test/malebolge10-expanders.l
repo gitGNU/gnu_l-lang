@@ -10,16 +10,21 @@ expander my_assert( form)
 	  })
 }
 
-expander my_log( form)
+
+expander
+toto( form)
 {
-  Form( print( "logging: ", $@form.form_list$)
-	//exit( 3)
-	)
+  Form( 3 * $form.form_list.head$ + 1)
 }
 
-
-
-
+expander my_log( form)
+{
+  //Expanders must be defined in-order, so toto has to be defined first.
+  let i = toto (25+3);
+  Form( print( "logging: ", $Int_Form (i)$, " : ", $@form.form_list$)
+	     //exit( 3)
+	)
+}
 
 Void
 test()

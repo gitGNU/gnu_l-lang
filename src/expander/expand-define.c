@@ -70,6 +70,24 @@ define_function( Symbol name, Type type, void *address)
   define_expander(name, expand_function);
 }
 
+expanded_form_t
+expand_function_definition( Symbol name, generic_form_t lambda_form)
+{
+  assert( is_form( lambda_form, generic_form)
+	  && lambda_form->head == SYMBOL( lambda));
+  form_t return_type = CAR (lambda_form->form_list);
+  generic_form_t parameters = CAR (lambda_form->form_list->next);
+  Type function_type = intern_type( function_type_form (return_type,
+								  parameters));
+
+  define_function( name, function_type, NULL);
+	  
+  /* XXX Why do we expand this.  */
+  return create_expanded_form(define_form(SYMBOL(function),
+					  name, expand(lambda_form)),
+			      NULL);
+}
+
 list_t
 expand_all_function_and_global( list_t form_list)
 {
@@ -104,20 +122,8 @@ expand_all_function_and_global( list_t form_list)
       if(form_type == SYMBOL( function))
 	{
 	  generic_form_t lambda_form = CAR( df->form_list->next->next);
-	  assert( is_form( lambda_form, generic_form));
-	  assert( lambda_form->head == SYMBOL( lambda));
 
-	  form_t return_type = CAR (lambda_form->form_list);
-	  generic_form_t parameters = CAR (lambda_form->form_list->next);
-	  Type function_type = intern_type( function_type_form (return_type,
-								  parameters));
-
-	  define_function( name, function_type, NULL);
-	  
-	  /* XXX Why do we expand this.  */
-	  expform = create_expanded_form(define_form(SYMBOL(function),
-						     name, expand(lambda_form)),
-					 NULL);
+	  expform = expand_function_definition( name, lambda_form);
 	}
       else
 	{
@@ -152,9 +158,9 @@ expand_all_expanders( list_t form_list)
      l'une contenue dans l'autre. */
 
   
-  list_t fun_form_list;
+  list_t expander_list;
   {
-    list_t *fun_form_list_ptr = &fun_form_list;
+    list_t *expander_list_ptr = &expander_list;
     
     FOREACH( element, form_list)
       {
@@ -193,56 +199,19 @@ expand_all_expanders( list_t form_list)
 	strcat( funname_, "##expander_function");
 	Symbol funname = intern( funname_);
 	free( funname_);
+
+	expanded_form_t exp_function_form = expand_function_definition( funname,
+									tlambda_form);
+	generate( exp_function_form);
+	define_expander( name, get_global_address( funname));
 	
-	form_t function_form = define_form( SYMBOL( function),
-					    funname,
-					    tlambda_form);
-	*fun_form_list_ptr = CONS( function_form, NULL);
-	fun_form_list_ptr = &((*fun_form_list_ptr)->next);
+	*expander_list_ptr = CONS( define_form( SYMBOL( expander), name,
+						exp_function_form),
+				   NULL);
+	expander_list_ptr = &((*expander_list_ptr)->next);
 
 	/* Construct the expander form.  */
       }
-    *fun_form_list_ptr = NULL;
-  }
-
-  /* Compiles all the functions.  */
-  list_t expanded_funs = expand_all_function_and_global( fun_form_list);
-  generate_list( expanded_funs);
-
-  list_t expander_list;
-  {
-    list_t *expander_list_ptr = &expander_list;
-    list_t fun_element;
-    list_t exp_element;
-    
-    for(exp_element = form_list, fun_element = expanded_funs;
-	exp_element;
-	exp_element = exp_element->next, fun_element = fun_element->next)
-      {
-	assert( fun_element);
-
-	generic_form_t df = CAR( exp_element);
-	id_form_t name_form = CAR( df->form_list->next);
-	Symbol name = name_form->value;
-
-	expanded_form_t exp_df2 = CAR( fun_element);
-	assert( is_form( exp_df2, expanded_form));
-	generic_form_t df2 = exp_df2->return_form;
-	assert( is_form(  df2, generic_form));
-	assert( df2->head == SYMBOL( define));
-
-	id_form_t fun_name_form = CAR( df2->form_list->next);
-	assert( is_form( fun_name_form, id_form));
-
-	/* Finally defines the expander.  */
-	define_expander( name, get_global_address( fun_name_form->value));
-
-	/* We return an expanded expander for use in backends (for
-	   instance, the C backend).  */
-	*expander_list_ptr = define_form( SYMBOL( expander), name, df2);
-	expander_list_ptr = &((*expander_list_ptr)->next);
-      }
-    assert( fun_element == NULL);
     *expander_list_ptr = NULL;
   }
 
@@ -368,7 +337,7 @@ expand_all( list_t form_list)
     expanded_type_list = expand_all_types( type_list);
   
   
-  list_t expander_list = gethash( SYMBOL( expander), ht);
+  list_t expander_list = reverse( gethash( SYMBOL( expander), ht));
   list_t expanded_expander_list = NULL;
   if( expander_list)
     expanded_expander_list = expand_all_expanders( expander_list);

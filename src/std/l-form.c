@@ -99,7 +99,7 @@ expand_form_rec (generic_form_t form)
       if(exp_form->type != TYPE ("Form"))
 	panic ("Error: $can replace only forms.  \n");
 
-      return exp_form->return_form;
+      return exp_form;
     }
   
   if(form->head == intern ("$@"))
@@ -159,7 +159,6 @@ expand_form_rec (generic_form_t form)
 
  end:
 
-  lispify (new_form_list);
   return generic_form_symbol (SYMBOL (Generic_Form_Function),
 			      CONS (symbol_form (head),
 				    CONS (new_form_list,
