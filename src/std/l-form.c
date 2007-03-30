@@ -61,8 +61,16 @@ form_parse (form_t *form, Read_Buffer buf)
   return ~(EXPRESSION);
 }
 
+
+/* Transforms "3 + i" into "generic_form( '+', CONS( int_form( 3),
+   CONS( id_form( 'i'))))"
+
+   IDs in id_list and forms beginning by $ or $@ are not expanded this
+   way.  This is useful when defining macros.  */
+   
+   
 generic_form_t
-expand_form_rec (generic_form_t form)
+expand_form_rec (generic_form_t form, list_t id_list)
 {
   if(is_form (form, atomic_form))
     {
@@ -70,7 +78,16 @@ expand_form_rec (generic_form_t form)
 	return generic_form_symbol (SYMBOL (Int_Form), CONS (form, NULL));
 
       if(is_form (form, id_form))
-	return generic_form_symbol (SYMBOL (Id_Form), CONS (symbol_form (((id_form_t)form)->value), NULL));
+	{
+	  Symbol id = (((id_form_t)form)->value);
+	  FOREACH( element, id_list)
+	    {
+	      if(CAR( element) == id)
+		return form;
+	    }
+	  return generic_form_symbol (SYMBOL (Id_Form), CONS (symbol_form( id), NULL));
+
+	}
 
       if(is_form (form, quoted_symbol_form))
 	return generic_form_symbol (SYMBOL (Symbol_Form), CONS (form, NULL));
@@ -80,7 +97,9 @@ expand_form_rec (generic_form_t form)
 
       if(is_form (form, string_form))
 	return generic_form_symbol (SYMBOL (String_Form), CONS (form, NULL));
-
+      if(is_form( form, expanded_form))
+	return expand_form_rec( ((expanded_form_t)form)->return_form, NULL);
+      
       panic ("Here\n");
     }
 
@@ -140,7 +159,7 @@ expand_form_rec (generic_form_t form)
 	      }
 	  }
 	
-	form_t new_form = expand_form_rec(subform);
+	form_t new_form = expand_form_rec(subform, id_list);
 
 	*new_form_list_ptr = generic_form_symbol(SYMBOL(cons),
 						 CONS(new_form,
@@ -171,7 +190,7 @@ expand_form (generic_form_t form)
 {
   form_t the_form = CAR (form->form_list);
 
-  form_t returned_form = expand_form_rec (the_form);
+  form_t returned_form = expand_form_rec (the_form, NULL);
 
   assert (returned_form);
 
@@ -205,4 +224,6 @@ init_l_form (void)
 		      generic_form_symbol,
 		      "Form<-(Symbol, List(Form))");
 
+  /* In fact, Expanded_Form<-Form.  */
+  DEFINE_C_FUNCTION (expand, "Form<-Form");
 }

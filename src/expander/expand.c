@@ -1137,6 +1137,8 @@ define_expander(symbol_t symbol, expander_t expander)
 void
 init_expand (void)
 {
+  init_expand_define();
+  
   define_expander(SYMBOL(lambda), expand_lambda);
   define_expander(SYMBOL(block), expand_block);
   define_expander(SYMBOL(seq), expand_seq);

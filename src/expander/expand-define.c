@@ -144,13 +144,180 @@ expand_all_function_and_global( list_t form_list)
   return exp_form_list;
 }
 
-/* Expanders.  */
+/* Misc definitions: expander, macros, user definitions...  */
+
+/* For now, all these definitions are processed in-order.  Later, this
+   will depend on what other definitions it creates (for instance,
+   macro definition would create expanders; class definition would
+   create expanders and types; but attributes definitions wouldn't
+   create many things. */
+
+typedef expanded_form_t (*Definer)( Symbol define_type,
+				    Symbol name,
+				    list_t rest);
+
+MAKE_STATIC_HASH_TABLE( definer_hash);
+
+void
+define_definer( Symbol s, Definer d)
+{
+  puthash( s, d, definer_hash);
+}
+
+/* A define hash associates a symbol to a definer.  */
+
+static expanded_form_t
+expand_expander( Symbol expander,
+		 Symbol name,
+		 list_t rest)
+{
+  //  assert( expander == SYMBOL( expander));
+
+  generic_form_t tlabel_form = CAR( rest);
+  assert( is_form( tlabel_form, generic_form));
+  assert( tlabel_form->head == SYMBOL( label));
+  
+  id_form_t parameter_namef = CAR( tlabel_form->form_list);
+  assert( is_form( parameter_namef, id_form));
+  form_t parameters = new_tuple_form( CONS( label_form_symbol( parameter_namef->value,
+							       id_form( SYMBOL( Compound_Form))),
+					    NULL));
+	
+  form_t body = CAR(tlabel_form->form_list->next);
+  /* Create a function.  */
+  
+  form_t tlambda_form = lambda_form( base_type_form( SYMBOL( Form)),
+				     parameters,
+				     body);
+  
+  char *funname_ = malloc( strlen( name->name) + 20);
+  strcpy( funname_, name->name);
+  strcat( funname_, "##expander_function");
+  Symbol funname = intern( funname_);
+  free( funname_);
+  
+  expanded_form_t exp_function_form = expand_function_definition( funname,
+								  tlambda_form);
+  generate( exp_function_form);
+  define_expander( name, get_global_address( funname));
+
+  return create_expanded_form( define_form( SYMBOL( expander), name,
+					    exp_function_form));
+}
+
+static expanded_form_t
+expand_macro( Symbol macro,
+	      Symbol name,
+	      list_t rest)
+{
+  assert( macro == SYMBOL( macro));
+  assert( rest && rest->next && !rest->next->next);
+  
+  generic_form_t parameters = CAR( rest);
+  generic_form_t body = CAR( rest->next);
+
+  /* XXX: expands the parameters, check their number, etc.  */
+
+  Symbol expander_parameter_name = gensym( "form");
+  
+  list_t id_list;
+  list_t prepare_list;
+  list_t *prepare_list_ptr = &prepare_list;
+  {
+    int num_next = 0;
+    list_t *id_list_ptr = &id_list;
+  
+    FOREACH( element, parameters->form_list)
+      {
+	form_t parameter = CAR( element);
+	Symbol parameter_name;
+	form_t parameter_form_type;
+
+	if(is_form( parameter, id_form))
+	  {
+	    parameter_name = ((id_form_t)parameter)->value;
+	    parameter_form_type = NULL;
+	  }
+	else
+	  {
+	    assert( is_form( parameter, generic_form));
+	    generic_form_t gparameter = parameter;
+	    assert( gparameter->head == SYMBOL( label));
+	    assert( gparameter->form_list && gparameter->form_list->next);
+	    assert( is_form( (form_t) CAR( gparameter->form_list), id_form));
+	    parameter_name = ((id_form_t) CAR( gparameter->form_list))->value;
+	    parameter_form_type = ((id_form_t) CAR( gparameter->form_list->next));
+	  }
+	
+
+	/* Add let parameter_name = form.form_list.( tail)*.head.   */
+	form_t form = id_form( expander_parameter_name);
+	form = generic_form_symbol( intern( "[]"),
+				    CONS( form,
+					  CONS( symbol_form( SYMBOL( form_list)),
+						NULL)));
+	
+	for(int i = 0; i < num_next; i++)
+	  {
+	    form = generic_form_symbol( intern( "[]"),
+					CONS( form,
+					      CONS( symbol_form( SYMBOL( tail)),
+						    NULL)));
+	  }
+	/* XXX Add: assert( form_.form_list.tail*).  */
+	form = generic_form_symbol( intern( "[]"),
+				    CONS( form,
+					  CONS( symbol_form( SYMBOL( head)),
+						NULL)));
+
+	if(parameter_form_type)
+	  {
+	    form = generic_form_symbol( SYMBOL( expand),
+					CONS( form,
+					      NULL));
+	    /* A simple expand would not suffice, because there can be
+	       parameters whose type is not known here.  Expansion
+	       of the parameters must happen on the caller's side.
+
+	       Here, the type should be checked.  Later, it will even
+	       be used for macro overloading.  
+	       */
+	    //	    panic( "Pre-Expansion of the macro parameters not implemented\n");
+	  }
+	form_t tlet_form = let_form( id_form( SYMBOL( Form)), parameter_name);
+	form_t assign_form = generic_form_symbol( intern( "="),
+						  CONS( tlet_form,
+							CONS( form,
+							      NULL)));
+	*prepare_list_ptr = CONS( assign_form, NULL);
+	prepare_list_ptr = &((*prepare_list_ptr)->next);
+	*id_list_ptr = CONS( parameter_name, NULL);
+	id_list_ptr = &((*id_list_ptr)->next);
+	num_next++;
+      }
+    *id_list_ptr = NULL;
+  }
+
+  form_t form_exp_body =  expand_form_rec( body, id_list);
+  *prepare_list_ptr = CONS(form_exp_body, NULL);
+  (*prepare_list_ptr)->next = NULL;
+
+  form_t new_body = block_form( prepare_list);
+  
+  return expand_expander( NULL, name, CONS( label_form_symbol( expander_parameter_name,
+							       new_body),
+					    NULL));
+  //  lispify( parameters);
+  //  lispify( body);
+}
+
+
 
 
 /* Expand and dynamically compiles the expanders.  */
 
 list_t
-expand_all_expanders( list_t form_list)
+expand_all_misc( list_t form_list)
 {
   /* IL faut creer deux listes, avec le meme body: une liste
      d'expanders, et une liste de fonctions.  Les fonctions sont a
@@ -171,43 +338,19 @@ expand_all_expanders( list_t form_list)
 	id_form_t form_typef = CAR(df->form_list);
 	assert( is_form( form_typef, id_form));
 	Symbol form_type = form_typef->value;
-	assert( form_type == SYMBOL( expander));
 		
 	id_form_t name_form = CAR( df->form_list->next);
 	assert( is_form( name_form, id_form));
 	Symbol name = name_form->value;
 
-	generic_form_t tlabel_form = CAR( df->form_list->next->next);
-	assert( is_form( tlabel_form, generic_form));
-	assert( tlabel_form->head == SYMBOL( label));
-
-	id_form_t parameter_namef = CAR( tlabel_form->form_list);
-	assert( is_form( parameter_namef, id_form));
-	form_t parameters = new_tuple_form( CONS( label_form_symbol( parameter_namef->value,
-								     id_form( SYMBOL( Compound_Form))),
-						  NULL));
+	Definer definer = gethash( form_type, definer_hash);
+	assert( definer);
 	
-	form_t body = CAR(tlabel_form->form_list->next);
-	/* Create a function.  */
+	expanded_form_t exp_form = definer( form_type,
+					    name,
+					    df->form_list->next->next);
 	
-	form_t tlambda_form = lambda_form( base_type_form( SYMBOL( Form)),
-					   parameters,
-					   body);
-
-	char *funname_ = malloc( strlen( name->name) + 20);
-	strcpy( funname_, name->name);
-	strcat( funname_, "##expander_function");
-	Symbol funname = intern( funname_);
-	free( funname_);
-
-	expanded_form_t exp_function_form = expand_function_definition( funname,
-									tlambda_form);
-	generate( exp_function_form);
-	define_expander( name, get_global_address( funname));
-	
-	*expander_list_ptr = CONS( define_form( SYMBOL( expander), name,
-						exp_function_form),
-				   NULL);
+	*expander_list_ptr = CONS( exp_form, NULL);
 	expander_list_ptr = &((*expander_list_ptr)->next);
 
 	/* Construct the expander form.  */
@@ -215,7 +358,7 @@ expand_all_expanders( list_t form_list)
     *expander_list_ptr = NULL;
   }
 
-  return NULL;//expander_list;
+  return expander_list;
 }
 
 
@@ -337,10 +480,11 @@ expand_all( list_t form_list)
     expanded_type_list = expand_all_types( type_list);
   
   
-  list_t expander_list = reverse( gethash( SYMBOL( expander), ht));
+  list_t expander_list = reverse( nconc( gethash( SYMBOL( macro), ht),
+					 gethash( SYMBOL( expander), ht)));
   list_t expanded_expander_list = NULL;
   if( expander_list)
-    expanded_expander_list = expand_all_expanders( expander_list);
+    expanded_expander_list = expand_all_misc( expander_list);
 
   /* Reverse of the funlist is necessary because we cannot compile
      functions when they are not in order.  */
@@ -358,6 +502,14 @@ expand_all( list_t form_list)
 
 
 
+
+void
+init_expand_define(void)
+{
+  define_definer( SYMBOL( expander), expand_expander);
+  define_definer( SYMBOL( macro), expand_macro);
+}
+
 #if 0
 /* A hash symbol->definer.  */
 MAKE_STATIC_HASH_TABLE( real_definer_hash);

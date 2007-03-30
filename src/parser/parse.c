@@ -806,6 +806,56 @@ parse_all ()
 	  parse_type_declaration (&form);
 	  return form;
 	}
+      else if(next_token.id == SYMBOL( macro))
+	{
+	  expect( ID_RTK);
+	  expect( ID_RTK);
+	  symbol_t name = current_token.id;
+	  expect( OPEN_PAREN_RTK);
+	  list_t parameters;
+	  if(accept( CLOSE_PAREN_RTK))
+	    parameters = NULL;
+	  else
+	    {
+	      list_t *parameters_ptr = &parameters;
+	      while(1)
+		{
+		  expect( ID_RTK);
+		  symbol_t param_name = current_token.id;
+		  form_t param_form = id_form( param_name);
+		  if(accept( COLON_RTK))
+		    {
+		      type_form_t type_form = parse_type_form();
+		      param_form = label_form( param_form, type_form);
+		    }
+
+		  *parameters_ptr = CONS( param_form, NULL);
+		  parameters_ptr = &((*parameters_ptr)->next);
+		  
+		  if(accept( CLOSE_PAREN_RTK))
+		    {
+		      *parameters_ptr = NULL;
+		      break;
+		    }
+
+		  expect( COMMA_RTK);
+		}
+	    }
+
+	  form_t tuple_form = new_tuple_form( parameters);
+	  expect( ASSIGNMENT_RTK);
+	  //	  form_t expression = parse_expression();
+	  //	  expect( SEMICOLON_RTK);
+	  form_t expression = parse_statement();
+
+	  form = generic_form_symbol (SYMBOL( define),
+				      CONS( id_form( SYMBOL( macro)),
+					    CONS( id_form( name),
+						  CONS( tuple_form,
+							CONS( expression,
+							      NULL)))));
+	  return form;
+	}
       else if(next_token.id == SYMBOL (def))
 	{
 	  form = parse_def ();

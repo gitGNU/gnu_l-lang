@@ -277,6 +277,7 @@ let_form (type_form_t type, symbol_t name/*, expression_form_t initial_value*/)
 }
 
 
+/* Should take a list as a the last argument.  */
 generic_form_t
 define_form (symbol_t type, symbol_t name, /*expression_*/form_t initial_value)
 {

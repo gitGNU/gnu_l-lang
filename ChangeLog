@@ -1,3 +1,23 @@
+2007-03-30  Matthieu Lemerre  <racin@free.fr>
+
+	Add supportfor macros.
+	
+	* src/compiler/generate.c (generate): Does not treat non-globals
+	and non-functions.
+	* src/expander/expand-define.c (init_expand_define): New function.
+	(Definer): New type.
+	(define_definer,expand_expander,expand_macro): New function.
+	(expand_all_misc): Renamed from expand_all_expanders. Now calls
+	the corresponding definer.
+	(expand_all): Call the expanders in the right order.
+	* src/expander/expand.c (init_expand): Init expand_define.
+	* src/parser/parse.c (parse_all): Parse macros.
+	* src/std/l-form.c (expand_form_rec): Now takes an id_list
+	argument, which are the ids not to transform into form (they
+	contain forms).
+	(init_l_form): Exports the expander to L.
+	* test/malebolge11-macros.l: New file.
+
 2007-03-28  Matthieu Lemerre  <racin@free.fr>
 
 	Bug fix in form handling and definition of expanders in the order

@@ -1287,6 +1287,7 @@ void generate (expanded_form_t form_)
 {
   /* XXX: the form should really be "(compile nom_du_bout_de_code form)"  */
 
+  assert( is_form( form_, expanded_form));
   generic_form_t form = form_->return_form;
   assert (is_form (form, generic_form));
   assert (form->head == SYMBOL (define));
@@ -1306,18 +1307,19 @@ void generate (expanded_form_t form_)
       compile_function (type_symbol, name, CAR (form->form_list->next->next));
       return;
     }
-  
-  assert( type_symbol == SYMBOL( global));
+  else if( type_symbol == SYMBOL( global))
+    {
 
-  /* XXX: we should have support to patch globals too; for now we
-     require globals to be defined before the functions that use
-     them.  */
-  form_t type_form = CAR( form->form_list->next->next);
-  Type type = intern_type( type_form);
-  id_form_t name_form = CAR( form->form_list->next);
-  Symbol id = name_form->value;
-  
-  create_global_variable( type, id);
+      /* XXX: we should have support to patch globals too; for now we
+	 require globals to be defined before the functions that use
+	 them.  */
+      form_t type_form = CAR( form->form_list->next->next);
+      Type type = intern_type( type_form);
+      id_form_t name_form = CAR( form->form_list->next);
+      Symbol id = name_form->value;
+      
+      create_global_variable( type, id);
+    }
 }
 
 //void *define_type;

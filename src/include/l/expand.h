@@ -51,6 +51,10 @@
 
 Define_Form(expanded_form, Expanded_Form);
 
+/* The expand function, responsible for local expansion (inside functions). */
+expanded_form_t
+expand (form_t form);
+
 /* The expander functions that the user write take a form as an
    argument, and return an expanded form.  
 
