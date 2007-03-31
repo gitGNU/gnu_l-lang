@@ -1,6 +1,15 @@
+2007-03-31  Matthieu Lemerre  <racin@free.fr>
+
+	Add the div operation.
+	
+	* src/compiler/jit/operations.c (DEFINE_INT_OPERATION_NON_COMMUTATIVE): 
+	New macro. Use it to define div operations.
+	* src/compiler/generate.c: Add the div operation.
+	(init_generate): Init it.
+
 2007-03-30  Matthieu Lemerre  <racin@free.fr>
 
-	Add supportfor macros.
+	Add support for macros.
 	
 	* src/compiler/generate.c (generate): Does not treat non-globals
 	and non-functions.

@@ -1250,6 +1250,7 @@ compile_##name_ (generic_form_t form, Type expected_type)		\
 
 DEFINE_OP (add)
 DEFINE_OP (mul)
+DEFINE_OP (div)
 DEFINE_OP (sub)
 
 /* We compile -b as 0 - b.  */
@@ -1351,6 +1352,7 @@ init_generate (void)
 
   DEFINE_GENERIC ("+_Int", compile_add);
   DEFINE_GENERIC ("*_Int", compile_mul);
+  DEFINE_GENERIC ("/_Int", compile_div);
   DEFINE_GENERIC ("-_Int", compile_sub);
   DEFINE_GENERIC ("unary_minus_Int", compile_unary_minus_Int);
 

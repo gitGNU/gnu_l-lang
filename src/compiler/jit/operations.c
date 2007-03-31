@@ -208,7 +208,37 @@ add_int_locations (location_t loc1, location_t loc2)
 
 #endif
 
-
+#define DEFINE_INT_OPERATION_NON_COMMUTATIVE( name1)			\
+static inline void							\
+name1##_int_register_constant (register_t reg1, int value2)		\
+{									\
+  jit_##name1##i_i (corresponding_register[reg1],			\
+	      corresponding_register[reg1],				\
+	      value2);							\
+}									\
+									\
+  /* Additional argument is in which register should the result be put.  */ \
+static inline void							\
+name1##_int_register_register (register_t reg1, register_t reg2,	\
+		       register_t where_result)				\
+{									\
+  assert (where_result == reg1 || where_result == reg2);		\
+  assert (where_result == reg1); /* For the moment.  */			\
+  jit_##name1##r_i (corresponding_register[where_result],		\
+	      corresponding_register[reg1],				\
+	      corresponding_register[reg2]);				\
+}									\
+  									\
+static inline void							\
+name1##_int_constant_register (int value1, register_t reg2)		\
+{									\
+  register_t reg = allocate_free_data_register();			\
+  jit_movi_i(reg, value1);						\
+  jit_##name1##r_i (corresponding_register[reg2],			\
+		    corresponding_register[reg],			\
+		    corresponding_register[reg2]);			\
+  free_data_register( reg);						\
+}									\
 
 #define DEFINE_INT_OPERATION_SEMI_COMMUTATIVE(name1, name_reverse)	\
 static inline void							\
@@ -404,11 +434,15 @@ DEFINE_INT_OPERATION_SEMI_COMMUTATIVE(sub, rsb)
 DEFINE_INT_OPERATION_FRONT (sub)
 
 
-
 static inline int
 div_int_constant_constant (unsigned int value1, unsigned int value2)
 {
   return (int) value1 / (int) value2;
 }
+
+DEFINE_INT_OPERATION_NON_COMMUTATIVE( div)
+DEFINE_INT_OPERATION_FRONT( div);
+
+
 
 
