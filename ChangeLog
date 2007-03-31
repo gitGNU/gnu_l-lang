@@ -1,5 +1,25 @@
 2007-03-31  Matthieu Lemerre  <racin@free.fr>
 
+	Support for virtual attributes and additional checks when
+	expanding accessers.
+
+	* test/malebolge12-virtual-attributes.l: New test file.
+	* src/expander/expand-define.c (expanded_form_t): Definers now
+	take a form as a second argument (and not just an Id).
+	(expand_expander, expand_macro): Adapt them to take the form
+	second argument.
+	(Virtual_Accesser, Virtual_Left_Accesser): New types.
+	(virtual_attributes_hash, virtual_left_attributes_hash): New hashes.
+	(virtual_accesser, virtual_left_accesser): New accessers.
+	(expand_attribute): New definer. Initialised.
+	(expand_all_misc, expand_all): Adapted to the above changes.
+	* src/parser/parse.c (parse_all): Parse attributes.
+
+	* src/expander/access.c (get_accesser, get_left_accesser): Make
+	them non static.
+	(struct_accesser, derived_accesser, struct_left_accesser)
+	(derived_left_accesser): Add checks.
+	
 	Add the div operation.
 	
 	* src/compiler/jit/operations.c (DEFINE_INT_OPERATION_NON_COMMUTATIVE): 

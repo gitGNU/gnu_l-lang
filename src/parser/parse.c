@@ -856,6 +856,27 @@ parse_all ()
 							      NULL)))));
 	  return form;
 	}
+      else if(next_token.id == SYMBOL( attribute))
+	{
+	  expect( ID_RTK);
+	  type_form_t tf = parse_type_form();
+	  expect( ID_RTK);
+	  Symbol obj_name = current_token.id;
+	  expect( DOT_RTK);
+	  expect( ID_RTK);
+	  Symbol field_name = current_token.id;
+	  expect( ASSIGNMENT_RTK);
+	  form_t expression = parse_statement();
+
+	  form = generic_form_symbol( SYMBOL( define),
+				      CONS( id_form( SYMBOL( attribute)),
+					    CONS( tf,
+						  CONS( id_form( obj_name),
+							CONS( id_form( field_name),
+							      CONS( expression,
+								    NULL))))));
+	  return form;
+	}
       else if(next_token.id == SYMBOL (def))
 	{
 	  form = parse_def ();

@@ -60,7 +60,7 @@ define_accesser (Type type, Accesser accesser)
   puthash (type, accesser, accesser_hash);
 }
 
-static Accesser
+Accesser
 get_accesser (Type type)
 {
   return gethash (type, accesser_hash);
@@ -85,7 +85,7 @@ struct_accesser(Type type_,
   symbol_t accessor_symbol = accessor_symbol_form->value;
   offset_type_t offset_type = gethash(accessor_symbol, type->field_hash);
   if(offset_type == NULL)
-    compile_error( "Unknown accessor: %s\n", accessor_symbol->name);
+    compile_error( "Not a valid field: %s\n", accessor_symbol->name);
 
   return create_expanded_form(generic_form_symbol(intern("[]_Struct"),
 						  CONS(accessed,
@@ -130,6 +130,8 @@ derived_accesser (Type type_,
 								    CONS (accessed,
 									  NULL))));
   Accesser acc = get_accesser (type->origin_type);
+  if(acc == NULL)
+    panic( "There are no accessers for %s\n", asprint_type( type_));
   return acc (type->origin_type, new_accessed, accessor);
 }
 
@@ -145,7 +147,7 @@ define_left_accesser(Type type, Left_Accesser expander)
   puthash(type, expander, left_accesser_hash);
 }
 
-static Left_Accesser
+Left_Accesser
 get_left_accesser (Type type)
 {
   return gethash (type, left_accesser_hash);
@@ -194,7 +196,9 @@ struct_left_accesser(Type type_,
   
   symbol_t accessor_symbol = accessor_symbol_form->value;
   offset_type_t offset_type = gethash(accessor_symbol, type->field_hash);
-
+  if(offset_type == NULL)
+    compile_error( "Not a valid field: %s\n", accessor_symbol->name);
+  
   expanded_form_t left_form = create_expanded_form (generic_form_symbol(intern("[]_Struct"),
 									CONS(accessed,
 									     CONS(accessor,
@@ -247,6 +251,13 @@ derived_left_accesser (Type type_,
 								    CONS (accessed,
 									  NULL))));
   Left_Accesser lacc = get_left_accesser (type->origin_type);
+  if(lacc == NULL)
+      {
+	/* XXX: try to see if there is a virtual attribute for the type.  */
+	panic ("There isn't any left accessor for type %s\n",
+	     asprint_type (type));
+      }
+
   return lacc (type->origin_type, new_accessed, accessor, expression);
 }
 

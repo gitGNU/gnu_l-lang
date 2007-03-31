@@ -153,7 +153,7 @@ expand_all_function_and_global( list_t form_list)
    create many things. */
 
 typedef expanded_form_t (*Definer)( Symbol define_type,
-				    Symbol name,
+				    form_t name_form,
 				    list_t rest);
 
 MAKE_STATIC_HASH_TABLE( definer_hash);
@@ -168,9 +168,11 @@ define_definer( Symbol s, Definer d)
 
 static expanded_form_t
 expand_expander( Symbol expander,
-		 Symbol name,
+		 id_form_t name_form,
 		 list_t rest)
 {
+  assert( is_form( name_form, id_form));
+  Symbol name = name_form->value;
   //  assert( expander == SYMBOL( expander));
 
   generic_form_t tlabel_form = CAR( rest);
@@ -204,13 +206,15 @@ expand_expander( Symbol expander,
   return create_expanded_form( define_form( SYMBOL( expander), name,
 					    exp_function_form));
 }
-
+
 static expanded_form_t
 expand_macro( Symbol macro,
-	      Symbol name,
+	      id_form_t name_form,
 	      list_t rest)
 {
-  assert( macro == SYMBOL( macro));
+  assert( is_form( name_form, id_form));
+  Symbol name = name_form->value;
+  
   assert( rest && rest->next && !rest->next->next);
   
   generic_form_t parameters = CAR( rest);
@@ -304,16 +308,287 @@ expand_macro( Symbol macro,
 
   form_t new_body = block_form( prepare_list);
   
-  return expand_expander( NULL, name, CONS( label_form_symbol( expander_parameter_name,
-							       new_body),
-					    NULL));
+  return expand_expander( NULL, name_form, CONS( label_form_symbol( expander_parameter_name,
+								    new_body),
+						 NULL));
   //  lispify( parameters);
   //  lispify( body);
+}
+
+
+#include <l/access.h>
+
+typedef form_t( *Virtual_Accesser)(expanded_form_t);
+typedef form_t( *Virtual_Left_Accesser)(expanded_form_t, form_t);
+
+/* A hash table Type -> Hash_Table( Symbol -> Virtual_Accesser) that
+   associates to a type a hash table associating a field to an
+   expander function.
+*/
+MAKE_STATIC_HASH_TABLE( virtual_attributes_hash);
+MAKE_STATIC_HASH_TABLE( virtual_left_attributes_hash);
+
+
+static form_t
+virtual_accesser( Type type,
+		  expanded_form_t accessed,
+		  expanded_form_t accessor)
+{
+  hash_table_t field_hash = gethash( type, virtual_attributes_hash);
+
+  symbol_form_t accessor_symbol_form = accessor->return_form;
+  if(!is_form(accessor_symbol_form, quoted_symbol_form))
+    {
+      goto not_virtual_attribute;
+    }
+  symbol_t accessor_symbol = accessor_symbol_form->value;
+
+  Virtual_Accesser fun = gethash( accessor_symbol, field_hash);
+  if(fun)
+    {
+      return fun( accessed);
+    }
+  
+ not_virtual_attribute:
+  {
+    Accesser defalt = gethash( intern( "_"), field_hash);
+    if(defalt == NULL)
+      {
+	panic ("There isn't any accessor for type %s\n",
+	       asprint_type (accessed->type));
+      }
+    return defalt(type, accessed, accessor);
+  }
+}
+
+static form_t
+virtual_left_accesser( Type type,
+		       expanded_form_t accessed,
+		       expanded_form_t accessor,
+		       expanded_form_t expression)
+{
+  hash_table_t field_hash = gethash( type, virtual_left_attributes_hash);
+
+  symbol_form_t accessor_symbol_form = accessor->return_form;
+  if(!is_form(accessor_symbol_form, quoted_symbol_form))
+    {
+      goto not_virtual_attribute;
+    }
+  symbol_t accessor_symbol = accessor_symbol_form->value;
+
+  Virtual_Left_Accesser fun = gethash( accessor_symbol, field_hash);
+  if(fun)
+    {
+      return fun( accessed, expression);
+    }
+  
+ not_virtual_attribute:
+  {
+    Left_Accesser defalt = gethash( intern( "_"), field_hash);
+    if(defalt == NULL)
+      {
+	panic ("There isn't any left accessor for type %s\n",
+	       asprint_type (accessed->type));
+      }
+    return defalt(type, accessed, accessor, expression);
+  }
 }
 
 
 
+static expanded_form_t
+expand_attribute( Symbol macro,
+		  form_t type_form,
+		  list_t rest)
+{
+  Type type = intern_type( type_form);
 
+  assert( rest);
+  id_form_t obj_name_form = CAR( rest);
+  assert( is_form( obj_name_form, id_form));
+  Symbol obj_name = obj_name_form->value;
+
+  assert( rest->next);
+  id_form_t field_name_form = CAR( rest->next);
+  assert( is_form( field_name_form, id_form));
+  Symbol field_name = field_name_form->value;
+
+  assert( rest->next->next);
+  form_t last_arg = CAR( rest->next->next);
+  assert( !rest->next->next->next);
+
+  form_t body = NULL;
+  form_t left_body = NULL;
+
+  Symbol expression_name;
+  
+  if(is_form( last_arg, generic_form))
+    {
+      generic_form_t glast_arg = last_arg;
+      if(glast_arg->head == SYMBOL( tuple))
+	{
+	  /* We got a tuple: both the left and right body were
+	     given.  */
+	  assert( glast_arg->form_list
+		  && glast_arg->form_list->next
+		  && !glast_arg->form_list->next->next);
+	  FOREACH( element, glast_arg->form_list)
+	    {
+	      generic_form_t glabel = CAR( element);
+	      assert( is_form( glabel, generic_form));
+	      assert( glabel->head == SYMBOL( label));
+
+	      if(is_form( (form_t) CAR( glabel->form_list), generic_form))
+		{
+		  generic_form_t left_form = CAR( glabel->form_list);
+		  assert( left_form->head == SYMBOL( left));
+		  assert( is_form( (form_t) CAR( left_form->form_list), id_form));
+		  assert( body == NULL);
+
+		  left_body = CAR( glabel->form_list->next);
+		  expression_name = ((id_form_t) CAR( left_form->form_list))->value;
+		}
+	      else
+		{
+		  assert( is_form( (form_t) CAR( glabel->form_list), id_form));
+		  assert( ((id_form_t) CAR( glabel->form_list))->value == SYMBOL( right));
+		  body = CAR( glabel->form_list->next);
+		}
+	    }
+	  goto next;
+	}
+      else if(glast_arg->head == SYMBOL( label))
+	{
+	  generic_form_t glabel = glast_arg;
+	  /* A label form: the user wants either a read only or write
+	     only attribute.  */
+	  if(is_form( (form_t) CAR( glabel->form_list), generic_form))
+	    {
+	      generic_form_t left_form = CAR( glabel->form_list);
+	      assert( left_form->head == SYMBOL( left));
+	      assert( is_form( (form_t) CAR( left_form->form_list), id_form));
+	      assert( body == NULL);
+	      
+	      left_body = CAR( glabel->form_list->next);
+	      expression_name = ((id_form_t) CAR( left_form->form_list))->value;
+	    }
+	  else
+	    {
+	      assert( is_form( (form_t) CAR( glabel->form_list), id_form));
+	      assert( ((id_form_t) CAR( glabel->form_list))->value == SYMBOL( right));
+	      body = CAR( glabel->form_list->next);
+	    }
+	  goto next;
+	}
+    }
+
+  /* Neither a tuple, nor a label: then we assume that the argument
+     given works for  both left and right body.  */
+  body = last_arg;
+  expression_name = gensym( "expression");
+  left_body = generic_form_symbol( intern( "="),
+				   CONS( body,
+					 CONS( id_form( expression_name),
+					       NULL)));
+ next:
+
+  /* Create and compile the virtual_accesser.  */
+  if(body)
+    {
+      form_t replaced_body = expand_form_rec( body, CONS( obj_name, NULL));
+    
+      form_t parameters = new_tuple_form( CONS( label_form_symbol( obj_name,
+								   id_form( SYMBOL( Form))),
+						NULL));
+      form_t tlambda_form = lambda_form( base_type_form( SYMBOL( Form)),
+					 parameters,
+					 replaced_body);
+      char *name = asprint_type( type);
+      char *funname_ = malloc( strlen( name) + 30);
+      strcpy( funname_, name);
+      strcat( funname_, "##virtual_attribute_function");
+      Symbol funname = intern( funname_);
+      free( funname_);
+    
+      expanded_form_t exp_function_form = expand_function_definition( funname,
+								      tlambda_form);
+      generate( exp_function_form);
+    
+      Virtual_Accesser va = get_global_address( funname);
+      assert( va);
+    
+      /* Now install the virtual attribute accesser as the new accesser.  */
+      Accesser old_accesser = get_accesser( type);
+      hash_table_t field_hash;
+      if(old_accesser != virtual_accesser)
+	{
+	  define_accesser( type, virtual_accesser);
+	  field_hash = make_hash_table();
+	  puthash( intern( "_"), old_accesser, field_hash);
+	  puthash( type, field_hash, virtual_attributes_hash);
+	}
+      else
+	{
+	  field_hash = gethash( type, virtual_attributes_hash);
+	}
+    
+      puthash( field_name, va, field_hash);
+    }
+
+  /* Do the same to the left accessor.  */
+  if(left_body)
+    {
+      form_t replaced_left_body = expand_form_rec( left_body,
+						   CONS( obj_name,
+							 CONS( expression_name,
+							       NULL)));
+
+    
+    
+      form_t parameters = new_tuple_form( CONS( label_form_symbol( obj_name,
+								   id_form( SYMBOL( Form))),
+						CONS( label_form_symbol( expression_name,
+									 id_form( SYMBOL( Form))),
+						      NULL)));
+      form_t tlambda_form = lambda_form( base_type_form( SYMBOL( Form)),
+					 parameters,
+					 replaced_left_body);
+      char *name = asprint_type( type);
+      char *funname_ = malloc( strlen( name) + 40);
+      strcpy( funname_, name);
+      strcat( funname_, "##virtual_left_attribute_function");
+      Symbol funname = intern( funname_);
+      free( funname_);
+    
+      expanded_form_t exp_function_form = expand_function_definition( funname,
+								      tlambda_form);
+      generate( exp_function_form);
+    
+      Virtual_Left_Accesser va = get_global_address( funname);
+      assert( va);
+    
+      Accesser old_left_accesser = get_left_accesser( type);
+      hash_table_t left_field_hash;
+      if(old_left_accesser != virtual_left_accesser)
+	{
+	  define_left_accesser( type, virtual_left_accesser);
+	  left_field_hash = make_hash_table();
+	  puthash( intern( "_"), old_left_accesser, left_field_hash);
+	  puthash( type, left_field_hash, virtual_left_attributes_hash);
+	}
+      else
+	{
+	  left_field_hash = gethash( type, virtual_left_attributes_hash);
+	}
+    
+      puthash( field_name, va, left_field_hash);
+    }
+  return create_expanded_form( define_form( SYMBOL( attribute), id_form( SYMBOL( name)),
+					    NULL));
+}
+
+
+
 /* Expand and dynamically compiles the expanders.  */
 
 list_t
@@ -340,14 +615,12 @@ expand_all_misc( list_t form_list)
 	Symbol form_type = form_typef->value;
 		
 	id_form_t name_form = CAR( df->form_list->next);
-	assert( is_form( name_form, id_form));
-	Symbol name = name_form->value;
 
 	Definer definer = gethash( form_type, definer_hash);
 	assert( definer);
 	
 	expanded_form_t exp_form = definer( form_type,
-					    name,
+					    name_form,
 					    df->form_list->next->next);
 	
 	*expander_list_ptr = CONS( exp_form, NULL);
@@ -480,8 +753,9 @@ expand_all( list_t form_list)
     expanded_type_list = expand_all_types( type_list);
   
   
-  list_t expander_list = reverse( nconc( gethash( SYMBOL( macro), ht),
-					 gethash( SYMBOL( expander), ht)));
+  list_t expander_list = reverse(nconc( gethash( SYMBOL( attribute), ht),
+					nconc( gethash( SYMBOL( macro), ht),
+					       gethash( SYMBOL( expander), ht))));
   list_t expanded_expander_list = NULL;
   if( expander_list)
     expanded_expander_list = expand_all_misc( expander_list);
@@ -508,6 +782,7 @@ init_expand_define(void)
 {
   define_definer( SYMBOL( expander), expand_expander);
   define_definer( SYMBOL( macro), expand_macro);
+  define_definer( SYMBOL( attribute), expand_attribute);
 }
 
 #if 0
