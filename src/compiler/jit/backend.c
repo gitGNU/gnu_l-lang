@@ -462,7 +462,7 @@ generate_function_end ()
 				  (JITE_OFFSET_FROM_LOCAL_ARG 
 				   + min_offset_used/*current_function.max_offset*/)));
 
-  printf("STACK OFFSET: %d\n", min_offset_used);
+  //  printf("STACK OFFSET: %d\n", min_offset_used);
   
   /* Finish the code, release the memory.  */
   finish_code (function_start);
@@ -499,7 +499,7 @@ delete_block (void)
     {
       location_t loc = * (location_t *) pvalue;
       
-      printf ("Stack variable: %s %d\n", ((symbol_t) index)->name, loc->ref_count);
+      //      printf ("Stack variable: %s %d\n", ((symbol_t) index)->name, loc->ref_count);
       
       JLN (pvalue, *location_table, index);
 
@@ -508,7 +508,7 @@ delete_block (void)
   
   JLFA (index, *location_table);
 
-  printf ("Bytes freed:%d\n", index);
+  //  printf ("Bytes freed:%d\n", index);
   
   /* Move all unresolved forward references to the enclosing scope.  */
   {
@@ -526,7 +526,7 @@ delete_block (void)
     
     while(pvalue != NULL)
       {
-	printf( "Symbol:%s\n", ((Symbol)index)->name);
+	//	printf( "Symbol:%s\n", ((Symbol)index)->name);
 	list_t old_refs = gethash( index, block_list->next->forward_refs);
 	list_t refs_to_append = *pvalue;
 

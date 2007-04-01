@@ -177,7 +177,7 @@ list_foreach_expander( Symbol loop_name, form_t var_form,
 						 CONS( loop_form,
 						       NULL)));
   
-  lispify( final_form);
+  //  lispify( final_form);
   return expand( final_form);
 }
 

@@ -70,7 +70,7 @@ allocate_free_data_register (void)//unsigned int constraint, unsigned int prefer
   assert (r != REG_RET && r != REG_FP);
   assert (r != REG_R0 && r != REG_R1 && r != REG_R2);
 
-  printf ("REGISTER USED: %d\n", r);
+  //  printf ("REGISTER USED: %d\n", r);
 
   register_lru_counter[r] = ++lru_counter;
   assert (register_locations[r] == NULL);
@@ -84,7 +84,7 @@ allocate_data_register (register_t reg)
   if(reg == REG_FP || reg == REG_RET)
     return;
 
-  printf ("REGISTER USED (forced): %d\n", reg);
+  //  printf ("REGISTER USED (forced): %d\n", reg);
   //  panic ("Allocate data register\n");
   assert (!(used_data_registers & (1 << reg)));
   used_data_registers |= (1 << reg);
@@ -102,7 +102,7 @@ free_data_register (register_t reg)
   used_data_registers &= ~(1 << reg);
 
   assert (reg != -1);
-  printf ("REGISTER FREED: %d\n", reg);
+  //  printf ("REGISTER FREED: %d\n", reg);
 
   register_lru_counter[reg] = ~0;
 }

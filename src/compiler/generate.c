@@ -724,7 +724,7 @@ compile_function_call (generic_form_t form)
 
       if(location_type (locations[i]) != fields[i])
 	{
-	  printf( "In ");
+	  printf( "When calling ");
 	  lispify( expanded_function_form);
 	  compile_error ("Type mismatch: passing a %s instead of a %s "
 			 "for argument number %d\n",
@@ -1284,12 +1284,12 @@ compile_unary_minus_Int( generic_form_t form, Type expected_type)
 
 
 
-void generate (expanded_form_t form_)
+void generate (generic_form_t form)
 {
   /* XXX: the form should really be "(compile nom_du_bout_de_code form)"  */
 
-  assert( is_form( form_, expanded_form));
-  generic_form_t form = form_->return_form;
+  //  assert( is_form( form_, expanded_form));
+  //  generic_form_t form = form_->return_form;
   assert (is_form (form, generic_form));
   assert (form->head == SYMBOL (define));
 

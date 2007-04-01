@@ -600,7 +600,7 @@ expand_creator(generic_form_t form)
 
   Creator c = get_creator( t);
   form_t f = c( t, form->form_list->next);
-  lispify( f);
+  //  lispify( f);
   return f;
   
 }

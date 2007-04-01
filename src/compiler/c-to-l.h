@@ -38,7 +38,7 @@ compile_function_call (generic_form_t form);
   do {							\
   generic_t generic = MALLOC (generic);			\
   generic->compile = compiler__;			\
-  printf("Creationg generic: %s\n", symbol__->name);	\
+  /*  printf("Creationg generic: %s\n", symbol__->name);*/	\
   puthash (symbol__, generic, generic_hash);	\
  } while(0)
 
