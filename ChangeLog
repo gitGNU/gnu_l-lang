@@ -1,3 +1,13 @@
+2007-04-03  Matthieu Lemerre  <racin@free.fr>
+
+	Define forms are not expanded.
+	
+	* src/expander/expand-define.c (expand_all_function_and_global)
+	(expand_expander, expand_attribute, expand_all_types)
+	(expand_define, expand_function_definition): Don't expand define
+	forms.
+	(expand_all): Return the type list too.
+
 2007-04-01  Matthieu Lemerre  <racin@free.fr>
 
 	Removed noisy output.

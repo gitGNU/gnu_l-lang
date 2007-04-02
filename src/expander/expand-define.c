@@ -82,10 +82,8 @@ expand_function_definition( Symbol name, generic_form_t lambda_form)
 
   define_function( name, function_type, NULL);
 	  
-  /* XXX Why do we expand this.  */
-  return create_expanded_form(define_form(SYMBOL(function),
-					  name, expand(lambda_form)),
-			      NULL);
+  return define_form(SYMBOL(function),
+		     name, expand(lambda_form));
 }
 
 list_t
@@ -130,9 +128,8 @@ expand_all_function_and_global( list_t form_list)
 	  assert( form_type == SYMBOL( global));
 	  form_t type_form = CAR( df->form_list->next->next);
 	  define_global( name, intern_type( type_form), NULL);
-	  expform = create_expanded_form(define_form(SYMBOL(global),
-						  name, type_form),
-					 NULL);
+	  expform = define_form(SYMBOL(global),
+				name, type_form);
 	}
       *exp_form_list_ptr = CONS( expform, NULL);
       exp_form_list_ptr = &((*exp_form_list_ptr)->next);
@@ -203,8 +200,8 @@ expand_expander( Symbol expander,
   generate( exp_function_form);
   define_expander( name, get_global_address( funname));
 
-  return create_expanded_form( define_form( SYMBOL( expander), name,
-					    exp_function_form));
+  return define_form( SYMBOL( expander), name,
+		      exp_function_form);
 }
 
 static expanded_form_t
@@ -583,8 +580,8 @@ expand_attribute( Symbol macro,
     
       puthash( field_name, va, left_field_hash);
     }
-  return create_expanded_form( define_form( SYMBOL( attribute), id_form( SYMBOL( name)),
-					    NULL));
+  return define_form( SYMBOL( attribute), id_form( SYMBOL( name)),
+		      NULL);
 }
 
 
@@ -692,7 +689,7 @@ expand_all_types( list_t form_list)
 
 	generic_form_t type_form = CAR( df->form_list->next->next);
 	
-	form_t exp_type_form = define_form( SYMBOL( form_type),
+	form_t exp_type_form = define_form( SYMBOL( type),
 					    name,
 					    type_form);
 
@@ -748,7 +745,7 @@ expand_all( list_t form_list)
   list_t type_alias_list = gethash( SYMBOL( type_alias), ht);
   type_list = reverse( nconc( type_list, type_alias_list));
 
-  list_t expanded_type_list;
+  list_t expanded_type_list = NULL;
   if(type_list)
     expanded_type_list = expand_all_types( type_list);
   
@@ -771,7 +768,8 @@ expand_all( list_t form_list)
   if(globlist)
     expanded_fun_list =  expand_all_function_and_global(globlist);
 
-  return nconc( expanded_fun_list, expanded_expander_list);
+  return nconc( expanded_type_list,
+		nconc( expanded_fun_list, expanded_expander_list));
 }
 
 
@@ -801,19 +799,16 @@ expand_define(generic_form_t form)
       form_t lambda_form = CAR(form->form_list->next->next);
       
       
-      return create_expanded_form(define_form(SYMBOL(function),
-					      name, expand(lambda_form)),
-				  NULL);
+      return define_form(SYMBOL(function),
+			 name, expand(lambda_form));
     }
     assert( function->value == SYMBOL( global));
     symbol_form_t name_form = CAR(form->form_list->next);
     symbol_t name = name_form->value;
 
     form_t type_form = CAR( form->form_list->next->next);
-    return create_expanded_form(define_form(SYMBOL(global),
-					    name, type_form),
-				NULL);
-    
+    return define_form(SYMBOL(global),
+		       name, type_form);
       
   //  return create_expanded_form(form, NULL);
   /* XXX: replace the body form by the expanded body form.  *///NO!!
