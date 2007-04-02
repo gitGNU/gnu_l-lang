@@ -406,6 +406,33 @@ static const block_t global_block = &global_block_;
 
 static block_t block_list = &global_block_;
 
+/* We have minimal debug info, that helps knowing the name of the
+   function that faulted.  For more precise informations, we should
+   associate to each expanded form an interval like this one; and
+   the original forms of the expanded forms would then be helpful. */
+typedef struct debug_info
+{
+  void *start;
+  void *end;
+  symbol_t funname;
+} *debug_info_t;
+
+/* A list of debug info.  A black-red tree would be better.  */
+list_t function_offsets = NULL;
+
+symbol_t
+find_owning_function( unsigned int i)
+{
+  void *address = (void *) i;
+  FOREACH( element, function_offsets)
+    {
+      debug_info_t di = CAR( element);
+      if(address >= di->start && address <= di->end)
+	return di->funname;
+    }
+  return intern( "<Not found>");
+}
+
 /* Parameters is a tuple form.  */
 void *
 generate_function_start (symbol_t name, generic_form_t parameters)
@@ -443,6 +470,13 @@ generate_function_start (symbol_t name, generic_form_t parameters)
 								 0xe0e0e0e0));
   /* XXX: init parameters.  */
 
+  //Some debug info
+  debug_info_t di = MALLOC( debug_info);
+  di->start = function_start;
+  di->funname = name;
+
+  function_offsets = CONS( di, function_offsets);
+  
   return function_start;
 }
 
@@ -469,6 +503,10 @@ generate_function_end ()
 
   /* Patches all calls to redefine the function call.  */
   //link_symbol_address (current_function->name, function_start);
+
+  /* Put some minimal debug informations.  */
+  debug_info_t di = CAR( function_offsets);
+  di->end = jit_get_ip().vptr;
   
   return;
 }

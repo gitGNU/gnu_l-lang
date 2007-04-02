@@ -1,5 +1,14 @@
 2007-04-03  Matthieu Lemerre  <racin@free.fr>
 
+	Basic debugging support : return the matching function from a
+	program counter.
+	
+	* src/compiler/jit/backend.c (struct debug_info): New struct.
+	(function_offsets): New global.
+	(find_owning_function): Function to call for debugging.
+	(generate_function_start): Create debug info.
+	(generate_function_end): Complete debug info.
+
 	Define forms are not expanded.
 	
 	* src/expander/expand-define.c (expand_all_function_and_global)
