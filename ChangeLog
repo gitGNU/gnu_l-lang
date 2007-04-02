@@ -1,5 +1,10 @@
 2007-04-03  Matthieu Lemerre  <racin@free.fr>
 
+	Better tuple left-expansion.
+	
+	* src/expander/left-expand.c (left_expand_tuple): Now components
+	inside tuples are left expanded too.
+
 	Basic debugging support : return the matching function from a
 	program counter.
 	

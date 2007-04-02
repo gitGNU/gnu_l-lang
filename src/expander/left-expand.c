@@ -115,14 +115,67 @@ left_expand_tuple (generic_form_t form, expanded_form_t expression)
      That's no big deal, it will be eliminated when we have ssa form.
 
      */
-  expanded_form_t exp_form = expand_tuple (form);
 
-  type_check (exp_form->type, expression->type);
+  /* To maintain the tuple semantics, we need to copy the expression.  */
+
+  /* In fact, it is here that tuple affectation is sequentialized.  */
   
-  return create_expanded_form (generic_form_symbol (intern ("="),
-						    CONS (exp_form,
-							  CONS (expression,
-								NULL))));
+  list_t id_list;
+  list_t assign_form_list;
+  {
+    list_t *id_list_ptr = &id_list;
+    list_t *assign_form_list_ptr = &assign_form_list;
+
+    generic_form_t gform = expression->return_form;
+    assert( is_form( gform, generic_form));
+    assert( gform->head == SYMBOL( tuple));
+
+    FOREACH( element, gform->form_list)
+      {
+	expanded_form_t subexpr = CAR( element);
+	
+	Symbol tuple_copy = gensym( "tuple");
+	*id_list_ptr = CONS( tuple_copy, NULL);
+	id_list_ptr = &((*id_list_ptr)->next);
+	
+	form_t copy_form = generic_form_symbol( intern( "="),
+						CONS( generic_form_symbol( SYMBOL( let),
+									   CONS( id_form( tuple_copy),
+										 NULL)),
+						      CONS( subexpr,
+							    NULL)));
+	*assign_form_list_ptr = CONS( expand( copy_form), NULL);
+	assign_form_list_ptr = &((*assign_form_list_ptr)->next);
+      }
+    *assign_form_list_ptr = NULL;
+    *id_list_ptr = NULL;
+  }
+    
+  /* Now, left-expand the left forms normally.  */
+
+  list_t cur_id = id_list;
+  list_t second_assign_list;
+  {
+    list_t *second_assign_list_ptr = &second_assign_list;
+    
+    FOREACH( element, form->form_list)
+      {
+	assert( cur_id); /* XXX: for now. */
+	Symbol id = CAR( cur_id);
+	*second_assign_list_ptr = CONS( left_expand( CAR( element), expand( id_form( id))),
+					NULL);
+	second_assign_list_ptr = &((*second_assign_list_ptr)->next);
+	cur_id = cur_id->next;
+      }
+    *second_assign_list_ptr = NULL;
+  }
+
+  assert( cur_id == NULL);
+
+  form_t return_form = seq_form( CONS( seq_form( assign_form_list),
+				       CONS( seq_form( second_assign_list),
+					     NULL)));
+  return expand( return_form);
 }
 
 #include <l/sys/type.h>
