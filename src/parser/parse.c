@@ -856,6 +856,21 @@ parse_all ()
 							      NULL)))));
 	  return form;
 	}
+      else if(next_token.id == SYMBOL( include))
+	{
+	  expect( ID_RTK);
+	  expect( STRING_RTK);
+	  String str = current_token.string;
+	  char *save_scanner_pointer = scanner_pointer;
+	  expect( SEMICOLON_RTK);
+	  printf( "Current:|%s", save_scanner_pointer);
+	  printf( "Content: %s\n", make_C_string_from_L_string( str));
+	  list_t form_list = parse_file( make_C_string_from_L_string( str));
+	  scanner_pointer = save_scanner_pointer;
+	  parse_initialize();
+	  return generic_form_symbol( SYMBOL( include), form_list);
+	  
+	}
       else if(next_token.id == SYMBOL( attribute))
 	{
 	  expect( ID_RTK);
@@ -1814,7 +1829,20 @@ list_t parse (String string)
   list_t *list_ptr = &list;
   do {
     form_t form = parse_all ();//parse (scanner_pointer, length_);
-
+    if(is_form( form, generic_form))
+      {
+	generic_form_t gform = form;
+	if(gform->head == SYMBOL( include))
+	  {
+	    for( list_t element = gform->form_list; element; element = element->next)
+	      {
+		*list_ptr = CONS( CAR( element), NULL);
+		list_ptr = &((*list_ptr)->next);
+	      }
+	    continue;
+	  }
+      }
+    
     *list_ptr = MALLOC (pair);
     CAR (*list_ptr) = form;
     list_ptr = &CDR (*list_ptr);

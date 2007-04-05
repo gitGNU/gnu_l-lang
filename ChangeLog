@@ -1,3 +1,10 @@
+2007-04-05  Matthieu Lemerre  <racin@free.fr>
+
+	Parser hack to allow including L files in L.
+	
+	* src/parser/parse.c (parse_all): Handle include keyword.
+	* src/parser/parse.c (parse): Handle include forms.
+
 2007-04-03  Matthieu Lemerre  <racin@free.fr>
 
 	Better tuple left-expansion.
