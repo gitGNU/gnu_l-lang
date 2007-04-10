@@ -1,3 +1,20 @@
+2007-04-10  Matthieu Lemerre  <racin@free.fr>
+
+	Shadowing support; all let declarations are gathered at the
+	beginning of the blocks in the expanded code.
+	
+	* test/malebolge13-shadow.l: New test file.
+
+	* src/expander/expand.c (id_info): New field unique_name
+	(uniquify): New function.
+	(insert_id): Shadowing is a normal behaviour.
+	(expand_id_no_fail): Old expand_id, but does not fail.
+	(expand_id): Calls expand_id_no_fail
+	(expand_block): At the end of a block, declares all the used local
+	variables at the beginning of the block.
+	(expand_let): Use the unique name instead
+	* src/expander/left-expand.c (left_expand_let): Use the unique name.
+
 2007-04-05  Matthieu Lemerre  <racin@free.fr>
 
 	Parser hack to allow including L files in L.

@@ -863,8 +863,6 @@ parse_all ()
 	  String str = current_token.string;
 	  char *save_scanner_pointer = scanner_pointer;
 	  expect( SEMICOLON_RTK);
-	  printf( "Current:|%s", save_scanner_pointer);
-	  printf( "Content: %s\n", make_C_string_from_L_string( str));
 	  list_t form_list = parse_file( make_C_string_from_L_string( str));
 	  scanner_pointer = save_scanner_pointer;
 	  parse_initialize();

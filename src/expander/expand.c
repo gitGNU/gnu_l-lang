@@ -234,6 +234,11 @@ typedef struct id_info
      thread_local, is the variable constant, is the variable an alias
      (with a different type) to another variable, if the variable has
      been used...  */
+  union
+  {
+    Symbol unique_name; /* This is used to rename variables so that
+			   there is no shadowing.  */
+  };
 } *id_info_t;
 
 /* A table ID -> IType (for now; later we may ).  */
@@ -265,29 +270,42 @@ remove_block(void)
      on?  */
 }
 
+Symbol
+uniquify( Symbol s)
+{
+  char buffer[1024];
+
+  static int i = 0;
+  sprintf( buffer, "%s#u#%d", s->name, i);
+  return intern( buffer);
+}
+
 #include <stdarg.h>
-void
+Symbol
 insert_id( symbol_t symbol, int can_shadow, Species species, ...)
 {
   va_list ap;
   va_start( ap, species);
-  
-  if(can_shadow == 0)
-    {
-      /* Check if id is already present.  */
-      block_t cur_block = block_list;
-      id_info_t id_info;
-      while(cur_block)
-	{
-	  if((id_info = gethash(symbol, cur_block->id_table)))
-	    {
-	      panic( "ID %s shadows an existing identifier\n", symbol->name);
-	      /* Later, it should be permitted to shadow an id when
-		 told explicitely, but only in a new scope( and id_table).  */
-	    }
-	  cur_block = cur_block->next;
-	}
+
+  int is_shadowing = 0;
+  {
+    /* Check if id is already present.  */
+    block_t cur_block = block_list;
+    id_info_t id_info;
+    while(cur_block)
+      {
+	if((id_info = gethash(symbol, cur_block->id_table)))
+	  {
+	    is_shadowing = 1;
+	    /* Later, it should be permitted to shadow an id when
+	       told explicitely, but only in a new scope( and id_table).  */
+	  }
+	cur_block = cur_block->next;
+      }
   }
+    
+  if(can_shadow == 0 && is_shadowing)
+    panic( "ID %s shadows an existing identifier\n", symbol->name);
 
   id_info_t ii = MALLOC(id_info);
   ii->species = species;
@@ -299,6 +317,14 @@ insert_id( symbol_t symbol, int can_shadow, Species species, ...)
 	Type t;
 	t = va_arg( ap, Type);
 	ii->type = t;
+	if(is_shadowing)
+	  {
+	    ii->unique_name = uniquify( symbol);
+	  }
+	else
+	  {
+	    ii->unique_name = symbol;
+	  }
 	break;
       }
     case SPECIES_LABEL:
@@ -313,13 +339,14 @@ insert_id( symbol_t symbol, int can_shadow, Species species, ...)
   puthash(symbol, ii, block_list->id_table);
 
   va_end( ap);
+  return ii->unique_name;
 }
 
 
 #include <l/sys/global.h>
 
 expanded_form_t
-expand_id(symbol_t symbol)
+expand_id_no_fail(symbol_t symbol)
 {
   block_t cur_block = block_list;
   id_info_t id_info;
@@ -341,16 +368,16 @@ expand_id(symbol_t symbol)
       return create_expanded_form( id_form( symbol),
 				   glob->type);
     }
-    
+
   /* This is an error.  */
-  panic("Id %s was not found\n", symbol->name);
+  return NULL;
 
  next:
 
   switch(id_info->species)
     {
     case SPECIES_VARIABLE:
-      return create_expanded_form(id_form(symbol),
+      return create_expanded_form(id_form(id_info->unique_name),
 				  id_info->type);
       
     case SPECIES_LABEL:
@@ -364,8 +391,16 @@ expand_id(symbol_t symbol)
     default:
       compile_error ( "This species cannot be expanded\n");
     }
-  
+}
 
+expanded_form_t
+expand_id( symbol_t symbol)
+{
+  expanded_form_t exp = expand_id_no_fail( symbol);
+
+  if(exp == NULL)
+    panic("Id %s was not found\n", symbol->name);
+  return exp;
 }
 
 
@@ -453,6 +488,30 @@ expand_block(generic_form_t form)
       expanded_form_list_ptr = &((*expanded_form_list_ptr)->cdr);
     }
   *expanded_form_list_ptr = NULL;
+
+  /* Add all the needed variables at the beginning of the block.  */
+  {
+    Symbol Index = 0;
+    id_info_t *PValue;
+    JLF(PValue, *block_list->id_table, Index);
+    while (PValue != NULL)
+      {
+	id_info_t ii = *PValue;
+	if(ii->species == SPECIES_VARIABLE)
+	  {
+	    expanded_form_t explet = create_expanded_form( generic_form_symbol( SYMBOL( let),
+										CONS(id_form( ii->unique_name),
+										     CONS( ii->type->type_form,
+											   NULL))),
+							   ii->type);
+	    expanded_form_list = CONS( explet,
+				       expanded_form_list);
+	  }
+	JLN(PValue, *block_list->id_table, Index);
+      }
+  }
+  
+
   
   remove_block();
   /* The final type is the last one.  */
@@ -492,13 +551,13 @@ expand_let(generic_form_t form)
   symbol_t id = id_form->value;
   Type type = intern_type(type_form);
 
-  insert_id(id, 0, SPECIES_VARIABLE, type);
+  insert_id(id, 1, SPECIES_VARIABLE, type);
 
   /* ID should be expanded.  */
-  return create_expanded_form(generic_form_symbol( SYMBOL( let),
-						   CONS( id_form,
-							 CONS( type_form,
-							       NULL))),
+  return create_expanded_form(//generic_form_symbol( SYMBOL( let),
+			      /*		   CONS(*/ id_form,
+			      //							 CONS( type_form,
+			      //							       NULL))),
 			      type);
 }
 

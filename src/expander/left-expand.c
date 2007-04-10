@@ -182,8 +182,8 @@ left_expand_tuple (generic_form_t form, expanded_form_t expression)
 expanded_form_t
 left_expand_let( generic_form_t form, expanded_form_t expression)
 {
-  id_form_t id_form = CAR( form->form_list);
-  assert( is_form( id_form, id_form));
+  id_form_t id_form_ = CAR( form->form_list);
+  assert( is_form( id_form_, id_form));
 
   form_t type_form;
 
@@ -201,15 +201,18 @@ left_expand_let( generic_form_t form, expanded_form_t expression)
       id_type = expression->type;
     }
   
-  expanded_form_t exp_let = create_expanded_form(generic_form_symbol(SYMBOL(let),
-								     CONS(id_form,
-									  CONS( type_form,
-										NULL))),
-						 id_type);
 
   /* We could also transform the form into
      (seq (let type id) (= type expression)) */ 
-  insert_id(id_form->value, 0, SPECIES_VARIABLE, id_type);
+  Symbol newsymb = insert_id(id_form_->value, 1, SPECIES_VARIABLE, id_type);
+
+  expanded_form_t exp_let = create_expanded_form(//generic_form_symbol(SYMBOL(let),
+//								     CONS(
+						 id_form( newsymb),
+//									  CONS( type_form,
+//										NULL))),
+						 id_type);
+
   
   return create_expanded_form (generic_form_symbol (intern ("="),
 						    CONS (exp_let,

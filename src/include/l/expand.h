@@ -93,7 +93,7 @@ typedef enum species_t { SPECIES_VARIABLE,
 			 SPECIES_FUNCTION } Species;
 
 #include <stdarg.h>
-void
+Symbol
 insert_id( symbol_t symbol, int can_shadow, Species species, ...);
 
 
