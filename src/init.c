@@ -23,6 +23,9 @@
    L according to the different features a program need, and their
    dependencies.  */
 
+#include "compiler/c-to-l.h"
+extern void *compile( void*);
+
 void
 init ()
 {
@@ -46,9 +49,10 @@ init ()
   init_analysis ();
   init_generate ();
 
-  init_form ();
-
-
   init_library ();
+  init_c_output_support();
+
+  //  DEFINE_C_FUNCTION (expand, "Void *<-Form");
+  //  DEFINE_C_FUNCTION (compile, "Void <-Form");
 
 }

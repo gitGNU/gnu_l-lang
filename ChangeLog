@@ -12,7 +12,7 @@
 	
 	* configure.in: Add c-output
 	* src/Makefile.am: Creates a libl; creates c_output.
-	* src/init.c (init): Calls init_form.
+	* src/init.c (init): Calls init_c_output_support.
 	* src/compiler/type.c (pre_create_type): Redefinition is no more
 	an error.
 	* src/lexer/Makefile.am: Lexer uses libtool.
