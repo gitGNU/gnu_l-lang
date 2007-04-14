@@ -606,23 +606,22 @@ doit( l_file:String, out_c_file:String, out_inc_file:String)
   flush();
 
   //The types of the functions we use must be outputed too.
-  foreach_hash( (let symbol, let misc_), globals_needed,
-		{
-		let t:Type = get_global_type( symbol);
-		  type_definition_needed[t] = cast( Bool, 1)
-		  
-		});
+  foreach( (let symbol, let misc_) in globals_needed)
+    {
+      let t:Type = get_global_type( symbol);
+      type_definition_needed[t] = cast( Bool, 1);
+    }
 
   //XXX: And the types of the globals.
   current_output_descriptor = inc_file_descriptor;
   output_all_type_definitions(); //Output the types definitions
 
-  foreach_hash( (let symbol, let misc_), globals_needed,
+  foreach( (let symbol, let misc_) in globals_needed)
     {
       let t:Type = get_global_type( symbol);
       c_output_type( symbol, t);
-      print( ";\n")
-    });
+      print( ";\n");
+    }
 
   // XXX: We don't print the globals for now.
   print( "Output_Descriptor__type current_output_descriptor;\n",
@@ -679,4 +678,5 @@ test ()
 //  let form_list = expanded_form_list_from_file_name( "c-output/c-output.l");
 
   doit("c-output/c-output.l", "c-output/c-output.c", "c-output/c-output.inc");
+  //  doit("to_output.l", "to_output.c", "to_output.inc");
 }

@@ -227,8 +227,6 @@ c_output_type_definition(t:Type)
  end:
 }
 
-include "c-output/foreach-hash.l";
-
 Void
 output_all_type_definitions()
 {
@@ -254,15 +252,12 @@ output_all_type_definitions()
   ();
   
   //XXX: use remhash.
-  foreach_hash(( let type, let bool),
-	       type_definition_needed,
-	       { if( bool)
-		   { c_output_type_definition( type);
-		     //		     type_definition_needed[type] = cast( Bool, 0);
-		   }
-		 ()
-		   });
-	       
+  foreach( (let type, let bool) in type_definition_needed)
+    {
+      if( bool)
+	{ c_output_type_definition( type);
+	}
+    }
 }
 
 Void

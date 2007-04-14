@@ -32,6 +32,18 @@ Int test ()
   
   i = stable["toto"];
   stable["tata"] = stable["toto"] = 3;
-  stable["tata"]
-    
+  stable["tata"];
+
+  // Test iteration.
+
+  let ht = Hash (Symbol, Int);
+  ht['tata'] = 52;
+  ht['toto'] = 23;
+
+  foreach (( let key, let value) in  ht)
+    {
+      print( "Key:", key, ", value:", value, "\n");
+    }
+
+  2    
 }

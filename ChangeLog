@@ -1,4 +1,14 @@
 2007-04-14  Matthieu Lemerre  <racin@free.fr>
+	
+	Support for real iteration on hash tables.
+
+	* src/c-output/c-output-type.l (output_all_type_definitions): Use
+	foreach instead of foreach_hash.
+	* src/c-output/c-output.l (doit): Likewise.
+	* src/std/hash.c (hash_foreach_expander): Filled the foreach
+	expander.
+	(make_type_Hash): Declares it as a foreach expander.
+	* test/malebolge05-hash.l (test): Test iteration.
 
 	C output support; L code can now be outputed to C code.
 	
