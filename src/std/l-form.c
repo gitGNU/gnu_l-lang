@@ -178,7 +178,7 @@ expand_form_rec (generic_form_t form, list_t id_list)
 
  end:
 
-  return generic_form_symbol (SYMBOL (Generic_Form_Function),
+  return generic_form_symbol (SYMBOL (Compound_Form),
 			      CONS (symbol_form (head),
 				    CONS (new_form_list,
 					  NULL)));
@@ -206,12 +206,26 @@ init_l_form (void)
   eval_cstring( "type Form = struct {"
 		"form_type_: Int;} *;");
 
+  eval_cstring( "type Id_Form = struct { form_type_: Int;"
+		"value : Symbol;} *;");
+
+  eval_cstring( "type Int_Form = struct { form_type_: Int;"
+		"value : Int;} *;");
+
+  eval_cstring( "type Symbol_Form = struct { form_type_: Int;"
+		"value : Symbol;} *;");
+
+  eval_cstring( "type String_Form = struct { form_type_: Int;"
+		"value : String;} *;");
+  
   eval_cstring( "type Compound_Form = struct {"
 		"form_type_: Int;"
 		"head: Symbol;"
 		"garbage_:Int;"
                 "form_list: List( Form); } *;");
 
+  
+  
   define_parse (SYMBOL (Form), form_parse);
   define_expander (SYMBOL (Form), expand_form);
   
@@ -220,7 +234,7 @@ init_l_form (void)
   DEFINE_C_FUNCTION2 ("Symbol_Form", symbol_form, "Form<-Symbol");
   DEFINE_C_FUNCTION2 ("Id_Form", id_form, "Form<-Symbol");
   DEFINE_C_FUNCTION2 ("String_Form", string_form, "Form<-String");
-  DEFINE_C_FUNCTION2 ("Generic_Form_Function",
+  DEFINE_C_FUNCTION2 ("Compound_Form",
 		      generic_form_symbol,
 		      "Form<-(Symbol, List(Form))");
 

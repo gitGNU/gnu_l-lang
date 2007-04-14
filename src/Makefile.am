@@ -18,22 +18,48 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301
 # USA.
 
-SUBDIRS = memory lexer compiler expander parser std objects
+SUBDIRS = memory lexer compiler expander parser std objects c-output
 
-bin_PROGRAMS = L
-L_SOURCES = main.c init.c eval.c
+#the L library, useful for linking with other programs.
+lib_LTLIBRARIES = libl.la
 
-L_LDADD =    objects/libl-objects.la \
-	     memory/libl-memory.la \
-	     parser/libl-parser.la \
-             compiler/libl-generator.la \
-             expander/libl-expand.la \
-	     memory/libl-memory.la lexer/libl-lexer.a  \
-	     std/libl-std.la  \
-	     -lJudy -lm
+libl_la_SOURCES = init.c eval.c
+
+libl_la_LIBADD = objects/libl-objects.la \
+	  	memory/libl-memory.la \
+		parser/libl-parser.la \
+		compiler/libl-generator.la \
+	        expander/libl-expand.la \
+		memory/libl-memory.la \
+		lexer/libl-lexer.la  \
+		std/libl-std.la  \
+		c-output/libl-c-output.la \
+		-lJudy -lm
+#		/usr/lib/libJudy.a /usr/lib/libm.a
+
+
+bin_PROGRAMS = L c_output
+L_SOURCES = main.c
+# init.c eval.c
+
+L_LDADD = libl.la
+
+#objects/libl-objects.la \
+#	     memory/libl-memory.la \
+#	     parser/libl-parser.la \
+#             compiler/libl-generator.la \
+#             expander/libl-expand.la \
+#	     memory/libl-memory.la lexer/libl-lexer.a  \
+#	     std/libl-std.la  \
+#	     c-output/libl-c-output.la \
+#	     -lJudy -lm
 
 
 L_LDFLAGS = -lJudy
+
+#Test is useful to test another file. Don't forget to init L in the file if you need it.
+c_output_SOURCES = c-output/c-output.c
+c_output_LDADD = libl.la
 
 AM_CFLAGS = -g -O0 -Wall
 CFLAGS = -g -O0 -Wall

@@ -16,6 +16,7 @@ AC_OUTPUT(Makefile
 	  src/compiler/Makefile
           src/objects/Makefile
 	  src/std/Makefile
+          src/c-output/Makefile
 	  src/compiler/jit/Makefile
 	  src/expander/Makefile
 	  doc/Makefile

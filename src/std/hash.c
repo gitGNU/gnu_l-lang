@@ -280,6 +280,70 @@ make_type_Hash_String (generic_form_t form)
 }
 
 
+/* Hash iterator.  */
+form_t
+hash_foreach_expander( Symbol loop_name, form_t var_form,
+		       expanded_form_t hash_form, form_t body)
+{
+  
+}
+
+
+hash_table_t
+make_hash_table (void)
+{
+  hash_table_t ht = xmalloc (sizeof(hash_table));
+  *ht = NULL;
+  return ht;
+}
+
+#include <Judy.h>
+
+void *
+gethash (void * key, hash_table_t table)
+{
+  PWord_t Pvalue;
+  JLG (Pvalue, *table, (Word_t) key);
+  return (Pvalue ? (void *) *Pvalue : (void *) 0);
+}
+
+void *
+puthash (void * key, void * value, hash_table_t table)
+{
+  PWord_t PValue;
+  JLI (PValue, (*table), (Word_t) key);
+  *PValue = (Word_t) value;
+  return value;
+}
+
+hash_string_table_t
+make_hash_string_table (void)
+{
+  hash_string_table_t ht = xmalloc (sizeof(hash_table));
+  *ht = NULL;
+  return ht;
+}
+
+#include <Judy.h>
+
+void *
+gethash_string (String key, hash_string_table_t table)
+{
+  PWord_t Pvalue;
+  JHSG (Pvalue, *table, key->content, key->length);
+  return (Pvalue ? (void *) *Pvalue : (void *) 0);
+}
+
+void *
+puthash_string (String key, void * value, hash_string_table_t table)
+{
+  PWord_t PValue;
+  JHSI (PValue, *table, key->content, key->length);
+  *PValue = (Word_t) value;
+  return value;
+}
+
+
 
 void
 init_hash (void)
@@ -295,6 +359,9 @@ init_hash (void)
   DEFINE_C_FUNCTION (gethash, "Void * <- (Void *, Hash_Table)");
   DEFINE_C_FUNCTION (puthash, "Void * <- (Void *, Void *, Hash_Table)");
 
+  DEFINE_C_FUNCTION( JudyLFirst, "Void ** <- (Void *, Void *, Int)");
+  DEFINE_C_FUNCTION( JudyLNext, "Void ** <- (Void *, Void *, Int)");
+  
   /* XXX: remove should also work: remove(table['toto'] would remove
      the entry 'toto' from the table.  */
   

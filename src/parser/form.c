@@ -40,6 +40,10 @@ int_form (int value)
   return intform;
 }
 
+#undef Int_Form
+form_t Int_Form( int value) __attribute__((alias( "int_form")));
+
+
 float_form_t
 float_form (float value)
 {
@@ -58,6 +62,11 @@ id_form (symbol_t value)
   return symform;
 }
 
+#undef Id_Form
+form_t Id_Form( symbol_t value) __attribute__((alias( "id_form")));
+
+
+
 quoted_symbol_form_t
 symbol_form (symbol_t value)
 {
@@ -65,6 +74,10 @@ symbol_form (symbol_t value)
   qsymform->value = value;
   return qsymform;
 }
+#undef Symbol_Form
+form_t Symbol_Form( symbol_t value) __attribute__((alias( "symbol_form")));
+
+
 
 string_form_t
 string_form (string_t value)
@@ -128,6 +141,11 @@ generic_form_symbol (symbol_t head, list_t list)
   gf->head = head;
   return gf;
 }
+
+#undef Compound_Form
+form_t Compound_Form( symbol_t head, list_t list) __attribute__((alias( "generic_form_symbol")));
+
+
 
 generic_form_t
 generic_form (id_form_t head, list_t list)

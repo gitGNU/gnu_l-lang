@@ -1,3 +1,33 @@
+2007-04-14  Matthieu Lemerre  <racin@free.fr>
+
+	C output support; L code can now be outputed to C code.
+	
+	* src/c-output/Makefile.am
+        * src/c-output/c-output-type.l
+        * src/c-output/c-output.c
+        * src/c-output/c-output.inc
+        * src/c-output/c-output.l
+        * src/c-output/foreach-hash.l
+        * src/c-output/support.c: New files.
+	
+	* configure.in: Add c-output
+	* src/Makefile.am: Creates a libl; creates c_output.
+	* src/init.c (init): Calls init_form.
+	* src/compiler/type.c (pre_create_type): Redefinition is no more
+	an error.
+	* src/lexer/Makefile.am: Lexer uses libtool.
+	* src/parser/form.c (Int_Form, Id_Form, Symbol_Form)
+	(Compound_Form): New aliases.
+	* src/std/hash.c (init_hash): Defines JudyLFirst and JudyLNext.
+	(make_hash_table, gethash, puthash, make_hash_string_table)
+	(gethash_string, puthash_string): Defines them here
+	* src/include/l/sys/hash.h: Only declares the functions now.
+	* src/std/l-form.c (expand_form_rec, init_l_form): Rename
+	Generic_Form_Function to Compound_Form.
+	(init_l_form): Defines Id_Form, Int_form, Symbol_Form, String_Form
+	* src/std/xml.c (init_xml): Use eval_cstring to define type
+	XML_Node.
+
 2007-04-10  Matthieu Lemerre  <racin@free.fr>
 
 	Shadowing support; all let declarations are gathered at the

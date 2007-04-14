@@ -71,10 +71,10 @@ test3()
 
   print( "Control is here\n");
   
-  {
+  {//Warning: this is not yet handled by the GNU C outputter.
     goto(toto);
 
-  toto:;
+    toto:;
   }
 
   print( "Control is there\n");

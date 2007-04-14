@@ -10,7 +10,7 @@ test ()
   let point:struct {x:Int; y:Int;} * = &the_point;
 
   if(point.x != (*point).x)
-    test_function(point.y);
+    print ("Error", point.y);
 
   point.y = 5;
   print ("Point.y :", point.y, "\n");

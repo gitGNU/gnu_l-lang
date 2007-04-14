@@ -626,7 +626,9 @@ pre_create_type (struct type_form *form)
   JSLG (PValue, string_to_type, buf.start);
 
   if(PValue)
-    compile_error ("Error: calling pre_create_type on an already defined type form, %s\n", buf.start);
+    /* Redefinition of type type.  */
+    return *PValue;
+    //    compile_error ("Error: calling pre_create_type on an already defined type form, %s\n", buf.start);
 
   /* When creating a new type, it is either of the form "Symbol" or
      Type_Cons(Symbol1, Symbol2, ...)

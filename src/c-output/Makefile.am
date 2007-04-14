@@ -1,4 +1,4 @@
-## Makefile.am -- Makefile template for the lexer.
+## Makefile.am -- Makefile template for the compiler
 # Copyright (C) 2007 Matthieu Lemerre.
 #
 # This file is part of the L Programming Language.
@@ -18,6 +18,18 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301
 # USA.
 
-lib_LTLIBRARIES = libl-lexer.la
+lib_LTLIBRARIES = libl-c-output.la
 
-libl_lexer_la_SOURCES = nfa.c transitions.c character_set.c list_set.c determinize.c compile.c
+libl_c_output_la_SOURCES = support.c
+
+
+#bin_PROGRAMS = test
+##test_SOURCES = ../lexer/nfa.c ../lexer/transitions.c ../lexer/character_set.c ../lexer/list_set.c ../lexer/determinize.c ../lexer/compile.c ../runtime/panic.c ../runtime/read-sexp.c ../memory/code.c ../memory/memory.c ../objects/symbol.c ../objects/object.c ../objects/pair.c ../runtime/write-object.c ../objects/fixnum.c ../objects/string.c
+#test_LDFLAGS = -lJudy
+#test_SOURCES = generate.c location.c form.c analysis.c
+#test_LDADD = ../memory/libl-memory.a ../runtime/libl-runtime.a  \
+#	     ../objects/libl-objects.a  ../memory/libl-memory.a \
+#	     ../lexer/libl-lexer.a
+#
+AM_CFLAGS = -g -O0 -Wall
+CFLAGS = -g -O0 -Wall

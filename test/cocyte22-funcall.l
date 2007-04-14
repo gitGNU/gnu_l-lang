@@ -1,6 +1,7 @@
 //Funcall with variable functions.
 Int my_test (i:Int, j:Int)
 {
+  print( "In my_test\n");
   3 * i + j;
 }
 
