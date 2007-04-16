@@ -186,7 +186,7 @@ expand (form_t form)
   
   generic_form_t gform = (generic_form_t) form;
 
-  do{
+  for(;;) {
       /* XXX: problem if we want to redefine if to take lists as
       arguments for instance, we would loop for ever. So for now, we
       just look if the returned symbol is the same.
@@ -210,10 +210,17 @@ expand (form_t form)
 	panic("Error : no expander defined for %s\n", head->name);
 
       gform = expander (gform);
-  } while(!(is_form(gform, atomic_form)));
 
-  /* For now, expanders must return a generic form; this is a silly
-     restriction.  */
+      if(is_form( gform, expanded_form))
+	break;
+
+      if(is_form( gform, atomic_form))
+	{
+	  gform = expand( gform);
+	  break;
+	}
+  }
+
   assert(is_form(gform, expanded_form));
 
   return gform;
