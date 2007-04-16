@@ -27,10 +27,21 @@
 static unsigned int sym_nb = 0;
 
 symbol_t
-gensym(char *root)
+gensym_c(char *root)
 {
   char *mem = malloc(strlen(root) + 11);
   sprintf(mem, "#%s%d", root, sym_nb++);
 
   return intern(mem);
+}
+
+symbol_t
+gensym( String s)
+{
+  char *mem = malloc(s->length + 11);
+  mem[0] = '#';
+  memcpy( mem+1, s->content, s->length);
+  sprintf( mem+1+s->length,"%d", sym_nb++);
+
+  return intern( mem);
 }

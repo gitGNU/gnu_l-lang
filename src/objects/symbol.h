@@ -78,7 +78,10 @@ typedef hash_table_t symbol_table_t;
 //  ret;})
 
 symbol_t
-gensym(char *root);
+gensym_c(char *root);
+
+symbol_t
+gensym(String s);
 
 
 #endif

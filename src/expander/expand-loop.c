@@ -59,7 +59,7 @@ create_loop_label( Symbol loop_name, char *additional_string)
   memcpy( gensym_root + loop_name_len, additional_string, add_len);
   gensym_root[loop_name_len + add_len] = 0;
 
-  Symbol symb = gensym( gensym_root);
+  Symbol symb = gensym_c( gensym_root);
   free( gensym_root);
 
   return symb;
@@ -77,7 +77,7 @@ expanded_form_t
 expand_loop(generic_form_t form)
 {
   loop_info_t li = MALLOC( loop_info);
-  li->loop_name = gensym( "loop");
+  li->loop_name = gensym_c( "loop");
   li->continue_label = NULL;
   li->break_label = create_loop_label( li->loop_name, "_end");
   li->enclosing_loop = loop_list;

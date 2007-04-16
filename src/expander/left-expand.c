@@ -134,7 +134,7 @@ left_expand_tuple (generic_form_t form, expanded_form_t expression)
       {
 	expanded_form_t subexpr = CAR( element);
 	
-	Symbol tuple_copy = gensym( "tuple");
+	Symbol tuple_copy = gensym_c( "tuple");
 	*id_list_ptr = CONS( tuple_copy, NULL);
 	id_list_ptr = &((*id_list_ptr)->next);
 	

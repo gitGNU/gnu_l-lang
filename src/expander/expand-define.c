@@ -219,7 +219,7 @@ expand_macro( Symbol macro,
 
   /* XXX: expands the parameters, check their number, etc.  */
 
-  Symbol expander_parameter_name = gensym( "form");
+  Symbol expander_parameter_name = gensym_c( "form");
   
   list_t id_list;
   list_t prepare_list;
@@ -482,7 +482,7 @@ expand_attribute( Symbol macro,
   /* Neither a tuple, nor a label: then we assume that the argument
      given works for  both left and right body.  */
   body = last_arg;
-  expression_name = gensym( "expression");
+  expression_name = gensym_c( "expression");
   left_body = generic_form_symbol( intern( "="),
 				   CONS( body,
 					 CONS( id_form( expression_name),

@@ -18,6 +18,7 @@
    write to the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
    Boston, MA  02110-1301  USA.  */
 
+#include "../compiler/c-to-l.h"
 
 void
 init_library ()
@@ -34,6 +35,7 @@ init_library ()
   init_output ();
   init_hash ();
   init_l_form ();
- 
+
+  DEFINE_C_FUNCTION( gensym, "Symbol <- String");
   
 }

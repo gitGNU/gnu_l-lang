@@ -1,3 +1,13 @@
+2007-04-17  Matthieu Lemerre  <racin@free.fr>
+
+	Gensym now takes a String and is exported to L.
+	
+	* src/std/list.c (list_printer): Added skeleton.
+	* src/std/init_library.c (init_library): Init gensym.
+	* src/objects/symbol.c (gensym_c): Renamed from gensym. Fix all
+	callers.
+	(gensym): Now takes a String as an argument.
+
 2007-04-16  Matthieu Lemerre  <racin@free.fr>
 
 	Remove restrictions on expansions to be generic form

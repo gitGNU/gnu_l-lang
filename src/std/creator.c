@@ -343,7 +343,7 @@ create_pointed_form( Pointer_Type pointer_type,
   type_form_t pointed_type_form = pointed_type->type_form;
   type_form_t pointer_type_form = generic_form_symbol( SYMBOL( pointer),
 						       CONS( pointed_type_form, NULL));
-  id_form_t temp_id_form = id_form( gensym( "pointer_alloc"));
+  id_form_t temp_id_form = id_form( gensym_c( "pointer_alloc"));
 
   form_t let_f = generic_form_symbol( SYMBOL( let),
 				      CONS( temp_id_form,

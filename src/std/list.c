@@ -111,7 +111,7 @@ expand_cons(generic_form_t form)
 										      NULL))),
 							NULL));
 
-  symbol_t pair_ = gensym("pair_");
+  symbol_t pair_ = gensym_c("pair_");
 
   form_t cast_form = generic_form_symbol(SYMBOL(cast),
 					 CONS(pair_type_form,
@@ -276,6 +276,28 @@ print_int_list(pair_t list)
 form_t
 list_foreach_expander( Symbol loop_name, form_t var_form,
 			expanded_form_t list_form, form_t body);
+
+
+/* Expand print( list) into:
+   { let list_ = list; 
+   if(list_ != 0)
+   {
+     let sep_ = sep;
+     print( list.head);
+     foreach( let iter_ in list.tail)
+     {
+       print( sep_);
+       print( iter_);
+     }
+   }
+   }
+*/
+form_t
+list_printer( expanded_form_t to_print, form_t format)
+{
+  /* For now, the only formatter is a separator.  */
+  panic( "To write with my C outputer\n");
+}
 
 /* List(Int) is defined as:
 

@@ -66,7 +66,7 @@ expand_foreach( generic_form_t form)
   Symbol loop_name;
 
   /* XXX: use the supplied loop name, if any.  */
-  loop_name = gensym( "foreach");
+  loop_name = gensym_c( "foreach");
 
   expanded_form_t exp_iteree = expand( iteree);
 
@@ -109,7 +109,7 @@ list_foreach_expander( Symbol loop_name, form_t var_form,
   type_form_t list_type_form = list_form->type->type_form;
   type_form_t type_listed_form = CAR( ((generic_form_t) (list_type_form))->form_list);
   
-  Symbol sym = gensym( "iterator");
+  Symbol sym = gensym_c( "iterator");
   id_form_t id_sym = id_form( sym);
   
   form_t my_let_form = let_form( list_form->type->type_form, sym);
