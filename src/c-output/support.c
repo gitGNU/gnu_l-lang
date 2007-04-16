@@ -276,10 +276,6 @@ file_name_non_directory( String filename)
 void
 init_c_output_support()
 {
-  eval_cstring( "type Expanded_Form = struct { form_type_: Int;"
-		"original_form : Form;"
-		"return_form: Form;"
-		"type: Type ;} *;");
   define_printer( TYPE( "Expanded_Form"), Expanded_Form_printer);
   DEFINE_C_FUNCTION( lispify, "Void <- Form");
   DEFINE_C_FUNCTION( convert_id, "Symbol <- Symbol");

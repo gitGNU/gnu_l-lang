@@ -1,5 +1,12 @@
 2007-04-17  Matthieu Lemerre  <racin@free.fr>
 
+	Expand now returns Expanded Forms for L.
+	
+	* src/c-output/support.c: Move type Expanded_Form definition from
+	here...
+	* src/std/l-form.c (init_l_form): To here.
+	(init_l_form): Expand now returns an expanded form
+
 	Gensym now takes a String and is exported to L.
 	
 	* src/std/list.c (list_printer): Added skeleton.

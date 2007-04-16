@@ -224,7 +224,11 @@ init_l_form (void)
 		"garbage_:Int;"
                 "form_list: List( Form); } *;");
 
-  
+  eval_cstring( "type Expanded_Form = struct { form_type_: Int;"
+		"original_form : Form;"
+		"return_form: Form;"
+		"type: Type ;} *;");
+
   
   define_parse (SYMBOL (Form), form_parse);
   define_expander (SYMBOL (Form), expand_form);
@@ -239,5 +243,5 @@ init_l_form (void)
 		      "Form<-(Symbol, List(Form))");
 
   /* In fact, Expanded_Form<-Form.  */
-  DEFINE_C_FUNCTION (expand, "Form<-Form");
+  DEFINE_C_FUNCTION (expand, "Expanded_Form<-Form");
 }
