@@ -1,5 +1,14 @@
 2007-04-20  Matthieu Lemerre  <racin@free.fr>
 
+	* src/parser/form.c (String_Form): Add new alias.
+	* src/c-output/c-output.l (c_output_ref): Hack to solve problem
+	that & cannot take a cast as an argument in C.
+	(c_output_function_definition): Call convert_id on the function
+	parameters and function name.
+	(c_output_definition): Now also expand the functions used for
+	expansion.
+	(doit): Hack to handle output of the Output_Descriptor.
+
 	Support for make-list/make
 	
 	* src/std/list.c (make_list_list): New variable.

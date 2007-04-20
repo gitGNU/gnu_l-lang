@@ -390,9 +390,27 @@ c_output_let( cf:Expanded_Compound_Form)
 Void
 c_output_ref( cf:Expanded_Compound_Form)
 {
+  // Problem: &((void *)a) isn't permitted in C.
+  // To cope with this, we invert the cast and the ref.
+  // This is a bit ugly though.
   buffered {
+    let subform = cf.form_list.head;
+    if(is_compound_form( subform.return_form))
+      {
+	let csubform = cast( Expanded_Compound_Form, subform);
+	if(csubform.head == 'cast')
+	  {
+	    print( "((");
+	    c_output_type( '', intern_type( csubform.form_list.head.return_form));
+	    print( ") ");
+	    print( "(&", csubform.form_list.tail.head:gnu_c, ")");
+	    print( ")");
+	    goto (end);
+	  }
+      }
     print( "(&", cf.form_list.head:gnu_c, ")");
   }
+ end:
 }
 
 Void
@@ -497,7 +515,7 @@ c_output_function_definition( name:Symbol, l_:Form)
 
   let return_type = form_list.head;
   c_output_type( '', intern_type( return_type));
-  print( " ", name, "(");
+  print( " ", convert_id( name), "(");
   let parameters_type = cast( Compound_Form, form_list.tail.head);
   assert( parameters_type.head == 'tuple');
 
@@ -511,7 +529,7 @@ c_output_function_definition( name:Symbol, l_:Form)
       let first_param_type = first_parameter.form_list.tail.head;
   
       c_output_type( '', intern_type( cast( Form, first_param_type)));
-      print( " ", first_param_name.value);
+      print( " ", convert_id( first_param_name.value));
    
       foreach( let parameter
 	       in cast( List( Compound_Form), parameters_type.form_list.tail))
@@ -522,7 +540,7 @@ c_output_function_definition( name:Symbol, l_:Form)
 	  let type = parameter.form_list.tail.head;
   
 	  c_output_type( '', intern_type( cast( Form, type)));
-	  print( " ", param_name.value);
+	  print( " ", convert_id( param_name.value));
 	}
     }
   print( ")\n{\nreturn ");
@@ -569,6 +587,9 @@ c_output_definition( f:Compound_Form)
     }
   else if(species == 'expander')
     {
+      //Outputs the function used in the expander.
+      let funform = f.form_list.tail.tail.head;
+      c_output_definition( cast( Compound_Form, funform));
       ();
     }
   else if(species == 'attribute')
@@ -596,7 +617,8 @@ doit( l_file:String, out_c_file:String, out_inc_file:String)
   let form_list = expanded_form_list_from_file_name( l_file);
 
   current_output_descriptor = output_file_descriptor;
-  
+
+  print( "/* Automatically generated : do not edit!*/\n");
   print( '#include "', file_name_non_directory( out_inc_file), '"', "\n");
 
   foreach( let f in form_list)
@@ -613,6 +635,8 @@ doit( l_file:String, out_c_file:String, out_inc_file:String)
     }
 
   //XXX: And the types of the globals.
+  type_definition_needed[intern_type( Id_Form( 'Output_Descriptor'))] = cast( Bool, 1);
+  
   current_output_descriptor = inc_file_descriptor;
   output_all_type_definitions(); //Output the types definitions
 
@@ -677,6 +701,7 @@ test ()
 //  let form_list = expanded_form_list_from_file_name( "c-output/foreach-hash.l");
 //  let form_list = expanded_form_list_from_file_name( "c-output/c-output.l");
 
-  doit("c-output/c-output.l", "c-output/c-output.c", "c-output/c-output.inc");
+  //  doit("c-output/c-output.l", "c-output/c-output.c", "c-output/c-output.inc");
   //  doit("to_output.l", "to_output.c", "to_output.inc");
+  doit("test.l", "test.c", "test.inc");
 }

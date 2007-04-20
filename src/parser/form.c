@@ -87,6 +87,9 @@ string_form (string_t value)
   return sform;
 }
 
+#undef String_Form
+form_t String_Form( string_t value) __attribute__((alias( "string_form")));
+
 
 #if 0
 generic_form_t
