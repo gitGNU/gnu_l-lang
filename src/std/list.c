@@ -339,6 +339,9 @@ make_type_List (generic_form_t form)
   return the_type;
 }
 
+list_t make_list_list;
+Form  make_sharp__sharp_expander_function(form_t  form);
+Form  make_list_sharp__sharp_expander_function(form_t  form);
 
 void
 init_list(void)
@@ -348,6 +351,17 @@ init_list(void)
   DEFINE_C_FUNCTION2 ("alloc_cons_cell", alloc_cons_cell, "Void * <- ()");
   DEFINE_C_FUNCTION2 ("print_int_list", print_int_list, "Void <- (List(Int))");
 
-  define_expander(SYMBOL(cons), expand_cons);
-  define_expander(SYMBOL(list), expand_list);
+  eval_cstring( "type List_Maker_Element = struct { ptr_name:Symbol;"
+		"type_listed:Type;} *;");
+  
+  c_define_global( SYMBOL( make_list_list),
+  		   "List( List_Maker_Element)",
+		   &make_list_list);
+  
+  define_expander( SYMBOL( cons), expand_cons);
+  define_expander( SYMBOL( list), expand_list);
+  define_expander( SYMBOL( make_list), make_list_sharp__sharp_expander_function);
+  define_expander( SYMBOL( make), make_sharp__sharp_expander_function);
 }
+
+//List__O__List_Maker_Element__C____type__type make_list_list;
