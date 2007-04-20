@@ -1,13 +1,13 @@
 2007-04-20  Matthieu Lemerre  <racin@free.fr>
-	
+
 	Support for make-list/make
 	
 	* src/std/list.c (make_list_list): New variable.
 	* src/std/make-list.l: New file.
-	
 	* src/std/make-list.c, src/std/make-list.inc: Generated from
 	make-list.l
-
+	* src/std/Makefile.am (libl_std_la_SOURCES): Add make-list.c
+	
 2007-04-17  Matthieu Lemerre  <racin@free.fr>
 
 	Expand now returns Expanded Forms for L.
