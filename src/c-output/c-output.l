@@ -596,6 +596,14 @@ c_output_definition( f:Compound_Form)
     {
       ();
     }
+  else if(species == 'compile_time')
+    {
+      //Output the compile time things too
+      foreach( let definition in form_list.tail.tail)
+	{
+	  c_output_definition( cast( Compound_Form, definition));
+	}
+    }
   else
     {
       print_error( "Species '", species, "'\n");
@@ -703,5 +711,6 @@ test ()
 
   //  doit("c-output/c-output.l", "c-output/c-output.c", "c-output/c-output.inc");
   //  doit("to_output.l", "to_output.c", "to_output.inc");
-  doit("test.l", "test.c", "test.inc");
+  //  doit("test.l", "test.c", "test.inc");
+  doit( "std/make-list.l", "std/make-list.c", "std/make-list.inc");
 }

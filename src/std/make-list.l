@@ -8,6 +8,8 @@ type Common_To_All_Type = struct { type_type:Int;
 
 type Real_Type = struct { common_:Common_To_All_Type; }* ;
 
+compile_time global make_list_list:List (List_Maker_Element);
+
 expander make_list (form)
 {
   let symb = gensym ("make_list");

@@ -647,7 +647,10 @@ void create_global_variable_at( Type type, symbol_t name, void *address)
 
 void create_global_variable( Type type, symbol_t name)
 {
-  create_global_variable_at( type, name, malloc( type->size));
+  void *data = xmalloc( type->size);
+  /* Global data is 0 when untouched.  */
+  memset( data, 0, type->size); 
+  create_global_variable_at( type, name, data);
 }
 
 /* Retrieve the location associated to symbol ID.  */

@@ -890,6 +890,17 @@ parse_all ()
 								    NULL))))));
 	  return form;
 	}
+      else if(next_token.id == SYMBOL( compile_time))
+	{
+	  expect( ID_RTK);
+	  form_t form = parse_all();
+	  return generic_form_symbol( SYMBOL( define),
+				      CONS( id_form( SYMBOL( compile_time)),
+					    CONS( form,
+						  NULL)));
+	}
+      
+      
       else if(next_token.id == SYMBOL (def))
 	{
 	  form = parse_def ();

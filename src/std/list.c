@@ -339,7 +339,6 @@ make_type_List (generic_form_t form)
   return the_type;
 }
 
-list_t make_list_list;
 Form  make_sharp__sharp_expander_function(form_t  form);
 Form  make_list_sharp__sharp_expander_function(form_t  form);
 
@@ -353,10 +352,6 @@ init_list(void)
 
   eval_cstring( "type List_Maker_Element = struct { ptr_name:Symbol;"
 		"type_listed:Type;} *;");
-  
-  c_define_global( SYMBOL( make_list_list),
-  		   "List( List_Maker_Element)",
-		   &make_list_list);
   
   define_expander( SYMBOL( cons), expand_cons);
   define_expander( SYMBOL( list), expand_list);

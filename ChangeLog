@@ -1,5 +1,20 @@
 2007-04-20  Matthieu Lemerre  <racin@free.fr>
 
+	Support for compile_time definitions.
+
+	* src/std/make-list.l: make_list_list is now a compile_time global
+	constant.
+	* src/std/list.c (make_list_list): Remove useless definition.
+	* src/parser/parse.c (parse_all): Parse compile_time.
+	* src/expander/expand-define.c (expand_all): Compile compile_time
+	definitions first.
+	* src/c-output/c-output.l (c_output_definition): Handle the
+	compile_time case.
+	* src/compiler/jit/backend.c (create_global_variable): Nullify the
+	global when initialized.
+
+	Better C output support.
+
 	* src/parser/form.c (String_Form): Add new alias.
 	* src/c-output/c-output.l (c_output_ref): Hack to solve problem
 	that & cannot take a cast as an argument in C.

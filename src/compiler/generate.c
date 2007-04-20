@@ -211,7 +211,7 @@ compile_discard (form_t form, unsigned int bitfield)
 #endif
 
 void
-type_check (Type to, Type from)
+type_check (Type from, Type to)
 {
   if(from != to)
     panic ("Type mismatch: %s given, %s expected\n",

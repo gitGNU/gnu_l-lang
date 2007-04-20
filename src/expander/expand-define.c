@@ -736,6 +736,33 @@ expand_all( list_t form_list)
       puthash( form_type, CONS( df, gethash( form_type, ht)), ht);
     }
 
+  /* First, we get the compile_time things.  */
+  list_t compile_time_list_ = reverse( gethash( SYMBOL( compile_time), ht));
+
+  list_t expanded_compile_time_list = NULL;
+  if(compile_time_list_)
+    {
+      list_t compile_time_list;
+      {
+	list_t *compile_time_list_ptr = &compile_time_list;
+	FOREACH( element, compile_time_list_)
+	  {
+	    generic_form_t cf = CAR( element);
+	    *compile_time_list_ptr = CONS( CAR( cf->form_list->next), NULL);
+	    compile_time_list_ptr = &((*compile_time_list_ptr)->next);
+	  }
+	*compile_time_list_ptr = NULL;
+      }
+
+      list_t exp_ctl = expand_all( compile_time_list);
+      generate_list( exp_ctl);
+      expanded_compile_time_list = CONS( generic_form_symbol( SYMBOL( define),
+							      CONS( id_form( SYMBOL( compile_time)),
+								    CONS( id_form( SYMBOL( toto)),
+									  exp_ctl))),
+					 NULL);
+    }
+  
   /* This should use a precedence graph between type forms.  */
   /* First the user definitions( that expand into other definitions)
      should be expanded, then the types, then the expanders, then the
@@ -768,8 +795,9 @@ expand_all( list_t form_list)
   if(globlist)
     expanded_fun_list =  expand_all_function_and_global(globlist);
 
-  return nconc( expanded_type_list,
-		nconc( expanded_fun_list, expanded_expander_list));
+  return nconc( expanded_compile_time_list,
+		nconc( expanded_type_list,
+		       nconc( expanded_fun_list, expanded_expander_list)));
 }
 
 
