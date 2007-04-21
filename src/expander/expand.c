@@ -1124,6 +1124,62 @@ expand_binary_relationship(generic_form_t form)
 			      intern_type(base_type_form(SYMBOL(Bool))));
 }
 
+/* Logical operations */
+expanded_form_t
+expand_logical_or(generic_form_t form)
+{
+   form_t arg1 = CAR(form->form_list);
+   form_t arg2 = CAR(form->form_list->next);
+   
+   expanded_form_t exp_arg1 = expand(arg1);
+   expanded_form_t exp_arg2 = expand(arg2);
+
+   type_check( exp_arg1->type, TYPE( "Bool"));
+   type_check( exp_arg2->type, TYPE( "Bool"));
+
+  return create_expanded_form(generic_form_symbol(intern("@logical_or"),
+						  CONS(exp_arg1,
+						       CONS(exp_arg2,
+							    NULL))),
+			      intern_type(base_type_form(SYMBOL(Bool))));
+}
+
+expanded_form_t
+expand_logical_and(generic_form_t form)
+{
+   form_t arg1 = CAR(form->form_list);
+   form_t arg2 = CAR(form->form_list->next);
+   
+   expanded_form_t exp_arg1 = expand(arg1);
+   expanded_form_t exp_arg2 = expand(arg2);
+
+   type_check( exp_arg1->type, TYPE( "Bool"));
+   type_check( exp_arg2->type, TYPE( "Bool"));
+
+  return create_expanded_form(generic_form_symbol(intern("@logical_and"),
+						  CONS(exp_arg1,
+						       CONS(exp_arg2,
+							    NULL))),
+			      intern_type(base_type_form(SYMBOL(Bool))));
+}
+
+
+expanded_form_t
+expand_logical_not(generic_form_t form)
+{
+   form_t arg1 = CAR(form->form_list);
+   
+   expanded_form_t exp_arg1 = expand(arg1);
+
+   type_check( exp_arg1->type, TYPE( "Bool"));
+
+  return create_expanded_form(generic_form_symbol(intern("@not"),
+						  CONS(exp_arg1,
+						       NULL)),
+			      intern_type(base_type_form(SYMBOL(Bool))));
+}
+
+
 
 
 /* We should also transform >= into >=_signed_int or >=_unsigned_int
@@ -1214,6 +1270,10 @@ init_expand (void)
   define_expander(intern("="), expand_assign);
   define_expander(SYMBOL (struct), expand_struct);
   define_expander(SYMBOL (label), expand_label);
+  
+  define_expander(intern( "@and"), expand_logical_and);
+  define_expander(intern( "@or"), expand_logical_or);
+  define_expander(intern( "@not"), expand_logical_not);
   define_expander(SYMBOL (goto), expand_goto);
   define_expander(intern( "@get_label"), expand_at_get_label);
   define_expander(SYMBOL (tuple), expand_tuple);

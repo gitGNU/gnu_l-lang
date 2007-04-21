@@ -235,6 +235,8 @@ typedef enum reduced_token_type
     MULTIPLICATIVE_RTK,
     UNARY_RTK,
     RELATIONAL_RTK,
+    LOGICAL_OR_RTK,
+    LOGICAL_AND_RTK,
     EQUALITY_RTK,
     ASSIGNMENT_RTK,
     OPEN_PAREN_RTK,
@@ -421,14 +423,13 @@ get_next_token (void)
     }
   else if(result_scanning == NOT_TK 
 	  || result_scanning == AMPERSAND_TK
-	  || result_scanning == STAR_TK
-	  || result_scanning == AND_TK)
+	  || result_scanning == STAR_TK)
     {
       /* We parsed &&.  */
       switch(result_scanning)
 	{
-	case AND_TK:
-	  current_token.id = intern( "@get_label");
+	case NOT_TK:
+	  current_token.id = intern( "@not");
 	  break;
 	  
 	case STAR_TK:
@@ -447,6 +448,16 @@ get_next_token (void)
 	  }
 	}
       current_token.type = UNARY_RTK;
+    }
+  else if(result_scanning == OR_TK)
+    {
+      current_token.id = intern( "@or");
+      current_token.type = LOGICAL_OR_RTK;
+    }
+  else if(result_scanning == AND_TK)
+    {
+      current_token.id = intern( "@and");
+      current_token.type = LOGICAL_AND_RTK;
     }
   else if(result_scanning == STRING_TK)
     {
@@ -490,7 +501,6 @@ get_next_token (void)
 						newstring - savnewstring);
       current_token.type = STRING_RTK;
     }
-  
   else parse_error ("Unrecognized token\n");
   
   token_counter++;
@@ -693,7 +703,8 @@ typedef enum {NOT_A_MACRO = 2} macro_type_t; /* rend aussi STATEMENT ou EXPRESSI
 
 //DECLARE_PARSE_OPERATOR_RIGHT (sequential, SEQUENTIAL, assignment)
 //DECLARE_PARSE_OPERATOR_RIGHT (assignment, ASSIGNMENT, logical)
-DECLARE_PARSE_OPERATOR_LEFT (logical, LOGICAL, bit)
+DECLARE_PARSE_OPERATOR_LEFT (logical_or, LOGICAL_OR, bit)
+DECLARE_PARSE_OPERATOR_LEFT (logical_and, LOGICAL_AND, bit)
 DECLARE_PARSE_OPERATOR_LEFT (bit, BIT, equality)
 DECLARE_PARSE_OPERATOR_LEFT (equality, EQUALITY, relational)
 DECLARE_PARSE_OPERATOR_LEFT (relational, RELATIONAL, shift)
@@ -1550,14 +1561,12 @@ parse_label_expression (form_t *form)
   return se;
 }
 
-
-
 static statement_or_expression_t
 parse_assignment_expression (form_t *form)
 {
   /* parse_unary_expression(); */
   form_t assignment_form;
-  statement_or_expression_t se = parse_equality_expression (&assignment_form);
+  statement_or_expression_t se = parse_logical_and_expression (&assignment_form);
 
   if (se == STATEMENT)
     {
@@ -1579,6 +1588,8 @@ parse_assignment_expression (form_t *form)
   //  return assignment_form;
 }
 
+DEFINE_PARSE_OPERATOR_LEFT( logical_and, LOGICAL_AND, logical_or);
+DEFINE_PARSE_OPERATOR_LEFT( logical_or, LOGICAL_OR, equality);
 DEFINE_PARSE_OPERATOR_LEFT (equality, EQUALITY, relational)
 DEFINE_PARSE_OPERATOR_LEFT (relational, RELATIONAL, additive)
 DEFINE_PARSE_OPERATOR_LEFT (additive, ADDITIVE, multiplicative)
@@ -1612,6 +1623,19 @@ parse_unary_expression (form_t *form)
       if( current_token.id == intern( "-"))
 	{
 	  form_t operator_form = id_form (intern("unary_minus"));
+	  form_t second_form;
+	  statement_or_expression_t se = parse_unary_expression (&second_form);
+	  *form = function_form (operator_form, CONS (second_form, NULL));
+	  return se;
+	}
+      else parse_error("Invalid unary token\n");
+    }
+  else if(accept( LOGICAL_AND_RTK))
+    {
+      /* unary &&, for addresses of labels.  */
+      if(current_token.id == intern("@and"))
+	{
+	  form_t operator_form = id_form (intern("@get_label"));
 	  form_t second_form;
 	  statement_or_expression_t se = parse_unary_expression (&second_form);
 	  *form = function_form (operator_form, CONS (second_form, NULL));

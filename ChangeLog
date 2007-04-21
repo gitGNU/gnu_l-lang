@@ -1,3 +1,27 @@
+2007-04-22  Matthieu Lemerre  <racin@free.fr>
+
+	Support for boolean and, or, and not.
+	
+	* test/cocyte23-bool-operations.l: New test file.
+
+	* src/parser/parse.c (get_next_token): Now AND_TK is not parsed as
+	a UNARY_RTK, but as a LOGICAL_AND_RTK. OR_TK is parsed as a
+	LOGICAL_OR_RTK.
+	(logical_or, logical_and): New left parse operators.
+	(parse_assignment_expression): Subrule is a logical and instead of
+	an equality.
+	(parse_unary_expression): Transform the && token into @get_label
+
+	* src/expander/expand.c (expand_logical_or, expand_logical_and)
+	(expand_logical_not): New base expanders
+	(init_expand): Initialize them.
+
+	* src/compiler/generate.c (compile_not, compile_or, compile_and):
+	Now work.
+	(compile_or_boolean, compile_and_boolean): Added these boolean
+	operations.
+	(init_generate) Initialize all this.
+
 2007-04-20  Matthieu Lemerre  <racin@free.fr>
 
 	Support for compile_time definitions.

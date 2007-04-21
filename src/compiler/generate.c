@@ -1142,7 +1142,60 @@ compile_not_boolean (generic_form_t form)
 location_t
 compile_not (generic_form_t form)
 {
-  panic ("Not implemented\n");
+  boolean_expression_switch_t bes = compile_not_boolean (form);
+  return bes_to_location( bes);
+}
+
+
+boolean_expression_switch_t
+compile_or_boolean (generic_form_t form)
+{
+  form_t subform1 = CAR (form->form_list);
+  form_t subform2 = CAR (form->form_list->next);
+
+  boolean_expression_switch_t bes1 = compile_boolean (subform1);
+  bes1->false_jump = put_label_here( bes1->false_jump);
+  
+  boolean_expression_switch_t bes2 = compile_boolean (subform2);
+
+  bes2->true_jump->patch_list = nconc( bes2->true_jump->patch_list,
+				       bes1->true_jump->patch_list);
+  bes2->entry_point = bes1->entry_point;
+
+  return bes2;
+}
+
+location_t
+compile_or (generic_form_t form)
+{
+  boolean_expression_switch_t bes = compile_or_boolean (form);
+  return bes_to_location( bes);
+}
+
+
+boolean_expression_switch_t
+compile_and_boolean (generic_form_t form)
+{
+  form_t subform1 = CAR (form->form_list);
+  form_t subform2 = CAR (form->form_list->next);
+
+  boolean_expression_switch_t bes1 = compile_boolean (subform1);
+  bes1->true_jump = put_label_here( bes1->true_jump);
+  
+  boolean_expression_switch_t bes2 = compile_boolean (subform2);
+
+  bes2->false_jump->patch_list = nconc( bes2->false_jump->patch_list,
+					bes1->false_jump->patch_list);
+  bes2->entry_point = bes1->entry_point;
+
+  return bes2;
+}
+
+location_t
+compile_and (generic_form_t form)
+{
+  boolean_expression_switch_t bes = compile_and_boolean (form);
+  return bes_to_location( bes);
 }
 
 
@@ -1388,7 +1441,9 @@ init_generate (void)
   DEFINE_BOOLEAN_GENERIC (">=_Int", ge);
   DEFINE_BOOLEAN_GENERIC (">_Int", gt);
   DEFINE_BOOLEAN_GENERIC ("!=", ne);
-  DEFINE_BOOLEAN_GENERIC ("!", not);
+  DEFINE_BOOLEAN_GENERIC ("@not", not);
+  DEFINE_BOOLEAN_GENERIC ("@logical_or", or);
+  DEFINE_BOOLEAN_GENERIC ("@logical_and", and);
 
   /* XXX: */
 
