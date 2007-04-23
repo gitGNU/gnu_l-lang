@@ -530,6 +530,13 @@ expand_block(generic_form_t form)
 expanded_form_t
 expand_seq(generic_form_t form)
 {
+  if(form->form_list == NULL)
+    {
+      return create_expanded_form( new_tuple_form( NULL),
+				   TYPE( "Void"));
+    }
+
+  
   /* MAP expand on the forms; return the type of the last one.  */
   list_t expanded_form_list;
   
@@ -931,7 +938,7 @@ expand_binary_operator(generic_form_t form)
   Type type = exp_arg1->type;
 
   char *type_representation = asprint_type(type);
-  char *newstring = malloc(2 + strlen(type_representation));
+  char *newstring = malloc(2 + strlen(type_representation) + 1);
   newstring[0] = head->name[0];
   newstring[1] = '_';
   strcpy(newstring+2, type_representation);
@@ -1102,7 +1109,7 @@ expand_binary_relationship(generic_form_t form)
   /* The generator does only (signed) Int for now.  */
 
   char *type_representation = "Int";
-  char *newstring = malloc(3 + strlen(type_representation));
+  char *newstring = malloc(3 + strlen(type_representation) + 1);
   newstring[0] = head->name[0];
   if(head->name[1])
     {

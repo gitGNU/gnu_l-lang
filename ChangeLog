@@ -1,3 +1,14 @@
+2007-04-23  Matthieu Lemerre  <racin@free.fr>
+
+	Removed write out of address spaces errors.
+	
+	* src/include/l/string.h (maken_heap_string): Removed an
+	off-by-one write error.
+	* src/expander/expand.c (expand_binary_operator): Likewise.
+	(expand_binary_relationship): Likewise.
+	* src/expander/expand.c (expand_seq): Handle the case seq().
+
+
 2007-04-22  Matthieu Lemerre  <racin@free.fr>
 
 	Support for boolean and, or, and not.

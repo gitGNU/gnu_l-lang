@@ -62,7 +62,9 @@ maken_heap_string (const char *chars, unsigned int n)
   char *string_start = (char *) string  + sizeof(struct string);
   string->length = n;
   string->content = string_start;
-  memcpy (string_start, chars, n + 1);
+  memcpy (string_start, chars, n);
+  /* Only for compatibility.  */
+  string_start[n] = 0;
   return string;
 }
 
