@@ -25,6 +25,7 @@
 #include <sys/mman.h>
 #include <string.h>
 #include <unistd.h>
+#include <errno.h>
 
 
 /* Buffered output: print_string.  */
@@ -62,10 +63,8 @@ get_output_buffer (void)
       output_buffer_t ob = MALLOC (output_buffer);
       ob->start = mmap (NULL, page_size, PROT_WRITE,
 			MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
-      //      if(ob->start == (void *) -1)
-      //	printf ("ERROR: %s\n", strerror (errno));
-	
-      assert (ob->start !=(void *) -1);
+      if(ob->start == MAP_FAILED)
+      	panic ("ERROR: %s\n", strerror (errno));
       ob->current = ob->start;
       ob->end = ob->start + page_size;
       return ob;
@@ -113,10 +112,10 @@ flush_output_descriptor (output_descriptor_t output_descriptor)
 {
   if(output_descriptor->current_output_buffer)
     {
-      output_descriptor->flush_function (output_descriptor->flush_data,
+      output_descriptor->flush_function (output_descriptor,
 					 output_descriptor->current_output_buffer);
-      free_output_buffer (output_descriptor->current_output_buffer);
-      output_descriptor->current_output_buffer = NULL;
+      //      free_output_buffer (output_descriptor->current_output_buffer);
+      //      output_descriptor->current_output_buffer = NULL;
     }
 }
 
@@ -206,11 +205,13 @@ output_descriptor_t stderr_output_descriptor;
 
 
 /* Flush output to a UNIX file descriptor.  */
-void flush_unix_fd (void *file_descriptor, output_buffer_t buffer)
+void flush_unix_fd (output_descriptor_t od, output_buffer_t buffer)
 {
   assert (buffer);
-  int fd = (int) file_descriptor;
+  int fd = (int) od->flush_data;
   write (fd, buffer->start, buffer->current - buffer->start);
+  free_output_buffer (od->current_output_buffer);
+  od->current_output_buffer = NULL;
 }
 
 output_descriptor_t
@@ -223,6 +224,41 @@ make_unix_fd_output_descriptor (int fd)
   return od;
 }
 
+void flush_string_od( void *file_descriptor, output_buffer_t buffer)
+{
+  /* If the buffer is full, put it in the list of output buffers( flush_data).
+     */
+  if(buffer->end == buffer->current)
+    {
+      panic( "HERE\n");
+      //      free_output_buffer (od->current_output_buffer);
+      //      od->current_output_buffer = NULL;
+    }
+}
+
+output_descriptor_t
+make_string_output_descriptor (void)
+{
+  output_descriptor_t od = MALLOC (output_descriptor);
+  od->flush_data = NULL; /* A list of output buffers.  */
+  od->flush_function = flush_string_od;
+  od->current_output_buffer = NULL;
+  return od;
+}
+
+String
+string_output_descriptor_to_string( output_descriptor_t od)
+{
+  /* For now, we assume the current_output_buffer has never been
+     filled.  */
+  assert( od->flush_data == NULL);
+  String s = maken_heap_string( od->current_output_buffer->start,
+			       od->current_output_buffer->current
+			       - od->current_output_buffer->start);
+  return s;
+}
+
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -232,7 +268,7 @@ make_output_descriptor_write_file( String file_name)
 {
   char *c_file_name = make_C_string_from_L_string( file_name);
   unlink( c_file_name);
-  int fd = open( c_file_name, O_CREAT|O_WRONLY);
+  int fd = open( c_file_name, O_CREAT|O_WRONLY, S_IRUSR|S_IWUSR);
   return make_unix_fd_output_descriptor( fd);
 }
 
@@ -272,8 +308,21 @@ init_output (void)
   c_define_global( SYMBOL( current_output_descriptor),
 		   "Output_Descriptor", &current_output_descriptor);
 
+  c_define_global( SYMBOL( stdout_output_descriptor),
+		   "Output_Descriptor", &stdout_output_descriptor);
+  c_define_global( SYMBOL( stderr_output_descriptor),
+		   "Output_Descriptor", &stderr_output_descriptor);
+
   DEFINE_C_FUNCTION( make_output_descriptor_write_file,
 		     "Output_Descriptor <- String");
+
+  /* Should return a String_Output_Descriptor.  */
+  DEFINE_C_FUNCTION( make_string_output_descriptor,
+		     "Output_Descriptor <- ()");
+
+  DEFINE_C_FUNCTION( string_output_descriptor_to_string,
+		     "String <- (Output_Descriptor)");
+  
 }
 
 void

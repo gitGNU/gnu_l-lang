@@ -19,37 +19,15 @@ global c_output_hash:Hash( Symbol, (Void <- Expanded_Compound_Form)*);
 //Set of the functions (in the future, also globals) needed
 global globals_needed:Hash( Symbol, Bool);
 
+//Set of the strings needed.
+global strings_needed:Hash( Int, String);
+global string_counter:Int;
+
+
 global stdout_descriptor:Output_Descriptor;
 
 global output_file_descriptor:Output_Descriptor;
 global inc_file_descriptor:Output_Descriptor;
-
-expander print_error( form)
-{
-  Form( {let save_od_ = current_output_descriptor;
-         current_output_descriptor = stdout_descriptor;
-	 print( $@form.form_list$);
-	 flush();
-         current_output_descriptor = save_od_})
-}
-
-//XXX: temporary, because Form( condition) is really expansive.
-macro assert( condition) = 
-  if( condition == cast( Bool, 0))
-    {
-      print_error( "Assertion ");
-      print_form( Form( condition));
-      print_error( " failed\n");
-      exit( 3)
-    };
-
-expander panic( form)
-{
-  Form({current_output_descriptor = stdout_descriptor;
-      print( "Panic : ", $@form.form_list$);
-      flush();
-      exit( 3)})
-}
 
 ////////////////////////////////////////
 Bool
@@ -137,11 +115,10 @@ c_output_form( expf:Expanded_Form)
 	  }
 	else if( is_string_form( f))
 	  {
-	    //Should be initialised once and always used after that.
 	    let string_form = cast( String_Form, f);
-	    let string = convert_string( string_form.value);
-	    print( '(&(struct { unsigned int len; char *content;}){strlen( "',
-		   string, '"), "', string, '"})');
+	    string_counter = string_counter+1;
+	    strings_needed[string_counter] = string_form.value;
+	    print( "((String__type) &__string_", string_counter, ")");
 	  }
       
 	else
@@ -235,6 +212,30 @@ c_output_equal( cf:Expanded_Compound_Form)
   buffered print( "(", cf.form_list.head:gnu_c,
 		  " == ", cf.form_list.tail.head:gnu_c, ")");
 }
+
+Void
+c_output_logical_or( cf:Expanded_Compound_Form)
+{
+  buffered print( "((", cf.form_list.head:gnu_c,
+		  ")||(", cf.form_list.tail.head:gnu_c, "))");
+}
+
+Void
+c_output_logical_and( cf:Expanded_Compound_Form)
+{
+  buffered print( "((", cf.form_list.head:gnu_c,
+		  ")&&(", cf.form_list.tail.head:gnu_c, "))");
+}
+
+
+Void
+c_output_logical_not( cf:Expanded_Compound_Form)
+{
+  buffered print( "(!(", cf.form_list.head:gnu_c,"))");
+}
+
+
+
 
 ///////////////////////////
 //And also here, to extract all the constituents of an expanded compound form.
@@ -480,6 +481,12 @@ init_c_output()
   c_output_hash['=='] = &c_output_equal;
   c_output_hash['!='] = &c_output_different;
 
+  c_output_hash['@logical_or'] = &c_output_logical_or;
+  c_output_hash['@logical_and'] = &c_output_logical_and;
+  c_output_hash['@not'] = &c_output_logical_not;
+
+
+  
   c_output_hash['='] = &c_output_assign;
   c_output_hash['[]_Struct'] = &c_output_access_struct;
   c_output_hash['block'] = &c_output_block;
@@ -612,8 +619,34 @@ c_output_definition( f:Compound_Form)
 }
 
 Void
+c_output_init_definition(f:Compound_Form)
+{
+  assert( is_compound_form( cast( Form,f)));
+  assert( f.head == 'define');
+  let form_list = cast( List( Form), cast( Compound_Form, f).form_list);
+  assert( is_id_form( form_list.head));
+  let species = cast( Id_Form, form_list.head).value;
+  
+  assert( is_id_form( form_list.tail.head));
+  let name_form = cast( Id_Form, form_list.tail.head);
+
+  if(species == 'expander')
+    {
+      let funform = f.form_list.tail.tail.head;
+      let funname = cast( Id_Form, cast( Compound_Form, funform).form_list.tail.head).value;
+      
+      print( "define_expander( ");
+      print( 'intern( "', convert_id_as_string( name_form.value), '")');
+      print( ", ", convert_id( funname), ");\n");
+    }
+}
+
+
+Void
 doit( l_file:String, out_c_file:String, out_inc_file:String)
 {
+  string_counter = 0;
+  strings_needed = Hash( Int, String);
   globals_needed = Hash( Symbol, Bool);
   reinit_types();
 
@@ -632,6 +665,13 @@ doit( l_file:String, out_c_file:String, out_inc_file:String)
   foreach( let f in form_list)
     c_output_definition( f);
 
+  print( "void init_",
+	 file_name_non_extension( file_name_non_directory( out_inc_file)),
+	 "(void){\n");
+  foreach( let f in form_list)
+    c_output_init_definition( f);
+  print( "}\n\n");
+  
   print( 'void main() { init(); int (*test_ptr)( void); test_ptr = test; printf( "TEST result: %d", test_ptr());flush();}', "\n");
   flush();
 
@@ -657,7 +697,17 @@ doit( l_file:String, out_c_file:String, out_inc_file:String)
 
   // XXX: We don't print the globals for now.
   print( "Output_Descriptor__type current_output_descriptor;\n",
-	 "Output_Descriptor__type stdout_descriptor;\n");
+	 "Output_Descriptor__type stdout_output_descriptor;\n",
+	 "Output_Descriptor__type stderr_output_descriptor;\n");
+
+  //Define the strings used in the remainder of the program.
+  foreach( (let count, let string) in strings_needed)
+    {
+      print( "static struct { unsigned int length; char *content; }", " __string_", count,
+	     " = { ",get_string_length( string), ', "', convert_string( string), '"', "};\n");
+    }
+
+  
   flush();
 }
 
@@ -709,8 +759,13 @@ test ()
 //  let form_list = expanded_form_list_from_file_name( "c-output/foreach-hash.l");
 //  let form_list = expanded_form_list_from_file_name( "c-output/c-output.l");
 
-  //  doit("c-output/c-output.l", "c-output/c-output.c", "c-output/c-output.inc");
-  //  doit("to_output.l", "to_output.c", "to_output.inc");
-  //  doit("test.l", "test.c", "test.inc");
-  doit( "std/make-list.l", "std/make-list.c", "std/make-list.inc");
+//  doit("c-output/c-output.l", "c-output/c-output.c", "c-output/c-output.inc");
+  //  doit( "std/error.l", "std/error.c", "std/error.inc");
+  //  doit( "std/string.l", "std/string.c", "std/string.inc");
+    doit( "std/make-list.l", "std/make-list.c", "std/make-list.inc");
+
+  //  doit( "new-parser/grammar-expander.l", "test.c", "test.inc");
+  //doit( "std/error.l", "std/error.c", "std/error.inc");
+  //  doit( "std/error.l", "test.c", "test.inc");
+  //      doit( "test.l", "test.c", "test.inc");
 }

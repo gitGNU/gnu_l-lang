@@ -2201,7 +2201,7 @@ parse_while (form_t *form)
 
   form_t stat = parse_statement ();
 
-  list_t form_list = CONS (if_form (function_form (id_form (SYMBOL (!)),
+  list_t form_list = CONS (if_form (function_form (id_form (intern( "@not")),
 						   CONS (exp, NULL)),
 				    break_form (),
 				    NULL),

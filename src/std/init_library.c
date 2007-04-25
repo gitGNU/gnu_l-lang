@@ -35,7 +35,9 @@ init_library ()
   init_output ();
   init_hash ();
   init_l_form ();
-
+  init_error();
+  init_string();
+  
   DEFINE_C_FUNCTION( gensym, "Symbol <- String");
   
 }

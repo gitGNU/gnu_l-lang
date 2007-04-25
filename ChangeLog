@@ -1,3 +1,41 @@
+2007-04-26  Matthieu Lemerre  <racin@free.fr>
+
+	C output now handles strings properly, does the initalisation of
+	expanders, and outputs boolean operators; new error library; New
+	expander with_output_to_string
+	
+	* src/std/output.c (flush_string_od)
+	(make_string_output_descriptor)
+	(string_output_descriptor_to_string): New functions for output to
+	Strings.
+	(make_output_descriptor_write_file): Now creates file readable and
+	writable.
+	(stdout_output_descriptor, stderr_output_descriptor): Now
+	available to L.
+
+	* src/std/make-list.l: Now make returns Void.
+
+	* src/parser/parse.c (parse_while): While is now calls @not and not !
+
+	* src/compiler/jit/backend.c (generate_function_start): Moved the
+	allocation limit from 4096 to 16384.
+ 
+	* src/c-output/support.c (get_string_length): New function.
+	(file_name_non_extension): Likewise. Both are exported to L.
+
+	* src/c-output/c-output.l (c_output_form): Now uses a constant
+	String objects.
+	(strings_needed, strings_counter): New globals.
+	(doit): Initialize the globals and outputs the constant Strings.
+	(c_output_logical_or, c_output_logical_and)
+	(c_output_logical_not): New functions.
+	(c_output_init_definition): New function.
+	(print_error, assert, panic): Moved to error.l
+
+	* std/string.l: New file; defines the expander with_output_to_string
+	* src/std/error.l: New file, with generated files error.c and
+	error.inc
+	
 2007-04-23  Matthieu Lemerre  <racin@free.fr>
 
 	Removed write out of address spaces errors.

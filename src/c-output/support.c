@@ -122,6 +122,12 @@ convert_string(String s)
   return maken_heap_string( buffer, current-buffer);
 }
 
+int
+get_string_length( String s)
+{
+  return s->length;
+}
+
 String
 convert_id_as_string(Symbol s)
 {
@@ -273,6 +279,26 @@ file_name_non_directory( String filename)
   return maken_heap_string( end, save_end - end);
 }
 
+String
+file_name_non_extension( String filename)
+{
+  char *save_end;
+  char *end = save_end = filename->content + filename->length;
+
+  for(;;)
+    {
+      if(end <= filename->content)
+	break;
+      if(*end == '.')
+	{
+	  break;
+	}
+      end--;
+    }
+  return maken_heap_string( filename->content, end - filename->content);
+}
+
+
 void
 init_c_output_support()
 {
@@ -289,7 +315,8 @@ init_c_output_support()
   DEFINE_C_FUNCTION( prepend_star, "Symbol <- Symbol");
   DEFINE_C_FUNCTION( get_global_type, "Type <- Symbol");
   DEFINE_C_FUNCTION( file_name_non_directory, "String <- String");
-
+  DEFINE_C_FUNCTION( file_name_non_extension, "String <- String");
+  DEFINE_C_FUNCTION( get_string_length, "Int <- String");
 }
 
 //list_

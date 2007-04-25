@@ -82,7 +82,8 @@ expander make( form)
 	     (*cast( struct {car:Void*; cdr:Void*;}**,
 		     $id_symb$)).car = cast( Void *, $cast(Form, exp_subform)$),
 	     $id_symb$ = &((*cast( struct {car:Void*; cdr:Void*;}**,
-				   $id_symb$)).cdr)));
+				   $id_symb$)).cdr),
+	     ()));
 }
 
 Void
