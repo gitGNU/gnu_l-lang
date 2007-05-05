@@ -1,6 +1,15 @@
 2007-05-05  Matthieu Lemerre  <racin@free.fr>
 
+	declare_* functions for expanders with lexical scope and side
+	effects.
 	
+	* src/new-parser/grammar-expander.l (List): Use these functions.
+
+	* src/expander/expand.c:
+	(declare_block_begin, declare_block_end): New functions, callable
+	from L.
+	(expand_block): Use these functions.
+
 	Initial new parser support.
 	
 	* src/configure.in: Add new-parser.

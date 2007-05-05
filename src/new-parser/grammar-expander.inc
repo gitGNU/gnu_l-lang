@@ -30,6 +30,7 @@ Int__type form_type_;
 Symbol__type value;
 };
 typedef void *Hash_Table__type;
+typedef struct struct0x080649d0 *Real_Type__type;
 typedef void *Output_Descriptor__type;
 struct struct0x0805bb08 {
 Int__type form_type_;
@@ -69,54 +70,53 @@ struct struct0x08061a00 {
 Compound_Form__type head;
 List__O__Compound_Form__C____type__type tail;
 };
-struct struct0x080920b0 {
+struct struct0x080647d0 {
 Int__type type_type;
 Form__type type_form;
 Int__type size;
 Int__type alignment;
 };
-typedef struct struct0x08092360 *Real_Type__type;
-typedef struct struct0x080920b0 Common_To_All_Type__type;
-struct struct0x08092360 {
+typedef struct struct0x080647d0 Common_To_All_Type__type;
+struct struct0x080649d0 {
 Common_To_All_Type__type common_;
 };
-struct struct0x080937a0 {
+struct struct0x08065ce0 {
 Form__type car;
 List__O__Form__C____type__type cdr;
 };
-struct struct0x081d4a08 {
+struct struct0x081f7e28 {
 Compound_Form__type car;
 List__O__Compound_Form__C____type__type cdr;
 };
-struct struct0x084fdee0 {
-Int__type car;
-List__O__Int__C____type__type cdr;
-};
-struct struct0x08501c98 {
-void *car;
-void *cdr;
-};
-typedef struct struct0x08559c10 *Character_Range__type;
-struct struct0x08559c10 {
+typedef struct struct0x084d4998 *Character_Range__type;
+struct struct0x084d4998 {
 Int__type min;
 Int__type max;
 };
-typedef struct struct0x08559f08 *List__O__Character_Range__C____type__type;
-struct struct0x08559f08 {
+typedef struct struct0x084d4d28 *List__O__Character_Range__C____type__type;
+struct struct0x084d4d28 {
 Character_Range__type head;
 List__O__Character_Range__C____type__type tail;
 };
-typedef struct struct0x0855a1d0 *Exit__type;
+typedef Hash_Table__type Hash__O__Symbol__c__Type__C____type__type;
+typedef struct struct0x084d4fe8 *Exit__type;
 typedef List__O__Character_Range__C____type__type Character_Set__type;
-struct struct0x0855a1d0 {
+struct struct0x084d4fe8 {
 Int__type dummy;
 };
-typedef Hash_Table__type Hash__O__Symbol__c__Type__C____type__type;
 typedef Hash_Table__type Hash__O__Symbol__c__Character_Set__C____type__type;
 typedef Hash_Table__type Hash__O__Symbol__c__Form__C____type__type;
-struct struct0x0858fcb8 {
+struct struct0x084e0768 {
+void *car;
+void *cdr;
+};
+struct struct0x084e8aa8 {
 Character_Range__type car;
 List__O__Character_Range__C____type__type cdr;
+};
+struct struct0x08536ff8 {
+Int__type car;
+List__O__Int__C____type__type cdr;
 };
 Bool__type (is_compound_form)(Form__type );
 Form__type (Symbol_Form)(Symbol__type );
@@ -136,6 +136,7 @@ Form__type (Int_Form)(Int__type );
 void *(gethash)(void *, Hash_Table__type );
 void *(puthash)(void *, void *, Hash_Table__type );
 Form__type (Id_Form)(Symbol__type );
+void (declare_block_begin)(void);
 Form__type (Compound_Form)(Symbol__type , List__O__Form__C____type__type );
 Int__type (print_form)(Form__type );
 Bool__type (is_int_form)(Form__type );
@@ -148,6 +149,7 @@ Int__type (character_from_symbol)(Symbol__type );
 String__type (concat)(String__type , String__type );
 String__type (get_symbol_name)(Symbol__type );
 Int__type (string_element)(String__type , Int__type );
+Expanded_Form__type (declare_block_end)(List__O__Form__C____type__type );
 Character_Set__type (make_Character_Set)(Form__type );
 Character_Set__type (get_inverse_Character_Set)(Character_Set__type );
 Character_Set__type (make_inverse_Character_Set)(Form__type );

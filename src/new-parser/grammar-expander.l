@@ -370,11 +370,12 @@ grammar_produce_function_definitions( grammar_:Form)
       let function_name = intern_string( concat( "parse_", rule_name.name));
 
       let form = cast( Form, rule.form_list.tail.head);
-  
+
+      id_used = Hash( Symbol, Type);
+      declare_block_begin();
       let function_body = grammar_expander_rec( form, cast( List( Form), 0));
 
-      let exp_function_body = expand( Compound_Form( 'block',
-						     list( function_body)));
+      let exp_function_body = declare_block_end( list( function_body));
 
       let lambda_form = Compound_Form( 'lambda',
 				       list( exp_function_body.type.type_form,

@@ -473,23 +473,26 @@ expand_lambda(generic_form_t form)
  }
 
 
-
+/* The purpose of these functions is for "bottom to up" expansion
+   containing undeclared new variables. These functions allow to
+   define a scope for these variables, without expanding the contents
+   of the block.  */
+void
+declare_block_begin()
+{
+  new_block();
+}
 
 expanded_form_t
-expand_block(generic_form_t form)
+declare_block_end(list_t form_list)
 {
-  if(form->form_list == NULL)
-    panic ("Blocks cannot be empty\n"); /* Or empty blocks could be void.  */
-    
-  new_block();
-
   /* MAP expand on the forms; return the type of the last one.  */
   list_t expanded_form_list;
   
   list_t *expanded_form_list_ptr = &expanded_form_list;
   expanded_form_t last_element = NULL;
 
-  FOREACH(element, form->form_list)
+  FOREACH(element, form_list)
     {
       last_element = expand(CAR(element));
       *expanded_form_list_ptr = CONS(last_element, NULL);
@@ -524,7 +527,19 @@ expand_block(generic_form_t form)
   remove_block();
   /* The final type is the last one.  */
   return create_expanded_form(block_form(expanded_form_list),
-			      last_element->type);
+			      last_element->type);  
+}
+
+
+expanded_form_t
+expand_block(generic_form_t form)
+{
+  if(form->form_list == NULL)
+    panic ("Blocks cannot be empty\n"); /* Or empty blocks could be void.  */
+
+  declare_block_begin();
+
+  declare_block_end( form->form_list);
 }
 
 

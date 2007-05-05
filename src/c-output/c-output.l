@@ -762,10 +762,10 @@ test ()
 //  doit("c-output/c-output.l", "c-output/c-output.c", "c-output/c-output.inc");
   //  doit( "std/error.l", "std/error.c", "std/error.inc");
   //  doit( "std/string.l", "std/string.c", "std/string.inc");
-//    doit( "std/make-list.l", "std/make-list.c", "std/make-list.inc");
+  // doit( "std/make-list.l", "std/make-list.c", "std/make-list.inc");
 
 doit( "new-parser/grammar-expander.l", "new-parser/grammar-expander.c", "new-parser/grammar-expander.inc");
-doit( "new-parser/parse-grammar.l", "test.c", "test.inc");
+doit( "new-parser/parse-grammar-bootstrap.l", "parse-grammar.c", "parse-grammar.inc");
   //doit( "std/error.l", "std/error.c", "std/error.inc");
   //  doit( "std/error.l", "test.c", "test.inc");
   //      doit( "test.l", "test.c", "test.inc");
