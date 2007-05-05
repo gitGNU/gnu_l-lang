@@ -1,5 +1,9 @@
 2007-05-05  Matthieu Lemerre  <racin@free.fr>
 
+	New C output of make_list.l
+	
+	* src/std/list.c (init_list): call init_make_list
+
 	C output bugfix, new list functions, new form functions, exit
 	type, new list functions.
 	

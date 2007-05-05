@@ -360,8 +360,7 @@ init_list(void)
   
   define_expander( SYMBOL( cons), expand_cons);
   define_expander( SYMBOL( list), expand_list);
-  define_expander( SYMBOL( make_list), make_list_sharp__sharp_expander_function);
-  define_expander( SYMBOL( make), make_sharp__sharp_expander_function);
+  init_make_list();
 }
 
 //List__O__List_Maker_Element__C____type__type make_list_list;
