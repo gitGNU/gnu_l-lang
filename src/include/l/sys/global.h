@@ -33,19 +33,4 @@ extern hash_table_t global_hash;
 typedef enum { NORMAL_GLOBAL,
                CONSTANT_GLOBAL,
                THREAD_LOCAL_GLOBAL } global_type_t;
-
-typedef struct global
-{
-  global_type_t global_type;
-  Type type;
-
-  /* Which backend has compiled this global.  Later, we will use this
-     for one backend to be able to use globals created in different
-     backends.   */
-  void *handling_backend;
-
-  /* Backend-specific info.  */
-  void *for_backend;
-} *global_t;
-
 #endif

@@ -1,5 +1,12 @@
 2007-05-05  Matthieu Lemerre  <racin@free.fr>
 
+	Little name change.
+	
+	* src/include/l/global.h (get_global_address): Changed to
+	(get_global).
+	(struct global): moved from sys/global.h. Changed field
+	for_backend to address. Fixed users.
+
 	The code generator now generates PIC code. Mutually recursive
 	functions are handled.
 	

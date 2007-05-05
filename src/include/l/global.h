@@ -23,12 +23,27 @@
 
 #include <l/sys/global.h>
 
+
+typedef struct global
+{
+  /* Address of the global. We put it first so as not to have offset
+     calculation for getting it, when the global is used dynamically
+     in PIC code.  */
+  void *address;
+
+  global_type_t global_type;
+  
+  /* Type of the global. */
+  Type type;
+} *global_t;
+
+
+
 static inline void*
-get_global_address( Symbol name)
+get_global( Symbol name)
 {
   global_t glob = gethash( name, global_hash);
-  assert( glob);
-  return glob->for_backend;
+  return glob;
 }
 
 /* If there is no address, use NULL.  */

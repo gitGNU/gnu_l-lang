@@ -238,7 +238,7 @@ compile_function (symbol_t define_symbol, symbol_t name, expanded_form_t expform
   assert( glob);
   create_global_variable_at( glob->type, name,
   			     fun_address);
-  glob->for_backend = fun_address;
+  glob->address = fun_address;
   // XXX: if void, calls compile_branche_discard_results instead.
   // */
   Type return_type = intern_type( return_type_form);

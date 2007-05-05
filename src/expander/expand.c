@@ -350,7 +350,7 @@ insert_id( symbol_t symbol, int can_shadow, Species species, ...)
 }
 
 
-#include <l/sys/global.h>
+#include <l/global.h>
 
 expanded_form_t
 expand_id_no_fail(symbol_t symbol)
@@ -367,7 +367,7 @@ expand_id_no_fail(symbol_t symbol)
     }
 
   /* Not a local id.  Maybe it is global.  */
-  global_t glob = gethash( symbol, global_hash);
+  global_t glob = get_global( symbol);
 
   if(glob)
     {

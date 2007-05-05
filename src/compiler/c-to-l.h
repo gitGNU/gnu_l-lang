@@ -26,7 +26,7 @@
 #include "backend.h"
 #include "../parser/form.h"
 #include <l/expand.h>
-#include <l/sys/global.h>
+#include <l/global.h>
 
 extern hash_table_t generic_hash;
 extern hash_table_t function_hash;
@@ -51,8 +51,7 @@ compile_function_call (generic_form_t form);
     global_t global = MALLOC( global);					\
     global->global_type = NORMAL_GLOBAL;				\
     global->type = intern_type( string_to_type_form( type_string));	\
-    global->handling_backend = NULL;					\
-    global->for_backend = name2_;					\
+    global->address = name2_;					\
     symbol_t symbol = intern( name1_);					\
     puthash( symbol, global, global_hash);				\
     create_global_variable_at( global->type, symbol, name2_);		\
@@ -79,8 +78,7 @@ c_define_global( Symbol name, char *type_string, void *address)
   global_t glob = MALLOC( global);
   glob->global_type = NORMAL_GLOBAL;
   glob->type = type;
-  glob->handling_backend = NULL;
-  glob->for_backend = address;
+  glob->address = address;
 
   /* For the expander.  */
   puthash( name, glob, global_hash);

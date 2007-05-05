@@ -45,7 +45,8 @@ main (int argc, char **argv)
 
   eval_file (argv[1]);
 
-  void_to_int_t test = get_global_address( SYMBOL( test));
+  global_t glob = get_global( SYMBOL( test));
+  void_to_int_t test = glob->address;
   assert( test);
 
   Symbol s = find_owning_function( test);

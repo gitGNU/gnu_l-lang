@@ -640,16 +640,16 @@ void create_stack_variable (Type type, symbol_t name)
   puthash (name, location, block_list->location_table);
 }
 
-#include <l/sys/global.h>
+#include <l/global.h>
 void create_global_variable_at( Type type, symbol_t name, void *address)
 {
   location_t location = global_location( type, address);
   //  assert( global_block == block_list);
   puthash (name, location, global_block->location_table);
 
-  global_t glob = gethash( name, global_hash);
+  global_t glob = get_global( name);
   assert( glob);
-  glob->for_backend = address;
+  glob->address = address;
 }
 
 void create_global_variable( Type type, symbol_t name)
@@ -686,7 +686,7 @@ get_location (symbol_t id)
   /* We generate PIC code, and use an indirection through the
      global.  */
   low_location_t lloc = indirection( 0,
-				     indirection( offsetof( struct global, for_backend),
+				     indirection( offsetof( struct global, address),
 						  constant_value_location( glob)));
 						     
   loc = temporary_location( glob->type, lloc);

@@ -58,7 +58,7 @@ define_global( symbol_t name, Type type,
   if(glob)
     {
       glob->type = type;
-      glob->for_backend = address;
+      glob->address = address;
       /* XXX: should have a relocation list and patch all the
 	 relocations on redefinition. */
       return;
@@ -67,8 +67,7 @@ define_global( symbol_t name, Type type,
   glob = MALLOC( global);
   glob->global_type = NORMAL_GLOBAL;
   glob->type = type;
-  glob->handling_backend = NULL;
-  glob->for_backend = address;
+  glob->address = address;
 
   puthash( name, glob, global_hash);
 }
@@ -251,7 +250,8 @@ expand_expander( Symbol expander,
   expanded_form_t exp_function_form = expand_function_definition( funname,
 								  tlambda_form);
   generate( exp_function_form);
-  define_expander( name, get_global_address( funname));
+  global_t glob = get_global( funname);
+  define_expander( name, glob->address);
 
   return define_form( SYMBOL( expander), name,
 		      exp_function_form);
@@ -563,8 +563,9 @@ expand_attribute( Symbol macro,
       expanded_form_t exp_function_form = expand_function_definition( funname,
 								      tlambda_form);
       generate( exp_function_form);
-    
-      Virtual_Accesser va = get_global_address( funname);
+
+      global_t glob = get_global( funname);
+      Virtual_Accesser va = glob->address;
       assert( va);
     
       /* Now install the virtual attribute accesser as the new accesser.  */
@@ -613,8 +614,9 @@ expand_attribute( Symbol macro,
       expanded_form_t exp_function_form = expand_function_definition( funname,
 								      tlambda_form);
       generate( exp_function_form);
-    
-      Virtual_Left_Accesser va = get_global_address( funname);
+
+      global_t glob = get_global( funname);
+      Virtual_Left_Accesser va = glob->address;
       assert( va);
     
       Accesser old_left_accesser = get_left_accesser( type);
