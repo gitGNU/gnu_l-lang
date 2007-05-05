@@ -1,7 +1,9 @@
 2007-05-05  Matthieu Lemerre  <racin@free.fr>
 
+	
 	Initial new parser support.
 	
+	* src/configure.in: Add new-parser.
 	* src/Makefile.am (libl_la_LIBADD): Add new-parser/libl-new-parser.la
 
 	* src/parser/parse.c (parse_all): Parse grammars.
