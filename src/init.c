@@ -26,6 +26,9 @@
 #include "compiler/c-to-l.h"
 extern void *compile( void*);
 
+void *declare_block_begin( void*);
+void *declare_block_end( void*);
+
 void
 init ()
 {
@@ -51,7 +54,26 @@ init ()
 
   init_library ();
   init_c_output_support();
+  init_newparser_support();
 
+  /* Things that don't really have a place anywhere.  */
+  eval_cstring( "compile_time type Common_To_All_Type = struct { type_type:Int;"
+		"type_form:Form;"
+		"size:Int;"
+		"alignment:Int;"
+		"};"
+		"compile_time type Real_Type = struct { common_:Common_To_All_Type; }* ;"
+		"compile_time attribute Type t.type_form = cast( Real_Type, t).common_.type_form;");
+
+  eval_cstring( "compile_time attribute Symbol s.name = get_symbol_name( s);");
+
+  
+
+  DEFINE_C_FUNCTION( declare_block_begin, "()<- ()");
+  DEFINE_C_FUNCTION( declare_block_end, "Expanded_Form <- (List( Form))");
+
+
+  
   //  DEFINE_C_FUNCTION (expand, "Void *<-Form");
   //  DEFINE_C_FUNCTION (compile, "Void <-Form");
 
