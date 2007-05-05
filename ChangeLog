@@ -1,5 +1,8 @@
 2007-05-05  Matthieu Lemerre  <racin@free.fr>
 
+	* src/expander/expand-define.c (expand_all): Kludge to handle
+	grammar definitions.
+	
 	declare_* functions for expanders with lexical scope and side
 	effects.
 	

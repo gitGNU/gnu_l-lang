@@ -762,6 +762,21 @@ expand_all( list_t form_list)
 									  exp_ctl))),
 					 NULL);
     }
+
+  /* This is hacky; for now we just expand the grammars here.  */
+  list_t grammar_list = gethash( SYMBOL( grammar), ht);
+
+  list_t grammar_function_list = NULL;
+  if(grammar_list)
+    {
+      FOREACH( element, grammar_list)
+	{
+	  form_t grammar = CAR( element);
+	  list_t funlist = grammar_produce_function_definitions( grammar);
+	  grammar_function_list = nconc( funlist, grammar_function_list);
+	}
+    }
+
   
   /* This should use a precedence graph between type forms.  */
   /* First the user definitions( that expand into other definitions)
@@ -789,7 +804,7 @@ expand_all( list_t form_list)
      
   list_t funlist = reverse( gethash( SYMBOL( function), ht));
   list_t globlist = gethash( SYMBOL( global), ht);
-  globlist = nconc( globlist, funlist);
+  globlist = nconc( globlist, nconc( funlist, grammar_function_list));
 
   list_t expanded_fun_list = NULL;
   if(globlist)
