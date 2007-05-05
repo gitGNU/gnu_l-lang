@@ -54,7 +54,17 @@ void
 define_global( symbol_t name, Type type,
 	       void *address)
 {
-  global_t glob = MALLOC( global);
+  global_t glob = gethash( name, global_hash);
+  if(glob)
+    {
+      glob->type = type;
+      glob->for_backend = address;
+      /* XXX: should have a relocation list and patch all the
+	 relocations on redefinition. */
+      return;
+    }
+  
+  glob = MALLOC( global);
   glob->global_type = NORMAL_GLOBAL;
   glob->type = type;
   glob->handling_backend = NULL;
@@ -89,6 +99,49 @@ expand_function_definition( Symbol name, generic_form_t lambda_form)
 list_t
 expand_all_function_and_global( list_t form_list)
 {
+
+  /* First pass: declare all the globals' type and functions' expanders.  */
+  FOREACH( element, form_list)
+    {
+      generic_form_t df = CAR( element);
+      assert( is_form(  df, generic_form));
+      assert( df->head == SYMBOL( define));
+      
+      id_form_t form_typef = CAR(df->form_list);
+      assert( is_form( form_typef, id_form));
+      Symbol form_type = form_typef->value;
+
+      id_form_t name_form = CAR( df->form_list->next);
+      assert( is_form( name_form, id_form));
+      Symbol name = name_form->value;
+
+      expanded_form_t expform;
+	
+      if(form_type == SYMBOL( function))
+	{
+	  generic_form_t lambda_form = CAR( df->form_list->next->next);
+
+	  assert( is_form( lambda_form, generic_form)
+		  && lambda_form->head == SYMBOL( lambda));
+	  form_t return_type = CAR (lambda_form->form_list);
+	  generic_form_t parameters = CAR (lambda_form->form_list->next);
+	  form_t type_form = function_type_form (return_type, parameters);
+	  Type function_type = intern_type( type_form);
+
+	  define_function( name, function_type, NULL);
+	}
+      else
+	{
+	  assert( form_type == SYMBOL( global));
+	  form_t type_form = CAR( df->form_list->next->next);
+	  define_global( name, intern_type( type_form), NULL);
+	  expform = define_form(SYMBOL(global),
+				name, type_form);
+	}
+    }
+
+
+  
   /* There should be two passes: one get the types of all the
      functions, and the other compiles them.
 

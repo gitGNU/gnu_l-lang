@@ -1,5 +1,26 @@
 2007-05-05  Matthieu Lemerre  <racin@free.fr>
 
+	The code generator now generates PIC code. Mutually recursive
+	functions are handled.
+	
+	* src/compiler/jit/backend.c (block_list, generate_function_start)
+	(generate_function_end) : Remove use of global_block to detect
+	globals and handle them separately.
+	(create_global_variable_at): Put the address in the global.
+	(get_location): Check if the id is global; if so use it in the
+	code to retrieve dynamically the address.  *
+	src/expander/expand-define.c (define_global): Do not create a new
+	global on redifinition, just change the address.
+	(expand_all_function_and_global): Make two passes, one to define
+	the functions and one to expand the code.
+	
+	* src/new-parser/parse-grammar-bootstrap.l (parse_Rule): Now there
+	is only need for one parse_Rule, remove the useless one.
+
+	* test/cocyte24-even-odd.l: New test file.
+	
+	Handling of grammar definitions.
+	
 	* src/expander/expand-define.c (expand_all): Kludge to handle
 	grammar definitions.
 	

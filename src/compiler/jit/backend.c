@@ -404,7 +404,7 @@ static struct block global_block_ = {.location_table = &global_location_hash_tab
                                      .next = NULL };
 static const block_t global_block = &global_block_;
 
-static block_t block_list = &global_block_;
+static block_t block_list = NULL;//&global_block_;
 
 /* We have minimal debug info, that helps knowing the name of the
    function that faulted.  For more precise informations, we should
@@ -441,7 +441,8 @@ generate_function_start (symbol_t name, generic_form_t parameters)
   function_start = allocate_code_space (32768);
   reinit_registers ();
   reinit_stack ();
-  assert( block_list == global_block);
+  //  assert( block_list == global_block);
+  assert( block_list == NULL);
   //  block_list = global_block;
 
   create_block ();
@@ -487,7 +488,8 @@ generate_function_end ()
 {
   delete_block ();
   
-  assert (block_list == global_block);
+  //  assert (block_list == global_block);
+    assert (block_list == NULL);
 
   assert (locations_created == 0);
   
@@ -638,11 +640,16 @@ void create_stack_variable (Type type, symbol_t name)
   puthash (name, location, block_list->location_table);
 }
 
+#include <l/sys/global.h>
 void create_global_variable_at( Type type, symbol_t name, void *address)
 {
   location_t location = global_location( type, address);
   //  assert( global_block == block_list);
   puthash (name, location, global_block->location_table);
+
+  global_t glob = gethash( name, global_hash);
+  assert( glob);
+  glob->for_backend = address;
 }
 
 void create_global_variable( Type type, symbol_t name)
@@ -653,6 +660,7 @@ void create_global_variable( Type type, symbol_t name)
   create_global_variable_at( type, name, data);
 }
 
+#include <stddef.h>
 /* Retrieve the location associated to symbol ID.  */
 location_t
 get_location (symbol_t id)
@@ -669,7 +677,20 @@ get_location (symbol_t id)
       if(loc)
 	goto next;
     }
-  compile_error ("Symbol %s is never defined\n",id->name);
+
+  /* Check if we have a global id. */
+  global_t glob = gethash( id, global_hash);
+  if(!glob)
+    compile_error ("Symbol %s is never defined\n",id->name);
+
+  /* We generate PIC code, and use an indirection through the
+     global.  */
+  low_location_t lloc = indirection( 0,
+				     indirection( offsetof( struct global, for_backend),
+						  constant_value_location( glob)));
+						     
+  loc = temporary_location( glob->type, lloc);
+  return loc;
   
  next:
   /* XXX: for special variables, it won't be like this.  */

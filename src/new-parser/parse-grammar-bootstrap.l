@@ -517,14 +517,6 @@ parse_Callable_Rule()
 }
 
 Form
-parse_Rule()
-{
-  panic( "Should not be called\n");
-  //Fake, must be defined because we don't handle double recursivity
-  cast( Form, 0);
-}
-
-Form
 parse_Grouping()
 {
   grammar_expander( 'Grouping');
@@ -630,10 +622,10 @@ test()
 
  set_parser_support_to( "rule toto = [a-zA-Z_]*|toto tata|{print( 'hello')}|<hello:toto|[a-z] truc>;  ");
 
- set_parser_support_to( "<toto:{'[]'}> //toto");
+ set_parser_support_to( "<toto:{'[]'}>");
 
  
- //let form = parse_Rule();
+ let form = parse_Rule();
  // let form = parse_Grammar_Rule();
 // print_form( form);
  ();
