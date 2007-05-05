@@ -1,5 +1,21 @@
 2007-05-05  Matthieu Lemerre  <racin@free.fr>
 
+	Initial new parser support.
+	
+	* src/Makefile.am (libl_la_LIBADD): Add new-parser/libl-new-parser.la
+
+	* src/parser/parse.c (parse_all): Parse grammars.
+	* src/new-parser/Makefile.am
+        * src/new-parser/character-set.l
+        * src/new-parser/grammar-expander.c
+        * src/new-parser/grammar-expander.inc
+        * src/new-parser/grammar-expander.l
+        * src/new-parser/parse-grammar-bootstrap.l
+        * src/new-parser/parse-grammar.c
+        * src/new-parser/parse-grammar.inc
+        * src/new-parser/parse-grammar.l: 
+	* src/new-parser/support.c: New files
+	
 	New C output of make_list.l
 	
 	* src/std/list.c (init_list): call init_make_list

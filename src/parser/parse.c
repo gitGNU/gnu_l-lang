@@ -910,6 +910,21 @@ parse_all ()
 					    CONS( form,
 						  NULL)));
 	}
+      else if(next_token.id == SYMBOL( grammar))
+	{
+	  struct string the_string;
+	  the_string.content = scanner_pointer;
+	  the_string.length = 4194304; /* 4 Mo of source code is quite much. */
+	  set_parser_support_to( &the_string);
+
+	  form_t form = parse_Grammar();
+
+	  lispify( form);
+	  scanner_pointer = get_parser_support();
+	  parse_initialize();
+	  
+	  return form;
+	}
       
       
       else if(next_token.id == SYMBOL (def))

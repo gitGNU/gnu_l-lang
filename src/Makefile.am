@@ -18,7 +18,7 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301
 # USA.
 
-SUBDIRS = memory lexer compiler expander parser std objects c-output
+SUBDIRS = memory lexer compiler expander parser std objects c-output new-parser
 
 #the L library, useful for linking with other programs.
 lib_LTLIBRARIES = libl.la
@@ -34,11 +34,12 @@ libl_la_LIBADD = objects/libl-objects.la \
 		lexer/libl-lexer.la  \
 		std/libl-std.la  \
 		c-output/libl-c-output.la \
+		new-parser/libl-new-parser.la \
 		-lJudy -lm
 #		/usr/lib/libJudy.a /usr/lib/libm.a
 
 
-bin_PROGRAMS = L c_output
+bin_PROGRAMS = L c_output # test
 L_SOURCES = main.c
 # init.c eval.c
 
@@ -60,6 +61,10 @@ L_LDFLAGS = -lJudy
 #Test is useful to test another file. Don't forget to init L in the file if you need it.
 c_output_SOURCES = c-output/c-output.c
 c_output_LDADD = libl.la
+
+test_SOURCES = test.c
+test_LDADD= libl.la
+test_LDFLAGS = -lJudy
 
 AM_CFLAGS = -g -O0 -Wall
 CFLAGS = -g -O0 -Wall
