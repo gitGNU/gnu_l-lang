@@ -438,7 +438,7 @@ void *
 generate_function_start (symbol_t name, generic_form_t parameters)
 {
   /* XXX: allocate space for the code.  */
-  function_start = allocate_code_space (16384);
+  function_start = allocate_code_space (32768);
   reinit_registers ();
   reinit_stack ();
   assert( block_list == global_block);

@@ -307,7 +307,8 @@ Type
 make_type_List (generic_form_t form)
 {
   form_t type_listed = CAR(form->form_list);
-  
+
+  //XXX: replace by first and next. FIFO will have last also.
   form_t defining_type_form = 
     generic_form_symbol(SYMBOL(pointer),
 			CONS(generic_form_symbol(SYMBOL(struct),
@@ -342,6 +343,9 @@ make_type_List (generic_form_t form)
 Form  make_sharp__sharp_expander_function(form_t  form);
 Form  make_list_sharp__sharp_expander_function(form_t  form);
 
+
+void *append( void*, void*);
+
 void
 init_list(void)
 {
@@ -349,6 +353,7 @@ init_list(void)
   
   DEFINE_C_FUNCTION2 ("alloc_cons_cell", alloc_cons_cell, "Void * <- ()");
   DEFINE_C_FUNCTION2 ("print_int_list", print_int_list, "Void <- (List(Int))");
+  DEFINE_C_FUNCTION (append, "List( Void*)<- (List(Void *), List( Void*))");
 
   eval_cstring( "type List_Maker_Element = struct { ptr_name:Symbol;"
 		"type_listed:Type;} *;");

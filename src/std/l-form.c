@@ -198,6 +198,41 @@ expand_form (generic_form_t form)
   return returned_form;
 }
 
+
+/* These functions are only temporary, and we be replaced by proper
+   pattern matching on types.  */
+int
+is_compound_form( form_t f)
+{
+  return is_form( f, compound_form);
+}
+
+int
+is_id_form( form_t f)
+{
+  return is_form( f, id_form);
+}
+
+int
+is_symbol_form( form_t f)
+{
+  return is_form( f, symbol_form);
+}
+
+int
+is_int_form( form_t f)
+{
+  return is_form( f, int_form);
+}
+
+
+int
+is_string_form( form_t f)
+{
+  return is_form( f, string_form);
+}
+
+
 void
 init_l_form (void)
 {
@@ -242,6 +277,12 @@ init_l_form (void)
 		      generic_form_symbol,
 		      "Form<-(Symbol, List(Form))");
 
+  DEFINE_C_FUNCTION( is_compound_form, "Bool<-Form");
+  DEFINE_C_FUNCTION( is_id_form, "Bool<-Form");
+  DEFINE_C_FUNCTION( is_symbol_form, "Bool<-Form");
+  DEFINE_C_FUNCTION( is_string_form, "Bool<-Form");
+  DEFINE_C_FUNCTION( is_int_form, "Bool<-Form");
+  
   /* In fact, Expanded_Form<-Form.  */
   DEFINE_C_FUNCTION (expand, "Expanded_Form<-Form");
 }

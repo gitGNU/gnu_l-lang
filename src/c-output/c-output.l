@@ -666,7 +666,7 @@ doit( l_file:String, out_c_file:String, out_inc_file:String)
     c_output_definition( f);
 
   print( "void init_",
-	 file_name_non_extension( file_name_non_directory( out_inc_file)),
+	 convert_string( file_name_non_extension( file_name_non_directory( out_inc_file))),
 	 "(void){\n");
   foreach( let f in form_list)
     c_output_init_definition( f);
@@ -762,9 +762,10 @@ test ()
 //  doit("c-output/c-output.l", "c-output/c-output.c", "c-output/c-output.inc");
   //  doit( "std/error.l", "std/error.c", "std/error.inc");
   //  doit( "std/string.l", "std/string.c", "std/string.inc");
-    doit( "std/make-list.l", "std/make-list.c", "std/make-list.inc");
+//    doit( "std/make-list.l", "std/make-list.c", "std/make-list.inc");
 
-  //  doit( "new-parser/grammar-expander.l", "test.c", "test.inc");
+doit( "new-parser/grammar-expander.l", "new-parser/grammar-expander.c", "new-parser/grammar-expander.inc");
+doit( "new-parser/parse-grammar.l", "test.c", "test.inc");
   //doit( "std/error.l", "std/error.c", "std/error.inc");
   //  doit( "std/error.l", "test.c", "test.inc");
   //      doit( "test.l", "test.c", "test.inc");

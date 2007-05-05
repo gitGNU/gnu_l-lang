@@ -699,6 +699,8 @@ compile_function_call (generic_form_t form)
       {
 	if(i >= nb_arguments)
 	  {
+	    printf( "In \n");
+	    lispify( form);
 	    compile_error ( "Too many arguments given\n");
 	  }
 	
@@ -1239,7 +1241,7 @@ compile_if (generic_form_t form, Type expected_type)
       location_t else_loc = compile (else_form, expected_type);
 
       /* Unify the locations.  */
-      type_check( then_loc->type, else_loc->type);
+      //      type_check( then_loc->type, else_loc->type);
       if(if_loc->type != TYPE( "Void"))
 	move_between_locations( else_loc, if_loc);
       free_location( else_loc);

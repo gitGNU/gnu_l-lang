@@ -48,11 +48,15 @@ main (int argc, char **argv)
   void_to_int_t test = get_global_address( SYMBOL( test));
   assert( test);
 
+  Symbol s = find_owning_function( test);
+  printf( "Symbol %s\n", s->name);
+
   printf ("ICI: test =%p \n", test);
   int result = test ();
 
   printf ("TEST result: %d\n", result);
 
+  
   //run_analysis (CONS (form, NULL));
   //  compile (form);
   

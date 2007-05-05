@@ -1,3 +1,28 @@
+2007-05-05  Matthieu Lemerre  <racin@free.fr>
+
+	C output bugfix, new list functions, new form functions, exit
+	type, new list functions.
+	
+	* src/c-output/support.c (convert_id, convert_id_as_string):
+	convert '-' to '_'.
+	* src/c-output/c-output.l (doit): convert the initialization
+	function.
+	
+	* src/objects/pair.c (copy_list, append): New functions.
+	* src/std/list.c (init_list): Export append to L.
+
+	* src/std/l-form.c (is_compound_form, is_id_form)
+	(is_symbol_form, is_int_form, is_string_form): New functions. 
+	(init_l_form): Exported to L.
+
+	* src/expander/expand.c (expand_if): Quick hack that allows one
+	branch of an if to have an Exit type, which coerce into anything.
+
+	* src/compiler/generate.c (compile_function_call): More debugging
+	info.
+	(compile_if): Remove type check between if and else, for Exit
+	types.
+	
 2007-04-26  Matthieu Lemerre  <racin@free.fr>
 
 	C output now handles strings properly, does the initalisation of

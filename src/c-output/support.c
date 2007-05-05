@@ -71,6 +71,10 @@ convert_id(Symbol s)
 	  strcpy( current, "_sharp_");
 	  current += 7;
 	  break;
+
+	case '-':
+	  *current = '_';
+	  break;
 	  
 	default:
 	  *current = *current_symbol;
@@ -107,6 +111,11 @@ convert_string(String s)
 	case '"':
 	  strcpy( current, "\\\"");
 	  current += 2;
+	  break;
+
+	case '-':
+	  *current = '_';
+	  current++;
 	  break;
 	  
 	  

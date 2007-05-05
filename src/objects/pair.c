@@ -62,3 +62,34 @@ reverse (list_t list)
 
   return newlist;
 }
+
+
+list_t
+copy_list( list_t list1)
+{
+  list_t newlist;
+  list_t *p_newlist = &newlist;
+  
+  FOREACH( element, list1)
+    {
+      *p_newlist = xmalloc( sizeof( struct pair));
+      (*p_newlist)->car = CAR( element);
+      p_newlist = &((*p_newlist)->next);
+    }
+
+  *p_newlist = NULL;
+  return newlist;
+}
+
+list_t append( list_t list1_, list_t list2_)
+{
+  list_t list1 = copy_list( list1_);
+  list_t list2 = copy_list( list2_);
+
+  list_t *list1ptr;
+  for(list1ptr = &list1; (*list1ptr); list1ptr = &((*list1ptr)->next));
+
+  *list1ptr = list2;
+
+  return list1;
+}

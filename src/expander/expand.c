@@ -474,6 +474,7 @@ expand_lambda(generic_form_t form)
 
 
 
+
 expanded_form_t
 expand_block(generic_form_t form)
 {
@@ -1016,13 +1017,23 @@ expand_if(generic_form_t form)
       else_form = CAR(form->form_list->next->next);
       exp_else_form = expand(else_form);
 
+      Type ret_type = exp_then_form->type;
+      
       if(exp_then_form->type != exp_else_form->type)
-	panic("Type of the then (%s) and the else (%s) should be the same\n", 
-	      asprint_type(exp_then_form->type),
-	      asprint_type(exp_else_form->type));
-
+	{
+	  if(exp_else_form->type != TYPE( "Exit"))
+	    {
+	      if(exp_then_form->type == TYPE( "Exit"))
+		{
+		  ret_type = exp_else_form->type;
+		}
+	      else panic("Type of the then (%s) and the else (%s) should be the same\n", 
+			 asprint_type(exp_then_form->type),
+			 asprint_type(exp_else_form->type));
+	    }
+	}
       return create_expanded_form(if_form(exp_cond_form, exp_then_form, exp_else_form),
-				  exp_then_form->type);
+				  ret_type);
     }
 
   return create_expanded_form(if_form(exp_cond_form, exp_then_form, NULL),
