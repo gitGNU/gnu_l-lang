@@ -107,12 +107,18 @@ head_set( parse_form:Form, next_rules:List( Form))
 	   {
 	 //This is used to prevent infinite recursion
 	     head_set_hash[rule_name] = cast( Character_Set, -1);
-	     cs = head_set( rules_hash[rule_name], cast( List( Form), 0));
+	     let named_rule = rules_hash[rule_name];
+	     if(named_rule == cast( Form, 0))
+	       {
+		 panic( "Trying to calculate the head set of an unknown rule: ", rule_name, "\n");
+	       }
+	     cs = head_set( named_rule, cast( List( Form), 0));
 	 if(cs == cast( Character_Set, -1))
 	   {
 	     print( "Error: infinite recursion in rule ", rule_name, "\n");
 	     exit( 3);
 	   }
+	 
 	 head_set_hash[rule_name] = cs;
 	   }
 	 ();
@@ -345,20 +351,21 @@ List( Form)
 grammar_produce_function_definitions( grammar_:Form)
 {
   let grammar = cast( Compound_Form, grammar_);
-  let grammar_name = cast( Id_Form, grammar.form_list.tail.tail.head).value;
-  let rule_list = cast( List( Compound_Form), grammar.form_list.tail.tail.tail);
+  let grammar_name = cast( Id_Form, grammar.form_list.tail.head).value;
+  let rule_list = cast( List( Compound_Form), grammar.form_list.tail.tail);
   
   dot_character_set = cast( Character_Set, list( Character_Range( min:1, max:255)));
   rules_hash = cast( Hash( Symbol, Form), make_hash_table());
   head_set_hash = Hash( Symbol, Character_Set);
   
-  // Fill the rule_hash.
+  // Fill the rule_hash and predefines the functions.
   foreach( let rule in rule_list)
     {
       //      print_form( rule);
       let rule_name = cast( Id_Form, rule.form_list.head).value;
-      let form = cast( Form, rule.form_list.tail.head);
+      let form = cast( Form, rule.form_list.tail.tail.head);
       rules_hash[rule_name] = form;
+      pre_define_function( rule_name, rule.form_list.tail.head);
     }
 
   // Create the functions.
@@ -369,7 +376,7 @@ grammar_produce_function_definitions( grammar_:Form)
       let rule_name = cast( Id_Form, rule.form_list.head).value;
       let function_name = intern_string( concat( "parse_", rule_name.name));
 
-      let form = cast( Form, rule.form_list.tail.head);
+      let form = cast( Form, rule.form_list.tail.tail.head);
 
       id_used = Hash( Symbol, Type);
       declare_block_begin();

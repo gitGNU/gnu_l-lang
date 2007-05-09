@@ -78,6 +78,37 @@ compile_time Int max( a:Int, b:Int)
 //}
 
 compile_time Character_Set
+sort_Character_Set (cr_list:List (Character_Range))
+{
+  let new_cr_list = cast( List( Character_Range), 0);
+  foreach( let cr in cr_list)
+    {
+      let new_cr_list_ptr = &new_cr_list;
+
+      loop {
+	if(*new_cr_list_ptr == cast( List( Character_Range), 0))
+	  {
+	    *new_cr_list_ptr = cons( cr, cast( List( Character_Range), 0));
+	    break;
+	  }
+	
+	let next_cr = *new_cr_list_ptr;
+	if(cr.max < next_cr.head.min)
+	  {
+	    let pair = cons( cr, next_cr);
+	    *new_cr_list_ptr = pair;
+	    break;
+	  }
+
+	new_cr_list_ptr = &((*new_cr_list_ptr).tail);
+      }
+    }
+  cast( Character_Set, new_cr_list);
+}
+
+
+
+compile_time Character_Set
 make_Character_Set( form_:Form)
 {
   let form = cast( Compound_Form, form_);
@@ -108,15 +139,13 @@ make_Character_Set( form_:Form)
     ()
     });
 
-  //XXX: Sort the character set.
-  
-//  print_form( Form( cast( Character_Set, list( $@new_list$))));
-cast( Character_Set, new_list);
+  sort_Character_Set(new_list);
 }
 
 compile_time Character_Set
 get_inverse_Character_Set( cs:Character_Set)
 {
+  // Assumes that the character set is sorted.
   if(cs == cast( Character_Set, 0))
     {
       cast( Character_Set, list( Character_Range( min:1, max:255)))
@@ -202,6 +231,9 @@ is_in_Character_Set_condition( id_form:Form, cs:Character_Set)
 ////  let cs2 = Character_Set( 'a'-'z', 'A'-'Z', '_');
 ////  print_Character_Set( cs2);
 //  
+//
+//  make_Character_Set( Compound_Form( '[]', list( Form( 22-33), Form( 44-55), Form( 35-41))));
 //  ();
+//  
 //  
 //}

@@ -361,7 +361,7 @@ compile_assign (generic_form_t form, Type expected_type)
   
   expanded_form_t expression = CAR (form->form_list->next);
 
-  assert( expression->type == assignee->type);
+  type_check( expression->type, assignee->type);
   /* Here we rely on correct type information from the expander.  */
   location_t exp_loc = compile (expression, expression->type);
 

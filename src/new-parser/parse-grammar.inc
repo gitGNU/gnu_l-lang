@@ -13,172 +13,104 @@ Void__type print_String( String__type s);
 void maybe_flush( void);
 String__type make_heap_string( char *s);
 
-typedef struct struct0x08058a98 *List__O__Int__C____type__type;
-struct struct0x08058a98 {
-Int__type head;
-List__O__Int__C____type__type tail;
-};
-typedef struct struct0x080590f8 *List__O__pointer__O__Void__C____C____type__type;
-struct struct0x080590f8 {
-void *head;
-List__O__pointer__O__Void__C____C____type__type tail;
-};
-typedef struct struct0x0805d818 *Form__type;
-struct struct0x08059bd0 {
-Int__type form_type_;
-Symbol__type value;
-};
-typedef void *Hash_Table__type;
+typedef struct struct0x0805eea0 *Compound_Form__type;
+typedef struct struct0x0805d7a0 *Form__type;
 typedef void *Output_Descriptor__type;
-struct struct0x0805bad8 {
-Int__type form_type_;
-String__type value;
-};
-struct struct0x0805d818 {
+struct struct0x0805d7a0 {
 Int__type form_type_;
 };
-typedef struct struct0x0805e198 *Int_Form__type;
-typedef struct struct0x08059bd0 *Id_Form__type;
-struct struct0x0805e198 {
+typedef struct struct0x0805e120 *Int_Form__type;
+struct struct0x0805e120 {
 Int__type form_type_;
 Int__type value;
 };
-typedef struct struct0x08059bd0 *Symbol_Form__type;
-typedef struct struct0x0805bad8 *String_Form__type;
-typedef struct struct0x0805ef08 *Compound_Form__type;
-typedef struct struct0x0805f100 *List__O__Form__C____type__type;
-struct struct0x0805ef08 {
+typedef struct struct0x0805f098 *List__O__Form__C____type__type;
+struct struct0x0805eea0 {
 Int__type form_type_;
 Symbol__type head;
 Int__type garbage_;
 List__O__Form__C____type__type form_list;
 };
-typedef struct struct0x0805f978 *Expanded_Form__type;
-struct struct0x0805f100 {
+struct struct0x0805f098 {
 Form__type head;
 List__O__Form__C____type__type tail;
 };
-struct struct0x0805f978 {
-Int__type form_type_;
-Form__type original_form;
-Form__type return_form;
-Type__type type;
-};
-typedef struct struct0x08091f48 *Real_Type__type;
-struct struct0x08091d50 {
-Int__type type_type;
-Form__type type_form;
-Int__type size;
-Int__type alignment;
-};
-typedef struct struct0x08091d50 Common_To_All_Type__type;
-struct struct0x08091f48 {
-Common_To_All_Type__type common_;
-};
-struct struct0x080933f8 {
+struct struct0x08065f90 {
 Form__type car;
 List__O__Form__C____type__type cdr;
 };
-typedef struct struct0x084c4b68 *Character_Range__type;
-struct struct0x084c4b68 {
+typedef struct struct0x08508630 *Character_Range__type;
+struct struct0x08508630 {
 Int__type min;
 Int__type max;
 };
-typedef struct struct0x084c4ec0 *List__O__Character_Range__C____type__type;
-struct struct0x084c4ec0 {
+typedef struct struct0x085089c0 *List__O__Character_Range__C____type__type;
+struct struct0x085089c0 {
 Character_Range__type head;
 List__O__Character_Range__C____type__type tail;
 };
-typedef struct struct0x084c51b8 *Exit__type;
+typedef struct struct0x08508c80 *Exit__type;
 typedef List__O__Character_Range__C____type__type Character_Set__type;
-struct struct0x084c51b8 {
+struct struct0x08508c80 {
 Int__type dummy;
 };
-typedef Hash_Table__type Hash__O__Symbol__c__Type__C____type__type;
-typedef Hash_Table__type Hash__O__Symbol__c__Character_Set__C____type__type;
-typedef Hash_Table__type Hash__O__Symbol__c__Form__C____type__type;
-struct struct0x084f28c0 {
-void *car;
-void *cdr;
-};
-struct struct0x084fad08 {
+struct struct0x0850a870 {
 Character_Range__type car;
 List__O__Character_Range__C____type__type cdr;
 };
-struct struct0x08549318 {
-Int__type car;
-List__O__Int__C____type__type cdr;
+struct struct0x08518ba8 {
+void *car;
+void *cdr;
 };
 Bool__type (is_compound_form)(Form__type );
-Form__type (Symbol_Form)(Symbol__type );
 Form__type (String_Form)(String__type );
 void (exit)(Int__type );
 void *(GC_alloc)(Int__type );
 void (print_Int_Dec)(Int__type );
-void (print_Symbol)(Symbol__type );
 void *(alloc_cons_cell)(void);
-List__O__pointer__O__Void__C____C____type__type (append)(List__O__pointer__O__Void__C____C____type__type , List__O__pointer__O__Void__C____C____type__type );
-List__O__Int__C____type__type (string_to_int_list)(String__type );
-Hash_Table__type (make_hash_table)(void);
 void (print_String)(String__type );
 void (flush)(void);
 void (maybe_flush)(void);
 Form__type (Int_Form)(Int__type );
-void *(gethash)(void *, Hash_Table__type );
-void *(puthash)(void *, void *, Hash_Table__type );
 Form__type (Id_Form)(Symbol__type );
 Form__type (Compound_Form)(Symbol__type , List__O__Form__C____type__type );
 Int__type (print_form)(Form__type );
 Bool__type (is_int_form)(Form__type );
-Bool__type (is_id_form)(Form__type );
-Bool__type (is_string_form)(Form__type );
-Expanded_Form__type (expand)(Form__type );
-Symbol__type (gensym)(String__type );
 Symbol__type (intern_string)(String__type );
 Int__type (character_from_symbol)(Symbol__type );
 void (set_parser_support_to)(String__type );
 Int__type (peek_char)(void);
 Int__type (read_char)(void);
-String__type (concat)(String__type , String__type );
-String__type (get_symbol_name)(Symbol__type );
 Int__type (get_point_pos)(void);
 String__type (substring)(Int__type , Int__type );
-Int__type (string_element)(String__type , Int__type );
 Form__type (parse_Expression)(void);
-Int__type (Character)(Symbol__type );
+Form__type (parse_Type)(void);
+String__type (get_test_string)(void);
+Character_Set__type (sort_Character_Set)(List__O__Character_Range__C____type__type );
 Character_Set__type (make_Character_Set)(Form__type );
 Character_Set__type (get_inverse_Character_Set)(Character_Set__type );
-Character_Set__type (make_inverse_Character_Set)(Form__type );
-void (print_Character_Set)(Character_Set__type );
-Form__type (is_in_Character_Set_condition)(Form__type , Character_Set__type );
 Exit__type (parse_error)(void);
-Character_Set__type (head_set)(Form__type , List__O__Form__C____type__type );
-Form__type (grammar_expander_rec)(Form__type , List__O__Form__C____type__type );
-void (call_init_grammar_hash)(void);
-Int__type (parse_Digit)(void);
-Int__type (parse_Hexa_Digit)(void);
-Int__type (parse_Unsigned_Number)(void);
-Int__type (parse_Digit_or_Alpha)(void);
-Int__type (parse_Alpha_Num)(void);
-Int__type (parse_Alpha)(void);
+Form__type (parse_Grammar_Rule)(void);
+Form__type (parse_Grammar)(void);
 Int__type (parse_Comment)(void);
 void (parse_Spacing)(void);
+Int__type (parse_Alpha_Num)(void);
+Int__type (parse_Alpha)(void);
 Symbol__type (parse_Identifier)(void);
 Int__type (parse_Escaped_Character)(void);
 Int__type (parse_Maybe_Escaped_Character)(void);
-Int__type (parse_Maybe_Escaped_Character_Character_Range)(void);
-Form__type (parse_Character_Range)(void);
-Form__type (parse_Character_Set)(void);
-Form__type (parse_String)(void);
-Form__type (parse_Semantic_Action)(void);
 Form__type (parse_Callable_Rule)(void);
-Form__type (parse_Rule)(void);
-Form__type (parse_Grammar_Rule)(void);
+Int__type (parse_Maybe_Escaped_Character_Character_Range)(void);
+Form__type (parse_String)(void);
+Form__type (parse_Character_Range)(void);
+Form__type (parse_Sequence)(void);
+Form__type (parse_Character_Set)(void);
+Form__type (parse_Postfix)(void);
+Form__type (parse_Semantic_Action)(void);
 Form__type (parse_Grouping)(void);
 Form__type (parse_Primary)(void);
-Form__type (parse_Postfix)(void);
-Form__type (parse_Sequence)(void);
 Form__type (parse_Alternative)(void);
+Form__type (parse_Rule)(void);
 Output_Descriptor__type current_output_descriptor;
 Output_Descriptor__type stdout_output_descriptor;
 Output_Descriptor__type stderr_output_descriptor;
@@ -192,66 +124,4 @@ static struct { unsigned int length; char *content; } __string_7 = { 4, "min:"};
 static struct { unsigned int length; char *content; } __string_8 = { 6, ", max:"};
 static struct { unsigned int length; char *content; } __string_9 = { 1, "\n"};
 static struct { unsigned int length; char *content; } __string_10 = { 12, "Parse error\n"};
-static struct { unsigned int length; char *content; } __string_11 = { 10, "Assertion "};
-static struct { unsigned int length; char *content; } __string_12 = { 8, " failed\n"};
-static struct { unsigned int length; char *content; } __string_13 = { 8, "Panic : "};
-static struct { unsigned int length; char *content; } __string_14 = { 12, "Error in {}\n"};
-static struct { unsigned int length; char *content; } __string_15 = { 16, "Unimplemented :|"};
-static struct { unsigned int length; char *content; } __string_16 = { 2, "|\n"};
-static struct { unsigned int length; char *content; } __string_17 = { 8, "Panic : "};
-static struct { unsigned int length; char *content; } __string_18 = { 11, "Error in _\n"};
-static struct { unsigned int length; char *content; } __string_19 = { 34, "Error: infinite recursion in rule "};
-static struct { unsigned int length; char *content; } __string_20 = { 1, "\n"};
-static struct { unsigned int length; char *content; } __string_21 = { 12, "Not handled\n"};
-static struct { unsigned int length; char *content; } __string_22 = { 15, "peeked_char_alt"};
-static struct { unsigned int length; char *content; } __string_23 = { 16, "peeked_char_star"};
-static struct { unsigned int length; char *content; } __string_24 = { 17, "peeked_char_maybe"};
-static struct { unsigned int length; char *content; } __string_25 = { 6, "parse_"};
-static struct { unsigned int length; char *content; } __string_26 = { 13, "FORM PROBLEM\n"};
-static struct { unsigned int length; char *content; } __string_27 = { 8, "Panic : "};
-static struct { unsigned int length; char *content; } __string_28 = { 21, "Should not be called\n"};
-static struct { unsigned int length; char *content; } __string_29 = { 5, "2ab43"};
-static struct { unsigned int length; char *content; } __string_30 = { 7, "Parse: "};
-static struct { unsigned int length; char *content; } __string_31 = { 1, "\n"};
-static struct { unsigned int length; char *content; } __string_32 = { 7, "Parse: "};
-static struct { unsigned int length; char *content; } __string_33 = { 1, "\n"};
-static struct { unsigned int length; char *content; } __string_34 = { 7, "Parse: "};
-static struct { unsigned int length; char *content; } __string_35 = { 1, "\n"};
-static struct { unsigned int length; char *content; } __string_36 = { 7, "Parse: "};
-static struct { unsigned int length; char *content; } __string_37 = { 1, "\n"};
-static struct { unsigned int length; char *content; } __string_38 = { 9, "toto23,24"};
-static struct { unsigned int length; char *content; } __string_39 = { 12, "Identifier :"};
-static struct { unsigned int length; char *content; } __string_40 = { 1, "|"};
-static struct { unsigned int length; char *content; } __string_41 = { 4, "a-z_"};
-static struct { unsigned int length; char *content; } __string_42 = { 8, "[a-z_\n]"};
-static struct { unsigned int length; char *content; } __string_43 = { 13, "[^\]\-a-z_\n]"};
-static struct { unsigned int length; char *content; } __string_44 = { 7, "CSFORM\n"};
-static struct { unsigned int length; char *content; } __string_45 = { 77, "rule toto = [a-zA-Z_]*|toto tata|{print( 'hello')}|<hello:toto|[a-z] truc>;  "};
-static struct { unsigned int length; char *content; } __string_46 = { 20, "<toto:{'[]'}> //toto"};
-static struct { unsigned int length; char *content; } __string_47 = { 6, "//toto"};
-static struct { unsigned int length; char *content; } __string_48 = { 13, "Unknown rule\n"};
-static struct { unsigned int length; char *content; } __string_49 = { 2, "//"};
-static struct { unsigned int length; char *content; } __string_50 = { 1, "n"};
-static struct { unsigned int length; char *content; } __string_51 = { 1, "t"};
-static struct { unsigned int length; char *content; } __string_52 = { 1, "-"};
-static struct { unsigned int length; char *content; } __string_53 = { 1, "["};
-static struct { unsigned int length; char *content; } __string_54 = { 1, "^"};
-static struct { unsigned int length; char *content; } __string_55 = { 1, "]"};
-static struct { unsigned int length; char *content; } __string_56 = { 1, "{"};
-static struct { unsigned int length; char *content; } __string_57 = { 1, "}"};
-static struct { unsigned int length; char *content; } __string_58 = { 1, "<"};
-static struct { unsigned int length; char *content; } __string_59 = { 1, ":"};
-static struct { unsigned int length; char *content; } __string_60 = { 1, ">"};
-static struct { unsigned int length; char *content; } __string_61 = { 1, "("};
-static struct { unsigned int length; char *content; } __string_62 = { 1, ")"};
-static struct { unsigned int length; char *content; } __string_63 = { 1, "?"};
-static struct { unsigned int length; char *content; } __string_64 = { 1, "*"};
-static struct { unsigned int length; char *content; } __string_65 = { 1, "+"};
-static struct { unsigned int length; char *content; } __string_66 = { 1, "|"};
-static struct { unsigned int length; char *content; } __string_67 = { 4, "rule"};
-static struct { unsigned int length; char *content; } __string_68 = { 1, "="};
-static struct { unsigned int length; char *content; } __string_69 = { 1, ";"};
-static struct { unsigned int length; char *content; } __string_70 = { 1, "="};
-static struct { unsigned int length; char *content; } __string_71 = { 1, "{"};
-static struct { unsigned int length; char *content; } __string_72 = { 1, "}"};
-static struct { unsigned int length; char *content; } __string_73 = { 1, ";"};
+static struct { unsigned int length; char *content; } __string_11 = { 33, "rule Spacing:Character = [ \n	]* ;"};

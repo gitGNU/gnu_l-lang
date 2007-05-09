@@ -104,6 +104,45 @@ parse_Expression()
   //return generic_form_symbol( SYMBOL( toto), NULL);
 }
 
+form_t
+parse_Type()
+{
+  Read_Buffer rb = MALLOC( read_buffer);
+  rb->current = parser_current_pointer;
+  rb->end = parser_end_pointer;
+  rb->start = parser_current_pointer;
+
+  form_t form = l_parse_type( rb);
+
+  parser_current_pointer = rb->current;
+  /* This is hacky: as the L parser has one lexer token in advance,
+     which is =, we just decrement the parser_current_pointer by
+     one.  */
+  parser_current_pointer--;
+
+  free( rb);
+
+  //return   generic_form_symbol( SYMBOL( Type), CONS( form, NULL));
+  return form;
+}
+
+
+/* Defines the parse_* functions.  */
+void
+pre_define_function( Symbol symbol, form_t return_type_form)
+{
+  char *funname = malloc( 6 + strlen( symbol->name) + 1);
+  strcpy( funname, "parse_");
+  strcat( funname, symbol->name);
+
+  printf( "FUNNAME: %s\n", funname);
+  define_global( intern( funname),
+		 intern_type( function_type_form( return_type_form,
+						  tuple_type_form( NULL))),
+		 NULL);
+  free( funname);
+}
+
 
 
 int
@@ -157,6 +196,93 @@ intern_string( String s)
 }
   
 
+/* This is for testing that the parser can auto-parse itself.  */
+String
+get_test_string()
+{
+  
+char *string = "grammar parse_grammar = {"
+"  rule Spacing:Character = [ \\n\\t]* ;"
+"  rule Alpha:Character = [a-zA-Z_] ;"
+"  rule Alpha_Num:Character = [a-zA-Z_0-9] ;"
+"  "
+"  "
+"  rule Identifier:Symbol = <start:_> Alpha Alpha_Num* <end:_>"
+"  { intern_string( substring( start, end))} ;"
+""
+"  rule Escaped_Character:Character = [\\\\] ( \"n\" {10}"
+"                                          | \"t\"  {9}"
+"		                          | [^tn] ) ;"
+"  "
+"  rule Maybe_Escaped_Character:Character = Escaped_Character | [^\\\\] ;"
+"  rule Maybe_Escaped_Character_Character_Range:Character = Escaped_Character|[^\\]\\\\];"
+""
+"  rule String:Form = [\"] <start:_> ( Escaped_Character | [^\\\"\\\\])* <end:_> [\"]"
+"                       {String_Form( substring( start, end))} ;"
+"  "
+"  rule Character_Range:Form ="
+"                         <max:<min:Maybe_Escaped_Character_Character_Range>>"
+"                         (\"-\" <max:Maybe_Escaped_Character>)?"
+"                         { if(min == max) Int_Form( min) "
+"			     else Compound_Form('-', list( Int_Form( min),"
+"							   Int_Form( max))) } ;"
+""
+"  rule Character_Set:Form = "
+"                       <char_selector:{'[]'}>"
+"                       \"[\" (\"^\" <char_selector:{'[^]'}>)?"
+"                       <cr_list:( <cr:Character_Range> { make( cr) })*> \"]\""
+"                       { Compound_Form( char_selector, cr_list) } ;"
+""
+"  rule Callable_Rule:Form = <id:Identifier> {Id_Form( id)};"
+""
+"  rule Semantic_Action:Form = \"{\" <exp:Expression> \"}\""
+"                              {Compound_Form( '{}', list( exp))};"
+"  "
+"  rule Grouping:Form = \"<\" <id:Identifier> \":\" <form:Rule> \">\""
+"                       { Compound_Form( '<>', list( Id_Form( id), form)) };"
+""
+"  rule Primary:Form = (String"
+"		       | Character_Set "
+"		       | Callable_Rule"
+"		       | Grouping"
+"		       | Semantic_Action"
+"		       | \"(\" <r:Rule> \")\" {r});"
+""
+"  rule Postfix:Form = <form:Primary> ( <start:_> (\"?\" | \"*\" | \"+\") <end:_>"
+"				       <form:{ Compound_Form( intern_string( substring( start,end)),"
+"							      list( form)) }>)?"
+"                      { form };"
+"  "
+"  rule Sequence:Form = Spacing <post_list:(<post:Postfix>  Spacing {make( post)})*>"
+"                       { if( post_list.tail == cast( List( Form), 0)) post_list.head"
+"			   else Compound_Form( ' ', post_list) };"
+""
+"  rule Alternative:Form = <prim:Sequence>"
+"                          (\"|\" Spacing <sec:Sequence>"
+"			   <prim:{ Compound_Form( '|', list( prim, sec)) }>)*"
+"                          { prim };"
+""
+"  rule Rule:Form = Alternative;"
+""
+"  rule Grammar_Rule:Form = \"rule\" Spacing <id:Identifier> \":\" <ret_type:Type>"
+"                           Spacing \"=\" Spacing <r:Rule> Spacing \";\" Spacing"
+"                           { Compound_Form( 'rule', list( Id_Form( id),"
+"							  ret_type,"
+"							  r)) };"
+"  "
+"  rule Grammar:Form = \"grammar\" Spacing <id:Identifier> Spacing \"=\" Spacing"
+"                      \"{\" <gr_list:(<gr:Grammar_Rule> {make( gr)})*> \"}\" Spacing \";\""
+"                      { Compound_Form( 'define',"
+"				       cons( Id_Form( 'grammar'),"
+"					     cons( Id_Form( id),"
+"						   gr_list))) };"
+  "};";
+
+ return make_heap_string( string);
+
+}
+
+
 
 void
 init_newparser_support()
@@ -173,4 +299,8 @@ init_newparser_support()
   DEFINE_C_FUNCTION( string_to_int_list, "List( Int) <- (String)");
   DEFINE_C_FUNCTION( string_element, "Int <- (String, Int)");
   DEFINE_C_FUNCTION( parse_Expression, "Form <- ()");
+  DEFINE_C_FUNCTION( parse_Type, "Form <- ()");
+  DEFINE_C_FUNCTION( pre_define_function, "Void <- (Symbol, Form)");
+  DEFINE_C_FUNCTION( get_test_string, "String <- ()");
+
 }

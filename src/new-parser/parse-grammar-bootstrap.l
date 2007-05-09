@@ -307,8 +307,8 @@ expander init_grammar_hash( form)
 													       Compound_Form( '{}',
 															      list( Form( make( post)))))))))),
 						Compound_Form( '{}',
-							       list( Form( Compound_Form( ' ',
-											  post_list))))));
+							       list( Form( if( post_list.tail == cast( List( Form), 0)) post_list.head
+									     else Compound_Form( ' ', post_list))))));
 
   
   //grammar_rule Alternative = Sequence ("|" Sequence)*
@@ -335,13 +335,17 @@ expander init_grammar_hash( form)
   //grammar_rule Rule = Alternative
   rules_hash['Rule'] = Id_Form( 'Alternative');
 
-  //grammar_rule Grammar_Rule = "rule" Spacing <id:Identifier> Spacing "=" Spacing <r:Rule> Spacing ";" Spacing
+  //grammar_rule Grammar_Rule = "rule" Spacing <id:Identifier>":"<ret_type:Type> Spacing "=" Spacing <r:Rule> Spacing ";" Spacing
   rules_hash['Grammar_Rule'] = Compound_Form( ' ',
 					      list( String_Form( "rule"),
 						    Id_Form( 'Spacing'),
 						    Compound_Form( '<>',
 								   list( Id_Form( 'id'),
 									 Id_Form( 'Identifier'))),
+						    String_Form( ":"),
+						    Compound_Form( '<>',
+								   list( Id_Form( 'ret_type'),
+									 Id_Form( 'Type'))),
 						    Id_Form( 'Spacing'),
 						    String_Form( "="),
 						    Id_Form( 'Spacing'),
@@ -354,6 +358,7 @@ expander init_grammar_hash( form)
 						    Compound_Form( '{}',
 								   list( Form( Compound_Form( 'rule',
 											      list( Id_Form( id),
+												    ret_type,
 												    r)))))));
 
   //grammar_rule Grammar = "grammar" Spacing <id:Identifier> Spacing "=" Spacing "{" <gr_list:(<gr:Grammar_Rule> {make( gr)})*> "}" Spacing ";"
@@ -620,13 +625,13 @@ test()
 //
 // let form = parse_Rule();
 
- set_parser_support_to( "rule toto = [a-zA-Z_]*|toto tata|{print( 'hello')}|<hello:toto|[a-z] truc>;  ");
+ set_parser_support_to( "rule toto:Int = [a-zA-Z_]*|toto tata|{print( 'hello')}|<hello:toto|[a-z] truc>;  ");
 
- set_parser_support_to( "<toto:{'[]'}>");
+ // set_parser_support_to( "<toto:{'[]'}>");
 
  
- let form = parse_Rule();
- // let form = parse_Grammar_Rule();
-// print_form( form);
+ // let form = parse_Rule();
+  let form = parse_Grammar_Rule();
+  print_form( form);
  ();
 }

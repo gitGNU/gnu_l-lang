@@ -46,6 +46,7 @@ main (int argc, char **argv)
   eval_file (argv[1]);
 
   global_t glob = get_global( SYMBOL( test));
+  assert( glob);
   void_to_int_t test = glob->address;
   assert( test);
 

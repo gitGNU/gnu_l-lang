@@ -2299,6 +2299,20 @@ l_parse_expression (Read_Buffer buf)
   return tf;
 }
 
+/* These functions help calling a sub-help parser.  In the future, the
+   L parser will use the same buffer than the rest; so this won't be
+   needed.  */
+form_t
+l_parse_type (Read_Buffer buf)
+{
+  scanner_pointer = buf->current;
+  parse_initialize ();
+  form_t tf = parse_type_form ();
+  buf->current = scanner_pointer;
+  return tf;
+}
+
+
 form_t
 l_parse_statement (Read_Buffer buf)
 {

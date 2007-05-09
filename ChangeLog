@@ -1,3 +1,23 @@
+2007-05-09  Matthieu Lemerre  <racin@free.fr>
+
+	The new L parser for the parse-language can parse its own
+	definition.
+	
+	* src/parser/parse.c (l_parse_type): New function.
+	* src/new-parser/support.c (parse_Type, pre_define_function)
+	(get_test_string): New functions, callable from L.
+	* src/new-parser/parse-grammar.l: Updated with the function return
+	types. Now "bootstrap" itself (i.e. auto-parse itself).
+	* src/new-parser/parse-grammar-bootstrap.l: Updated; becomes
+	useless.
+	* src/new-parser/grammar-expander.l (head_set): catch error case
+	"trying to take the head set of an unknown rule"
+	(grammar_produce_function_definitions): Bugfixes, and call to
+	pre_define_function.
+	* src/new-parser/character-set.l (sort_Character_Set): New
+	function.
+	(make_Character_Set): call sort_Character_Set.
+
 2007-05-05  Matthieu Lemerre  <racin@free.fr>
 
 	Little name change.
