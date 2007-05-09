@@ -1,5 +1,9 @@
 2007-05-09  Matthieu Lemerre  <racin@free.fr>
 
+	Removed the bootstrap file
+
+	* src/new-parser/parse-grammar-bootstrap.l: Remove file.
+	
 	The new L parser for the parse-language can parse its own
 	definition.
 	
