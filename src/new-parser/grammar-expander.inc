@@ -13,108 +13,108 @@ Void__type print_String( String__type s);
 void maybe_flush( void);
 String__type make_heap_string( char *s);
 
-typedef struct struct0x0805ef40 *Compound_Form__type;
-typedef struct struct0x08058ad0 *List__O__Int__C____type__type;
-struct struct0x08058ad0 {
+typedef struct struct0x0805eea0 *Compound_Form__type;
+typedef struct struct0x08058a80 *List__O__Int__C____type__type;
+struct struct0x08058a80 {
 Int__type head;
 List__O__Int__C____type__type tail;
 };
-typedef struct struct0x08059130 *List__O__pointer__O__Void__C____C____type__type;
-struct struct0x08059130 {
+typedef struct struct0x080590d8 *List__O__pointer__O__Void__C____C____type__type;
+struct struct0x080590d8 {
 void *head;
 List__O__pointer__O__Void__C____C____type__type tail;
 };
-typedef struct struct0x0805d840 *Form__type;
-struct struct0x08059c28 {
+typedef struct struct0x0805d7a0 *Form__type;
+struct struct0x08059b98 {
 Int__type form_type_;
 Symbol__type value;
 };
 typedef void *Hash_Table__type;
-typedef struct struct0x080649d0 *Real_Type__type;
+typedef struct struct0x08064af8 *Real_Type__type;
 typedef void *Output_Descriptor__type;
-struct struct0x0805bb08 {
+struct struct0x0805bab0 {
 Int__type form_type_;
 String__type value;
 };
-struct struct0x0805d840 {
+struct struct0x0805d7a0 {
 Int__type form_type_;
 };
-typedef struct struct0x0805e1c0 *Int_Form__type;
-typedef struct struct0x08059c28 *Id_Form__type;
-struct struct0x0805e1c0 {
+typedef struct struct0x0805e120 *Int_Form__type;
+typedef struct struct0x08059b98 *Id_Form__type;
+struct struct0x0805e120 {
 Int__type form_type_;
 Int__type value;
 };
-typedef struct struct0x08059c28 *Symbol_Form__type;
-typedef struct struct0x0805bb08 *String_Form__type;
-typedef struct struct0x0805f138 *List__O__Form__C____type__type;
-struct struct0x0805ef40 {
+typedef struct struct0x08059b98 *Symbol_Form__type;
+typedef struct struct0x0805bab0 *String_Form__type;
+typedef struct struct0x0805f098 *List__O__Form__C____type__type;
+struct struct0x0805eea0 {
 Int__type form_type_;
 Symbol__type head;
 Int__type garbage_;
 List__O__Form__C____type__type form_list;
 };
-typedef struct struct0x0805f9b0 *Expanded_Form__type;
-struct struct0x0805f138 {
+typedef struct struct0x0805f910 *Expanded_Form__type;
+struct struct0x0805f098 {
 Form__type head;
 List__O__Form__C____type__type tail;
 };
-struct struct0x0805f9b0 {
+struct struct0x0805f910 {
 Int__type form_type_;
 Form__type original_form;
 Form__type return_form;
 Type__type type;
 };
-typedef struct struct0x08061a00 *List__O__Compound_Form__C____type__type;
-struct struct0x08061a00 {
+typedef struct struct0x08061890 *List__O__Compound_Form__C____type__type;
+struct struct0x08061890 {
 Compound_Form__type head;
 List__O__Compound_Form__C____type__type tail;
 };
-struct struct0x080647d0 {
+struct struct0x080648f8 {
 Int__type type_type;
 Form__type type_form;
 Int__type size;
 Int__type alignment;
 };
-typedef struct struct0x080647d0 Common_To_All_Type__type;
-struct struct0x080649d0 {
+typedef struct struct0x080648f8 Common_To_All_Type__type;
+struct struct0x08064af8 {
 Common_To_All_Type__type common_;
 };
-struct struct0x08065ce0 {
+struct struct0x08065e18 {
 Form__type car;
 List__O__Form__C____type__type cdr;
 };
-struct struct0x081f7e28 {
+typedef struct struct0x085136a8 *List__O__Character_Range__C____type__type;
+typedef List__O__Character_Range__C____type__type Character_Set__type;
+struct struct0x081fcf48 {
 Compound_Form__type car;
 List__O__Compound_Form__C____type__type cdr;
 };
-typedef struct struct0x084d4998 *Character_Range__type;
-struct struct0x084d4998 {
+typedef struct struct0x08513318 *Character_Range__type;
+struct struct0x08513318 {
 Int__type min;
 Int__type max;
 };
-typedef struct struct0x084d4d28 *List__O__Character_Range__C____type__type;
-struct struct0x084d4d28 {
+struct struct0x085136a8 {
 Character_Range__type head;
 List__O__Character_Range__C____type__type tail;
 };
 typedef Hash_Table__type Hash__O__Symbol__c__Type__C____type__type;
-typedef struct struct0x084d4fe8 *Exit__type;
-typedef List__O__Character_Range__C____type__type Character_Set__type;
-struct struct0x084d4fe8 {
+typedef struct struct0x08513988 *Exit__type;
+struct struct0x08513988 {
 Int__type dummy;
 };
 typedef Hash_Table__type Hash__O__Symbol__c__Character_Set__C____type__type;
 typedef Hash_Table__type Hash__O__Symbol__c__Form__C____type__type;
-struct struct0x084e0768 {
-void *car;
-void *cdr;
-};
-struct struct0x084e8aa8 {
+struct struct0x08515d60 {
 Character_Range__type car;
 List__O__Character_Range__C____type__type cdr;
 };
-struct struct0x08536ff8 {
+struct struct0x08524010 {
+void *car;
+void *cdr;
+};
+struct struct0x0857b328 {
 Int__type car;
 List__O__Int__C____type__type cdr;
 };
@@ -129,6 +129,7 @@ void *(alloc_cons_cell)(void);
 List__O__pointer__O__Void__C____C____type__type (append)(List__O__pointer__O__Void__C____C____type__type , List__O__pointer__O__Void__C____C____type__type );
 List__O__Int__C____type__type (string_to_int_list)(String__type );
 Hash_Table__type (make_hash_table)(void);
+void (pre_define_function)(Symbol__type , Form__type );
 void (print_String)(String__type );
 void (flush)(void);
 void (maybe_flush)(void);
@@ -150,6 +151,7 @@ String__type (concat)(String__type , String__type );
 String__type (get_symbol_name)(Symbol__type );
 Int__type (string_element)(String__type , Int__type );
 Expanded_Form__type (declare_block_end)(List__O__Form__C____type__type );
+Character_Set__type (sort_Character_Set)(List__O__Character_Range__C____type__type );
 Character_Set__type (make_Character_Set)(Form__type );
 Character_Set__type (get_inverse_Character_Set)(Character_Set__type );
 Character_Set__type (make_inverse_Character_Set)(Form__type );
@@ -178,14 +180,17 @@ static struct { unsigned int length; char *content; } __string_15 = { 16, "Unimp
 static struct { unsigned int length; char *content; } __string_16 = { 2, "|\n"};
 static struct { unsigned int length; char *content; } __string_17 = { 8, "Panic : "};
 static struct { unsigned int length; char *content; } __string_18 = { 11, "Error in _\n"};
-static struct { unsigned int length; char *content; } __string_19 = { 34, "Error: infinite recursion in rule "};
-static struct { unsigned int length; char *content; } __string_20 = { 1, "\n"};
-static struct { unsigned int length; char *content; } __string_21 = { 12, "Not handled\n"};
-static struct { unsigned int length; char *content; } __string_22 = { 15, "peeked_char_alt"};
-static struct { unsigned int length; char *content; } __string_23 = { 16, "peeked_char_star"};
-static struct { unsigned int length; char *content; } __string_24 = { 17, "peeked_char_maybe"};
-static struct { unsigned int length; char *content; } __string_25 = { 6, "parse_"};
-static struct { unsigned int length; char *content; } __string_26 = { 13, "FORM PROBLEM\n"};
-static struct { unsigned int length; char *content; } __string_27 = { 6, "parse_"};
-static struct { unsigned int length; char *content; } __string_28 = { 2, "//"};
-static struct { unsigned int length; char *content; } __string_29 = { 13, "Unknown rule\n"};
+static struct { unsigned int length; char *content; } __string_19 = { 8, "Panic : "};
+static struct { unsigned int length; char *content; } __string_20 = { 53, "Trying to calculate the head set of an unknown rule: "};
+static struct { unsigned int length; char *content; } __string_21 = { 1, "\n"};
+static struct { unsigned int length; char *content; } __string_22 = { 34, "Error: infinite recursion in rule "};
+static struct { unsigned int length; char *content; } __string_23 = { 1, "\n"};
+static struct { unsigned int length; char *content; } __string_24 = { 12, "Not handled\n"};
+static struct { unsigned int length; char *content; } __string_25 = { 15, "peeked_char_alt"};
+static struct { unsigned int length; char *content; } __string_26 = { 16, "peeked_char_star"};
+static struct { unsigned int length; char *content; } __string_27 = { 17, "peeked_char_maybe"};
+static struct { unsigned int length; char *content; } __string_28 = { 6, "parse_"};
+static struct { unsigned int length; char *content; } __string_29 = { 13, "FORM PROBLEM\n"};
+static struct { unsigned int length; char *content; } __string_30 = { 6, "parse_"};
+static struct { unsigned int length; char *content; } __string_31 = { 2, "//"};
+static struct { unsigned int length; char *content; } __string_32 = { 13, "Unknown rule\n"};
