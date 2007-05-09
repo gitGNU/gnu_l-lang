@@ -135,7 +135,6 @@ pre_define_function( Symbol symbol, form_t return_type_form)
   strcpy( funname, "parse_");
   strcat( funname, symbol->name);
 
-  printf( "FUNNAME: %s\n", funname);
   define_global( intern( funname),
 		 intern_type( function_type_form( return_type_form,
 						  tuple_type_form( NULL))),

@@ -765,7 +765,7 @@ test ()
   // doit( "std/make-list.l", "std/make-list.c", "std/make-list.inc");
 
 doit( "new-parser/grammar-expander.l", "new-parser/grammar-expander.c", "new-parser/grammar-expander.inc");
-doit( "new-parser/parse-grammar-bootstrap.l", "parse-grammar.c", "parse-grammar.inc");
+doit( "new-parser/parse-grammar.l", "new-parser/parse-grammar.c", "new-parser/parse-grammar.inc");
   //doit( "std/error.l", "std/error.c", "std/error.inc");
   //  doit( "std/error.l", "test.c", "test.inc");
   //      doit( "test.l", "test.c", "test.inc");

@@ -39,26 +39,26 @@ struct struct0x08065f90 {
 Form__type car;
 List__O__Form__C____type__type cdr;
 };
-typedef struct struct0x08508630 *Character_Range__type;
-struct struct0x08508630 {
+typedef struct struct0x08513380 *Character_Range__type;
+struct struct0x08513380 {
 Int__type min;
 Int__type max;
 };
-typedef struct struct0x085089c0 *List__O__Character_Range__C____type__type;
-struct struct0x085089c0 {
+typedef struct struct0x08513710 *List__O__Character_Range__C____type__type;
+struct struct0x08513710 {
 Character_Range__type head;
 List__O__Character_Range__C____type__type tail;
 };
-typedef struct struct0x08508c80 *Exit__type;
 typedef List__O__Character_Range__C____type__type Character_Set__type;
-struct struct0x08508c80 {
+typedef struct struct0x085139f0 *Exit__type;
+struct struct0x085139f0 {
 Int__type dummy;
 };
-struct struct0x0850a870 {
+struct struct0x08515dc8 {
 Character_Range__type car;
 List__O__Character_Range__C____type__type cdr;
 };
-struct struct0x08518ba8 {
+struct struct0x08524078 {
 void *car;
 void *cdr;
 };
@@ -94,6 +94,8 @@ Form__type (parse_Grammar_Rule)(void);
 Form__type (parse_Grammar)(void);
 Int__type (parse_Comment)(void);
 void (parse_Spacing)(void);
+Form__type (parse_String)(void);
+Form__type (parse_Character_Range)(void);
 Int__type (parse_Alpha_Num)(void);
 Int__type (parse_Alpha)(void);
 Symbol__type (parse_Identifier)(void);
@@ -101,14 +103,12 @@ Int__type (parse_Escaped_Character)(void);
 Int__type (parse_Maybe_Escaped_Character)(void);
 Form__type (parse_Callable_Rule)(void);
 Int__type (parse_Maybe_Escaped_Character_Character_Range)(void);
-Form__type (parse_String)(void);
-Form__type (parse_Character_Range)(void);
-Form__type (parse_Sequence)(void);
+Form__type (parse_Primary)(void);
 Form__type (parse_Character_Set)(void);
+Form__type (parse_Sequence)(void);
 Form__type (parse_Postfix)(void);
 Form__type (parse_Semantic_Action)(void);
 Form__type (parse_Grouping)(void);
-Form__type (parse_Primary)(void);
 Form__type (parse_Alternative)(void);
 Form__type (parse_Rule)(void);
 Output_Descriptor__type current_output_descriptor;

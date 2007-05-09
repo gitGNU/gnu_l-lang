@@ -30,7 +30,7 @@ Int__type form_type_;
 Symbol__type value;
 };
 typedef void *Hash_Table__type;
-typedef struct struct0x08064af8 *Real_Type__type;
+typedef struct struct0x08064cb0 *Real_Type__type;
 typedef void *Output_Descriptor__type;
 struct struct0x0805bab0 {
 Int__type form_type_;
@@ -70,51 +70,51 @@ struct struct0x08061890 {
 Compound_Form__type head;
 List__O__Compound_Form__C____type__type tail;
 };
-struct struct0x080648f8 {
+struct struct0x08064b00 {
 Int__type type_type;
 Form__type type_form;
 Int__type size;
 Int__type alignment;
 };
-typedef struct struct0x080648f8 Common_To_All_Type__type;
-struct struct0x08064af8 {
+typedef struct struct0x08064b00 Common_To_All_Type__type;
+struct struct0x08064cb0 {
 Common_To_All_Type__type common_;
 };
-struct struct0x08065e18 {
+struct struct0x08065f90 {
 Form__type car;
 List__O__Form__C____type__type cdr;
 };
-typedef struct struct0x085136a8 *List__O__Character_Range__C____type__type;
+typedef struct struct0x08513710 *List__O__Character_Range__C____type__type;
 typedef List__O__Character_Range__C____type__type Character_Set__type;
-struct struct0x081fcf48 {
+struct struct0x081fd0a8 {
 Compound_Form__type car;
 List__O__Compound_Form__C____type__type cdr;
 };
-typedef struct struct0x08513318 *Character_Range__type;
-struct struct0x08513318 {
+typedef struct struct0x08513380 *Character_Range__type;
+struct struct0x08513380 {
 Int__type min;
 Int__type max;
 };
-struct struct0x085136a8 {
+struct struct0x08513710 {
 Character_Range__type head;
 List__O__Character_Range__C____type__type tail;
 };
 typedef Hash_Table__type Hash__O__Symbol__c__Type__C____type__type;
-typedef struct struct0x08513988 *Exit__type;
-struct struct0x08513988 {
+typedef struct struct0x085139f0 *Exit__type;
+struct struct0x085139f0 {
 Int__type dummy;
 };
 typedef Hash_Table__type Hash__O__Symbol__c__Character_Set__C____type__type;
 typedef Hash_Table__type Hash__O__Symbol__c__Form__C____type__type;
-struct struct0x08515d60 {
+struct struct0x08515dc8 {
 Character_Range__type car;
 List__O__Character_Range__C____type__type cdr;
 };
-struct struct0x08524010 {
+struct struct0x08524078 {
 void *car;
 void *cdr;
 };
-struct struct0x0857b328 {
+struct struct0x0857b398 {
 Int__type car;
 List__O__Int__C____type__type cdr;
 };
