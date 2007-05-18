@@ -22,9 +22,11 @@ parse_error()
   cast( Exit, 3);
 }
 
-compile_time global head_set_hash:Hash( Symbol, Character_Set);
-//Temporary?
-compile_time global rules_hash:Hash( Symbol, Form);
+// A hash grammar_name -> rule_name -> Character_Set
+compile_time global head_set_hash:Hash( Symbol, Hash( Symbol, Character_Set));
+
+// A hash grammar_name -> rule_name -> Form
+compile_time global rules_hash:Hash( Symbol, Hash( Symbol, Form));
 
 // Character set for .; could (or not) contain \n for instance.
 compile_time global dot_character_set:Character_Set;
@@ -112,12 +114,13 @@ head_set( parse_form:Form, next_rules:List( Form))
        }
      else
        {
-	 cs = head_set_hash[rule_name];
+	 assert( head_set_hash[grammar_name] != cast( Hash( Symbol, Character_Set), 0));
+	 cs = head_set_hash[grammar_name][rule_name];
 	 if(cs == cast( Character_Set, 0))
 	   {
 	 //This is used to prevent infinite recursion
-	     head_set_hash[rule_name] = cast( Character_Set, -1);
-	     let named_rule = rules_hash[rule_name];
+	     head_set_hash[grammar_name][rule_name] = cast( Character_Set, -1);
+	     let named_rule = rules_hash[grammar_name][rule_name];
 	     if(named_rule == cast( Form, 0))
 	       {
 		 panic( "Trying to calculate the head set of an unknown rule: ", rule_name, "\n");
@@ -129,7 +132,7 @@ head_set( parse_form:Form, next_rules:List( Form))
 	     exit( 3);
 	   }
 	 
-	 head_set_hash[rule_name] = cs;
+	 head_set_hash[grammar_name][rule_name] = cs;
 	   }
 	 ();
        }
@@ -283,6 +286,13 @@ grammar_expander_rec (parse_form:Form, next_rules:List( Form))
 		$grammar_expander_rec(maybe_rule, next_rules)$;
 		})
 	}
+      else if(cf.head == '.')
+	{
+	  let gram_name = cast( Id_Form, cf.form_list.head).value;
+	  let rule_name = cast( Id_Form, cf.form_list.tail.head).value;
+	  Form( funcall( $Id_Form(intern_string( function_name_from_grammar_and_rule( gram_name,
+										      rule_name)))$))
+	}
       else
 	{
 	  Form( imp)
@@ -369,95 +379,105 @@ expander grammar_expander( form_)
   //so that all the allocated variables are defined in here.
   id_used = Hash( Symbol, Type);
   let rule = cast( Symbol_Form, form_.form_list.head).value;
-  if(rules_hash[rule] == cast( Form, 0))
+  if(rules_hash[grammar_name][rule] == cast( Form, 0))
     {
       print( "Unknown rule\n", rule);
       exit( 3);
     }
 
   grammar_name = 'parse_grammar';
-  let form = grammar_expander_rec(rules_hash[rule], cast( List( Form), 0));
+  let form = grammar_expander_rec(rules_hash[grammar_name][rule], cast( List( Form), 0));
 
   //  print_form( cast( Form, form));
   form;
 }
 
 List( Form)
-grammar_produce_function_definitions( grammar_:Form)
+expand_grammar_list( grammar_list:List( Compound_Form))
 {
-  let grammar = cast( Compound_Form, grammar_);
-  grammar_name = cast( Id_Form, grammar.form_list.tail.head).value;
-  let rule_list = cast( List( Compound_Form), grammar.form_list.tail.tail);
+  rules_hash = cast( Hash( Symbol, Hash( Symbol, Form)), make_hash_table());
+  head_set_hash = Hash( Symbol, Hash( Symbol, Character_Set));
   
-  dot_character_set = cast( Character_Set, list( Character_Range( min:1, max:255)));
-  rules_hash = cast( Hash( Symbol, Form), make_hash_table());
-  head_set_hash = Hash( Symbol, Character_Set);
-  
-  // Fill the rule_hash and predefines the functions.
-  foreach( let rule in rule_list)
+  //Fill the rule_hashes and predefines the functions.
+  foreach( let grammar in grammar_list)
     {
-      //      print_form( rule);
-      let rule_name = cast( Id_Form, rule.form_list.head).value;
-      let form = cast( Form, rule.form_list.tail.tail.head);
-      rules_hash[rule_name] = form;
-      pre_define_function( intern_string( function_name_from_grammar_and_rule( grammar_name,
-									       rule_name)),
-			   rule.form_list.tail.head);
+      grammar_name = cast( Id_Form, grammar.form_list.tail.head).value;
+      rules_hash[grammar_name] = cast( Hash( Symbol, Form), make_hash_table());
+      
+      let rule_list = cast( List( Compound_Form), grammar.form_list.tail.tail);
+      
+      foreach( let rule in rule_list)
+	{
+	  let rule_name = cast( Id_Form, rule.form_list.head).value;
+	  let form = cast( Form, rule.form_list.tail.tail.head);
+	  rules_hash[grammar_name][rule_name] = form;
+	  pre_define_function( intern_string( function_name_from_grammar_and_rule( grammar_name,
+										   rule_name)),
+			       rule.form_list.tail.head);
+	}
     }
 
-  // Create the functions.
-
+  //Creates the functions.
   let form_list = make_list( {
-  foreach( let rule in rule_list)
-    {
-      let rule_name = cast( Id_Form, rule.form_list.head).value;
-      let function_name = intern_string( function_name_from_grammar_and_rule( grammar_name,
-									      rule_name));
+      foreach( let grammar in grammar_list)
+	{
+	  grammar_name = cast( Id_Form, grammar.form_list.tail.head).value;
+	  head_set_hash[grammar_name] = Hash( Symbol, Character_Set);
+	  dot_character_set = cast( Character_Set, list( Character_Range( min:1, max:255)));
 
-      let form = cast( Form, rule.form_list.tail.tail.head);
+	  let rule_list = cast( List( Compound_Form), grammar.form_list.tail.tail);
+	  foreach( let rule in rule_list)
+	    {
+	      let rule_name = cast( Id_Form, rule.form_list.head).value;
+	      let function_name = intern_string( function_name_from_grammar_and_rule( grammar_name,
+										      rule_name));
+	      
+	      let form = cast( Form, rule.form_list.tail.tail.head);
+	      
+	      id_used = Hash( Symbol, Type);
+	      declare_block_begin();
+	      let function_body = grammar_expander_rec( form, cast( List( Form), 0));
+	      
+	      let exp_function_body = declare_block_end( list( function_body));
+	      
+	      let lambda_form = Compound_Form( 'lambda',
+					       list( exp_function_body.type.type_form,
+						     Compound_Form( 'tuple',
+								    cast( List( Form), 0)),
+						     exp_function_body.return_form));
+	      
+	      let function_form = Compound_Form( 'define',
+						 list( Id_Form( 'function'),
+						       Id_Form( function_name),
+						       lambda_form));
+	      make( function_form);
+	    }
+	}; ()});
 
-      id_used = Hash( Symbol, Type);
-      declare_block_begin();
-      let function_body = grammar_expander_rec( form, cast( List( Form), 0));
 
-      let exp_function_body = declare_block_end( list( function_body));
-
-      let lambda_form = Compound_Form( 'lambda',
-				       list( exp_function_body.type.type_form,
-					     Compound_Form( 'tuple',
-							    cast( List( Form), 0)),
-					     exp_function_body.return_form));
-
-      let function_form = Compound_Form( 'define',
-					 list( Id_Form( 'function'),
-					       Id_Form( function_name),
-					       lambda_form));
-      make( function_form);
-    }; ()});
-  
   form_list;
 }
 
 Void
 test()
 {
-    let rule = Compound_Form( 'define',
-			    list( Id_Form( 'rule'),
-				  Id_Form( 'Void'),
-				  Id_Form( 'Comment'),
-				  Compound_Form( ' ',
-					 list( String_Form( "//"),
-					       Compound_Form( '*',
-							      list( Compound_Form( '[^]',
-										   list( Int_Form( 10))))),
-					       Compound_Form( '[]',
-							      list( Int_Form( 10)))))));
-    let grammar = Compound_Form( 'define',
-				 list( Id_Form( 'grammar'),
-				       Id_Form( 'test_grammar'),
-				       rule));
-
-    grammar_produce_function_definitions( grammar);
+ //   let rule = Compound_Form( 'define',
+ //			    list( Id_Form( 'rule'),
+ //				  Id_Form( 'Void'),
+ //				  Id_Form( 'Comment'),
+ //				  Compound_Form( ' ',
+ //					 list( String_Form( "//"),
+ //					       Compound_Form( '*',
+ //							      list( Compound_Form( '[^]',
+ //										   list( Int_Form( 10))))),
+ //					       Compound_Form( '[]',
+ //							      list( Int_Form( 10)))))));
+ //   let grammar = Compound_Form( 'define',
+ //				 list( Id_Form( 'grammar'),
+ //				       Id_Form( 'test_grammar'),
+ //				       rule));
+ //
+ //   grammar_produce_function_definitions( grammar);
 
   //  Form( ());
   //  expand_init_test();

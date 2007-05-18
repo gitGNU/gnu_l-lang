@@ -1,5 +1,16 @@
 2007-05-18  Matthieu Lemerre  <racin@free.fr>
 
+	Handling of inter-grammar calls.
+	
+	* src/new-parser/grammar-expander.l (head_set_hash, rules_hash):
+	Now are double hashes (grammar, rule). Change callers.
+	(grammar_expander_rec): Handle the explicit grammar call case.
+	(expand_grammar_list): New function, replace grammar_produce_function_definitions.
+	* src/new-parser/parse-grammar.l (parse_grammar): Now parses the
+	grammar.rule form.
+	* src/expander/expand-define.c (expand_all): Call
+	expand_grammar_list for grammar expansion.
+
 	Parse functions now have a name depending on the grammar name.
 	
 	* src/parser/parse.c (parse_all): Allow the parser to parse the

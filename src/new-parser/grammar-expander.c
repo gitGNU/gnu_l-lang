@@ -6,9 +6,9 @@ Hash__O__Symbol__c__Form__C____type__type grammar_hash;
 
 Character_Set__type dot_character_set;
 
-Hash__O__Symbol__c__Form__C____type__type rules_hash;
+Hash__O__Symbol__c__Hash__O__Symbol__c__Form__C____C____type__type rules_hash;
 
-Hash__O__Symbol__c__Character_Set__C____type__type head_set_hash;
+Hash__O__Symbol__c__Hash__O__Symbol__c__Character_Set__C____C____type__type head_set_hash;
 
 Symbol__type grammar_name;
 
@@ -52,7 +52,7 @@ Character_Range__type cr;
 {
 ({goto _sharp__sharp_loop339_end340;});}})
 ;
-(cr = ((* ((struct struct0x08517b50 *) _sharp_iterator338)).car));
+(cr = ((* ((struct struct0x08518aa8 *) _sharp_iterator338)).car));
 ({
 List__O__Character_Range__C____type__type *new_cr_list_ptr;
 (new_cr_list_ptr = (&new_cr_list));
@@ -63,9 +63,9 @@ List__O__Character_Range__C____type__type next_cr;
 {
 ({
 ((* new_cr_list_ptr) = ({
-struct struct0x08517b50 *_sharp_pair_343;
+struct struct0x08518aa8 *_sharp_pair_343;
 _sharp_pair_343,
-(_sharp_pair_343 = ((struct struct0x08517b50 *) (alloc_cons_cell)()));
+(_sharp_pair_343 = ((struct struct0x08518aa8 *) (alloc_cons_cell)()));
 (((* _sharp_pair_343).car) = cr);
 (((* _sharp_pair_343).cdr) = ((List__O__Character_Range__C____type__type ) 0));
 ((List__O__Character_Range__C____type__type ) _sharp_pair_343);
@@ -76,14 +76,14 @@ _sharp_pair_343,
 ;}})
 ;
 (next_cr = (* new_cr_list_ptr));
-({if( ((int) ((* ((struct struct0x08514f60 *) cr)).max) < (int) ((* ((struct struct0x08514f60 *) ((* ((struct struct0x085152f0 *) next_cr)).head))).min)))
+({if( ((int) ((* ((struct struct0x08515d38 *) cr)).max) < (int) ((* ((struct struct0x08515d38 *) ((* ((struct struct0x08516170 *) next_cr)).head))).min)))
 {
 ({
 List__O__Character_Range__C____type__type pair;
 (pair = ({
-struct struct0x08517b50 *_sharp_pair_344;
+struct struct0x08518aa8 *_sharp_pair_344;
 _sharp_pair_344,
-(_sharp_pair_344 = ((struct struct0x08517b50 *) (alloc_cons_cell)()));
+(_sharp_pair_344 = ((struct struct0x08518aa8 *) (alloc_cons_cell)()));
 (((* _sharp_pair_344).car) = cr);
 (((* _sharp_pair_344).cdr) = next_cr);
 ((List__O__Character_Range__C____type__type ) _sharp_pair_344);
@@ -94,7 +94,7 @@ _sharp_pair_344,
 })
 ;}})
 ;
-(new_cr_list_ptr = (&((* ((struct struct0x085152f0 *) (* new_cr_list_ptr))).tail)));
+(new_cr_list_ptr = (&((* ((struct struct0x08516170 *) (* new_cr_list_ptr))).tail)));
 })
 ,
 ({goto _sharp__sharp_loop341_begin345;}),
@@ -102,7 +102,7 @@ _sharp_pair_344,
 })
 ;
 ((void) 0);_sharp__sharp_loop339_continue346:((void) 0);
-(_sharp_iterator338 = ((* ((struct struct0x08517b50 *) _sharp_iterator338)).cdr));
+(_sharp_iterator338 = ((* ((struct struct0x08518aa8 *) _sharp_iterator338)).cdr));
 })
 ,
 ({goto _sharp__sharp_loop339_begin347;}),
@@ -140,7 +140,7 @@ Form__type subform;
 ({
 (((is_compound_form)(subform))?
 (({
-struct struct0x08514f60 *_sharp_pointer_alloc360;
+struct struct0x08515d38 *_sharp_pointer_alloc360;
 Int_Form__type max_form;
 Int_Form__type min_form;
 Compound_Form__type cf;
@@ -256,16 +256,16 @@ Output_Descriptor__type save_od_;
 ;}})
 ;
 ((* _sharp_make_list_ptr349) = (alloc_cons_cell)()),
-(((* (* ((struct struct0x08525e00 **) _sharp_make_list_ptr349))).car) = ((void *) ((Character_Range__type ) _sharp_pointer_alloc360,
-(_sharp_pointer_alloc360 = ((struct struct0x08514f60 *) (GC_alloc)(8))),
-((* _sharp_pointer_alloc360) = ((struct struct0x08514f60 ){((* ((struct struct0x0805e120 *) min_form)).value), ((* ((struct struct0x0805e120 *) max_form)).value)})),
-((struct struct0x08514f60 *) _sharp_pointer_alloc360)))),
-(_sharp_make_list_ptr349 = (&((* (* ((struct struct0x08525e00 **) _sharp_make_list_ptr349))).cdr))),
+(((* (* ((struct struct0x08526d78 **) _sharp_make_list_ptr349))).car) = ((void *) ((Character_Range__type ) _sharp_pointer_alloc360,
+(_sharp_pointer_alloc360 = ((struct struct0x08515d38 *) (GC_alloc)(8))),
+((* _sharp_pointer_alloc360) = ((struct struct0x08515d38 ){((* ((struct struct0x0805e120 *) min_form)).value), ((* ((struct struct0x0805e120 *) max_form)).value)})),
+((struct struct0x08515d38 *) _sharp_pointer_alloc360)))),
+(_sharp_make_list_ptr349 = (&((* (* ((struct struct0x08526d78 **) _sharp_make_list_ptr349))).cdr))),
 ((void) 0);
 })
 ):
 (({
-struct struct0x08514f60 *_sharp_pointer_alloc364;
+struct struct0x08515d38 *_sharp_pointer_alloc364;
 Int_Form__type symbol_form;
 (symbol_form = ((Int_Form__type ) subform));
 ({if( ((is_int_form)(((Form__type ) symbol_form)) == ((Bool__type ) 0)))
@@ -323,11 +323,11 @@ Output_Descriptor__type save_od_;
 ;}})
 ;
 ((* _sharp_make_list_ptr349) = (alloc_cons_cell)()),
-(((* (* ((struct struct0x08525e00 **) _sharp_make_list_ptr349))).car) = ((void *) ((Character_Range__type ) _sharp_pointer_alloc364,
-(_sharp_pointer_alloc364 = ((struct struct0x08514f60 *) (GC_alloc)(8))),
-((* _sharp_pointer_alloc364) = ((struct struct0x08514f60 ){((* ((struct struct0x0805e120 *) symbol_form)).value), ((* ((struct struct0x0805e120 *) symbol_form)).value)})),
-((struct struct0x08514f60 *) _sharp_pointer_alloc364)))),
-(_sharp_make_list_ptr349 = (&((* (* ((struct struct0x08525e00 **) _sharp_make_list_ptr349))).cdr))),
+(((* (* ((struct struct0x08526d78 **) _sharp_make_list_ptr349))).car) = ((void *) ((Character_Range__type ) _sharp_pointer_alloc364,
+(_sharp_pointer_alloc364 = ((struct struct0x08515d38 *) (GC_alloc)(8))),
+((* _sharp_pointer_alloc364) = ((struct struct0x08515d38 ){((* ((struct struct0x0805e120 *) symbol_form)).value), ((* ((struct struct0x0805e120 *) symbol_form)).value)})),
+((struct struct0x08515d38 *) _sharp_pointer_alloc364)))),
+(_sharp_make_list_ptr349 = (&((* (* ((struct struct0x08526d78 **) _sharp_make_list_ptr349))).cdr))),
 ((void) 0);
 })
 ));
@@ -358,15 +358,15 @@ Character_Set__type  get_inverse_Character_Set(Character_Set__type  cs)
 return ({
 (((cs == ((Character_Set__type ) 0)))?
 (({
-struct struct0x08514f60 *_sharp_pointer_alloc367;
+struct struct0x08515d38 *_sharp_pointer_alloc367;
 ((Character_Set__type ) ({
-struct struct0x08517b50 *_sharp_pair_368;
+struct struct0x08518aa8 *_sharp_pair_368;
 _sharp_pair_368,
-(_sharp_pair_368 = ((struct struct0x08517b50 *) (alloc_cons_cell)()));
+(_sharp_pair_368 = ((struct struct0x08518aa8 *) (alloc_cons_cell)()));
 (((* _sharp_pair_368).car) = ((Character_Range__type ) _sharp_pointer_alloc367,
-(_sharp_pointer_alloc367 = ((struct struct0x08514f60 *) (GC_alloc)(8))),
-((* _sharp_pointer_alloc367) = ((struct struct0x08514f60 ){1, 255})),
-((struct struct0x08514f60 *) _sharp_pointer_alloc367)));
+(_sharp_pointer_alloc367 = ((struct struct0x08515d38 *) (GC_alloc)(8))),
+((* _sharp_pointer_alloc367) = ((struct struct0x08515d38 ){1, 255})),
+((struct struct0x08515d38 *) _sharp_pointer_alloc367)));
 (((* _sharp_pair_368).cdr) = ((List__O__Character_Range__C____type__type ) 0));
 ((List__O__Character_Range__C____type__type ) _sharp_pair_368);
 })
@@ -379,7 +379,7 @@ List__O__Character_Range__C____type__type inverse;
 List__O__Character_Range__C____type__type csl;
 Character_Range__type first;
 (csl = ((List__O__Character_Range__C____type__type ) cs));
-(first = ((* ((struct struct0x085152f0 *) csl)).head));
+(first = ((* ((struct struct0x08516170 *) csl)).head));
 (inverse = ({
 List__O__Character_Range__C____type__type _sharp_make_list369;
 _sharp_make_list369,
@@ -387,24 +387,24 @@ _sharp_make_list_ptr370,
 (_sharp_make_list_ptr370 = ((void *) (&_sharp_make_list369))),
 ({
 Int__type prec;
-({if( (((* ((struct struct0x08514f60 *) first)).min) != 0))
+({if( (((* ((struct struct0x08515d38 *) first)).min) != 0))
 {
 ({
-struct struct0x08514f60 *_sharp_pointer_alloc371;
+struct struct0x08515d38 *_sharp_pointer_alloc371;
 ((* _sharp_make_list_ptr370) = (alloc_cons_cell)()),
-(((* (* ((struct struct0x08525e00 **) _sharp_make_list_ptr370))).car) = ((void *) ((Character_Range__type ) _sharp_pointer_alloc371,
-(_sharp_pointer_alloc371 = ((struct struct0x08514f60 *) (GC_alloc)(8))),
-((* _sharp_pointer_alloc371) = ((struct struct0x08514f60 ){0, ((int) ((* ((struct struct0x08514f60 *) first)).min) - (int) 1)})),
-((struct struct0x08514f60 *) _sharp_pointer_alloc371)))),
-(_sharp_make_list_ptr370 = (&((* (* ((struct struct0x08525e00 **) _sharp_make_list_ptr370))).cdr))),
+(((* (* ((struct struct0x08526d78 **) _sharp_make_list_ptr370))).car) = ((void *) ((Character_Range__type ) _sharp_pointer_alloc371,
+(_sharp_pointer_alloc371 = ((struct struct0x08515d38 *) (GC_alloc)(8))),
+((* _sharp_pointer_alloc371) = ((struct struct0x08515d38 ){0, ((int) ((* ((struct struct0x08515d38 *) first)).min) - (int) 1)})),
+((struct struct0x08515d38 *) _sharp_pointer_alloc371)))),
+(_sharp_make_list_ptr370 = (&((* (* ((struct struct0x08526d78 **) _sharp_make_list_ptr370))).cdr))),
 ((void) 0);
 })
 ;}})
 ;
-(prec = ((int) ((* ((struct struct0x08514f60 *) first)).max) + (int) 1));
+(prec = ((int) ((* ((struct struct0x08515d38 *) first)).max) + (int) 1));
 ({
 List__O__Character_Range__C____type__type _sharp_iterator373;
-(_sharp_iterator373 = ((* ((struct struct0x085152f0 *) csl)).tail));
+(_sharp_iterator373 = ((* ((struct struct0x08516170 *) csl)).tail));
 ((void) 0);_sharp__sharp_loop374_begin378:((void) 0),
 ({
 Character_Range__type cr;
@@ -412,21 +412,21 @@ Character_Range__type cr;
 {
 ({goto _sharp__sharp_loop374_end375;});}})
 ;
-(cr = ((* ((struct struct0x08517b50 *) _sharp_iterator373)).car));
+(cr = ((* ((struct struct0x08518aa8 *) _sharp_iterator373)).car));
 ({
-struct struct0x08514f60 *_sharp_pointer_alloc376;
+struct struct0x08515d38 *_sharp_pointer_alloc376;
 ((* _sharp_make_list_ptr370) = (alloc_cons_cell)()),
-(((* (* ((struct struct0x08525e00 **) _sharp_make_list_ptr370))).car) = ((void *) ((Character_Range__type ) _sharp_pointer_alloc376,
-(_sharp_pointer_alloc376 = ((struct struct0x08514f60 *) (GC_alloc)(8))),
-((* _sharp_pointer_alloc376) = ((struct struct0x08514f60 ){prec, ((int) ((* ((struct struct0x08514f60 *) cr)).min) - (int) 1)})),
-((struct struct0x08514f60 *) _sharp_pointer_alloc376)))),
-(_sharp_make_list_ptr370 = (&((* (* ((struct struct0x08525e00 **) _sharp_make_list_ptr370))).cdr))),
+(((* (* ((struct struct0x08526d78 **) _sharp_make_list_ptr370))).car) = ((void *) ((Character_Range__type ) _sharp_pointer_alloc376,
+(_sharp_pointer_alloc376 = ((struct struct0x08515d38 *) (GC_alloc)(8))),
+((* _sharp_pointer_alloc376) = ((struct struct0x08515d38 ){prec, ((int) ((* ((struct struct0x08515d38 *) cr)).min) - (int) 1)})),
+((struct struct0x08515d38 *) _sharp_pointer_alloc376)))),
+(_sharp_make_list_ptr370 = (&((* (* ((struct struct0x08526d78 **) _sharp_make_list_ptr370))).cdr))),
 ((void) 0);
-(prec = ((int) ((* ((struct struct0x08514f60 *) cr)).max) + (int) 1));
+(prec = ((int) ((* ((struct struct0x08515d38 *) cr)).max) + (int) 1));
 })
 ;
 ((void) 0);_sharp__sharp_loop374_continue377:((void) 0);
-(_sharp_iterator373 = ((* ((struct struct0x08517b50 *) _sharp_iterator373)).cdr));
+(_sharp_iterator373 = ((* ((struct struct0x08518aa8 *) _sharp_iterator373)).cdr));
 })
 ,
 ({goto _sharp__sharp_loop374_begin378;}),
@@ -436,13 +436,13 @@ struct struct0x08514f60 *_sharp_pointer_alloc376;
 ({if( ((int) prec < (int) 256))
 {
 ({
-struct struct0x08514f60 *_sharp_pointer_alloc379;
+struct struct0x08515d38 *_sharp_pointer_alloc379;
 ((* _sharp_make_list_ptr370) = (alloc_cons_cell)()),
-(((* (* ((struct struct0x08525e00 **) _sharp_make_list_ptr370))).car) = ((void *) ((Character_Range__type ) _sharp_pointer_alloc379,
-(_sharp_pointer_alloc379 = ((struct struct0x08514f60 *) (GC_alloc)(8))),
-((* _sharp_pointer_alloc379) = ((struct struct0x08514f60 ){prec, 255})),
-((struct struct0x08514f60 *) _sharp_pointer_alloc379)))),
-(_sharp_make_list_ptr370 = (&((* (* ((struct struct0x08525e00 **) _sharp_make_list_ptr370))).cdr))),
+(((* (* ((struct struct0x08526d78 **) _sharp_make_list_ptr370))).car) = ((void *) ((Character_Range__type ) _sharp_pointer_alloc379,
+(_sharp_pointer_alloc379 = ((struct struct0x08515d38 *) (GC_alloc)(8))),
+((* _sharp_pointer_alloc379) = ((struct struct0x08515d38 ){prec, 255})),
+((struct struct0x08515d38 *) _sharp_pointer_alloc379)))),
+(_sharp_make_list_ptr370 = (&((* (* ((struct struct0x08526d78 **) _sharp_make_list_ptr370))).cdr))),
 ((void) 0);
 })
 ;}})
@@ -483,18 +483,18 @@ Character_Range__type cr;
 {
 ({goto _sharp__sharp_loop382_end383;});}})
 ;
-(cr = ((* ((struct struct0x08517b50 *) _sharp_iterator381)).car));
+(cr = ((* ((struct struct0x08518aa8 *) _sharp_iterator381)).car));
 ({
 (print_String)(((String__type) &__string_7)),
-(print_Int_Dec)(((* ((struct struct0x08514f60 *) cr)).min)),
+(print_Int_Dec)(((* ((struct struct0x08515d38 *) cr)).min)),
 (print_String)(((String__type) &__string_8)),
-(print_Int_Dec)(((* ((struct struct0x08514f60 *) cr)).max)),
+(print_Int_Dec)(((* ((struct struct0x08515d38 *) cr)).max)),
 (print_String)(((String__type) &__string_9)),
 (maybe_flush)();
 })
 ;
 ((void) 0);_sharp__sharp_loop382_continue384:((void) 0);
-(_sharp_iterator381 = ((* ((struct struct0x08517b50 *) _sharp_iterator381)).cdr));
+(_sharp_iterator381 = ((* ((struct struct0x08518aa8 *) _sharp_iterator381)).cdr));
 })
 ,
 ({goto _sharp__sharp_loop382_begin385;}),
@@ -535,10 +535,10 @@ Character_Range__type cr;
 {
 ({goto _sharp__sharp_loop390_end391;});}})
 ;
-(cr = ((* ((struct struct0x08517b50 *) _sharp_iterator389)).car));
+(cr = ((* ((struct struct0x08518aa8 *) _sharp_iterator389)).car));
 ({
 Form__type cond;
-(cond = (((((* ((struct struct0x08514f60 *) cr)).min) == ((* ((struct struct0x08514f60 *) cr)).max)))?
+(cond = (((((* ((struct struct0x08515d38 *) cr)).min) == ((* ((struct struct0x08515d38 *) cr)).max)))?
 (({
 (Compound_Form)(intern( "=="), ({
 struct struct0x08066050 *_sharp_pair_393;
@@ -549,7 +549,7 @@ _sharp_pair_393,
 struct struct0x08066050 *_sharp_pair_392;
 _sharp_pair_392,
 (_sharp_pair_392 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_392).car) = (Int_Form)(((* ((struct struct0x08514f60 *) cr)).min)));
+(((* _sharp_pair_392).car) = (Int_Form)(((* ((struct struct0x08515d38 *) cr)).min)));
 (((* _sharp_pair_392).cdr) = ((List__O__Form__C____type__type ) 0));
 ((List__O__Form__C____type__type ) _sharp_pair_392);
 })
@@ -573,7 +573,7 @@ _sharp_pair_395,
 struct struct0x08066050 *_sharp_pair_394;
 _sharp_pair_394,
 (_sharp_pair_394 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_394).car) = (Int_Form)(((* ((struct struct0x08514f60 *) cr)).min)));
+(((* _sharp_pair_394).car) = (Int_Form)(((* ((struct struct0x08515d38 *) cr)).min)));
 (((* _sharp_pair_394).cdr) = ((List__O__Form__C____type__type ) 0));
 ((List__O__Form__C____type__type ) _sharp_pair_394);
 })
@@ -594,7 +594,7 @@ _sharp_pair_397,
 struct struct0x08066050 *_sharp_pair_396;
 _sharp_pair_396,
 (_sharp_pair_396 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_396).car) = (Int_Form)(((* ((struct struct0x08514f60 *) cr)).max)));
+(((* _sharp_pair_396).car) = (Int_Form)(((* ((struct struct0x08515d38 *) cr)).max)));
 (((* _sharp_pair_396).cdr) = ((List__O__Form__C____type__type ) 0));
 ((List__O__Form__C____type__type ) _sharp_pair_396);
 })
@@ -631,7 +631,7 @@ _sharp_pair_400,
 })
 ;
 ((void) 0);_sharp__sharp_loop390_continue402:((void) 0);
-(_sharp_iterator389 = ((* ((struct struct0x08517b50 *) _sharp_iterator389)).cdr));
+(_sharp_iterator389 = ((* ((struct struct0x08518aa8 *) _sharp_iterator389)).cdr));
 })
 ,
 ({goto _sharp__sharp_loop390_begin403;}),
@@ -881,13 +881,107 @@ Output_Descriptor__type save_od_;
 })
 ):
 (({
-(cs = ((Character_Set__type ) (gethash)(((void *) rule_name), ((Hash_Table__type ) head_set_hash))));
+({if( ((((Hash__O__Symbol__c__Character_Set__C____type__type ) (gethash)(((void *) grammar_name), ((Hash_Table__type ) head_set_hash))) != ((Hash__O__Symbol__c__Character_Set__C____type__type ) 0)) == ((Bool__type ) 0)))
+{
+({
+({
+Output_Descriptor__type save_od_;
+(save_od_ = current_output_descriptor);
+(current_output_descriptor = stderr_output_descriptor);
+(print_String)(((String__type) &__string_21)),
+(maybe_flush)();
+(flush)();
+(current_output_descriptor = save_od_);
+((void) 0);
+})
+;
+(print_form)((Compound_Form)(intern( "!="), ({
+struct struct0x08066050 *_sharp_pair_424;
+_sharp_pair_424,
+(_sharp_pair_424 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
+(((* _sharp_pair_424).car) = (Compound_Form)(intern( "[]"), ({
+struct struct0x08066050 *_sharp_pair_418;
+_sharp_pair_418,
+(_sharp_pair_418 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
+(((* _sharp_pair_418).car) = (Id_Form)(intern( "head_set_hash")));
+(((* _sharp_pair_418).cdr) = ({
+struct struct0x08066050 *_sharp_pair_417;
+_sharp_pair_417,
+(_sharp_pair_417 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
+(((* _sharp_pair_417).car) = (Id_Form)(intern( "grammar_name")));
+(((* _sharp_pair_417).cdr) = ((List__O__Form__C____type__type ) 0));
+((List__O__Form__C____type__type ) _sharp_pair_417);
+})
+);
+((List__O__Form__C____type__type ) _sharp_pair_418);
+})
+));
+(((* _sharp_pair_424).cdr) = ({
+struct struct0x08066050 *_sharp_pair_423;
+_sharp_pair_423,
+(_sharp_pair_423 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
+(((* _sharp_pair_423).car) = (Compound_Form)(intern( "cast"), ({
+struct struct0x08066050 *_sharp_pair_422;
+_sharp_pair_422,
+(_sharp_pair_422 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
+(((* _sharp_pair_422).car) = (Compound_Form)(intern( "Hash"), ({
+struct struct0x08066050 *_sharp_pair_420;
+_sharp_pair_420,
+(_sharp_pair_420 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
+(((* _sharp_pair_420).car) = (Id_Form)(intern( "Symbol")));
+(((* _sharp_pair_420).cdr) = ({
+struct struct0x08066050 *_sharp_pair_419;
+_sharp_pair_419,
+(_sharp_pair_419 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
+(((* _sharp_pair_419).car) = (Id_Form)(intern( "Character_Set")));
+(((* _sharp_pair_419).cdr) = ((List__O__Form__C____type__type ) 0));
+((List__O__Form__C____type__type ) _sharp_pair_419);
+})
+);
+((List__O__Form__C____type__type ) _sharp_pair_420);
+})
+));
+(((* _sharp_pair_422).cdr) = ({
+struct struct0x08066050 *_sharp_pair_421;
+_sharp_pair_421,
+(_sharp_pair_421 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
+(((* _sharp_pair_421).car) = (Int_Form)(0));
+(((* _sharp_pair_421).cdr) = ((List__O__Form__C____type__type ) 0));
+((List__O__Form__C____type__type ) _sharp_pair_421);
+})
+);
+((List__O__Form__C____type__type ) _sharp_pair_422);
+})
+));
+(((* _sharp_pair_423).cdr) = ((List__O__Form__C____type__type ) 0));
+((List__O__Form__C____type__type ) _sharp_pair_423);
+})
+);
+((List__O__Form__C____type__type ) _sharp_pair_424);
+})
+));
+({
+Output_Descriptor__type save_od_;
+(save_od_ = current_output_descriptor);
+(current_output_descriptor = stderr_output_descriptor);
+(print_String)(((String__type) &__string_22)),
+(maybe_flush)();
+(flush)();
+(current_output_descriptor = save_od_);
+((void) 0);
+})
+;
+(exit)(2);
+})
+;}})
+;
+(cs = ((Character_Set__type ) (gethash)(((void *) rule_name), ((Hash_Table__type ) ((Hash__O__Symbol__c__Character_Set__C____type__type ) (gethash)(((void *) grammar_name), ((Hash_Table__type ) head_set_hash)))))));
 ({if( (cs == ((Character_Set__type ) 0)))
 {
 ({
 Form__type named_rule;
-((Character_Set__type ) (puthash)(((void *) rule_name), ((void *) ((Character_Set__type ) (- (int) 1))), ((Hash_Table__type ) head_set_hash)));
-(named_rule = ((Form__type ) (gethash)(((void *) rule_name), ((Hash_Table__type ) rules_hash))));
+((Character_Set__type ) (puthash)(((void *) rule_name), ((void *) ((Character_Set__type ) (- (int) 1))), ((Hash_Table__type ) ((Hash__O__Symbol__c__Character_Set__C____type__type ) (gethash)(((void *) grammar_name), ((Hash_Table__type ) head_set_hash))))));
+(named_rule = ((Form__type ) (gethash)(((void *) rule_name), ((Hash_Table__type ) ((Hash__O__Symbol__c__Form__C____type__type ) (gethash)(((void *) grammar_name), ((Hash_Table__type ) rules_hash)))))));
 ({if( (named_rule == ((Form__type ) 0)))
 {
 ({
@@ -896,10 +990,10 @@ Form__type named_rule;
 Output_Descriptor__type save_od_;
 (save_od_ = current_output_descriptor);
 (current_output_descriptor = stderr_output_descriptor);
-(print_String)(((String__type) &__string_21)),
-(print_String)(((String__type) &__string_22)),
-(print_Symbol)(rule_name),
 (print_String)(((String__type) &__string_23)),
+(print_String)(((String__type) &__string_24)),
+(print_Symbol)(rule_name),
+(print_String)(((String__type) &__string_25)),
 (maybe_flush)();
 (flush)();
 (current_output_descriptor = save_od_);
@@ -916,15 +1010,15 @@ Output_Descriptor__type save_od_;
 ({if( (cs == ((Character_Set__type ) (- (int) 1))))
 {
 ({
-(print_String)(((String__type) &__string_24)),
+(print_String)(((String__type) &__string_26)),
 (print_Symbol)(rule_name),
-(print_String)(((String__type) &__string_25)),
+(print_String)(((String__type) &__string_27)),
 (maybe_flush)();
 (exit)(3);
 })
 ;}})
 ;
-((Character_Set__type ) (puthash)(((void *) rule_name), ((void *) cs), ((Hash_Table__type ) head_set_hash)));
+((Character_Set__type ) (puthash)(((void *) rule_name), ((void *) cs), ((Hash_Table__type ) ((Hash__O__Symbol__c__Character_Set__C____type__type ) (gethash)(((void *) grammar_name), ((Hash_Table__type ) head_set_hash))))));
 })
 ;}})
 ;
@@ -935,26 +1029,26 @@ Output_Descriptor__type save_od_;
 ):
 ((((is_string_form)(parse_form))?
 (({
-struct struct0x08514f60 *_sharp_pointer_alloc417;
+struct struct0x08515d38 *_sharp_pointer_alloc425;
 Int__type head;
 (head = (string_element)(((* ((struct struct0x0805bab0 *) ((String_Form__type ) parse_form))).value), 0));
 (cs = ((Character_Set__type ) ({
-struct struct0x08517b50 *_sharp_pair_418;
-_sharp_pair_418,
-(_sharp_pair_418 = ((struct struct0x08517b50 *) (alloc_cons_cell)()));
-(((* _sharp_pair_418).car) = ((Character_Range__type ) _sharp_pointer_alloc417,
-(_sharp_pointer_alloc417 = ((struct struct0x08514f60 *) (GC_alloc)(8))),
-((* _sharp_pointer_alloc417) = ((struct struct0x08514f60 ){head, head})),
-((struct struct0x08514f60 *) _sharp_pointer_alloc417)));
-(((* _sharp_pair_418).cdr) = ((List__O__Character_Range__C____type__type ) 0));
-((List__O__Character_Range__C____type__type ) _sharp_pair_418);
+struct struct0x08518aa8 *_sharp_pair_426;
+_sharp_pair_426,
+(_sharp_pair_426 = ((struct struct0x08518aa8 *) (alloc_cons_cell)()));
+(((* _sharp_pair_426).car) = ((Character_Range__type ) _sharp_pointer_alloc425,
+(_sharp_pointer_alloc425 = ((struct struct0x08515d38 *) (GC_alloc)(8))),
+((* _sharp_pointer_alloc425) = ((struct struct0x08515d38 ){head, head})),
+((struct struct0x08515d38 *) _sharp_pointer_alloc425)));
+(((* _sharp_pair_426).cdr) = ((List__O__Character_Range__C____type__type ) 0));
+((List__O__Character_Range__C____type__type ) _sharp_pair_426);
 })
 ));
 ((void) 0);
 })
 ):
 (({
-(print_String)(((String__type) &__string_26)),
+(print_String)(((String__type) &__string_28)),
 (maybe_flush)();
 (print_form)(parse_form);
 (exit)(3);
@@ -993,12 +1087,12 @@ Form__type right_form;
 {
 ({
 (right_form = (Compound_Form)(intern( "make_list"), ({
-struct struct0x08066050 *_sharp_pair_419;
-_sharp_pair_419,
-(_sharp_pair_419 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_419).car) = right_form);
-(((* _sharp_pair_419).cdr) = ((List__O__Form__C____type__type ) 0));
-((List__O__Form__C____type__type ) _sharp_pair_419);
+struct struct0x08066050 *_sharp_pair_427;
+_sharp_pair_427,
+(_sharp_pair_427 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
+(((* _sharp_pair_427).car) = right_form);
+(((* _sharp_pair_427).cdr) = ((List__O__Form__C____type__type ) 0));
+((List__O__Form__C____type__type ) _sharp_pair_427);
 })
 ));
 })
@@ -1010,40 +1104,40 @@ _sharp_pair_419,
 ({
 ((Type__type ) (puthash)(((void *) id), ((void *) ((Type__type ) 1)), ((Hash_Table__type ) id_used)));
 (expand)((Compound_Form)(intern( "let"), ({
-struct struct0x08066050 *_sharp_pair_421;
-_sharp_pair_421,
-(_sharp_pair_421 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_421).car) = ((Form__type ) id_form));
-(((* _sharp_pair_421).cdr) = ({
-struct struct0x08066050 *_sharp_pair_420;
-_sharp_pair_420,
-(_sharp_pair_420 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_420).car) = (((struct struct0x08064b18 ) ((* ((struct struct0x08064d30 *) ((Real_Type__type ) ((* ((struct struct0x0805f910 *) exp_right_form)).type)))).common_)).type_form));
-(((* _sharp_pair_420).cdr) = ((List__O__Form__C____type__type ) 0));
-((List__O__Form__C____type__type ) _sharp_pair_420);
+struct struct0x08066050 *_sharp_pair_429;
+_sharp_pair_429,
+(_sharp_pair_429 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
+(((* _sharp_pair_429).car) = ((Form__type ) id_form));
+(((* _sharp_pair_429).cdr) = ({
+struct struct0x08066050 *_sharp_pair_428;
+_sharp_pair_428,
+(_sharp_pair_428 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
+(((* _sharp_pair_428).car) = (((struct struct0x08064b18 ) ((* ((struct struct0x08064d30 *) ((Real_Type__type ) ((* ((struct struct0x0805f910 *) exp_right_form)).type)))).common_)).type_form));
+(((* _sharp_pair_428).cdr) = ((List__O__Form__C____type__type ) 0));
+((List__O__Form__C____type__type ) _sharp_pair_428);
 })
 );
-((List__O__Form__C____type__type ) _sharp_pair_421);
+((List__O__Form__C____type__type ) _sharp_pair_429);
 })
 ));
 })
 ;}})
 ;
 (Compound_Form)(intern( "="), ({
-struct struct0x08066050 *_sharp_pair_423;
-_sharp_pair_423,
-(_sharp_pair_423 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_423).car) = left_form);
-(((* _sharp_pair_423).cdr) = ({
-struct struct0x08066050 *_sharp_pair_422;
-_sharp_pair_422,
-(_sharp_pair_422 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_422).car) = ((Form__type ) exp_right_form));
-(((* _sharp_pair_422).cdr) = ((List__O__Form__C____type__type ) 0));
-((List__O__Form__C____type__type ) _sharp_pair_422);
+struct struct0x08066050 *_sharp_pair_431;
+_sharp_pair_431,
+(_sharp_pair_431 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
+(((* _sharp_pair_431).car) = left_form);
+(((* _sharp_pair_431).cdr) = ({
+struct struct0x08066050 *_sharp_pair_430;
+_sharp_pair_430,
+(_sharp_pair_430 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
+(((* _sharp_pair_430).car) = ((Form__type ) exp_right_form));
+(((* _sharp_pair_430).cdr) = ((List__O__Form__C____type__type ) 0));
+((List__O__Form__C____type__type ) _sharp_pair_430);
 })
 );
-((List__O__Form__C____type__type ) _sharp_pair_423);
+((List__O__Form__C____type__type ) _sharp_pair_431);
 })
 );
 })
@@ -1055,40 +1149,40 @@ _sharp_pair_422,
 ):
 ((((((* ((struct struct0x0805eea0 *) cf)).head) == intern( " ")))?
 (({
-void **_sharp_make_list_ptr425;
+void **_sharp_make_list_ptr433;
 List__O__Form__C____type__type fl;
 (fl = ({
-List__O__Form__C____type__type _sharp_make_list424;
-_sharp_make_list424,
-_sharp_make_list_ptr425,
-(_sharp_make_list_ptr425 = ((void *) (&_sharp_make_list424))),
+List__O__Form__C____type__type _sharp_make_list432;
+_sharp_make_list432,
+_sharp_make_list_ptr433,
+(_sharp_make_list_ptr433 = ((void *) (&_sharp_make_list432))),
 ({
 List__O__Form__C____type__type grammar_rule_it;
 (grammar_rule_it = ((* ((struct struct0x0805eea0 *) cf)).form_list));
-((void) 0);_sharp__sharp_loop426_begin428:((void) 0),
+((void) 0);_sharp__sharp_loop434_begin436:((void) 0),
 ({if( (!((grammar_rule_it != ((List__O__Form__C____type__type ) 0)))))
 {
-({goto _sharp__sharp_loop426_end427;});}})
+({goto _sharp__sharp_loop434_end435;});}})
 ,
 ({
 List__O__Form__C____type__type grammar_tail;
 Form__type grammar_rule;
 (grammar_rule = ((* ((struct struct0x0805f098 *) grammar_rule_it)).head));
 (grammar_tail = ((* ((struct struct0x0805f098 *) grammar_rule_it)).tail));
-((* _sharp_make_list_ptr425) = (alloc_cons_cell)()),
-(((* (* ((struct struct0x08525e00 **) _sharp_make_list_ptr425))).car) = ((void *) (grammar_expander_rec)(grammar_rule, grammar_tail))),
-(_sharp_make_list_ptr425 = (&((* (* ((struct struct0x08525e00 **) _sharp_make_list_ptr425))).cdr))),
+((* _sharp_make_list_ptr433) = (alloc_cons_cell)()),
+(((* (* ((struct struct0x08526d78 **) _sharp_make_list_ptr433))).car) = ((void *) (grammar_expander_rec)(grammar_rule, grammar_tail))),
+(_sharp_make_list_ptr433 = (&((* (* ((struct struct0x08526d78 **) _sharp_make_list_ptr433))).cdr))),
 ((void) 0);
 (grammar_rule_it = grammar_tail);
 })
 ,
-({goto _sharp__sharp_loop426_begin428;}),
-((void) 0);_sharp__sharp_loop426_end427:((void) 0);
+({goto _sharp__sharp_loop434_begin436;}),
+((void) 0);_sharp__sharp_loop434_end435:((void) 0);
 ((void) 0);
 })
 ,
-((* _sharp_make_list_ptr425) = ((void *) 0)),
-_sharp_make_list424;
+((* _sharp_make_list_ptr433) = ((void *) 0)),
+_sharp_make_list432;
 })
 );
 (Compound_Form)(intern( "seq"), fl);
@@ -1099,87 +1193,33 @@ _sharp_make_list424;
 Form__type else_form;
 Form__type peeked_char_form;
 Symbol__type peeked_char;
-(peeked_char = (gensym)(((String__type) &__string_27)));
+(peeked_char = (gensym)(((String__type) &__string_29)));
 (peeked_char_form = (Id_Form)(peeked_char));
 (else_form = (Compound_Form)(intern( "parse_error"), ((List__O__Form__C____type__type ) 0)));
 ({
-List__O__Form__C____type__type _sharp_iterator430;
-(_sharp_iterator430 = ((* ((struct struct0x0805eea0 *) cf)).form_list));
-((void) 0);_sharp__sharp_loop431_begin437:((void) 0),
+List__O__Form__C____type__type _sharp_iterator438;
+(_sharp_iterator438 = ((* ((struct struct0x0805eea0 *) cf)).form_list));
+((void) 0);_sharp__sharp_loop439_begin445:((void) 0),
 ({
 Form__type grammar_rule;
-({if( (_sharp_iterator430 == ((List__O__Form__C____type__type ) 0)))
+({if( (_sharp_iterator438 == ((List__O__Form__C____type__type ) 0)))
 {
-({goto _sharp__sharp_loop431_end432;});}})
+({goto _sharp__sharp_loop439_end440;});}})
 ;
-(grammar_rule = ((* ((struct struct0x08066050 *) _sharp_iterator430)).car));
+(grammar_rule = ((* ((struct struct0x08066050 *) _sharp_iterator438)).car));
 ({
 Character_Set__type char_set;
 (char_set = (head_set)(grammar_rule, next_rules));
 (else_form = (Compound_Form)(intern( "if"), ({
-struct struct0x08066050 *_sharp_pair_435;
-_sharp_pair_435,
-(_sharp_pair_435 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_435).car) = (is_in_Character_Set_condition)(peeked_char_form, char_set));
-(((* _sharp_pair_435).cdr) = ({
-struct struct0x08066050 *_sharp_pair_434;
-_sharp_pair_434,
-(_sharp_pair_434 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_434).car) = (grammar_expander_rec)(grammar_rule, next_rules));
-(((* _sharp_pair_434).cdr) = ({
-struct struct0x08066050 *_sharp_pair_433;
-_sharp_pair_433,
-(_sharp_pair_433 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_433).car) = else_form);
-(((* _sharp_pair_433).cdr) = ((List__O__Form__C____type__type ) 0));
-((List__O__Form__C____type__type ) _sharp_pair_433);
-})
-);
-((List__O__Form__C____type__type ) _sharp_pair_434);
-})
-);
-((List__O__Form__C____type__type ) _sharp_pair_435);
-})
-));
-})
-;
-((void) 0);_sharp__sharp_loop431_continue436:((void) 0);
-(_sharp_iterator430 = ((* ((struct struct0x08066050 *) _sharp_iterator430)).cdr));
-})
-,
-({goto _sharp__sharp_loop431_begin437;}),
-((void) 0);_sharp__sharp_loop431_end432:((void) 0);
-})
-;
-(Compound_Form)(intern( "block"), ({
+struct struct0x08066050 *_sharp_pair_443;
+_sharp_pair_443,
+(_sharp_pair_443 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
+(((* _sharp_pair_443).car) = (is_in_Character_Set_condition)(peeked_char_form, char_set));
+(((* _sharp_pair_443).cdr) = ({
 struct struct0x08066050 *_sharp_pair_442;
 _sharp_pair_442,
 (_sharp_pair_442 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_442).car) = (Compound_Form)(intern( "="), ({
-struct struct0x08066050 *_sharp_pair_440;
-_sharp_pair_440,
-(_sharp_pair_440 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_440).car) = (Compound_Form)(intern( "let"), ({
-struct struct0x08066050 *_sharp_pair_438;
-_sharp_pair_438,
-(_sharp_pair_438 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_438).car) = peeked_char_form);
-(((* _sharp_pair_438).cdr) = ((List__O__Form__C____type__type ) 0));
-((List__O__Form__C____type__type ) _sharp_pair_438);
-})
-));
-(((* _sharp_pair_440).cdr) = ({
-struct struct0x08066050 *_sharp_pair_439;
-_sharp_pair_439,
-(_sharp_pair_439 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_439).car) = (Compound_Form)(intern( "peek_char"), ((List__O__Form__C____type__type ) 0)));
-(((* _sharp_pair_439).cdr) = ((List__O__Form__C____type__type ) 0));
-((List__O__Form__C____type__type ) _sharp_pair_439);
-})
-);
-((List__O__Form__C____type__type ) _sharp_pair_440);
-})
-));
+(((* _sharp_pair_442).car) = (grammar_expander_rec)(grammar_rule, next_rules));
 (((* _sharp_pair_442).cdr) = ({
 struct struct0x08066050 *_sharp_pair_441;
 _sharp_pair_441,
@@ -1192,64 +1232,32 @@ _sharp_pair_441,
 ((List__O__Form__C____type__type ) _sharp_pair_442);
 })
 );
-})
-):
-((((((* ((struct struct0x0805eea0 *) cf)).head) == intern( "*")))?
-(({
-Form__type repeated_rule;
-Character_Set__type char_set;
-Form__type peeked_char_form;
-Symbol__type peeked_char;
-(repeated_rule = ((* ((struct struct0x0805f098 *) ((* ((struct struct0x0805eea0 *) cf)).form_list))).head));
-(char_set = (head_set)(repeated_rule, ((List__O__Form__C____type__type ) 0)));
-(peeked_char = (gensym)(((String__type) &__string_28)));
-(peeked_char_form = (Id_Form)(peeked_char));
-(Compound_Form)(intern( "loop"), ({
-struct struct0x08066050 *_sharp_pair_452;
-_sharp_pair_452,
-(_sharp_pair_452 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_452).car) = (Compound_Form)(intern( "block"), ({
-struct struct0x08066050 *_sharp_pair_451;
-_sharp_pair_451,
-(_sharp_pair_451 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_451).car) = (Compound_Form)(intern( "="), ({
-struct struct0x08066050 *_sharp_pair_445;
-_sharp_pair_445,
-(_sharp_pair_445 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_445).car) = (Compound_Form)(intern( "let"), ({
-struct struct0x08066050 *_sharp_pair_443;
-_sharp_pair_443,
-(_sharp_pair_443 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_443).car) = peeked_char_form);
-(((* _sharp_pair_443).cdr) = ((List__O__Form__C____type__type ) 0));
 ((List__O__Form__C____type__type ) _sharp_pair_443);
 })
 ));
-(((* _sharp_pair_445).cdr) = ({
-struct struct0x08066050 *_sharp_pair_444;
-_sharp_pair_444,
-(_sharp_pair_444 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_444).car) = (Compound_Form)(intern( "peek_char"), ((List__O__Form__C____type__type ) 0)));
-(((* _sharp_pair_444).cdr) = ((List__O__Form__C____type__type ) 0));
-((List__O__Form__C____type__type ) _sharp_pair_444);
 })
-);
-((List__O__Form__C____type__type ) _sharp_pair_445);
+;
+((void) 0);_sharp__sharp_loop439_continue444:((void) 0);
+(_sharp_iterator438 = ((* ((struct struct0x08066050 *) _sharp_iterator438)).cdr));
 })
-));
-(((* _sharp_pair_451).cdr) = ({
+,
+({goto _sharp__sharp_loop439_begin445;}),
+((void) 0);_sharp__sharp_loop439_end440:((void) 0);
+})
+;
+(Compound_Form)(intern( "block"), ({
 struct struct0x08066050 *_sharp_pair_450;
 _sharp_pair_450,
 (_sharp_pair_450 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_450).car) = (Compound_Form)(intern( "if"), ({
+(((* _sharp_pair_450).car) = (Compound_Form)(intern( "="), ({
 struct struct0x08066050 *_sharp_pair_448;
 _sharp_pair_448,
 (_sharp_pair_448 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_448).car) = (Compound_Form)(intern( "@not"), ({
+(((* _sharp_pair_448).car) = (Compound_Form)(intern( "let"), ({
 struct struct0x08066050 *_sharp_pair_446;
 _sharp_pair_446,
 (_sharp_pair_446 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_446).car) = (is_in_Character_Set_condition)(peeked_char_form, char_set));
+(((* _sharp_pair_446).car) = peeked_char_form);
 (((* _sharp_pair_446).cdr) = ((List__O__Form__C____type__type ) 0));
 ((List__O__Form__C____type__type ) _sharp_pair_446);
 })
@@ -1258,7 +1266,7 @@ _sharp_pair_446,
 struct struct0x08066050 *_sharp_pair_447;
 _sharp_pair_447,
 (_sharp_pair_447 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_447).car) = (Compound_Form)(intern( "break"), ((List__O__Form__C____type__type ) 0)));
+(((* _sharp_pair_447).car) = (Compound_Form)(intern( "peek_char"), ((List__O__Form__C____type__type ) 0)));
 (((* _sharp_pair_447).cdr) = ((List__O__Form__C____type__type ) 0));
 ((List__O__Form__C____type__type ) _sharp_pair_447);
 })
@@ -1270,7 +1278,7 @@ _sharp_pair_447,
 struct struct0x08066050 *_sharp_pair_449;
 _sharp_pair_449,
 (_sharp_pair_449 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_449).car) = (grammar_expander_rec)(repeated_rule, next_rules));
+(((* _sharp_pair_449).car) = else_form);
 (((* _sharp_pair_449).cdr) = ((List__O__Form__C____type__type ) 0));
 ((List__O__Form__C____type__type ) _sharp_pair_449);
 })
@@ -1278,11 +1286,97 @@ _sharp_pair_449,
 ((List__O__Form__C____type__type ) _sharp_pair_450);
 })
 );
+})
+):
+((((((* ((struct struct0x0805eea0 *) cf)).head) == intern( "*")))?
+(({
+Form__type repeated_rule;
+Character_Set__type char_set;
+Form__type peeked_char_form;
+Symbol__type peeked_char;
+(repeated_rule = ((* ((struct struct0x0805f098 *) ((* ((struct struct0x0805eea0 *) cf)).form_list))).head));
+(char_set = (head_set)(repeated_rule, ((List__O__Form__C____type__type ) 0)));
+(peeked_char = (gensym)(((String__type) &__string_30)));
+(peeked_char_form = (Id_Form)(peeked_char));
+(Compound_Form)(intern( "loop"), ({
+struct struct0x08066050 *_sharp_pair_460;
+_sharp_pair_460,
+(_sharp_pair_460 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
+(((* _sharp_pair_460).car) = (Compound_Form)(intern( "block"), ({
+struct struct0x08066050 *_sharp_pair_459;
+_sharp_pair_459,
+(_sharp_pair_459 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
+(((* _sharp_pair_459).car) = (Compound_Form)(intern( "="), ({
+struct struct0x08066050 *_sharp_pair_453;
+_sharp_pair_453,
+(_sharp_pair_453 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
+(((* _sharp_pair_453).car) = (Compound_Form)(intern( "let"), ({
+struct struct0x08066050 *_sharp_pair_451;
+_sharp_pair_451,
+(_sharp_pair_451 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
+(((* _sharp_pair_451).car) = peeked_char_form);
+(((* _sharp_pair_451).cdr) = ((List__O__Form__C____type__type ) 0));
 ((List__O__Form__C____type__type ) _sharp_pair_451);
 })
 ));
+(((* _sharp_pair_453).cdr) = ({
+struct struct0x08066050 *_sharp_pair_452;
+_sharp_pair_452,
+(_sharp_pair_452 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
+(((* _sharp_pair_452).car) = (Compound_Form)(intern( "peek_char"), ((List__O__Form__C____type__type ) 0)));
 (((* _sharp_pair_452).cdr) = ((List__O__Form__C____type__type ) 0));
 ((List__O__Form__C____type__type ) _sharp_pair_452);
+})
+);
+((List__O__Form__C____type__type ) _sharp_pair_453);
+})
+));
+(((* _sharp_pair_459).cdr) = ({
+struct struct0x08066050 *_sharp_pair_458;
+_sharp_pair_458,
+(_sharp_pair_458 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
+(((* _sharp_pair_458).car) = (Compound_Form)(intern( "if"), ({
+struct struct0x08066050 *_sharp_pair_456;
+_sharp_pair_456,
+(_sharp_pair_456 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
+(((* _sharp_pair_456).car) = (Compound_Form)(intern( "@not"), ({
+struct struct0x08066050 *_sharp_pair_454;
+_sharp_pair_454,
+(_sharp_pair_454 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
+(((* _sharp_pair_454).car) = (is_in_Character_Set_condition)(peeked_char_form, char_set));
+(((* _sharp_pair_454).cdr) = ((List__O__Form__C____type__type ) 0));
+((List__O__Form__C____type__type ) _sharp_pair_454);
+})
+));
+(((* _sharp_pair_456).cdr) = ({
+struct struct0x08066050 *_sharp_pair_455;
+_sharp_pair_455,
+(_sharp_pair_455 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
+(((* _sharp_pair_455).car) = (Compound_Form)(intern( "break"), ((List__O__Form__C____type__type ) 0)));
+(((* _sharp_pair_455).cdr) = ((List__O__Form__C____type__type ) 0));
+((List__O__Form__C____type__type ) _sharp_pair_455);
+})
+);
+((List__O__Form__C____type__type ) _sharp_pair_456);
+})
+));
+(((* _sharp_pair_458).cdr) = ({
+struct struct0x08066050 *_sharp_pair_457;
+_sharp_pair_457,
+(_sharp_pair_457 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
+(((* _sharp_pair_457).car) = (grammar_expander_rec)(repeated_rule, next_rules));
+(((* _sharp_pair_457).cdr) = ((List__O__Form__C____type__type ) 0));
+((List__O__Form__C____type__type ) _sharp_pair_457);
+})
+);
+((List__O__Form__C____type__type ) _sharp_pair_458);
+})
+);
+((List__O__Form__C____type__type ) _sharp_pair_459);
+})
+));
+(((* _sharp_pair_460).cdr) = ((List__O__Form__C____type__type ) 0));
+((List__O__Form__C____type__type ) _sharp_pair_460);
 })
 );
 })
@@ -1295,63 +1389,80 @@ Symbol__type peeked_char;
 Form__type maybe_rule;
 (maybe_rule = ((* ((struct struct0x0805f098 *) ((* ((struct struct0x0805eea0 *) cf)).form_list))).head));
 (char_set = (head_set)(maybe_rule, ((List__O__Form__C____type__type ) 0)));
-(peeked_char = (gensym)(((String__type) &__string_29)));
+(peeked_char = (gensym)(((String__type) &__string_31)));
 (peeked_char_form = (Id_Form)(peeked_char));
 (Compound_Form)(intern( "block"), ({
-struct struct0x08066050 *_sharp_pair_459;
-_sharp_pair_459,
-(_sharp_pair_459 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_459).car) = (Compound_Form)(intern( "="), ({
-struct struct0x08066050 *_sharp_pair_455;
-_sharp_pair_455,
-(_sharp_pair_455 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_455).car) = (Compound_Form)(intern( "let"), ({
-struct struct0x08066050 *_sharp_pair_453;
-_sharp_pair_453,
-(_sharp_pair_453 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_453).car) = peeked_char_form);
-(((* _sharp_pair_453).cdr) = ((List__O__Form__C____type__type ) 0));
-((List__O__Form__C____type__type ) _sharp_pair_453);
+struct struct0x08066050 *_sharp_pair_467;
+_sharp_pair_467,
+(_sharp_pair_467 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
+(((* _sharp_pair_467).car) = (Compound_Form)(intern( "="), ({
+struct struct0x08066050 *_sharp_pair_463;
+_sharp_pair_463,
+(_sharp_pair_463 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
+(((* _sharp_pair_463).car) = (Compound_Form)(intern( "let"), ({
+struct struct0x08066050 *_sharp_pair_461;
+_sharp_pair_461,
+(_sharp_pair_461 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
+(((* _sharp_pair_461).car) = peeked_char_form);
+(((* _sharp_pair_461).cdr) = ((List__O__Form__C____type__type ) 0));
+((List__O__Form__C____type__type ) _sharp_pair_461);
 })
 ));
-(((* _sharp_pair_455).cdr) = ({
-struct struct0x08066050 *_sharp_pair_454;
-_sharp_pair_454,
-(_sharp_pair_454 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_454).car) = (Compound_Form)(intern( "peek_char"), ((List__O__Form__C____type__type ) 0)));
-(((* _sharp_pair_454).cdr) = ((List__O__Form__C____type__type ) 0));
-((List__O__Form__C____type__type ) _sharp_pair_454);
+(((* _sharp_pair_463).cdr) = ({
+struct struct0x08066050 *_sharp_pair_462;
+_sharp_pair_462,
+(_sharp_pair_462 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
+(((* _sharp_pair_462).car) = (Compound_Form)(intern( "peek_char"), ((List__O__Form__C____type__type ) 0)));
+(((* _sharp_pair_462).cdr) = ((List__O__Form__C____type__type ) 0));
+((List__O__Form__C____type__type ) _sharp_pair_462);
 })
 );
-((List__O__Form__C____type__type ) _sharp_pair_455);
+((List__O__Form__C____type__type ) _sharp_pair_463);
 })
 ));
-(((* _sharp_pair_459).cdr) = ({
-struct struct0x08066050 *_sharp_pair_458;
-_sharp_pair_458,
-(_sharp_pair_458 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_458).car) = (Compound_Form)(intern( "if"), ({
-struct struct0x08066050 *_sharp_pair_457;
-_sharp_pair_457,
-(_sharp_pair_457 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_457).car) = (is_in_Character_Set_condition)(peeked_char_form, char_set));
-(((* _sharp_pair_457).cdr) = ({
-struct struct0x08066050 *_sharp_pair_456;
-_sharp_pair_456,
-(_sharp_pair_456 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_456).car) = (grammar_expander_rec)(maybe_rule, next_rules));
-(((* _sharp_pair_456).cdr) = ((List__O__Form__C____type__type ) 0));
-((List__O__Form__C____type__type ) _sharp_pair_456);
+(((* _sharp_pair_467).cdr) = ({
+struct struct0x08066050 *_sharp_pair_466;
+_sharp_pair_466,
+(_sharp_pair_466 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
+(((* _sharp_pair_466).car) = (Compound_Form)(intern( "if"), ({
+struct struct0x08066050 *_sharp_pair_465;
+_sharp_pair_465,
+(_sharp_pair_465 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
+(((* _sharp_pair_465).car) = (is_in_Character_Set_condition)(peeked_char_form, char_set));
+(((* _sharp_pair_465).cdr) = ({
+struct struct0x08066050 *_sharp_pair_464;
+_sharp_pair_464,
+(_sharp_pair_464 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
+(((* _sharp_pair_464).car) = (grammar_expander_rec)(maybe_rule, next_rules));
+(((* _sharp_pair_464).cdr) = ((List__O__Form__C____type__type ) 0));
+((List__O__Form__C____type__type ) _sharp_pair_464);
 })
 );
-((List__O__Form__C____type__type ) _sharp_pair_457);
+((List__O__Form__C____type__type ) _sharp_pair_465);
 })
 ));
-(((* _sharp_pair_458).cdr) = ((List__O__Form__C____type__type ) 0));
-((List__O__Form__C____type__type ) _sharp_pair_458);
+(((* _sharp_pair_466).cdr) = ((List__O__Form__C____type__type ) 0));
+((List__O__Form__C____type__type ) _sharp_pair_466);
 })
 );
-((List__O__Form__C____type__type ) _sharp_pair_459);
+((List__O__Form__C____type__type ) _sharp_pair_467);
+})
+);
+})
+):
+((((((* ((struct struct0x0805eea0 *) cf)).head) == intern( ".")))?
+(({
+Symbol__type gram_name;
+Symbol__type rule_name;
+(gram_name = ((* ((struct struct0x08059b98 *) ((Id_Form__type ) ((* ((struct struct0x0805f098 *) ((* ((struct struct0x0805eea0 *) cf)).form_list))).head)))).value));
+(rule_name = ((* ((struct struct0x08059b98 *) ((Id_Form__type ) ((* ((struct struct0x0805f098 *) ((* ((struct struct0x0805f098 *) ((* ((struct struct0x0805eea0 *) cf)).form_list))).tail))).head)))).value));
+(Compound_Form)(intern( "funcall"), ({
+struct struct0x08066050 *_sharp_pair_468;
+_sharp_pair_468,
+(_sharp_pair_468 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
+(((* _sharp_pair_468).car) = (Id_Form)((intern_string)((function_name_from_grammar_and_rule)(gram_name, rule_name))));
+(((* _sharp_pair_468).cdr) = ((List__O__Form__C____type__type ) 0));
+((List__O__Form__C____type__type ) _sharp_pair_468);
 })
 );
 })
@@ -1359,7 +1470,7 @@ _sharp_pair_456,
 (({
 (Id_Form)(intern( "imp"));
 })
-))))))))))))));
+))))))))))))))));
 })
 ):
 ((((is_id_form)(parse_form))?
@@ -1369,12 +1480,12 @@ Symbol_Form__type id_form;
 (((((* ((struct struct0x08059b98 *) id_form)).value) == intern( "_")))?
 (({
 (Compound_Form)(intern( "funcall"), ({
-struct struct0x08066050 *_sharp_pair_460;
-_sharp_pair_460,
-(_sharp_pair_460 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_460).car) = (Id_Form)(intern( "get_point_pos")));
-(((* _sharp_pair_460).cdr) = ((List__O__Form__C____type__type ) 0));
-((List__O__Form__C____type__type ) _sharp_pair_460);
+struct struct0x08066050 *_sharp_pair_469;
+_sharp_pair_469,
+(_sharp_pair_469 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
+(((* _sharp_pair_469).car) = (Id_Form)(intern( "get_point_pos")));
+(((* _sharp_pair_469).cdr) = ((List__O__Form__C____type__type ) 0));
+((List__O__Form__C____type__type ) _sharp_pair_469);
 })
 );
 })
@@ -1385,66 +1496,66 @@ _sharp_pair_460,
 })
 ):
 ((Compound_Form)(intern( "funcall"), ({
-struct struct0x08066050 *_sharp_pair_461;
-_sharp_pair_461,
-(_sharp_pair_461 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_461).car) = (Id_Form)((intern_string)((function_name_from_grammar_and_rule)(grammar_name, ((* ((struct struct0x08059b98 *) id_form)).value)))));
-(((* _sharp_pair_461).cdr) = ((List__O__Form__C____type__type ) 0));
-((List__O__Form__C____type__type ) _sharp_pair_461);
+struct struct0x08066050 *_sharp_pair_470;
+_sharp_pair_470,
+(_sharp_pair_470 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
+(((* _sharp_pair_470).car) = (Id_Form)((intern_string)((function_name_from_grammar_and_rule)(grammar_name, ((* ((struct struct0x08059b98 *) id_form)).value)))));
+(((* _sharp_pair_470).cdr) = ((List__O__Form__C____type__type ) 0));
+((List__O__Form__C____type__type ) _sharp_pair_470);
 })
 )))));
 })
 ):
 ((((is_string_form)(parse_form))?
 (({
-void **_sharp_make_list_ptr463;
+void **_sharp_make_list_ptr472;
 List__O__Int__C____type__type cl;
 List__O__Form__C____type__type form_list;
 (cl = (string_to_int_list)(((* ((struct struct0x0805bab0 *) ((String_Form__type ) parse_form))).value)));
 (form_list = ({
-List__O__Form__C____type__type _sharp_make_list462;
-_sharp_make_list462,
-_sharp_make_list_ptr463,
-(_sharp_make_list_ptr463 = ((void *) (&_sharp_make_list462))),
+List__O__Form__C____type__type _sharp_make_list471;
+_sharp_make_list471,
+_sharp_make_list_ptr472,
+(_sharp_make_list_ptr472 = ((void *) (&_sharp_make_list471))),
 ({
 ({
-List__O__Int__C____type__type _sharp_iterator465;
-(_sharp_iterator465 = cl);
-((void) 0);_sharp__sharp_loop466_begin469:((void) 0),
+List__O__Int__C____type__type _sharp_iterator474;
+(_sharp_iterator474 = cl);
+((void) 0);_sharp__sharp_loop475_begin478:((void) 0),
 ({
 Int__type Int;
-({if( (_sharp_iterator465 == ((List__O__Int__C____type__type ) 0)))
+({if( (_sharp_iterator474 == ((List__O__Int__C____type__type ) 0)))
 {
-({goto _sharp__sharp_loop466_end467;});}})
+({goto _sharp__sharp_loop475_end476;});}})
 ;
-(Int = ((* ((struct struct0x0857d6f0 *) _sharp_iterator465)).car));
+(Int = ((* ((struct struct0x08588de0 *) _sharp_iterator474)).car));
 ({
-((* _sharp_make_list_ptr463) = (alloc_cons_cell)()),
-(((* (* ((struct struct0x08525e00 **) _sharp_make_list_ptr463))).car) = ((void *) (Compound_Form)(intern( "read_char"), ((List__O__Form__C____type__type ) 0)))),
-(_sharp_make_list_ptr463 = (&((* (* ((struct struct0x08525e00 **) _sharp_make_list_ptr463))).cdr))),
+((* _sharp_make_list_ptr472) = (alloc_cons_cell)()),
+(((* (* ((struct struct0x08526d78 **) _sharp_make_list_ptr472))).car) = ((void *) (Compound_Form)(intern( "read_char"), ((List__O__Form__C____type__type ) 0)))),
+(_sharp_make_list_ptr472 = (&((* (* ((struct struct0x08526d78 **) _sharp_make_list_ptr472))).cdr))),
 ((void) 0);
 })
 ;
-((void) 0);_sharp__sharp_loop466_continue468:((void) 0);
-(_sharp_iterator465 = ((* ((struct struct0x0857d6f0 *) _sharp_iterator465)).cdr));
+((void) 0);_sharp__sharp_loop475_continue477:((void) 0);
+(_sharp_iterator474 = ((* ((struct struct0x08588de0 *) _sharp_iterator474)).cdr));
 })
 ,
-({goto _sharp__sharp_loop466_begin469;}),
-((void) 0);_sharp__sharp_loop466_end467:((void) 0);
+({goto _sharp__sharp_loop475_begin478;}),
+((void) 0);_sharp__sharp_loop475_end476:((void) 0);
 })
 ;
 ((void) 0);
 })
 ,
-((* _sharp_make_list_ptr463) = ((void *) 0)),
-_sharp_make_list462;
+((* _sharp_make_list_ptr472) = ((void *) 0)),
+_sharp_make_list471;
 })
 );
 (Compound_Form)(intern( "seq"), form_list);
 })
 ):
 (({
-(print_String)(((String__type) &__string_30)),
+(print_String)(((String__type) &__string_32)),
 (maybe_flush)();
 (print_form)(parse_form);
 (Id_Form)(intern( "imp2"));
@@ -1460,76 +1571,113 @@ return ({
 })
 ;}
 
-List__O__Form__C____type__type  grammar_produce_function_definitions(Form__type  grammar_)
+List__O__Form__C____type__type  expand_grammar_list(List__O__Compound_Form__C____type__type  grammar_list)
 {
 return ({
-void **_sharp_make_list_ptr486;
-struct struct0x08514f60 *_sharp_pointer_alloc477;
-List__O__Compound_Form__C____type__type rule_list;
+void **_sharp_make_list_ptr499;
 List__O__Form__C____type__type form_list;
-Compound_Form__type grammar;
-(grammar = ((Compound_Form__type ) grammar_));
-(grammar_name = ((* ((struct struct0x08059b98 *) ((Id_Form__type ) ((* ((struct struct0x0805f098 *) ((* ((struct struct0x0805f098 *) ((* ((struct struct0x0805eea0 *) grammar)).form_list))).tail))).head)))).value));
-(rule_list = ((List__O__Compound_Form__C____type__type ) ((* ((struct struct0x0805f098 *) ((* ((struct struct0x0805f098 *) ((* ((struct struct0x0805eea0 *) grammar)).form_list))).tail))).tail)));
-(dot_character_set = ((Character_Set__type ) ({
-struct struct0x08517b50 *_sharp_pair_478;
-_sharp_pair_478,
-(_sharp_pair_478 = ((struct struct0x08517b50 *) (alloc_cons_cell)()));
-(((* _sharp_pair_478).car) = ((Character_Range__type ) _sharp_pointer_alloc477,
-(_sharp_pointer_alloc477 = ((struct struct0x08514f60 *) (GC_alloc)(8))),
-((* _sharp_pointer_alloc477) = ((struct struct0x08514f60 ){1, 255})),
-((struct struct0x08514f60 *) _sharp_pointer_alloc477)));
-(((* _sharp_pair_478).cdr) = ((List__O__Character_Range__C____type__type ) 0));
-((List__O__Character_Range__C____type__type ) _sharp_pair_478);
-})
-));
-(rules_hash = ((Hash__O__Symbol__c__Form__C____type__type ) (make_hash_table)()));
-(head_set_hash = ((Hash__O__Symbol__c__Character_Set__C____type__type ) (make_hash_table)()));
+(rules_hash = ((Hash__O__Symbol__c__Hash__O__Symbol__c__Form__C____C____type__type ) (make_hash_table)()));
+(head_set_hash = ((Hash__O__Symbol__c__Hash__O__Symbol__c__Character_Set__C____C____type__type ) (make_hash_table)()));
 ({
-List__O__Compound_Form__C____type__type _sharp_iterator480;
-(_sharp_iterator480 = rule_list);
-((void) 0);_sharp__sharp_loop481_begin484:((void) 0),
+List__O__Compound_Form__C____type__type _sharp_iterator487;
+(_sharp_iterator487 = grammar_list);
+((void) 0);_sharp__sharp_loop488_begin497:((void) 0),
+({
+Compound_Form__type grammar;
+({if( (_sharp_iterator487 == ((List__O__Compound_Form__C____type__type ) 0)))
+{
+({goto _sharp__sharp_loop488_end489;});}})
+;
+(grammar = ((* ((struct struct0x081fd1c8 *) _sharp_iterator487)).car));
+({
+List__O__Compound_Form__C____type__type rule_list;
+(grammar_name = ((* ((struct struct0x08059b98 *) ((Id_Form__type ) ((* ((struct struct0x0805f098 *) ((* ((struct struct0x0805f098 *) ((* ((struct struct0x0805eea0 *) grammar)).form_list))).tail))).head)))).value));
+((Hash__O__Symbol__c__Form__C____type__type ) (puthash)(((void *) grammar_name), ((void *) ((Hash__O__Symbol__c__Form__C____type__type ) (make_hash_table)())), ((Hash_Table__type ) rules_hash)));
+(rule_list = ((List__O__Compound_Form__C____type__type ) ((* ((struct struct0x0805f098 *) ((* ((struct struct0x0805f098 *) ((* ((struct struct0x0805eea0 *) grammar)).form_list))).tail))).tail)));
+({
+List__O__Compound_Form__C____type__type _sharp_iterator491;
+(_sharp_iterator491 = rule_list);
+((void) 0);_sharp__sharp_loop492_begin495:((void) 0),
 ({
 Compound_Form__type rule;
-({if( (_sharp_iterator480 == ((List__O__Compound_Form__C____type__type ) 0)))
+({if( (_sharp_iterator491 == ((List__O__Compound_Form__C____type__type ) 0)))
 {
-({goto _sharp__sharp_loop481_end482;});}})
+({goto _sharp__sharp_loop492_end493;});}})
 ;
-(rule = ((* ((struct struct0x081fd1c8 *) _sharp_iterator480)).car));
+(rule = ((* ((struct struct0x081fd1c8 *) _sharp_iterator491)).car));
 ({
 Symbol__type rule_name;
 Form__type form;
 (rule_name = ((* ((struct struct0x08059b98 *) ((Id_Form__type ) ((* ((struct struct0x0805f098 *) ((* ((struct struct0x0805eea0 *) rule)).form_list))).head)))).value));
 (form = ((Form__type ) ((* ((struct struct0x0805f098 *) ((* ((struct struct0x0805f098 *) ((* ((struct struct0x0805f098 *) ((* ((struct struct0x0805eea0 *) rule)).form_list))).tail))).tail))).head)));
-((Form__type ) (puthash)(((void *) rule_name), ((void *) form), ((Hash_Table__type ) rules_hash)));
+((Form__type ) (puthash)(((void *) rule_name), ((void *) form), ((Hash_Table__type ) ((Hash__O__Symbol__c__Form__C____type__type ) (gethash)(((void *) grammar_name), ((Hash_Table__type ) rules_hash))))));
 (pre_define_function)((intern_string)((function_name_from_grammar_and_rule)(grammar_name, rule_name)), ((* ((struct struct0x0805f098 *) ((* ((struct struct0x0805f098 *) ((* ((struct struct0x0805eea0 *) rule)).form_list))).tail))).head));
 })
 ;
-((void) 0);_sharp__sharp_loop481_continue483:((void) 0);
-(_sharp_iterator480 = ((* ((struct struct0x081fd1c8 *) _sharp_iterator480)).cdr));
+((void) 0);_sharp__sharp_loop492_continue494:((void) 0);
+(_sharp_iterator491 = ((* ((struct struct0x081fd1c8 *) _sharp_iterator491)).cdr));
 })
 ,
-({goto _sharp__sharp_loop481_begin484;}),
-((void) 0);_sharp__sharp_loop481_end482:((void) 0);
+({goto _sharp__sharp_loop492_begin495;}),
+((void) 0);_sharp__sharp_loop492_end493:((void) 0);
+})
+;
+})
+;
+((void) 0);_sharp__sharp_loop488_continue496:((void) 0);
+(_sharp_iterator487 = ((* ((struct struct0x081fd1c8 *) _sharp_iterator487)).cdr));
+})
+,
+({goto _sharp__sharp_loop488_begin497;}),
+((void) 0);_sharp__sharp_loop488_end489:((void) 0);
 })
 ;
 (form_list = ({
-List__O__Form__C____type__type _sharp_make_list485;
-_sharp_make_list485,
-_sharp_make_list_ptr486,
-(_sharp_make_list_ptr486 = ((void *) (&_sharp_make_list485))),
+List__O__Form__C____type__type _sharp_make_list498;
+_sharp_make_list498,
+_sharp_make_list_ptr499,
+(_sharp_make_list_ptr499 = ((void *) (&_sharp_make_list498))),
 ({
 ({
-List__O__Compound_Form__C____type__type _sharp_iterator488;
-(_sharp_iterator488 = rule_list);
-((void) 0);_sharp__sharp_loop489_begin499:((void) 0),
+List__O__Compound_Form__C____type__type _sharp_iterator501;
+(_sharp_iterator501 = grammar_list);
+((void) 0);_sharp__sharp_loop502_begin520:((void) 0),
+({
+Compound_Form__type grammar;
+({if( (_sharp_iterator501 == ((List__O__Compound_Form__C____type__type ) 0)))
+{
+({goto _sharp__sharp_loop502_end503;});}})
+;
+(grammar = ((* ((struct struct0x081fd1c8 *) _sharp_iterator501)).car));
+({
+struct struct0x08515d38 *_sharp_pointer_alloc504;
+List__O__Compound_Form__C____type__type rule_list;
+(grammar_name = ((* ((struct struct0x08059b98 *) ((Id_Form__type ) ((* ((struct struct0x0805f098 *) ((* ((struct struct0x0805f098 *) ((* ((struct struct0x0805eea0 *) grammar)).form_list))).tail))).head)))).value));
+((Hash__O__Symbol__c__Character_Set__C____type__type ) (puthash)(((void *) grammar_name), ((void *) ((Hash__O__Symbol__c__Character_Set__C____type__type ) (make_hash_table)())), ((Hash_Table__type ) head_set_hash)));
+(dot_character_set = ((Character_Set__type ) ({
+struct struct0x08518aa8 *_sharp_pair_505;
+_sharp_pair_505,
+(_sharp_pair_505 = ((struct struct0x08518aa8 *) (alloc_cons_cell)()));
+(((* _sharp_pair_505).car) = ((Character_Range__type ) _sharp_pointer_alloc504,
+(_sharp_pointer_alloc504 = ((struct struct0x08515d38 *) (GC_alloc)(8))),
+((* _sharp_pointer_alloc504) = ((struct struct0x08515d38 ){1, 255})),
+((struct struct0x08515d38 *) _sharp_pointer_alloc504)));
+(((* _sharp_pair_505).cdr) = ((List__O__Character_Range__C____type__type ) 0));
+((List__O__Character_Range__C____type__type ) _sharp_pair_505);
+})
+));
+(rule_list = ((List__O__Compound_Form__C____type__type ) ((* ((struct struct0x0805f098 *) ((* ((struct struct0x0805f098 *) ((* ((struct struct0x0805eea0 *) grammar)).form_list))).tail))).tail)));
+({
+List__O__Compound_Form__C____type__type _sharp_iterator507;
+(_sharp_iterator507 = rule_list);
+((void) 0);_sharp__sharp_loop508_begin518:((void) 0),
 ({
 Compound_Form__type rule;
-({if( (_sharp_iterator488 == ((List__O__Compound_Form__C____type__type ) 0)))
+({if( (_sharp_iterator507 == ((List__O__Compound_Form__C____type__type ) 0)))
 {
-({goto _sharp__sharp_loop489_end490;});}})
+({goto _sharp__sharp_loop508_end509;});}})
 ;
-(rule = ((* ((struct struct0x081fd1c8 *) _sharp_iterator488)).car));
+(rule = ((* ((struct struct0x081fd1c8 *) _sharp_iterator507)).car));
 ({
 Form__type function_form;
 Expanded_Form__type exp_function_body;
@@ -1545,84 +1693,94 @@ Form__type lambda_form;
 (declare_block_begin)();
 (function_body = (grammar_expander_rec)(form, ((List__O__Form__C____type__type ) 0)));
 (exp_function_body = (declare_block_end)(({
-struct struct0x08066050 *_sharp_pair_491;
-_sharp_pair_491,
-(_sharp_pair_491 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_491).car) = function_body);
-(((* _sharp_pair_491).cdr) = ((List__O__Form__C____type__type ) 0));
-((List__O__Form__C____type__type ) _sharp_pair_491);
+struct struct0x08066050 *_sharp_pair_510;
+_sharp_pair_510,
+(_sharp_pair_510 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
+(((* _sharp_pair_510).car) = function_body);
+(((* _sharp_pair_510).cdr) = ((List__O__Form__C____type__type ) 0));
+((List__O__Form__C____type__type ) _sharp_pair_510);
 })
 ));
 (lambda_form = (Compound_Form)(intern( "lambda"), ({
-struct struct0x08066050 *_sharp_pair_494;
-_sharp_pair_494,
-(_sharp_pair_494 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_494).car) = (((struct struct0x08064b18 ) ((* ((struct struct0x08064d30 *) ((Real_Type__type ) ((* ((struct struct0x0805f910 *) exp_function_body)).type)))).common_)).type_form));
-(((* _sharp_pair_494).cdr) = ({
-struct struct0x08066050 *_sharp_pair_493;
-_sharp_pair_493,
-(_sharp_pair_493 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_493).car) = (Compound_Form)(intern( "tuple"), ((List__O__Form__C____type__type ) 0)));
-(((* _sharp_pair_493).cdr) = ({
-struct struct0x08066050 *_sharp_pair_492;
-_sharp_pair_492,
-(_sharp_pair_492 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_492).car) = ((* ((struct struct0x0805f910 *) exp_function_body)).return_form));
-(((* _sharp_pair_492).cdr) = ((List__O__Form__C____type__type ) 0));
-((List__O__Form__C____type__type ) _sharp_pair_492);
+struct struct0x08066050 *_sharp_pair_513;
+_sharp_pair_513,
+(_sharp_pair_513 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
+(((* _sharp_pair_513).car) = (((struct struct0x08064b18 ) ((* ((struct struct0x08064d30 *) ((Real_Type__type ) ((* ((struct struct0x0805f910 *) exp_function_body)).type)))).common_)).type_form));
+(((* _sharp_pair_513).cdr) = ({
+struct struct0x08066050 *_sharp_pair_512;
+_sharp_pair_512,
+(_sharp_pair_512 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
+(((* _sharp_pair_512).car) = (Compound_Form)(intern( "tuple"), ((List__O__Form__C____type__type ) 0)));
+(((* _sharp_pair_512).cdr) = ({
+struct struct0x08066050 *_sharp_pair_511;
+_sharp_pair_511,
+(_sharp_pair_511 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
+(((* _sharp_pair_511).car) = ((* ((struct struct0x0805f910 *) exp_function_body)).return_form));
+(((* _sharp_pair_511).cdr) = ((List__O__Form__C____type__type ) 0));
+((List__O__Form__C____type__type ) _sharp_pair_511);
 })
 );
-((List__O__Form__C____type__type ) _sharp_pair_493);
+((List__O__Form__C____type__type ) _sharp_pair_512);
 })
 );
-((List__O__Form__C____type__type ) _sharp_pair_494);
+((List__O__Form__C____type__type ) _sharp_pair_513);
 })
 ));
 (function_form = (Compound_Form)(intern( "define"), ({
-struct struct0x08066050 *_sharp_pair_497;
-_sharp_pair_497,
-(_sharp_pair_497 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_497).car) = (Id_Form)(intern( "function")));
-(((* _sharp_pair_497).cdr) = ({
-struct struct0x08066050 *_sharp_pair_496;
-_sharp_pair_496,
-(_sharp_pair_496 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_496).car) = (Id_Form)(function_name));
-(((* _sharp_pair_496).cdr) = ({
-struct struct0x08066050 *_sharp_pair_495;
-_sharp_pair_495,
-(_sharp_pair_495 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_495).car) = lambda_form);
-(((* _sharp_pair_495).cdr) = ((List__O__Form__C____type__type ) 0));
-((List__O__Form__C____type__type ) _sharp_pair_495);
+struct struct0x08066050 *_sharp_pair_516;
+_sharp_pair_516,
+(_sharp_pair_516 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
+(((* _sharp_pair_516).car) = (Id_Form)(intern( "function")));
+(((* _sharp_pair_516).cdr) = ({
+struct struct0x08066050 *_sharp_pair_515;
+_sharp_pair_515,
+(_sharp_pair_515 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
+(((* _sharp_pair_515).car) = (Id_Form)(function_name));
+(((* _sharp_pair_515).cdr) = ({
+struct struct0x08066050 *_sharp_pair_514;
+_sharp_pair_514,
+(_sharp_pair_514 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
+(((* _sharp_pair_514).car) = lambda_form);
+(((* _sharp_pair_514).cdr) = ((List__O__Form__C____type__type ) 0));
+((List__O__Form__C____type__type ) _sharp_pair_514);
 })
 );
-((List__O__Form__C____type__type ) _sharp_pair_496);
+((List__O__Form__C____type__type ) _sharp_pair_515);
 })
 );
-((List__O__Form__C____type__type ) _sharp_pair_497);
+((List__O__Form__C____type__type ) _sharp_pair_516);
 })
 ));
-((* _sharp_make_list_ptr486) = (alloc_cons_cell)()),
-(((* (* ((struct struct0x08525e00 **) _sharp_make_list_ptr486))).car) = ((void *) function_form)),
-(_sharp_make_list_ptr486 = (&((* (* ((struct struct0x08525e00 **) _sharp_make_list_ptr486))).cdr))),
+((* _sharp_make_list_ptr499) = (alloc_cons_cell)()),
+(((* (* ((struct struct0x08526d78 **) _sharp_make_list_ptr499))).car) = ((void *) function_form)),
+(_sharp_make_list_ptr499 = (&((* (* ((struct struct0x08526d78 **) _sharp_make_list_ptr499))).cdr))),
 ((void) 0);
 })
 ;
-((void) 0);_sharp__sharp_loop489_continue498:((void) 0);
-(_sharp_iterator488 = ((* ((struct struct0x081fd1c8 *) _sharp_iterator488)).cdr));
+((void) 0);_sharp__sharp_loop508_continue517:((void) 0);
+(_sharp_iterator507 = ((* ((struct struct0x081fd1c8 *) _sharp_iterator507)).cdr));
 })
 ,
-({goto _sharp__sharp_loop489_begin499;}),
-((void) 0);_sharp__sharp_loop489_end490:((void) 0);
+({goto _sharp__sharp_loop508_begin518;}),
+((void) 0);_sharp__sharp_loop508_end509:((void) 0);
+})
+;
+})
+;
+((void) 0);_sharp__sharp_loop502_continue519:((void) 0);
+(_sharp_iterator501 = ((* ((struct struct0x081fd1c8 *) _sharp_iterator501)).cdr));
+})
+,
+({goto _sharp__sharp_loop502_begin520;}),
+((void) 0);_sharp__sharp_loop502_end503:((void) 0);
 })
 ;
 ((void) 0);
 ((void) 0);
 })
 ,
-((* _sharp_make_list_ptr486) = ((void *) 0)),
-_sharp_make_list485;
+((* _sharp_make_list_ptr499) = ((void *) 0)),
+_sharp_make_list498;
 })
 );
 form_list;
@@ -1632,115 +1790,6 @@ form_list;
 void  test(void)
 {
 return ({
-Form__type rule;
-Form__type grammar;
-(rule = (Compound_Form)(intern( "define"), ({
-struct struct0x08066050 *_sharp_pair_509;
-_sharp_pair_509,
-(_sharp_pair_509 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_509).car) = (Id_Form)(intern( "rule")));
-(((* _sharp_pair_509).cdr) = ({
-struct struct0x08066050 *_sharp_pair_508;
-_sharp_pair_508,
-(_sharp_pair_508 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_508).car) = (Id_Form)(intern( "Void")));
-(((* _sharp_pair_508).cdr) = ({
-struct struct0x08066050 *_sharp_pair_507;
-_sharp_pair_507,
-(_sharp_pair_507 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_507).car) = (Id_Form)(intern( "Comment")));
-(((* _sharp_pair_507).cdr) = ({
-struct struct0x08066050 *_sharp_pair_506;
-_sharp_pair_506,
-(_sharp_pair_506 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_506).car) = (Compound_Form)(intern( " "), ({
-struct struct0x08066050 *_sharp_pair_505;
-_sharp_pair_505,
-(_sharp_pair_505 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_505).car) = (String_Form)(((String__type) &__string_31)));
-(((* _sharp_pair_505).cdr) = ({
-struct struct0x08066050 *_sharp_pair_504;
-_sharp_pair_504,
-(_sharp_pair_504 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_504).car) = (Compound_Form)(intern( "*"), ({
-struct struct0x08066050 *_sharp_pair_501;
-_sharp_pair_501,
-(_sharp_pair_501 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_501).car) = (Compound_Form)(intern( "[^]"), ({
-struct struct0x08066050 *_sharp_pair_500;
-_sharp_pair_500,
-(_sharp_pair_500 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_500).car) = (Int_Form)(10));
-(((* _sharp_pair_500).cdr) = ((List__O__Form__C____type__type ) 0));
-((List__O__Form__C____type__type ) _sharp_pair_500);
-})
-));
-(((* _sharp_pair_501).cdr) = ((List__O__Form__C____type__type ) 0));
-((List__O__Form__C____type__type ) _sharp_pair_501);
-})
-));
-(((* _sharp_pair_504).cdr) = ({
-struct struct0x08066050 *_sharp_pair_503;
-_sharp_pair_503,
-(_sharp_pair_503 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_503).car) = (Compound_Form)(intern( "[]"), ({
-struct struct0x08066050 *_sharp_pair_502;
-_sharp_pair_502,
-(_sharp_pair_502 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_502).car) = (Int_Form)(10));
-(((* _sharp_pair_502).cdr) = ((List__O__Form__C____type__type ) 0));
-((List__O__Form__C____type__type ) _sharp_pair_502);
-})
-));
-(((* _sharp_pair_503).cdr) = ((List__O__Form__C____type__type ) 0));
-((List__O__Form__C____type__type ) _sharp_pair_503);
-})
-);
-((List__O__Form__C____type__type ) _sharp_pair_504);
-})
-);
-((List__O__Form__C____type__type ) _sharp_pair_505);
-})
-));
-(((* _sharp_pair_506).cdr) = ((List__O__Form__C____type__type ) 0));
-((List__O__Form__C____type__type ) _sharp_pair_506);
-})
-);
-((List__O__Form__C____type__type ) _sharp_pair_507);
-})
-);
-((List__O__Form__C____type__type ) _sharp_pair_508);
-})
-);
-((List__O__Form__C____type__type ) _sharp_pair_509);
-})
-));
-(grammar = (Compound_Form)(intern( "define"), ({
-struct struct0x08066050 *_sharp_pair_512;
-_sharp_pair_512,
-(_sharp_pair_512 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_512).car) = (Id_Form)(intern( "grammar")));
-(((* _sharp_pair_512).cdr) = ({
-struct struct0x08066050 *_sharp_pair_511;
-_sharp_pair_511,
-(_sharp_pair_511 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_511).car) = (Id_Form)(intern( "test_grammar")));
-(((* _sharp_pair_511).cdr) = ({
-struct struct0x08066050 *_sharp_pair_510;
-_sharp_pair_510,
-(_sharp_pair_510 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_510).car) = rule);
-(((* _sharp_pair_510).cdr) = ((List__O__Form__C____type__type ) 0));
-((List__O__Form__C____type__type ) _sharp_pair_510);
-})
-);
-((List__O__Form__C____type__type ) _sharp_pair_511);
-})
-);
-((List__O__Form__C____type__type ) _sharp_pair_512);
-})
-));
-(grammar_produce_function_definitions)(grammar);
 ((void) 0);
 })
 ;}
@@ -1762,7 +1811,7 @@ Symbol__type grammar;
 Output_Descriptor__type save_od_;
 (save_od_ = current_output_descriptor);
 (current_output_descriptor = stderr_output_descriptor);
-(print_String)(((String__type) &__string_32)),
+(print_String)(((String__type) &__string_33)),
 (maybe_flush)();
 (flush)();
 (current_output_descriptor = save_od_);
@@ -1770,19 +1819,19 @@ Output_Descriptor__type save_od_;
 })
 ;
 (print_form)((Compound_Form)(intern( "is_compound_form"), ({
-struct struct0x08066050 *_sharp_pair_470;
-_sharp_pair_470,
-(_sharp_pair_470 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_470).car) = (Id_Form)(intern( "form2")));
-(((* _sharp_pair_470).cdr) = ((List__O__Form__C____type__type ) 0));
-((List__O__Form__C____type__type ) _sharp_pair_470);
+struct struct0x08066050 *_sharp_pair_479;
+_sharp_pair_479,
+(_sharp_pair_479 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
+(((* _sharp_pair_479).car) = (Id_Form)(intern( "form2")));
+(((* _sharp_pair_479).cdr) = ((List__O__Form__C____type__type ) 0));
+((List__O__Form__C____type__type ) _sharp_pair_479);
 })
 ));
 ({
 Output_Descriptor__type save_od_;
 (save_od_ = current_output_descriptor);
 (current_output_descriptor = stderr_output_descriptor);
-(print_String)(((String__type) &__string_33)),
+(print_String)(((String__type) &__string_34)),
 (maybe_flush)();
 (flush)();
 (current_output_descriptor = save_od_);
@@ -1802,7 +1851,7 @@ Output_Descriptor__type save_od_;
 Output_Descriptor__type save_od_;
 (save_od_ = current_output_descriptor);
 (current_output_descriptor = stderr_output_descriptor);
-(print_String)(((String__type) &__string_34)),
+(print_String)(((String__type) &__string_35)),
 (maybe_flush)();
 (flush)();
 (current_output_descriptor = save_od_);
@@ -1810,43 +1859,43 @@ Output_Descriptor__type save_od_;
 })
 ;
 (print_form)((Compound_Form)(intern( "=="), ({
-struct struct0x08066050 *_sharp_pair_474;
-_sharp_pair_474,
-(_sharp_pair_474 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_474).car) = (Compound_Form)(intern( "[]"), ({
-struct struct0x08066050 *_sharp_pair_472;
-_sharp_pair_472,
-(_sharp_pair_472 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_472).car) = (Id_Form)(intern( "cf2")));
-(((* _sharp_pair_472).cdr) = ({
-struct struct0x08066050 *_sharp_pair_471;
-_sharp_pair_471,
-(_sharp_pair_471 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_471).car) = (Symbol_Form)(intern( "head")));
-(((* _sharp_pair_471).cdr) = ((List__O__Form__C____type__type ) 0));
-((List__O__Form__C____type__type ) _sharp_pair_471);
+struct struct0x08066050 *_sharp_pair_483;
+_sharp_pair_483,
+(_sharp_pair_483 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
+(((* _sharp_pair_483).car) = (Compound_Form)(intern( "[]"), ({
+struct struct0x08066050 *_sharp_pair_481;
+_sharp_pair_481,
+(_sharp_pair_481 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
+(((* _sharp_pair_481).car) = (Id_Form)(intern( "cf2")));
+(((* _sharp_pair_481).cdr) = ({
+struct struct0x08066050 *_sharp_pair_480;
+_sharp_pair_480,
+(_sharp_pair_480 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
+(((* _sharp_pair_480).car) = (Symbol_Form)(intern( "head")));
+(((* _sharp_pair_480).cdr) = ((List__O__Form__C____type__type ) 0));
+((List__O__Form__C____type__type ) _sharp_pair_480);
 })
 );
-((List__O__Form__C____type__type ) _sharp_pair_472);
+((List__O__Form__C____type__type ) _sharp_pair_481);
 })
 ));
-(((* _sharp_pair_474).cdr) = ({
-struct struct0x08066050 *_sharp_pair_473;
-_sharp_pair_473,
-(_sharp_pair_473 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_473).car) = (Symbol_Form)(intern( "[]")));
-(((* _sharp_pair_473).cdr) = ((List__O__Form__C____type__type ) 0));
-((List__O__Form__C____type__type ) _sharp_pair_473);
+(((* _sharp_pair_483).cdr) = ({
+struct struct0x08066050 *_sharp_pair_482;
+_sharp_pair_482,
+(_sharp_pair_482 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
+(((* _sharp_pair_482).car) = (Symbol_Form)(intern( "[]")));
+(((* _sharp_pair_482).cdr) = ((List__O__Form__C____type__type ) 0));
+((List__O__Form__C____type__type ) _sharp_pair_482);
 })
 );
-((List__O__Form__C____type__type ) _sharp_pair_474);
+((List__O__Form__C____type__type ) _sharp_pair_483);
 })
 ));
 ({
 Output_Descriptor__type save_od_;
 (save_od_ = current_output_descriptor);
 (current_output_descriptor = stderr_output_descriptor);
-(print_String)(((String__type) &__string_35)),
+(print_String)(((String__type) &__string_36)),
 (maybe_flush)();
 (flush)();
 (current_output_descriptor = save_od_);
@@ -1866,7 +1915,7 @@ Output_Descriptor__type save_od_;
 Output_Descriptor__type save_od_;
 (save_od_ = current_output_descriptor);
 (current_output_descriptor = stderr_output_descriptor);
-(print_String)(((String__type) &__string_36)),
+(print_String)(((String__type) &__string_37)),
 (maybe_flush)();
 (flush)();
 (current_output_descriptor = save_od_);
@@ -1874,19 +1923,19 @@ Output_Descriptor__type save_od_;
 })
 ;
 (print_form)((Compound_Form)(intern( "is_id_form"), ({
-struct struct0x08066050 *_sharp_pair_475;
-_sharp_pair_475,
-(_sharp_pair_475 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_475).car) = (Id_Form)(intern( "grammar_id_form")));
-(((* _sharp_pair_475).cdr) = ((List__O__Form__C____type__type ) 0));
-((List__O__Form__C____type__type ) _sharp_pair_475);
+struct struct0x08066050 *_sharp_pair_484;
+_sharp_pair_484,
+(_sharp_pair_484 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
+(((* _sharp_pair_484).car) = (Id_Form)(intern( "grammar_id_form")));
+(((* _sharp_pair_484).cdr) = ((List__O__Form__C____type__type ) 0));
+((List__O__Form__C____type__type ) _sharp_pair_484);
 })
 ));
 ({
 Output_Descriptor__type save_od_;
 (save_od_ = current_output_descriptor);
 (current_output_descriptor = stderr_output_descriptor);
-(print_String)(((String__type) &__string_37)),
+(print_String)(((String__type) &__string_38)),
 (maybe_flush)();
 (flush)();
 (current_output_descriptor = save_od_);
@@ -1900,12 +1949,12 @@ Output_Descriptor__type save_od_;
 (grammar = ((* ((struct struct0x08059b98 *) ((Id_Form__type ) grammar_id_form))).value));
 (rule = ((* ((struct struct0x08059b98 *) ((Id_Form__type ) rule_id_form))).value));
 (Compound_Form)(intern( "funcall"), ({
-struct struct0x08066050 *_sharp_pair_476;
-_sharp_pair_476,
-(_sharp_pair_476 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
-(((* _sharp_pair_476).car) = (Id_Form)((intern_string)((function_name_from_grammar_and_rule)(grammar, rule))));
-(((* _sharp_pair_476).cdr) = ((List__O__Form__C____type__type ) 0));
-((List__O__Form__C____type__type ) _sharp_pair_476);
+struct struct0x08066050 *_sharp_pair_485;
+_sharp_pair_485,
+(_sharp_pair_485 = ((struct struct0x08066050 *) (alloc_cons_cell)()));
+(((* _sharp_pair_485).car) = (Id_Form)((intern_string)((function_name_from_grammar_and_rule)(grammar, rule))));
+(((* _sharp_pair_485).cdr) = ((List__O__Form__C____type__type ) 0));
+((List__O__Form__C____type__type ) _sharp_pair_485);
 })
 );
 })
@@ -1918,10 +1967,10 @@ Symbol__type rule;
 Form__type form;
 (id_used = ((Hash__O__Symbol__c__Type__C____type__type ) (make_hash_table)()));
 (rule = ((* ((struct struct0x08059b98 *) ((Symbol_Form__type ) ((* ((struct struct0x0805f098 *) ((* ((struct struct0x0805eea0 *) form_)).form_list))).head)))).value));
-({if( (((Form__type ) (gethash)(((void *) rule), ((Hash_Table__type ) rules_hash))) == ((Form__type ) 0)))
+({if( (((Form__type ) (gethash)(((void *) rule), ((Hash_Table__type ) ((Hash__O__Symbol__c__Form__C____type__type ) (gethash)(((void *) grammar_name), ((Hash_Table__type ) rules_hash)))))) == ((Form__type ) 0)))
 {
 ({
-(print_String)(((String__type) &__string_38)),
+(print_String)(((String__type) &__string_39)),
 (print_Symbol)(rule),
 (maybe_flush)();
 (exit)(3);
@@ -1929,7 +1978,7 @@ Form__type form;
 ;}})
 ;
 (grammar_name = intern( "parse_grammar"));
-(form = (grammar_expander_rec)(((Form__type ) (gethash)(((void *) rule), ((Hash_Table__type ) rules_hash))), ((List__O__Form__C____type__type ) 0)));
+(form = (grammar_expander_rec)(((Form__type ) (gethash)(((void *) rule), ((Hash_Table__type ) ((Hash__O__Symbol__c__Form__C____type__type ) (gethash)(((void *) grammar_name), ((Hash_Table__type ) rules_hash)))))), ((List__O__Form__C____type__type ) 0)));
 form;
 })
 ;}

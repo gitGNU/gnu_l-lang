@@ -35,30 +35,30 @@ struct struct0x0805f098 {
 Form__type head;
 List__O__Form__C____type__type tail;
 };
+typedef struct struct0x08515d38 *Character_Range__type;
 struct struct0x08066050 {
 Form__type car;
 List__O__Form__C____type__type cdr;
 };
-typedef struct struct0x085152f0 *List__O__Character_Range__C____type__type;
+typedef struct struct0x08516170 *List__O__Character_Range__C____type__type;
 typedef List__O__Character_Range__C____type__type Character_Set__type;
-typedef struct struct0x08514f60 *Character_Range__type;
-struct struct0x08514f60 {
+struct struct0x08515d38 {
 Int__type min;
 Int__type max;
 };
-struct struct0x085152f0 {
+struct struct0x08516170 {
 Character_Range__type head;
 List__O__Character_Range__C____type__type tail;
 };
-typedef struct struct0x085155d0 *Exit__type;
-struct struct0x085155d0 {
+typedef struct struct0x08516478 *Exit__type;
+struct struct0x08516478 {
 Int__type dummy;
 };
-struct struct0x08517b50 {
+struct struct0x08518aa8 {
 Character_Range__type car;
 List__O__Character_Range__C____type__type cdr;
 };
-struct struct0x08525e00 {
+struct struct0x08526d78 {
 void *car;
 void *cdr;
 };
@@ -125,3 +125,4 @@ static struct { unsigned int length; char *content; } __string_8 = { 6, ", max:"
 static struct { unsigned int length; char *content; } __string_9 = { 1, "\n"};
 static struct { unsigned int length; char *content; } __string_10 = { 12, "Parse error\n"};
 static struct { unsigned int length; char *content; } __string_11 = { 33, "rule Spacing:Character = [ \n	]* ;"};
+static struct { unsigned int length; char *content; } __string_12 = { 55, "grammar parse_grammar = { rule truc:Int = toto.tata; };"};

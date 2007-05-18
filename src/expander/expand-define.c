@@ -824,12 +824,7 @@ expand_all( list_t form_list)
   list_t grammar_function_list = NULL;
   if(grammar_list)
     {
-      FOREACH( element, grammar_list)
-	{
-	  form_t grammar = CAR( element);
-	  list_t funlist = grammar_produce_function_definitions( grammar);
-	  grammar_function_list = nconc( funlist, grammar_function_list);
-	}
+      grammar_function_list = expand_grammar_list( grammar_list);
     }
 
   

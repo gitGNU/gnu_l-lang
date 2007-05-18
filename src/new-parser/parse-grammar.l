@@ -50,7 +50,11 @@ grammar parse_grammar = {
                        <cr_list:( <cr:Character_Range> { make( cr) })*> "]"
                        { Compound_Form( char_selector, cr_list) } ;
 
-  rule Callable_Rule:Form = <id:Identifier> {Id_Form( id)};
+  rule Callable_Rule:Form = <id:Identifier> <form:{Id_Form( id)}>
+                            ("." <id:Identifier> <form:{Compound_Form( '.',
+								       list( form,
+									     Id_Form(id)))}>)?
+                            {form};
 
   rule Semantic_Action:Form = "{" <exp:Expression> "}"
                               {Compound_Form( '{}', list( exp))};
@@ -125,6 +129,7 @@ test ()
   set_parser_support_to( s);
   //set_parser_support_to( "grammar parse_grammar = {   rule Spacing:Character = [ \n\t]* ; };");
 
+  set_parser_support_to( "grammar parse_grammar = { rule truc:Int = toto.tata; };");
   form = parse (parse_grammar.Grammar);
   print_form( form);
  ();
