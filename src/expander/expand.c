@@ -841,7 +841,10 @@ expand_function(generic_form_t form)
 
   /* MAP expand on the forms; return the type of the last one.  */
   list_t expanded_form_list;
+  Type * type_array = function_type->parameters_type->fields;
+  int type_counter = 0;
 
+  
   {
     list_t *expanded_form_list_ptr = &expanded_form_list;
     expanded_form_t last_element = NULL;
@@ -849,9 +852,20 @@ expand_function(generic_form_t form)
     FOREACH(element, form->form_list)
       {
 	last_element = expand(CAR(element));
-	/* XXX: check type.  */
+
+	/* Check type.  */
+	if(type_counter >= function_type->parameters_type->length)
+	  {
+	    compile_error( "Too many arguments given when calling %s\n", head->name);
+	  }
+	type_check( last_element->type, type_array[type_counter++]);
+	
 	*expanded_form_list_ptr = CONS(last_element, NULL);
 	expanded_form_list_ptr = &((*expanded_form_list_ptr)->cdr);
+      }
+    if(type_counter < function_type->parameters_type->length)
+      {
+	compile_error( "Too few arguments given when calling %s\n", head->name);
       }
     *expanded_form_list_ptr = NULL;
   }
