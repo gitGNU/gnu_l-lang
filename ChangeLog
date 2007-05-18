@@ -1,5 +1,11 @@
 2007-05-18  Matthieu Lemerre  <racin@free.fr>
 
+	Bugfixes.
+	
+	* src/new-parser/grammar-expander.l (head_set): Handle the '.'
+	case.
+	* src/new-parser/support.c (string_to_int_list): Bugfix.
+
 	Handling of inter-grammar calls.
 	
 	* src/new-parser/grammar-expander.l (head_set_hash, rules_hash):

@@ -93,6 +93,34 @@ head_set( parse_form:Form, next_rules:List( Form))
 	  cs = head_set( next_rules.head, next_rules.tail);
 	  ();
 	}
+      else if(cf.head == '.')
+	{
+	  let save_grammar_name = grammar_name;
+	  grammar_name = cast( Id_Form, cf.form_list.head).value;
+	  let rule_name = cast( Id_Form, cf.form_list.tail.head).value;
+	  assert( head_set_hash[grammar_name] != cast( Hash( Symbol, Character_Set), 0));
+	  cs = head_set_hash[grammar_name][rule_name];
+	  if(cs == cast( Character_Set, 0))
+	    {
+	      //This is used to prevent infinite recursion
+	      head_set_hash[grammar_name][rule_name] = cast( Character_Set, -1);
+	     let named_rule = rules_hash[grammar_name][rule_name];
+	     if(named_rule == cast( Form, 0))
+	       {
+		 panic( "Trying to calculate the head set of an unknown rule: ", rule_name, "\n");
+	       }
+	     cs = head_set( named_rule, cast( List( Form), 0));
+	 if(cs == cast( Character_Set, -1))
+	   {
+	     print( "Error: infinite recursion in rule ", rule_name, "\n");
+	     exit( 3);
+	   }
+	 
+	 head_set_hash[grammar_name][rule_name] = cs;
+	   }
+	 grammar_name = save_grammar_name;
+	 ();
+	}
       else {
 	print( "Unimplemented :|", cf.head, "|\n");
 	print_form( parse_form);
@@ -398,11 +426,12 @@ expand_grammar_list( grammar_list:List( Compound_Form))
   rules_hash = cast( Hash( Symbol, Hash( Symbol, Form)), make_hash_table());
   head_set_hash = Hash( Symbol, Hash( Symbol, Character_Set));
   
-  //Fill the rule_hashes and predefines the functions.
+  //Fill the rule_hashes, set head_set_hash and predefines the functions.
   foreach( let grammar in grammar_list)
     {
       grammar_name = cast( Id_Form, grammar.form_list.tail.head).value;
       rules_hash[grammar_name] = cast( Hash( Symbol, Form), make_hash_table());
+      head_set_hash[grammar_name] = Hash( Symbol, Character_Set);
       
       let rule_list = cast( List( Compound_Form), grammar.form_list.tail.tail);
       
@@ -422,7 +451,6 @@ expand_grammar_list( grammar_list:List( Compound_Form))
       foreach( let grammar in grammar_list)
 	{
 	  grammar_name = cast( Id_Form, grammar.form_list.tail.head).value;
-	  head_set_hash[grammar_name] = Hash( Symbol, Character_Set);
 	  dot_character_set = cast( Character_Set, list( Character_Range( min:1, max:255)));
 
 	  let rule_list = cast( List( Compound_Form), grammar.form_list.tail.tail);

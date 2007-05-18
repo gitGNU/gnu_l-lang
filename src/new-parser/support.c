@@ -153,7 +153,25 @@ string_to_int_list( String s)
 
   for(int i = 0; i < s->length; i++)
     {
-      *list_ptr = CONS( s->content[i], NULL);
+      char next = s->content[i];
+      if(next == '\\')
+	{
+	  switch( s->content[++i])
+	    {
+	    case 0:
+	      next = 0;
+	      break;
+	    case 'n':
+	      next = '\n';
+	      break;
+	    case 't':
+	      next = '\t';
+	      break;
+	    default:
+	      next = s->content[i];
+	    }
+	}
+      *list_ptr = CONS( next, NULL);
       list_ptr = &((*list_ptr)->next);
     }
   *list_ptr = NULL;
