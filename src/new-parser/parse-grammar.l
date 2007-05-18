@@ -36,6 +36,8 @@ grammar parse_grammar = {
 
   rule String:Form = ["] <start:_> ( Escaped_Character | [^\"\\])* <end:_> ["]
                        {String_Form( substring( start, end))} ;
+  rule Symbol:Form = ['] <start:_> ( Escaped_Character | [^\'\\])* <end:_> [']
+                       {Symbol_Form( intern_string( substring( start, end)))} ;
   
   rule Character_Range:Form =
                          <max:<min:Maybe_Escaped_Character_Character_Range>>
@@ -62,11 +64,16 @@ grammar parse_grammar = {
   rule Grouping:Form = "<" <id:Identifier> ":" <form:Rule> ">"
                        { Compound_Form( '<>', list( Id_Form( id), form)) };
 
+  // Normally, should be only of the form @macro_name(param1,param2) 
+  rule Rule_Macro:Form = "@" <exp:Expression> {Compound_Form( '@', list( exp))};
+  
   rule Primary:Form = (String
+		       | Symbol
 		       | Character_Set 
 		       | Callable_Rule
 		       | Grouping
 		       | Semantic_Action
+		       | Rule_Macro
 		       | "(" <r:Rule> ")" {r});
 
   rule Postfix:Form = <form:Primary> ( <start:_> ("?" | "*" | "+") <end:_>
@@ -129,7 +136,7 @@ test ()
   set_parser_support_to( s);
   //set_parser_support_to( "grammar parse_grammar = {   rule Spacing:Character = [ \n\t]* ; };");
 
-  set_parser_support_to( "grammar parse_grammar = { rule truc:Int = toto.tata; };");
+  set_parser_support_to( "grammar parse_grammar = { rule truc:Int = toto.tata 'ouf'; rule test:toto = @test( truc);};");
   form = parse (parse_grammar.Grammar);
   print_form( form);
  ();

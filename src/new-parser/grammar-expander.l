@@ -121,6 +121,11 @@ head_set( parse_form:Form, next_rules:List( Form))
 	 grammar_name = save_grammar_name;
 	 ();
 	}
+      else if(cf.head == '@')
+	{
+	  // XXX: many cases should be reduced to this one.
+	  panic( "Unimplemented\n");
+	}
       else {
 	print( "Unimplemented :|", cf.head, "|\n");
 	print_form( parse_form);
@@ -172,6 +177,14 @@ head_set( parse_form:Form, next_rules:List( Form))
       cs = cast( Character_Set, list( Character_Range( min:head, max:head)));
       ();
     }
+  else if(is_symbol_form( parse_form))
+    {
+      let head = string_element( cast( Symbol_Form, parse_form).value.name,
+				 0);
+      cs = cast( Character_Set, list( Character_Range( min:head, max:head)));
+      ();
+    }
+  
   else {print( "Not handled\n"); print_form( parse_form); exit( 3);}
   
   //  let cs = make_Character_Set( cast( Compound_Form, Form( toto( '0'-'9'))));
@@ -321,6 +334,11 @@ grammar_expander_rec (parse_form:Form, next_rules:List( Form))
 	  Form( funcall( $Id_Form(intern_string( function_name_from_grammar_and_rule( gram_name,
 										      rule_name)))$))
 	}
+      else if(cf.head == '@')
+	{
+	  panic( "Unimplemented\n");
+	  Form( imp)
+	}
       else
 	{
 	  Form( imp)
@@ -355,9 +373,14 @@ grammar_expander_rec (parse_form:Form, next_rules:List( Form))
       Form( seq( $@form_list$))
 	
     }
+  else if(is_symbol_form( parse_form))
+    {
+      let symbol = cast( Symbol_Form, parse_form).value;
+      Form( parse_symbol( $String_Form(symbol.name)$))
+    }
   else
     {
-      print( "FORM PROBLEM\n");
+      panic( "FORM PROBLEM\n");
       print_form( parse_form);
       Form( imp2)
 	}

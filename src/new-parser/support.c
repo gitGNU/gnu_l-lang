@@ -126,6 +126,26 @@ _l__parse__parse_grammar__Type()
   return form;
 }
 
+Symbol
+intern_string( String s);
+
+/* This is used to parse text tokens "as a whole". */
+form_t
+parse_symbol( String s)
+{
+  int i;
+  for(i = 0; i < s->length; i++)
+    {
+      if(read_char() != s->content[i])
+	panic( "Error while reading symbol %s\n", make_C_string_from_L_string( s));
+    }
+  
+  /* Parse spacing.  */
+  _l__parse__parse_grammar__Spacing();
+  
+  return intern_string( s);
+}
+
 
 /* Defines the parse_* functions.  */
 void
@@ -302,6 +322,7 @@ init_newparser_support()
   DEFINE_C_FUNCTION( set_parser_support_to, "Void <- String");
   DEFINE_C_FUNCTION( peek_char, "Int <- ()");
   DEFINE_C_FUNCTION( read_char, "Int <- ()");
+  DEFINE_C_FUNCTION( parse_symbol, "Symbol <- (String)");
   DEFINE_C_FUNCTION( character_from_symbol, "Int <- Symbol");
   DEFINE_C_FUNCTION( concat, "String <- (String, String)");
   DEFINE_C_FUNCTION( get_symbol_name, "String <- (Symbol)");

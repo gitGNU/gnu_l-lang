@@ -216,7 +216,7 @@ is_id_form( form_t f)
 int
 is_symbol_form( form_t f)
 {
-  return is_form( f, symbol_form);
+  return is_form( f, quoted_symbol_form);
 }
 
 int

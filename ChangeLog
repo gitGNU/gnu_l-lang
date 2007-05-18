@@ -1,3 +1,15 @@
+2007-05-19  Matthieu Lemerre  <racin@free.fr>
+
+	Handling of symbol and rule_macro case in the parser.
+	
+	* src/std/l-form.c (is_symbol_form): Bugfix.
+	* src/new-parser/support.c (parse_symbol): New function.
+	* src/new-parser/parse-grammar.l: Handling of Symbol and call to
+	Rule_Macro.
+	* src/new-parser/grammar-expander.l (head_set): Support for the
+	symbol case (a shortcut for parsing tokens and their following
+	spacing, and returning a symbol) and room for the '@' case.
+  
 2007-05-18  Matthieu Lemerre  <racin@free.fr>
 
 	Bugfixes.
