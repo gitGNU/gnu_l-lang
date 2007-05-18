@@ -1,3 +1,28 @@
+2007-05-18  Matthieu Lemerre  <racin@free.fr>
+
+	Parse functions now have a name depending on the grammar name.
+	
+	* src/parser/parse.c (parse_all): Allow the parser to parse the
+	species declaration. Call the new rule name
+	_l__parse__parse_grammar__Grammar.
+
+	* src/new-parser/support.c (_l__parse__parse_grammar__Expression)
+	(_l__parse__parse_grammar__Type): New names for parse_Expression
+	and parse_Type.
+	(pre_define_function): Now takes the name of the function as an argument.
+
+	* src/new-parser/parse-grammar.l (test): Use the parse expander.
+
+	* src/new-parser/grammar-expander.l
+	(function_name_from_grammar_and_rule): New function for nomming
+	parsing rule functions. Use it in the file.
+	(grammar_name): New global.
+	(parse): New expander, for calling grammar rules.
+
+	Add type check of function parameters.
+	
+	* src/expander/expand.c (expand_function): Type checking added.
+
 2007-05-09  Matthieu Lemerre  <racin@free.fr>
 
 	Removed the bootstrap file

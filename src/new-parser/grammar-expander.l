@@ -1,5 +1,15 @@
 include "new-parser/character-set.l";
 
+// Dynamic-scope variable.
+compile_time global grammar_name:Symbol;
+
+compile_time String function_name_from_grammar_and_rule( grammar_name:Symbol,
+							 rule_name:Symbol)
+{
+  concat( "_l__parse__", concat( convert_id( grammar_name).name,
+				 concat( "__", convert_id( rule_name).name)));
+}
+
 compile_time type Exit = struct { dummy:Int;}*;
 
 // XXX: c'est un Int pour satisfaire Digit_or_Alpha, mais en fait ca devrait etre
@@ -289,7 +299,8 @@ grammar_expander_rec (parse_form:Form, next_rules:List( Form))
 	{
 	  Form( read_char())
 	}
-      else Form( funcall( $Id_Form(intern_string(concat( "parse_", id_form.value.name)))$))
+      else Form( funcall( $Id_Form(intern_string( function_name_from_grammar_and_rule( grammar_name,
+										       id_form.value)))$))
 	}
   else if(is_string_form( parse_form))
     {
@@ -329,6 +340,29 @@ compile_time Form expand_grammar_rule( rule:Form)
   Form( ());
 }
 
+// Allow to call a rule to parse from outside.
+// Future additional arguments may include the string
+// to parse and parameters to the rule.
+expander parse( form)
+{
+  let form2 = form.form_list.head;
+  assert( is_compound_form( form2));
+  let cf2 = cast( Compound_Form, form2);
+  print_form( form2);
+  assert( cf2.head == '[]');
+
+  let grammar_id_form = cf2.form_list.head;
+  let rule_id_form = cf2.form_list.tail.head;
+  assert( is_id_form( grammar_id_form));
+  //  assert( is_symbol_form( rule_id_form));
+
+  let grammar = cast( Id_Form, grammar_id_form).value;
+  let rule = cast( Id_Form, rule_id_form).value;
+
+  Form( funcall( $Id_Form(intern_string( function_name_from_grammar_and_rule( grammar,
+									      rule)))$))
+}
+
 expander grammar_expander( form_)
 {
   //XXX: we should tell the expander that we create a block here
@@ -340,7 +374,8 @@ expander grammar_expander( form_)
       print( "Unknown rule\n", rule);
       exit( 3);
     }
-  
+
+  grammar_name = 'parse_grammar';
   let form = grammar_expander_rec(rules_hash[rule], cast( List( Form), 0));
 
   //  print_form( cast( Form, form));
@@ -351,7 +386,7 @@ List( Form)
 grammar_produce_function_definitions( grammar_:Form)
 {
   let grammar = cast( Compound_Form, grammar_);
-  let grammar_name = cast( Id_Form, grammar.form_list.tail.head).value;
+  grammar_name = cast( Id_Form, grammar.form_list.tail.head).value;
   let rule_list = cast( List( Compound_Form), grammar.form_list.tail.tail);
   
   dot_character_set = cast( Character_Set, list( Character_Range( min:1, max:255)));
@@ -365,7 +400,9 @@ grammar_produce_function_definitions( grammar_:Form)
       let rule_name = cast( Id_Form, rule.form_list.head).value;
       let form = cast( Form, rule.form_list.tail.tail.head);
       rules_hash[rule_name] = form;
-      pre_define_function( rule_name, rule.form_list.tail.head);
+      pre_define_function( intern_string( function_name_from_grammar_and_rule( grammar_name,
+									       rule_name)),
+			   rule.form_list.tail.head);
     }
 
   // Create the functions.
@@ -374,7 +411,8 @@ grammar_produce_function_definitions( grammar_:Form)
   foreach( let rule in rule_list)
     {
       let rule_name = cast( Id_Form, rule.form_list.head).value;
-      let function_name = intern_string( concat( "parse_", rule_name.name));
+      let function_name = intern_string( function_name_from_grammar_and_rule( grammar_name,
+									      rule_name));
 
       let form = cast( Form, rule.form_list.tail.tail.head);
 
@@ -405,6 +443,7 @@ test()
 {
     let rule = Compound_Form( 'define',
 			    list( Id_Form( 'rule'),
+				  Id_Form( 'Void'),
 				  Id_Form( 'Comment'),
 				  Compound_Form( ' ',
 					 list( String_Form( "//"),

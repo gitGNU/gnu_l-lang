@@ -24,13 +24,13 @@ struct struct0x080590d8 {
 void *head;
 List__O__pointer__O__Void__C____C____type__type tail;
 };
+typedef struct struct0x08064d30 *Real_Type__type;
 typedef struct struct0x0805d7a0 *Form__type;
 struct struct0x08059b98 {
 Int__type form_type_;
 Symbol__type value;
 };
 typedef void *Hash_Table__type;
-typedef struct struct0x08064cb0 *Real_Type__type;
 typedef void *Output_Descriptor__type;
 struct struct0x0805bab0 {
 Int__type form_type_;
@@ -70,51 +70,51 @@ struct struct0x08061890 {
 Compound_Form__type head;
 List__O__Compound_Form__C____type__type tail;
 };
-struct struct0x08064b00 {
+struct struct0x08064b18 {
 Int__type type_type;
 Form__type type_form;
 Int__type size;
 Int__type alignment;
 };
-typedef struct struct0x08064b00 Common_To_All_Type__type;
-struct struct0x08064cb0 {
+typedef struct struct0x08064b18 Common_To_All_Type__type;
+struct struct0x08064d30 {
 Common_To_All_Type__type common_;
 };
-struct struct0x08065f90 {
+struct struct0x08066050 {
 Form__type car;
 List__O__Form__C____type__type cdr;
 };
-typedef struct struct0x08513710 *List__O__Character_Range__C____type__type;
+typedef struct struct0x085152f0 *List__O__Character_Range__C____type__type;
 typedef List__O__Character_Range__C____type__type Character_Set__type;
-struct struct0x081fd0a8 {
+struct struct0x081fd1c8 {
 Compound_Form__type car;
 List__O__Compound_Form__C____type__type cdr;
 };
-typedef struct struct0x08513380 *Character_Range__type;
-struct struct0x08513380 {
+typedef struct struct0x08514f60 *Character_Range__type;
+struct struct0x08514f60 {
 Int__type min;
 Int__type max;
 };
-struct struct0x08513710 {
+struct struct0x085152f0 {
 Character_Range__type head;
 List__O__Character_Range__C____type__type tail;
 };
 typedef Hash_Table__type Hash__O__Symbol__c__Type__C____type__type;
-typedef struct struct0x085139f0 *Exit__type;
-struct struct0x085139f0 {
+typedef struct struct0x085155d0 *Exit__type;
+struct struct0x085155d0 {
 Int__type dummy;
 };
-typedef Hash_Table__type Hash__O__Symbol__c__Character_Set__C____type__type;
 typedef Hash_Table__type Hash__O__Symbol__c__Form__C____type__type;
-struct struct0x08515dc8 {
+typedef Hash_Table__type Hash__O__Symbol__c__Character_Set__C____type__type;
+struct struct0x08517b50 {
 Character_Range__type car;
 List__O__Character_Range__C____type__type cdr;
 };
-struct struct0x08524078 {
+struct struct0x08525e00 {
 void *car;
 void *cdr;
 };
-struct struct0x0857b398 {
+struct struct0x0857d6f0 {
 Int__type car;
 List__O__Int__C____type__type cdr;
 };
@@ -145,6 +145,7 @@ Bool__type (is_id_form)(Form__type );
 Bool__type (is_string_form)(Form__type );
 Expanded_Form__type (expand)(Form__type );
 Symbol__type (gensym)(String__type );
+Symbol__type (convert_id)(Symbol__type );
 Symbol__type (intern_string)(String__type );
 Int__type (character_from_symbol)(Symbol__type );
 String__type (concat)(String__type , String__type );
@@ -156,8 +157,9 @@ Character_Set__type (make_Character_Set)(Form__type );
 Character_Set__type (get_inverse_Character_Set)(Character_Set__type );
 Character_Set__type (make_inverse_Character_Set)(Form__type );
 Form__type (is_in_Character_Set_condition)(Form__type , Character_Set__type );
-Character_Set__type (head_set)(Form__type , List__O__Form__C____type__type );
 Form__type (grammar_expander_rec)(Form__type , List__O__Form__C____type__type );
+String__type (function_name_from_grammar_and_rule)(Symbol__type , Symbol__type );
+Character_Set__type (head_set)(Form__type , List__O__Form__C____type__type );
 List__O__Form__C____type__type (grammar_produce_function_definitions)(Form__type );
 Output_Descriptor__type current_output_descriptor;
 Output_Descriptor__type stdout_output_descriptor;
@@ -171,26 +173,32 @@ static struct { unsigned int length; char *content; } __string_6 = { 8, " failed
 static struct { unsigned int length; char *content; } __string_7 = { 4, "min:"};
 static struct { unsigned int length; char *content; } __string_8 = { 6, ", max:"};
 static struct { unsigned int length; char *content; } __string_9 = { 1, "\n"};
-static struct { unsigned int length; char *content; } __string_10 = { 12, "Parse error\n"};
-static struct { unsigned int length; char *content; } __string_11 = { 10, "Assertion "};
-static struct { unsigned int length; char *content; } __string_12 = { 8, " failed\n"};
-static struct { unsigned int length; char *content; } __string_13 = { 8, "Panic : "};
-static struct { unsigned int length; char *content; } __string_14 = { 12, "Error in {}\n"};
-static struct { unsigned int length; char *content; } __string_15 = { 16, "Unimplemented :|"};
-static struct { unsigned int length; char *content; } __string_16 = { 2, "|\n"};
-static struct { unsigned int length; char *content; } __string_17 = { 8, "Panic : "};
-static struct { unsigned int length; char *content; } __string_18 = { 11, "Error in _\n"};
+static struct { unsigned int length; char *content; } __string_10 = { 11, "_l__parse__"};
+static struct { unsigned int length; char *content; } __string_11 = { 2, "__"};
+static struct { unsigned int length; char *content; } __string_12 = { 12, "Parse error\n"};
+static struct { unsigned int length; char *content; } __string_13 = { 10, "Assertion "};
+static struct { unsigned int length; char *content; } __string_14 = { 8, " failed\n"};
+static struct { unsigned int length; char *content; } __string_15 = { 8, "Panic : "};
+static struct { unsigned int length; char *content; } __string_16 = { 12, "Error in {}\n"};
+static struct { unsigned int length; char *content; } __string_17 = { 16, "Unimplemented :|"};
+static struct { unsigned int length; char *content; } __string_18 = { 2, "|\n"};
 static struct { unsigned int length; char *content; } __string_19 = { 8, "Panic : "};
-static struct { unsigned int length; char *content; } __string_20 = { 53, "Trying to calculate the head set of an unknown rule: "};
-static struct { unsigned int length; char *content; } __string_21 = { 1, "\n"};
-static struct { unsigned int length; char *content; } __string_22 = { 34, "Error: infinite recursion in rule "};
+static struct { unsigned int length; char *content; } __string_20 = { 11, "Error in _\n"};
+static struct { unsigned int length; char *content; } __string_21 = { 8, "Panic : "};
+static struct { unsigned int length; char *content; } __string_22 = { 53, "Trying to calculate the head set of an unknown rule: "};
 static struct { unsigned int length; char *content; } __string_23 = { 1, "\n"};
-static struct { unsigned int length; char *content; } __string_24 = { 12, "Not handled\n"};
-static struct { unsigned int length; char *content; } __string_25 = { 15, "peeked_char_alt"};
-static struct { unsigned int length; char *content; } __string_26 = { 16, "peeked_char_star"};
-static struct { unsigned int length; char *content; } __string_27 = { 17, "peeked_char_maybe"};
-static struct { unsigned int length; char *content; } __string_28 = { 6, "parse_"};
-static struct { unsigned int length; char *content; } __string_29 = { 13, "FORM PROBLEM\n"};
-static struct { unsigned int length; char *content; } __string_30 = { 6, "parse_"};
+static struct { unsigned int length; char *content; } __string_24 = { 34, "Error: infinite recursion in rule "};
+static struct { unsigned int length; char *content; } __string_25 = { 1, "\n"};
+static struct { unsigned int length; char *content; } __string_26 = { 12, "Not handled\n"};
+static struct { unsigned int length; char *content; } __string_27 = { 15, "peeked_char_alt"};
+static struct { unsigned int length; char *content; } __string_28 = { 16, "peeked_char_star"};
+static struct { unsigned int length; char *content; } __string_29 = { 17, "peeked_char_maybe"};
+static struct { unsigned int length; char *content; } __string_30 = { 13, "FORM PROBLEM\n"};
 static struct { unsigned int length; char *content; } __string_31 = { 2, "//"};
-static struct { unsigned int length; char *content; } __string_32 = { 13, "Unknown rule\n"};
+static struct { unsigned int length; char *content; } __string_32 = { 10, "Assertion "};
+static struct { unsigned int length; char *content; } __string_33 = { 8, " failed\n"};
+static struct { unsigned int length; char *content; } __string_34 = { 10, "Assertion "};
+static struct { unsigned int length; char *content; } __string_35 = { 8, " failed\n"};
+static struct { unsigned int length; char *content; } __string_36 = { 10, "Assertion "};
+static struct { unsigned int length; char *content; } __string_37 = { 8, " failed\n"};
+static struct { unsigned int length; char *content; } __string_38 = { 13, "Unknown rule\n"};

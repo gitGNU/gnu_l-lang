@@ -83,7 +83,7 @@ string_element( String s, unsigned int num)
 
 #include "../parser/buffer.h"
 form_t
-parse_Expression()
+_l__parse__parse_grammar__Expression()
 {
   Read_Buffer rb = MALLOC( read_buffer);
   rb->current = parser_current_pointer;
@@ -105,7 +105,7 @@ parse_Expression()
 }
 
 form_t
-parse_Type()
+_l__parse__parse_grammar__Type()
 {
   Read_Buffer rb = MALLOC( read_buffer);
   rb->current = parser_current_pointer;
@@ -131,15 +131,10 @@ parse_Type()
 void
 pre_define_function( Symbol symbol, form_t return_type_form)
 {
-  char *funname = malloc( 6 + strlen( symbol->name) + 1);
-  strcpy( funname, "parse_");
-  strcat( funname, symbol->name);
-
-  define_global( intern( funname),
+  define_global( symbol,
 		 intern_type( function_type_form( return_type_form,
 						  tuple_type_form( NULL))),
 		 NULL);
-  free( funname);
 }
 
 
@@ -297,9 +292,10 @@ init_newparser_support()
   DEFINE_C_FUNCTION( substring, "String <- (Int, Int)");
   DEFINE_C_FUNCTION( string_to_int_list, "List( Int) <- (String)");
   DEFINE_C_FUNCTION( string_element, "Int <- (String, Int)");
-  DEFINE_C_FUNCTION( parse_Expression, "Form <- ()");
-  DEFINE_C_FUNCTION( parse_Type, "Form <- ()");
+  DEFINE_C_FUNCTION( _l__parse__parse_grammar__Expression, "Form <- ()");
+  DEFINE_C_FUNCTION( _l__parse__parse_grammar__Type, "Form <- ()");
   DEFINE_C_FUNCTION( pre_define_function, "Void <- (Symbol, Form)");
   DEFINE_C_FUNCTION( get_test_string, "String <- ()");
 
+  init_grammar_expander();
 }

@@ -913,11 +913,12 @@ parse_all ()
       else if(next_token.id == SYMBOL( grammar))
 	{
 	  struct string the_string;
-	  the_string.content = scanner_pointer;
+	  /* We remove the 6 characters of 'grammar' */
+	  the_string.content = scanner_pointer - 6;
 	  the_string.length = 4194304; /* 4 Mo of source code is quite much. */
 	  set_parser_support_to( &the_string);
 
-	  form_t form = parse_Grammar();
+	  form_t form = _l__parse__parse_grammar__Grammar();
 
 	  lispify( form);
 	  scanner_pointer = get_parser_support();

@@ -86,7 +86,7 @@ grammar parse_grammar = {
                            { Compound_Form( 'rule', list( Id_Form( id),
 							  ret_type,
 							  r)) };
-  
+
   rule Grammar:Form = "grammar" Spacing <id:Identifier> Spacing "=" Spacing
   "{" Spacing <gr_list:(<gr:Grammar_Rule> {make( gr)})*> "}" Spacing ";"
   {  Compound_Form( 'define',
@@ -121,11 +121,11 @@ test ()
   let s = get_test_string();
   //  print( s);
 
-  let form = parse_Grammar_Rule();
+  let form = parse (parse_grammar.Grammar_Rule);// _Grammar_Rule();
   set_parser_support_to( s);
   //set_parser_support_to( "grammar parse_grammar = {   rule Spacing:Character = [ \n\t]* ; };");
 
-  form = parse_Grammar();
+  form = parse (parse_grammar.Grammar);
   print_form( form);
  ();
 
