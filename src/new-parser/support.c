@@ -157,6 +157,30 @@ pre_define_function( Symbol symbol, form_t return_type_form)
 		 NULL);
 }
 
+extern hash_table_t expander_hash;
+
+/* We need that because we use standard macros for grammar macros,
+   so grammar expander are regular expanders.  */
+form_t
+call_grammar_macro( Symbol macro_name, form_t form)
+{
+  char *funname_ = malloc( strlen( macro_name->name) + 30);
+  strcpy( funname_, macro_name->name);
+  strcat( funname_, "##grammar_macro");
+  Symbol funname = intern( funname_);
+  free( funname_);
+
+  /* Retrieve the expander function.  */
+  expander_t expander = gethash( funname, expander_hash);
+  if(expander == NULL)
+    panic( "There is no grammar macro for %s\n", funname->name);
+
+  form_t expform = expander( form);
+
+  return expform;
+}
+
+
 
 
 int
@@ -322,6 +346,7 @@ init_newparser_support()
   DEFINE_C_FUNCTION( set_parser_support_to, "Void <- String");
   DEFINE_C_FUNCTION( peek_char, "Int <- ()");
   DEFINE_C_FUNCTION( read_char, "Int <- ()");
+  DEFINE_C_FUNCTION( call_grammar_macro, "Form <- (Symbol, Form)");
   DEFINE_C_FUNCTION( parse_symbol, "Symbol <- (String)");
   DEFINE_C_FUNCTION( character_from_symbol, "Int <- Symbol");
   DEFINE_C_FUNCTION( concat, "String <- (String, String)");

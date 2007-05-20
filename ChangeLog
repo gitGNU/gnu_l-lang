@@ -1,3 +1,22 @@
+2007-05-21  Matthieu Lemerre  <racin@free.fr>
+
+	Handling of grammar macros.
+	
+	* src/expander/expand-define.c (expand_all): Hande grammar_macros.
+	* src/expander/expand.c (declare_function_begin, declare_function_end):
+	New declare_*_begin/end couple.
+	(expand_lambda): Use them.
+	* src/new-parser/grammar-expander.l (head_set): Handle '*', '+'
+	and '@'.
+	(grammar_expander_rec): Handle '+' and '@'.
+	* src/new-parser/parse-grammar.l (parse_grammar): New grammar
+	rules Rule_Macro and Replacement. Some rearrangements in other
+	rules.
+	* src/new-parser/support.c (call_grammar_macro): New C function:
+	call grammar macro.  Hack to re-use expanders for grammar macro
+	expansion.
+	* src/parser/parse.c (parse_all): Hande parse_macro.
+
 2007-05-19  Matthieu Lemerre  <racin@free.fr>
 
 	Handling of symbol and rule_macro case in the parser.

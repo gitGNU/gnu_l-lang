@@ -639,6 +639,9 @@ expand_attribute( Symbol macro,
 		      NULL);
 }
 
+/* A hash symbol->function.  */
+MAKE_STATIC_HASH_TABLE (grammar_macro_hash);
+
 
 
 /* Expand and dynamically compiles the expanders.  */
@@ -818,6 +821,36 @@ expand_all( list_t form_list)
 					 NULL);
     }
 
+  /* Before the grammars come the grammar macros. */
+  list_t grammar_macro_list = gethash( SYMBOL( grammar_macro), ht);
+  if(grammar_macro_list)
+    {
+      list_t grammar_macro_function_list;
+      list_t *grammar_macro_function_list_ptr = &grammar_macro_function_list;
+      FOREACH( grammar_macro_, grammar_macro_list)
+	{
+
+	  generic_form_t grammar_macro = CAR( grammar_macro_);
+	  symbol_t macro_name = ((id_form_t) CAR( grammar_macro->form_list->next))->value;
+
+	  form_t body = CAR( grammar_macro->form_list->next->next->next);
+	  generic_form_t parameters = CAR( grammar_macro->form_list->next->next);
+	  char *funname_ = malloc( strlen( macro_name->name) + 30);
+	  strcpy( funname_, macro_name->name);
+	  strcat( funname_, "##grammar_macro");
+	  Symbol funname = intern( funname_);
+	  free( funname_);
+	  
+	  form_t exp_form = expand_macro( NULL, id_form( funname),
+					    CONS( parameters,
+						  CONS( body,
+							NULL)));
+	}
+      /* XXX: fill grammar_macro_function_list. */
+      *grammar_macro_function_list_ptr = NULL;
+    }
+
+  
   /* This is hacky; for now we just expand the grammars here.  */
   list_t grammar_list = gethash( SYMBOL( grammar), ht);
 

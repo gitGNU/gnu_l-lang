@@ -1,5 +1,14 @@
 include "new-parser/character-set.l";
 
+// Next version should do macro expansion as a first step;
+// also should pass as an argument of grammar_expander_rec whether
+// the result is needed( useful for implementing make_list correctly,
+// as well as for interning symbols.
+// 
+// Also, expansion of 'symbol' in conditionals should perform additional
+// checks to validate the symbol; this is for not validating - instead of ->
+// for instance.
+
 // Dynamic-scope variable.
 compile_time global grammar_name:Symbol;
 
@@ -81,7 +90,22 @@ head_set( parse_form:Form, next_rules:List( Form))
 	      //cs = union_Character_Set( head_set( rule, next_rules), cs);
 	      cs_ = append( cast( List( Void *), head_set( rule, next_rules)), cs_);
 	    }
-	  cs = cast( Character_Set, cs_);
+	  cs = sort_Character_Set( cast( List( Character_Range), cs_));
+	  ();
+	}
+      else if(cf.head == '*')
+	{
+	  print_form( cast( Form, cf));
+	  let cs_ = append( cast( List( Void*),
+				  head_set( cf.form_list.head, cf.form_list.tail)),
+			    cast( List( Void*),
+				  head_set( next_rules.head, next_rules.tail)));
+	  cs = sort_Character_Set( cast( List( Character_Range), cs_));
+	  ();
+	}
+      else if(cf.head == '+')
+	{
+	  cs = head_set( cf.form_list.head, cf.form_list.tail);
 	  ();
 	}
       else if(cf.head == '{}')
@@ -124,7 +148,14 @@ head_set( parse_form:Form, next_rules:List( Form))
       else if(cf.head == '@')
 	{
 	  // XXX: many cases should be reduced to this one.
-	  panic( "Unimplemented\n");
+	  // XXX: this case should be expanded once instead of dynamically.
+	  let form = cf.form_list.head;
+	  assert( is_compound_form( form));
+	  let form_head = cast( Compound_Form, form).head;
+
+	  let grammar_form = call_grammar_macro( form_head, form);
+	  cs = head_set( grammar_form, next_rules);
+	  ();
 	}
       else {
 	print( "Unimplemented :|", cf.head, "|\n");
@@ -314,6 +345,22 @@ grammar_expander_rec (parse_form:Form, next_rules:List( Form))
 	      $grammar_expander_rec(repeated_rule, next_rules)$;
 		})
 	}
+      else if(cf.head == '+')
+	{
+	  // Expand into a do .. while like loop.
+	  let repeated_rule = cf.form_list.head;
+	  let char_set = head_set( repeated_rule, cast( List( Form), 0));
+
+	  let peeked_char = gensym( "peeked_char_star");
+	  let peeked_char_form = Id_Form( peeked_char);
+
+	  Form(loop {
+	      $grammar_expander_rec(repeated_rule, next_rules)$;
+	      $Compound_Form('let', list( peeked_char_form))$ = peek_char();
+	      if(!($is_in_Character_Set_condition( peeked_char_form, char_set)$))
+		break;
+		})
+	}
       else if(cf.head == '?')
 	{
 	  let maybe_rule = cf.form_list.head;
@@ -336,11 +383,20 @@ grammar_expander_rec (parse_form:Form, next_rules:List( Form))
 	}
       else if(cf.head == '@')
 	{
-	  panic( "Unimplemented\n");
-	  Form( imp)
+	  // XXX: this case should be expanded once instead of dynamically.
+
+	  let form = cf.form_list.head;
+	  assert( is_compound_form( form));
+	  let form_head = cast( Compound_Form, form).head;
+
+	  let grammar_form = call_grammar_macro( form_head, form);
+	  //	  print_form( grammar_form);
+	  grammar_expander_rec( grammar_form, next_rules)
 	}
       else
 	{
+	  print_form( cast( Form, cf));
+	  panic( "unknown head\n");
 	  Form( imp)
 	}
     }

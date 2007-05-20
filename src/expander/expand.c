@@ -411,18 +411,25 @@ expand_id( symbol_t symbol)
 }
 
 
+
 /* XXX: allow when the announced return type is a tuple of less
    components than the body.
  */
 
-expanded_form_t
-expand_lambda(generic_form_t form)
-{
-  form_t return_type_form = CAR (form->form_list);
-  generic_form_t parameters = CAR (form->form_list->next);
-  generic_form_t body = CAR (form->form_list->next->next);
+/* We should have: function() for defining regular functions, and
+   lambda() for defining closures, which is not for now.  */
 
+
+static Type function_return_type;
+
+static form_t function_parameters;
+
+void
+declare_function_begin( generic_form_t parameters,
+			form_t return_type_form)
+{
   /* Create a new block containing the passed arguments;  */
+  assert( function_return_type == NULL);
   assert(block_list == NULL);
   new_block();
 
@@ -442,37 +449,56 @@ expand_lambda(generic_form_t form)
 
       insert_id(id, 0, SPECIES_VARIABLE, type);
     }
-  
+  function_return_type = intern_type(return_type_form);
+  function_parameters = parameters;
+}
+
+expanded_form_t
+declare_function_end( form_t body)
+{
   expanded_form_t expanded_body = expand(body);
   
   remove_block();
   assert(block_list == NULL);
-
-
-  Type return_type = intern_type(return_type_form);
+  assert( function_return_type);
 
   /* TODO: The user may announce only a supertype of the returned
      type.  */
-  if(return_type != expanded_body->type)
+  if(function_return_type != expanded_body->type)
     panic("Function body's return type (%s) does not match"
-	  "the given return type(%s)\n", asprint_type_form(return_type_form),
+	  "the given return type(%s)\n", asprint_type(function_return_type),
 	  asprint_type(expanded_body->type));
 
   /* Create the function type form.  */
-  type_form_t function_form = function_type_form(return_type_form, parameters);
+  type_form_t function_form = function_type_form(function_return_type->type_form,
+						 function_parameters);
 
-  expanded_form_t eform = create_expanded_form(lambda_form(return_type_form,
-							   parameters,
+  expanded_form_t eform = create_expanded_form(lambda_form(function_return_type->type_form,
+							   function_parameters,
 							   expanded_body),
 					       intern_type(function_form));
 
-
-
+  function_parameters = NULL;
+  function_return_type = NULL;
+  
+  
   return eform;
+}
+
+
+expanded_form_t
+expand_lambda(generic_form_t form)
+{
+  form_t return_type_form = CAR (form->form_list);
+  generic_form_t parameters = CAR (form->form_list->next);
+  generic_form_t body = CAR (form->form_list->next->next);
+
+  declare_function_begin( parameters, return_type_form);
+  return declare_function_end( body);
   
  }
 
-
+
 /* The purpose of these functions is for "bottom to up" expansion
    containing undeclared new variables. These functions allow to
    define a scope for these variables, without expanding the contents

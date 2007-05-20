@@ -913,7 +913,7 @@ parse_all ()
       else if(next_token.id == SYMBOL( grammar))
 	{
 	  struct string the_string;
-	  /* We remove the 6 characters of 'grammar' */
+	  /* We remove the 7 characters of 'grammar' */
 	  the_string.content = scanner_pointer - 6;
 	  the_string.length = 4194304; /* 4 Mo of source code is quite much. */
 	  set_parser_support_to( &the_string);
@@ -925,6 +925,23 @@ parse_all ()
 	  parse_initialize();
 	  
 	  return form;
+	}
+      else if(next_token.id == SYMBOL( grammar_macro))
+	{
+	  struct string the_string;
+	  /* We remove the 13 characters of 'grammar_macro' */
+	  the_string.content = scanner_pointer - 13;
+	  the_string.length = 4194304; /* 4 Mo of source code is quite much. */
+	  set_parser_support_to( &the_string);
+
+	  form_t form = _l__parse__parse_grammar__Grammar_Macro();
+
+	  lispify( form);
+	  scanner_pointer = get_parser_support();
+	  parse_initialize();
+	  
+	  return form;
+	  
 	}
       
       
