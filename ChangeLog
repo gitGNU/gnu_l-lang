@@ -1,3 +1,9 @@
+2007-05-23  Matthieu Lemerre  <racin@free.fr>
+
+	* src/new-parser/parse-grammar.l (parse_Grammar): remove Grouping
+	rule, binding is done using only ':' instead. Convert the grammar
+	to the new rules.
+
 2007-05-21  Matthieu Lemerre  <racin@free.fr>
 
 	Handling of grammar macros.

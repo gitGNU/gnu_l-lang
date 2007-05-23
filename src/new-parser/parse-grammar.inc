@@ -39,26 +39,26 @@ struct struct0x080663e8 {
 Form__type car;
 List__O__Form__C____type__type cdr;
 };
-typedef struct struct0x0851b408 *Character_Range__type;
-struct struct0x0851b408 {
+typedef struct struct0x0850bd08 *Character_Range__type;
+struct struct0x0850bd08 {
 Int__type min;
 Int__type max;
 };
-typedef struct struct0x0851b798 *List__O__Character_Range__C____type__type;
-struct struct0x0851b798 {
+typedef struct struct0x0850c098 *List__O__Character_Range__C____type__type;
+struct struct0x0850c098 {
 Character_Range__type head;
 List__O__Character_Range__C____type__type tail;
 };
-typedef struct struct0x0851ba90 *Exit__type;
+typedef struct struct0x0850c358 *Exit__type;
 typedef List__O__Character_Range__C____type__type Character_Set__type;
-struct struct0x0851ba90 {
+struct struct0x0850c358 {
 Int__type dummy;
 };
-struct struct0x0851e1e0 {
+struct struct0x0850df10 {
 Character_Range__type car;
 List__O__Character_Range__C____type__type cdr;
 };
-struct struct0x0852c460 {
+struct struct0x0851c278 {
 void *car;
 void *cdr;
 };
@@ -98,25 +98,23 @@ Int__type (_l__parse__parse_grammar__Alpha_Num)(void);
 Int__type (_l__parse__parse_grammar__Alpha)(void);
 Symbol__type (_l__parse__parse_grammar__Identifier)(void);
 Int__type (_l__parse__parse_grammar__Escaped_Character)(void);
-Form__type (_l__parse__parse_grammar__Callable_Rule)(void);
+Form__type (_l__parse__parse_grammar__Callable_Rule_or_Binding)(void);
 Int__type (_l__parse__parse_grammar__Maybe_Escaped_Character)(void);
 Int__type (_l__parse__parse_grammar__Maybe_Escaped_Character_Character_Range)(void);
 Form__type (_l__parse__parse_grammar__String)(void);
 Form__type (_l__parse__parse_grammar__Symbol)(void);
 Form__type (_l__parse__parse_grammar__Character_Range)(void);
 Form__type (_l__parse__parse_grammar__Character_Set)(void);
-Form__type (_l__parse__parse_grammar__Replacement)(void);
-Form__type (_l__parse__parse_grammar__Semantic_Action)(void);
-Form__type (_l__parse__parse_grammar__Grammar_Rule)(void);
-Form__type (_l__parse__parse_grammar__Grouping)(void);
-Form__type (_l__parse__parse_grammar__Rule_Macro)(void);
 Form__type (_l__parse__parse_grammar__Primary)(void);
+Form__type (_l__parse__parse_grammar__Semantic_Action)(void);
+Form__type (_l__parse__parse_grammar__Rule_Macro)(void);
+Form__type (_l__parse__parse_grammar__Replacement)(void);
 Form__type (_l__parse__parse_grammar__Postfix)(void);
 Form__type (_l__parse__parse_grammar__Sequence)(void);
 Form__type (_l__parse__parse_grammar__Alternative)(void);
 Form__type (_l__parse__parse_grammar__Rule)(void);
+Form__type (_l__parse__parse_grammar__Grammar_Rule)(void);
 Form__type (_l__parse__parse_grammar__Grammar)(void);
-Form__type (_l__parse__parse_grammar__Grammar_Macro)(void);
 Output_Descriptor__type current_output_descriptor;
 Output_Descriptor__type stdout_output_descriptor;
 Output_Descriptor__type stderr_output_descriptor;
@@ -132,7 +130,7 @@ static struct { unsigned int length; char *content; } __string_9 = { 1, "\n"};
 static struct { unsigned int length; char *content; } __string_10 = { 12, "Parse error\n"};
 static struct { unsigned int length; char *content; } __string_11 = { 33, "rule Spacing:Character = [ \n	]* ;"};
 static struct { unsigned int length; char *content; } __string_12 = { 108, "grammar parse_grammar = { rule truc:Int = toto.tata 'ouf'?; rule test:toto = @Separator(',', truc) ')' a to;"};
-static struct { unsigned int length; char *content; } __string_13 = { 167, "grammar_macro @Left_Infix_Operator(operators, subrule) = <form:$subrule$> (<id:$operators$> <form2:$subrule$> <form:{Compound_Form( id, list( form, form2))}>)* {form};"};
+static struct { unsigned int length; char *content; } __string_13 = { 31, "rule toto:Form = tata:truc taff"};
 static struct { unsigned int length; char *content; } __string_14 = { 1, ","};
 static struct { unsigned int length; char *content; } __string_15 = { 1, "+"};
 static struct { unsigned int length; char *content; } __string_16 = { 1, "*"};

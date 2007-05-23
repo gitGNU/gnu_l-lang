@@ -24,7 +24,7 @@ grammar parse_grammar = {
   rule Alpha_Num:Character = [a-zA-Z_0-9] ;
   
   
-  rule Identifier:Symbol = <start:_> Alpha Alpha_Num* <end:_>
+  rule Identifier:Symbol = start:_ Alpha Alpha_Num* end:_
   { intern_string( substring( start, end))} ;
 
   rule Escaped_Character:Character = [\\] ( "n" {10}
@@ -34,88 +34,89 @@ grammar parse_grammar = {
   rule Maybe_Escaped_Character:Character = Escaped_Character | [^\\] ;
   rule Maybe_Escaped_Character_Character_Range:Character = Escaped_Character|[^\]\\];
 
-  rule String:Form = ["] <start:_> ( Escaped_Character | [^\"\\])* <end:_> ["]
+  rule String:Form = ["] start:_ ( Escaped_Character | [^\"\\])* end:_ ["]
                        {String_Form( substring( start, end))} ;
-  rule Symbol:Form = ['] <start:_> ( Escaped_Character | [^\'\\])* <end:_> [']
+  rule Symbol:Form = ['] start:_ ( Escaped_Character | [^\'\\])* end:_ [']
                        {Symbol_Form( intern_string( substring( start, end)))} ;
   
   rule Character_Range:Form =
-                         <max:<min:Maybe_Escaped_Character_Character_Range>>
-                         ("-" <max:Maybe_Escaped_Character>)?
+                         max:min:Maybe_Escaped_Character_Character_Range
+                         ("-" max:Maybe_Escaped_Character)?
                          { if(min == max) Int_Form( min) 
 			     else Compound_Form('-', list( Int_Form( min),
 							   Int_Form( max))) } ;
 
   rule Character_Set:Form = 
-                       <char_selector:{'[]'}>
-                       "[" ("^" <char_selector:{'[^]'}>)?
-                       <cr_list:( <cr:Character_Range> { make( cr) })*> "]"
+                       char_selector:{'[]'}
+                       "[" ("^" char_selector:{'[^]'})?
+                       cr_list:( cr:Character_Range { make( cr) })* "]"
                        { Compound_Form( char_selector, cr_list) } ;
 
-  rule Callable_Rule:Form = <id:Identifier> <form:{Id_Form( id)}>
-                            ("." <id:Identifier> <form:{Compound_Form( '.',
-								       list( form,
-									     Id_Form(id)))}>)?
-                            {form};
+  rule Callable_Rule_or_Binding:Form = id:Identifier form:{Id_Form( id)}
+  ("." id:Identifier form:{Compound_Form( '.',
+					  list( form,
+						Id_Form(id)))}
+    // should be ':' instead.
+    | ":" form:Postfix form:{Compound_Form( '<>',
+					    list( Id_Form( id),
+						  form))}
+    )?
+  {form};
 
-  rule Semantic_Action:Form = "{" <exp:Expression> "}"
+  rule Semantic_Action:Form = "{" exp:Expression "}"
                               {Compound_Form( '{}', list( exp))};
   
-  rule Grouping:Form = "<" <id:Identifier> ":" <form:Rule> ">"
-                       { Compound_Form( '<>', list( Id_Form( id), form)) };
-
   // Should use the @Separator grammar macro.
-  rule Rule_Macro:Form = "@" <id:Identifier>
-                         "(" Spacing <form_list:( ")" {cast( List( Form), 0)}
-                                                 | <arg1:Rule> Spacing
-     		                                   <rest_list:(',' <arg:Rule>
-						               {make( arg)})*>
+  rule Rule_Macro:Form = "@" id:Identifier
+                         "(" Spacing form_list:( ")" {cast( List( Form), 0)}
+                                                 | arg1:Rule Spacing
+     		                                   rest_list:(',' arg:Rule
+						               {make( arg)})*
                      	  	                      ")" {cons( arg1,
-			  			                 rest_list)})>
+			  			                 rest_list)})
                          {Compound_Form( '@',
 					 list( Compound_Form( id,
 							      form_list)))};
   
   // This is used in rule_macros.
-  rule Replacement:Form = "$" <exp:Expression> "$" {Compound_Form( '$', list( exp))};
+  rule Replacement:Form = "$" exp:Expression "$" {Compound_Form( '$', list( exp))};
   
   rule Primary:Form = (String
 		       | Symbol
 		       | Character_Set 
-		       | Callable_Rule
-		       | Grouping
+		       | Callable_Rule_or_Binding
 		       | Semantic_Action
 		       | Rule_Macro
 		       | Replacement
-		       | "(" Spacing <r:Rule> ")" {r});
+		       | "(" Spacing r:Rule ")" {r});
 
-  rule Postfix:Form = <form:Primary> ( <op:('?' | '*' | '+')>
-				       <form:{ Compound_Form( op,
-							      list( form)) }>)?
+  rule Postfix:Form = form:Primary ( op:('?' | '*' | '+')
+				     form:{ Compound_Form( op,
+							   list( form)) })?
                       { form };
 
   // Due to technical restrictions in head set calculation,
   // for now we use + instead of * for a sequence.
-  rule Sequence:Form = <post_list:(<post:Postfix>  Spacing {make( post)})+>
+  rule Sequence:Form = post_list:(post:Postfix  Spacing {make( post)})+
                        { if( post_list.tail == cast( List( Form), 0)) post_list.head
 			   else Compound_Form( ' ', post_list) };
 
-  rule Alternative:Form = <prim:Sequence>
-                          ("|" Spacing <sec:Sequence>
-			   <prim:{ Compound_Form( '|', list( prim, sec)) }>)*
+  rule Alternative:Form = prim:Sequence
+                          ("|" Spacing sec:Sequence
+			   prim:{ Compound_Form( '|', list( prim, sec)) })*
                           { prim };
 
   rule Rule:Form = Alternative;
 
-  rule Grammar_Rule:Form = "rule" Spacing <id:Identifier> ":" <ret_type:Type>
-                               Spacing "=" Spacing <r:Rule> Spacing ";" Spacing
+  rule Grammar_Rule:Form = "rule" Spacing id:Identifier ":" ret_type:Type
+                               Spacing "=" Spacing r:Rule Spacing ";" Spacing
                                { Compound_Form( 'rule', list( Id_Form( id),
 							      ret_type,
 							      r)) };
   
 
-  rule Grammar:Form = "grammar" Spacing <id:Identifier> Spacing "=" Spacing
-  "{" Spacing <gr_list:(<gr:Grammar_Rule> {make( gr)})*> "}" Spacing ";"
+  rule Grammar:Form = "grammar" Spacing id:Identifier Spacing "=" Spacing
+  "{" Spacing gr_list:(gr:Grammar_Rule {make( gr)})* "}" Spacing ";"
   {  Compound_Form( 'define',
 		    cons( Id_Form( 'grammar'),
 			  cons( Id_Form( id),
@@ -123,12 +124,12 @@ grammar parse_grammar = {
 
 
   // Grammar macro; should use the @Separator grammar_macro.
-  rule Grammar_Macro:Form = "grammar_macro" Spacing "@" <id:Identifier>
-     "(" Spacing <form_list:( ")" {cast( List( Form), 0)}
-                            | <arg1:Identifier> Spacing
-     		              <rest_list:(','  <arg:Identifier> {make( Id_Form( arg))})*>
-           		      ")" { cons( Id_Form( arg1), rest_list)} )>
-     Spacing '=' <rule:Rule> ';'
+  rule Grammar_Macro:Form = "grammar_macro" Spacing "@" id:Identifier
+     "(" Spacing form_list:( ")" {cast( List( Form), 0)}
+                            | arg1:Identifier Spacing
+     		              rest_list:(','  arg:Identifier {make( Id_Form( arg))})*
+           		      ")" { cons( Id_Form( arg1), rest_list)} )
+     Spacing '=' rule:Rule ';'
      {Compound_Form( 'define',
 		     list( Id_Form( 'grammar_macro'),
 			   Id_Form( id),
@@ -136,7 +137,7 @@ grammar parse_grammar = {
 					  form_list),
 			   rule))} ;
 
-  //  rule Test:Form = "rule" Spacing <num:0> {Form($num$)};//("toto" { num = num + 1})* {Form( num)};
+  //  rule Test:Form = "rule" Spacing num:0 {Form($num$)};//("toto" { num = num + 1})* {Form( num)};
 
 };
 
@@ -145,7 +146,7 @@ test ()
 {
 
   set_parser_support_to( "rule Spacing:Character = [ \n\t]* ;");
-  //  set_parser_support_to( "rule toto:Int = [a-zA-Z_]*|toto tata|{print( 'hello')}|<hello:toto|[a-z] truc>;  ");
+  //  set_parser_support_to( "rule toto:Int = [a-zA-Z_]*|toto tata|{print( 'hello')}|hello:toto|[a-z] truc;  ");
   //  set_parser_support_to( "rule toto:Int = [a-zA-Z_]*;");
   //  let form = parse_Grammar_Rule( );
   //   set_parser_support_to( "[a-zA-Z_]*");//let form = parse_Rule();
@@ -171,8 +172,9 @@ test ()
   form = parse (parse_grammar.Grammar);
   print_form( form);
 
-  set_parser_support_to( "grammar_macro @Left_Infix_Operator(operators, subrule) = <form:$subrule$> (<id:$operators$> <form2:$subrule$> <form:{Compound_Form( id, list( form, form2))}>)* {form};");
-  let form2 = parse (parse_grammar.Grammar_Macro);
+  //  set_parser_support_to( "grammar_macro @Left_Infix_Operator(operators, subrule) = form:$subrule$ (id:$operators$ form2:$subrule$ form:{Compound_Form( id, list( form, form2))})* {form};");
+  set_parser_support_to( "rule toto:Form = tata:truc taff");
+  let form2 = parse (parse_grammar.Grammar_Rule);
 
   
   print_form( form2);
