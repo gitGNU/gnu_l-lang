@@ -131,6 +131,45 @@ convert_string(String s)
   return maken_heap_string( buffer, current-buffer);
 }
 
+
+String
+quote_string(String s)
+{
+  /* Transform the L ids into valid C ones.  */
+  char buffer[1024];
+  char *current = buffer;
+  char *current_string = s->content;
+
+  while(current_string < s->content + s->length)
+    {
+      switch(*current_string)
+	{
+	case 0:
+	  panic( "PB");
+
+	case '\n':
+	  strcpy( current, "\\n");
+	  current += 2;
+	  break;
+
+	case '"':
+	  strcpy( current, "\\\"");
+	  current += 2;
+	  break;
+	  
+	default:
+	  *current = *current_string;
+	  current++;
+	  break;
+	}
+      current_string++;
+    }
+  
+ end:
+  return maken_heap_string( buffer, current-buffer);
+}
+
+
 int
 get_string_length( String s)
 {
@@ -316,6 +355,7 @@ init_c_output_support()
   DEFINE_C_FUNCTION( convert_id, "Symbol <- Symbol");
   DEFINE_C_FUNCTION( convert_id_as_string, "String <- Symbol");
   DEFINE_C_FUNCTION( convert_string, "String <- String");
+  DEFINE_C_FUNCTION( quote_string, "String <- String");
   DEFINE_C_FUNCTION( expanded_form_list_from_file_name,
 		     "List( Compound_Form) <- String");
   DEFINE_C_FUNCTION( intern_type, "Type <- Form");

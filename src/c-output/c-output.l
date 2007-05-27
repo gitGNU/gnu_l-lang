@@ -373,7 +373,8 @@ c_output_label( cf:Expanded_Compound_Form)
   assert( cf.form_list.tail == cast( List( Expanded_Form), 0));
   assert( is_id_form( cast( Form, cf.form_list.head)));
   let label_form = cast( Id_Form, cf.form_list.head);
-  buffered print( "((void) 0);", convert_id( label_form.value), ":((void) 0)");
+  //  buffered print( "((void) 0);", convert_id( label_form.value), ":((void) 0)");
+  buffered print( convert_id( label_form.value), ":");
 }
 
 
@@ -419,11 +420,12 @@ c_output_seq( cf:Expanded_Compound_Form)
 {
   buffered {
     assert( cf.form_list != cast( List( Expanded_Form), 0));
-    print( cf.form_list.head:gnu_c);
+    print( "({", cf.form_list.head:gnu_c);
     foreach( let subform in cf.form_list.tail)
       {
-	print( ",\n", subform:gnu_c);
+	print( ";\n", subform:gnu_c);
       }
+    print( ";})");
   }
 }
 
@@ -704,7 +706,7 @@ doit( l_file:String, out_c_file:String, out_inc_file:String)
   foreach( (let count, let string) in strings_needed)
     {
       print( "static struct { unsigned int length; char *content; }", " __string_", count,
-	     " = { ",get_string_length( string), ', "', convert_string( string), '"', "};\n");
+	     " = { ",get_string_length( string), ', "', quote_string( string), '"', "};\n");
     }
 
   
@@ -718,7 +720,7 @@ test ()
   stdout_descriptor = current_output_descriptor;
   init_c_output();
 
-//  let form_list = expanded_form_list_from_file_name( "../test/cocyte01-function-definition.l");
+  //let form_list = expanded_form_list_from_file_name( "../test/cocyte01-function-definition.l");
 //  let form_list = expanded_form_list_from_file_name( "../test/cocyte02-let.l");
 //  let form_list = expanded_form_list_from_file_name( "../test/cocyte03-funcall.l");
 //  let form_list = expanded_form_list_from_file_name( "../test/cocyte04-funcall-args.l");
@@ -759,14 +761,18 @@ test ()
 //  let form_list = expanded_form_list_from_file_name( "c-output/foreach-hash.l");
 //  let form_list = expanded_form_list_from_file_name( "c-output/c-output.l");
 
-//  doit("c-output/c-output.l", "c-output/c-output.c", "c-output/c-output.inc");
+
+  
+  doit("c-output/c-output.l", "c-output/c-output.c", "c-output/c-output.inc");
   //  doit( "std/error.l", "std/error.c", "std/error.inc");
   //  doit( "std/string.l", "std/string.c", "std/string.inc");
   // doit( "std/make-list.l", "std/make-list.c", "std/make-list.inc");
 
-doit( "new-parser/grammar-expander.l", "new-parser/grammar-expander.c", "new-parser/grammar-expander.inc");
-doit( "new-parser/parse-grammar.l", "new-parser/parse-grammar.c", "new-parser/parse-grammar.inc");
+  doit( "new-parser/grammar-expander.l", "new-parser/grammar-expander.c", "new-parser/grammar-expander.inc");
+  //doit( "new-parser/parse-grammar.l", "new-parser/parse-grammar.c", "new-parser/parse-grammar.inc");
+  doit( "new-parser/parse-l.l", "test.c", "test.inc");
   //doit( "std/error.l", "std/error.c", "std/error.inc");
   //  doit( "std/error.l", "test.c", "test.inc");
-  //      doit( "test.l", "test.c", "test.inc");
+  //  doit( "test.l", "test.c", "test.inc");
+  
 }
