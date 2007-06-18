@@ -28,6 +28,9 @@ extern void *compile( void*);
 
 void *declare_block_begin( void*);
 void *declare_block_end( void*);
+void *declare_function_begin( void*);
+void *declare_function_end( void*);
+
 
 void
 init ()
@@ -71,7 +74,10 @@ init ()
 
   DEFINE_C_FUNCTION( declare_block_begin, "()<- ()");
   DEFINE_C_FUNCTION( declare_block_end, "Expanded_Form <- (List( Form))");
+  DEFINE_C_FUNCTION( declare_function_begin, "() <- (Compound_Form, Form)");
+  DEFINE_C_FUNCTION( declare_function_end, "Expanded_Form <- (Expanded_Form)");
 
+  
 
   
   //  DEFINE_C_FUNCTION (expand, "Void *<-Form");

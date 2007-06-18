@@ -1,3 +1,6 @@
+//Many of these functions could be part of a more general "interval/union of intervals library":
+//union, intersection, minus.
+
 //Duplicates
 
 compile_time
@@ -193,29 +196,91 @@ print_Character_Set( s:Character_Set)
   foreach( let cr in cl)
     {
       print( "min:", cr.min, ", max:", cr.max, "\n");
+      if(cr.min > 255 || cr.max > 255)
+	{panic( "Bad min or max\n")};
+
     }
   
 }
 
+//Enough it the character sets do not intersec.
+compile_time Character_Set
+union_Character_Set( cs1_:Character_Set, cs2_:Character_Set)
+{
+  let cs1 = cast( List( Character_Range), cs1_);
+  let cs2 = cast( List( Character_Range), cs2_);
+
+  //  let new_cs = make_list( {
+  sort_Character_Set( cast( List( Character_Range),
+			    append( cast( List( Void *), cs1),
+				    cast( List( Void *), cs2))))
+}
+
+
+//Should return a graph(for LL( *)) (at least a tree for LL( k)) instead;
+//but for now we parse too large.
+compile_time List( Character_Set)
+union_Character_Set_List( csl1:List( Character_Set), csl2:List( Character_Set))
+{
+  let l1 = csl1;
+  let l2 = csl2;
+  let new_list = make_list({loop {
+    if(l1 != cast( List( Character_Set), 0))
+      {
+	if(l2 != cast( List( Character_Set), 0))
+	  {
+	    make( union_Character_Set( l1.head, l2.head));
+	    l2 = l2.tail;
+	    l1 = l1.tail;
+	    continue;
+	  }
+
+	//	foreach( let cs1 in l1) make( cs1);
+	break;
+      }
+    else if(l2 != cast( List( Character_Set), 0))
+      {
+	//	foreach( let cs2 in l2) make( cs2);
+	break;
+      }
+
+    break;
+      };()})
+    
+			   
+  
+}
+
+
 // Tests whether C is in character set CS.
 compile_time Form
-is_in_Character_Set_condition( id_form:Form, cs:Character_Set)
+is_in_Character_Set_condition(cs_list:List( Character_Set))
 {
-  let final_cond = Form( cast( Bool, 0)};
+  let final_cond:Form;
+  let final_final_cond = Form( cast( Bool, 1));
+
+  let i = 0;
   
-  foreach( let cr in cast( List( Character_Range), cs))
+  foreach( let cs in cs_list)
     {
-      let cond = if(cr.min == cr.max)
+      let get_form = Form( new_peek_char( $Int_Form(i)$));
+      i = i + 1;
+      final_cond = Form( cast( Bool, 0));
+      foreach( let cr in cast( List( Character_Range), cs))
 	{
-	  Form( $id_form$ == $Int_Form(cr.min)$)
-	} 
-      else
-	{
-	  Form( $id_form$ >= $Int_Form(cr.min)$ && $id_form$ <= $Int_Form(cr.max)$)
-	};
-      final_cond = Form( $cond$ || $final_cond$);
+	  let cond = if(cr.min == cr.max)
+	    {
+	      Form( $get_form$ == $Int_Form(cr.min)$)
+	    } 
+	  else
+	    {
+	      Form( $get_form$ >= $Int_Form(cr.min)$ && $get_form$ <= $Int_Form(cr.max)$)
+		};
+	  final_cond = Form( $cond$ || $final_cond$);
+	}
+      final_final_cond = Form( $final_final_cond$ && $final_cond$);
     }
-  final_cond;
+  final_final_cond;
 }
 
 //

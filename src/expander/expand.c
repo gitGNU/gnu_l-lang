@@ -456,6 +456,8 @@ declare_function_begin( generic_form_t parameters,
 expanded_form_t
 declare_function_end( form_t body)
 {
+  /* If we use the declare_*, it is likely that the body will be expanded.
+     So we could only assert that it is. */
   expanded_form_t expanded_body = expand(body);
   
   remove_block();
@@ -1370,7 +1372,7 @@ init_expand (void)
   define_expander(intern("unary_minus"), expand_unary_operator);
   
   define_expander(SYMBOL(let), expand_let);
-   define_expander(SYMBOL(funcall), expand_funcall);
+  define_expander(SYMBOL(funcall), expand_funcall);
   //  define_expander(SYMBOL(toto), expand_function);
   /* After we have expanded everything, for now we should strip the
 expand info so that the cocyte compiler has a normal tree. In the

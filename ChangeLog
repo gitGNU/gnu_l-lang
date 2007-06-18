@@ -1,3 +1,27 @@
+2007-06-18  Matthieu Lemerre  <racin@free.fr>
+
+	* src/new-parser/parse-l.l: New L grammar. Many changes in support
+	files.
+	
+	* src/init.c (declare_function_begin, declare_function_end):
+	Export these functions.
+
+2007-06-11  Matthieu Lemerre  <racin@free.fr>
+
+	* src/new-parser/parse-grammar.l: Rule macros parameters are
+	passed with <> instead of ().
+	
+
+2007-05-28  Matthieu Lemerre  <racin@free.fr>
+
+	Better C output; use the fact that lets are condensed at the
+	beginnings of the bloks.
+	
+	* src/c-output/c-output.l (doit): Use quote_string
+	* src/c-output/support.c (quote_string): New function.
+	* src/c-output/c-output.l (c_output_label, c_output_seq): Output
+	statements and block expressions instead of using ,
+	
 2007-05-23  Matthieu Lemerre  <racin@free.fr>
 
 	* src/new-parser/parse-grammar.l (parse_Grammar): remove Grouping

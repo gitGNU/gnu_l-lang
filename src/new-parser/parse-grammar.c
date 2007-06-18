@@ -3,50 +3,42 @@
 Int__type  _l__parse__parse_grammar__Comment(void)
 {
 return ({
-(read_char)(),
-(read_char)(),
-((void) 0);_sharp__sharp_loop405_begin407:((void) 0),
+({({(read_char)();
+(read_char)();});
+({({_sharp__sharp_loop795_begin797:;
 ({
-Int__type _sharp_peeked_char_star404;
-(_sharp_peeked_char_star404 = (peek_char)());
-({if( (!(((((((int) _sharp_peeked_char_star404 >= (int) 11))&&(((int) _sharp_peeked_char_star404 <= (int) 255))))||(((((((int) _sharp_peeked_char_star404 >= (int) 0))&&(((int) _sharp_peeked_char_star404 <= (int) 9))))||(((Bool__type ) 0))))))))
+({if( (!(((((Bool__type ) 1))&&(((((((int) (new_peek_char)(0) >= (int) 11))&&(((int) (new_peek_char)(0) <= (int) 255))))||(((((((int) (new_peek_char)(0) >= (int) 0))&&(((int) (new_peek_char)(0) <= (int) 9))))||(((Bool__type ) 0))))))))))
 {
-({goto _sharp__sharp_loop405_end406;});}})
+({goto _sharp__sharp_loop795_end796;});}})
 ;
 (read_char)();
 })
-,
-({goto _sharp__sharp_loop405_begin407;}),
-((void) 0);_sharp__sharp_loop405_end406:((void) 0),
-(read_char)();
+;
+({goto _sharp__sharp_loop795_begin797;});});
+_sharp__sharp_loop795_end796:;});
+({(read_char)();});});
 })
 ;}
 
 void  _l__parse__parse_grammar__Spacing(void)
 {
 return ({
-((void) 0);_sharp__sharp_loop410_begin412:((void) 0),
+({({_sharp__sharp_loop799_begin801:;
 ({
-Int__type _sharp_peeked_char_star408;
-(_sharp_peeked_char_star408 = (peek_char)());
-({if( (!((((_sharp_peeked_char_star408 == 47))||((((_sharp_peeked_char_star408 == 32))||((((_sharp_peeked_char_star408 == 10))||((((_sharp_peeked_char_star408 == 9))||(((Bool__type ) 0))))))))))))
+({if( (!(((((Bool__type ) 1))&&(((((new_peek_char)(0) == 47))||(((((new_peek_char)(0) == 32))||(((((new_peek_char)(0) == 10))||(((((new_peek_char)(0) == 9))||(((Bool__type ) 0))))))))))))))
 {
-({goto _sharp__sharp_loop410_end411;});}})
+({goto _sharp__sharp_loop799_end800;});}})
 ;
 ({
-Int__type _sharp_peeked_char_alt409;
-(_sharp_peeked_char_alt409 = (peek_char)());
-(((((_sharp_peeked_char_alt409 == 47))||(((Bool__type ) 0))))?
-((_l__parse__parse_grammar__Comment)()):
-((((((_sharp_peeked_char_alt409 == 32))||((((_sharp_peeked_char_alt409 == 10))||((((_sharp_peeked_char_alt409 == 9))||(((Bool__type ) 0))))))))?
+((((((Bool__type ) 1))&&(((((new_peek_char)(0) == 32))||(((((new_peek_char)(0) == 10))||(((((new_peek_char)(0) == 9))||(((Bool__type ) 0))))))))))?
 ((read_char)()):
-((parse_error)()))));
+((_l__parse__parse_grammar__Comment)()));
 })
 ;
 })
-,
-({goto _sharp__sharp_loop410_begin412;}),
-((void) 0);_sharp__sharp_loop410_end411:((void) 0);
+;
+({goto _sharp__sharp_loop799_begin801;});});
+_sharp__sharp_loop799_end800:;});
 })
 ;}
 
@@ -69,51 +61,41 @@ Symbol__type  _l__parse__parse_grammar__Identifier(void)
 return ({
 Int__type start;
 Int__type end;
-(start = (get_point_pos)()),
-(_l__parse__parse_grammar__Alpha)(),
-((void) 0);_sharp__sharp_loop414_begin416:((void) 0),
+({(start = (get_point_pos)());
+(_l__parse__parse_grammar__Alpha)();
+({({_sharp__sharp_loop803_begin805:;
 ({
-Int__type _sharp_peeked_char_star413;
-(_sharp_peeked_char_star413 = (peek_char)());
-({if( (!(((((((int) _sharp_peeked_char_star413 >= (int) 97))&&(((int) _sharp_peeked_char_star413 <= (int) 122))))||((((_sharp_peeked_char_star413 == 95))||(((((((int) _sharp_peeked_char_star413 >= (int) 65))&&(((int) _sharp_peeked_char_star413 <= (int) 90))))||(((((((int) _sharp_peeked_char_star413 >= (int) 48))&&(((int) _sharp_peeked_char_star413 <= (int) 57))))||(((Bool__type ) 0))))))))))))
+({if( (!(((((Bool__type ) 1))&&(((((((int) (new_peek_char)(0) >= (int) 97))&&(((int) (new_peek_char)(0) <= (int) 122))))||(((((new_peek_char)(0) == 95))||(((((((int) (new_peek_char)(0) >= (int) 65))&&(((int) (new_peek_char)(0) <= (int) 90))))||(((((((int) (new_peek_char)(0) >= (int) 48))&&(((int) (new_peek_char)(0) <= (int) 57))))||(((Bool__type ) 0))))))))))))))
 {
-({goto _sharp__sharp_loop414_end415;});}})
+({goto _sharp__sharp_loop803_end804;});}})
 ;
 (_l__parse__parse_grammar__Alpha_Num)();
 })
-,
-({goto _sharp__sharp_loop414_begin416;}),
-((void) 0);_sharp__sharp_loop414_end415:((void) 0),
-(end = (get_point_pos)()),
-(intern_string)((substring)(start, end));
+;
+({goto _sharp__sharp_loop803_begin805;});});
+_sharp__sharp_loop803_end804:;});
+(end = (get_point_pos)());
+({(intern_string)((substring)(start, end));});});
 })
 ;}
 
 Int__type  _l__parse__parse_grammar__Escaped_Character(void)
 {
 return ({
-(read_char)(),
+({(read_char)();
 ({
-Int__type _sharp_peeked_char_alt417;
-(_sharp_peeked_char_alt417 = (peek_char)());
-((((((((int) _sharp_peeked_char_alt417 >= (int) 117))&&(((int) _sharp_peeked_char_alt417 <= (int) 255))))||(((((((int) _sharp_peeked_char_alt417 >= (int) 111))&&(((int) _sharp_peeked_char_alt417 <= (int) 115))))||(((((((int) _sharp_peeked_char_alt417 >= (int) 0))&&(((int) _sharp_peeked_char_alt417 <= (int) 109))))||(((Bool__type ) 0))))))))?
-((read_char)()):
-((((((_sharp_peeked_char_alt417 == 116))||((((_sharp_peeked_char_alt417 == 110))||(((Bool__type ) 0))))))?
+((((((Bool__type ) 1))&&(((((new_peek_char)(0) == 110))||(((Bool__type ) 0))))))?
+(({({(read_char)();});
+({10;});})):
 (({
-Int__type _sharp_peeked_char_alt418;
-(_sharp_peeked_char_alt418 = (peek_char)());
-(((((_sharp_peeked_char_alt418 == 116))||(((Bool__type ) 0))))?
-((read_char)(),
-9):
-((((((_sharp_peeked_char_alt418 == 110))||(((Bool__type ) 0))))?
-((read_char)(),
-10):
-((parse_error)()))));
+((((((Bool__type ) 1))&&(((((new_peek_char)(0) == 116))||(((Bool__type ) 0))))))?
+(({({(read_char)();});
+({9;});})):
+((read_char)()));
 })
-):
-((parse_error)()))));
+));
 })
-;
+;});
 })
 ;}
 
@@ -121,13 +103,9 @@ Int__type  _l__parse__parse_grammar__Maybe_Escaped_Character(void)
 {
 return ({
 ({
-Int__type _sharp_peeked_char_alt419;
-(_sharp_peeked_char_alt419 = (peek_char)());
-((((((((int) _sharp_peeked_char_alt419 >= (int) 93))&&(((int) _sharp_peeked_char_alt419 <= (int) 255))))||(((((((int) _sharp_peeked_char_alt419 >= (int) 0))&&(((int) _sharp_peeked_char_alt419 <= (int) 91))))||(((Bool__type ) 0))))))?
-((read_char)()):
-((((((_sharp_peeked_char_alt419 == 92))||(((Bool__type ) 0))))?
+((((((Bool__type ) 1))&&(((((new_peek_char)(0) == 92))||(((Bool__type ) 0))))))?
 ((_l__parse__parse_grammar__Escaped_Character)()):
-((parse_error)()))));
+((read_char)()));
 })
 ;
 })
@@ -137,13 +115,9 @@ Int__type  _l__parse__parse_grammar__Maybe_Escaped_Character_Character_Range(voi
 {
 return ({
 ({
-Int__type _sharp_peeked_char_alt420;
-(_sharp_peeked_char_alt420 = (peek_char)());
-((((((((int) _sharp_peeked_char_alt420 >= (int) 94))&&(((int) _sharp_peeked_char_alt420 <= (int) 255))))||(((((((int) _sharp_peeked_char_alt420 >= (int) 93))&&(((int) _sharp_peeked_char_alt420 <= (int) 92))))||(((((((int) _sharp_peeked_char_alt420 >= (int) 0))&&(((int) _sharp_peeked_char_alt420 <= (int) 91))))||(((Bool__type ) 0))))))))?
-((read_char)()):
-((((((_sharp_peeked_char_alt420 == 92))||(((Bool__type ) 0))))?
+((((((Bool__type ) 1))&&(((((new_peek_char)(0) == 92))||(((Bool__type ) 0))))))?
 ((_l__parse__parse_grammar__Escaped_Character)()):
-((parse_error)()))));
+((read_char)()));
 })
 ;
 })
@@ -154,33 +128,27 @@ Form__type  _l__parse__parse_grammar__String(void)
 return ({
 Int__type start;
 Int__type end;
-(read_char)(),
-(start = (get_point_pos)()),
-((void) 0);_sharp__sharp_loop423_begin425:((void) 0),
+({(read_char)();
+(start = (get_point_pos)());
+({({_sharp__sharp_loop807_begin809:;
 ({
-Int__type _sharp_peeked_char_star421;
-(_sharp_peeked_char_star421 = (peek_char)());
-({if( (!(((((((int) _sharp_peeked_char_star421 >= (int) 93))&&(((int) _sharp_peeked_char_star421 <= (int) 255))))||((((_sharp_peeked_char_star421 == 92))||(((((((int) _sharp_peeked_char_star421 >= (int) 35))&&(((int) _sharp_peeked_char_star421 <= (int) 91))))||(((((((int) _sharp_peeked_char_star421 >= (int) 0))&&(((int) _sharp_peeked_char_star421 <= (int) 33))))||(((Bool__type ) 0))))))))))))
+({if( (!(((((Bool__type ) 1))&&(((((((int) (new_peek_char)(0) >= (int) 93))&&(((int) (new_peek_char)(0) <= (int) 255))))||(((((new_peek_char)(0) == 92))||(((((((int) (new_peek_char)(0) >= (int) 35))&&(((int) (new_peek_char)(0) <= (int) 91))))||(((((((int) (new_peek_char)(0) >= (int) 0))&&(((int) (new_peek_char)(0) <= (int) 33))))||(((Bool__type ) 0))))))))))))))
 {
-({goto _sharp__sharp_loop423_end424;});}})
+({goto _sharp__sharp_loop807_end808;});}})
 ;
 ({
-Int__type _sharp_peeked_char_alt422;
-(_sharp_peeked_char_alt422 = (peek_char)());
-((((((((int) _sharp_peeked_char_alt422 >= (int) 93))&&(((int) _sharp_peeked_char_alt422 <= (int) 255))))||(((((((int) _sharp_peeked_char_alt422 >= (int) 35))&&(((int) _sharp_peeked_char_alt422 <= (int) 91))))||(((((((int) _sharp_peeked_char_alt422 >= (int) 0))&&(((int) _sharp_peeked_char_alt422 <= (int) 33))))||(((Bool__type ) 0))))))))?
-((read_char)()):
-((((((_sharp_peeked_char_alt422 == 92))||(((Bool__type ) 0))))?
+((((((Bool__type ) 1))&&(((((new_peek_char)(0) == 92))||(((Bool__type ) 0))))))?
 ((_l__parse__parse_grammar__Escaped_Character)()):
-((parse_error)()))));
+((read_char)()));
 })
 ;
 })
-,
-({goto _sharp__sharp_loop423_begin425;}),
-((void) 0);_sharp__sharp_loop423_end424:((void) 0),
-(end = (get_point_pos)()),
-(read_char)(),
-(String_Form)((substring)(start, end));
+;
+({goto _sharp__sharp_loop807_begin809;});});
+_sharp__sharp_loop807_end808:;});
+(end = (get_point_pos)());
+(read_char)();
+({(String_Form)((substring)(start, end));});});
 })
 ;}
 
@@ -189,33 +157,27 @@ Form__type  _l__parse__parse_grammar__Symbol(void)
 return ({
 Int__type start;
 Int__type end;
-(read_char)(),
-(start = (get_point_pos)()),
-((void) 0);_sharp__sharp_loop428_begin430:((void) 0),
+({(read_char)();
+(start = (get_point_pos)());
+({({_sharp__sharp_loop811_begin813:;
 ({
-Int__type _sharp_peeked_char_star426;
-(_sharp_peeked_char_star426 = (peek_char)());
-({if( (!(((((((int) _sharp_peeked_char_star426 >= (int) 93))&&(((int) _sharp_peeked_char_star426 <= (int) 255))))||((((_sharp_peeked_char_star426 == 92))||(((((((int) _sharp_peeked_char_star426 >= (int) 40))&&(((int) _sharp_peeked_char_star426 <= (int) 91))))||(((((((int) _sharp_peeked_char_star426 >= (int) 0))&&(((int) _sharp_peeked_char_star426 <= (int) 38))))||(((Bool__type ) 0))))))))))))
+({if( (!(((((Bool__type ) 1))&&(((((((int) (new_peek_char)(0) >= (int) 93))&&(((int) (new_peek_char)(0) <= (int) 255))))||(((((new_peek_char)(0) == 92))||(((((((int) (new_peek_char)(0) >= (int) 40))&&(((int) (new_peek_char)(0) <= (int) 91))))||(((((((int) (new_peek_char)(0) >= (int) 0))&&(((int) (new_peek_char)(0) <= (int) 38))))||(((Bool__type ) 0))))))))))))))
 {
-({goto _sharp__sharp_loop428_end429;});}})
+({goto _sharp__sharp_loop811_end812;});}})
 ;
 ({
-Int__type _sharp_peeked_char_alt427;
-(_sharp_peeked_char_alt427 = (peek_char)());
-((((((((int) _sharp_peeked_char_alt427 >= (int) 93))&&(((int) _sharp_peeked_char_alt427 <= (int) 255))))||(((((((int) _sharp_peeked_char_alt427 >= (int) 40))&&(((int) _sharp_peeked_char_alt427 <= (int) 91))))||(((((((int) _sharp_peeked_char_alt427 >= (int) 0))&&(((int) _sharp_peeked_char_alt427 <= (int) 38))))||(((Bool__type ) 0))))))))?
-((read_char)()):
-((((((_sharp_peeked_char_alt427 == 92))||(((Bool__type ) 0))))?
+((((((Bool__type ) 1))&&(((((new_peek_char)(0) == 92))||(((Bool__type ) 0))))))?
 ((_l__parse__parse_grammar__Escaped_Character)()):
-((parse_error)()))));
+((read_char)()));
 })
 ;
 })
-,
-({goto _sharp__sharp_loop428_begin430;}),
-((void) 0);_sharp__sharp_loop428_end429:((void) 0),
-(end = (get_point_pos)()),
-(read_char)(),
-(Symbol_Form)((intern_string)((substring)(start, end)));
+;
+({goto _sharp__sharp_loop811_begin813;});});
+_sharp__sharp_loop811_end812:;});
+(end = (get_point_pos)());
+(read_char)();
+({(Symbol_Form)((intern_string)((substring)(start, end)));});});
 })
 ;}
 
@@ -224,151 +186,134 @@ Form__type  _l__parse__parse_grammar__Character_Range(void)
 return ({
 Int__type max;
 Int__type min;
-(max = (min = (_l__parse__parse_grammar__Maybe_Escaped_Character_Character_Range)())),
+({(min = (_l__parse__parse_grammar__Maybe_Escaped_Character_Character_Range)());
 ({
-Int__type _sharp_peeked_char_maybe431;
-(_sharp_peeked_char_maybe431 = (peek_char)());
-({if( (((_sharp_peeked_char_maybe431 == 45))||(((Bool__type ) 0))))
-{
-(read_char)(),
-(max = (_l__parse__parse_grammar__Maybe_Escaped_Character)());}})
-;
-})
-,
-(((min == max))?
-((Int_Form)(min)):
-((Compound_Form)(intern( "-"), ({
-struct struct0x080663e8 *_sharp_pair_433;
-_sharp_pair_433,
-(_sharp_pair_433 = ((struct struct0x080663e8 *) (alloc_cons_cell)()));
-(((* _sharp_pair_433).car) = (Int_Form)(min));
-(((* _sharp_pair_433).cdr) = ({
-struct struct0x080663e8 *_sharp_pair_432;
-_sharp_pair_432,
-(_sharp_pair_432 = ((struct struct0x080663e8 *) (alloc_cons_cell)()));
-(((* _sharp_pair_432).car) = (Int_Form)(max));
-(((* _sharp_pair_432).cdr) = ((List__O__Form__C____type__type ) 0));
-((List__O__Form__C____type__type ) _sharp_pair_432);
+((((((Bool__type ) 1))&&(((((new_peek_char)(0) == 45))||(((Bool__type ) 0))))))?
+(({({(read_char)();});
+(max = (_l__parse__parse_grammar__Maybe_Escaped_Character)());
+({(Compound_Form)(intern( "-"), ({
+struct struct0x08067248 *_sharp_pair_815;
+({_sharp_pair_815;
+(_sharp_pair_815 = ((struct struct0x08067248 *) (alloc_cons_cell)()));});
+(((* _sharp_pair_815).car) = (Int_Form)(min));
+(((* _sharp_pair_815).cdr) = ({
+struct struct0x08067248 *_sharp_pair_814;
+({_sharp_pair_814;
+(_sharp_pair_814 = ((struct struct0x08067248 *) (alloc_cons_cell)()));});
+(((* _sharp_pair_814).car) = (Int_Form)(max));
+(((* _sharp_pair_814).cdr) = ((List__O__Form__C____type__type ) 0));
+((List__O__Form__C____type__type ) _sharp_pair_814);
 })
 );
-((List__O__Form__C____type__type ) _sharp_pair_433);
+((List__O__Form__C____type__type ) _sharp_pair_815);
 })
-)));
+);});})):
+(({(Int_Form)(min);})));
+})
+;});
 })
 ;}
 
 Form__type  _l__parse__parse_grammar__Character_Set(void)
 {
 return ({
-void **_sharp_make_list_ptr437;
+void **_sharp_make_list_ptr818;
 Symbol__type char_selector;
 Form__type cr;
 List__O__Form__C____type__type cr_list;
-(char_selector = intern( "[]")),
-(read_char)(),
-({
-Int__type _sharp_peeked_char_maybe434;
-(_sharp_peeked_char_maybe434 = (peek_char)());
-({if( (((_sharp_peeked_char_maybe434 == 94))||(((Bool__type ) 0))))
-{
-(read_char)(),
-(char_selector = intern( "[^]"));}})
-;
+({({(read_char)();});
+(char_selector = ({
+((((((Bool__type ) 1))&&(((((new_peek_char)(0) == 94))||(((Bool__type ) 0))))))?
+(({({(read_char)();});
+({intern( "[^]");});})):
+(({intern( "[]");})));
 })
-,
+);
 (cr_list = ({
-List__O__Form__C____type__type _sharp_make_list436;
-_sharp_make_list436,
-_sharp_make_list_ptr437,
-(_sharp_make_list_ptr437 = ((void *) (&_sharp_make_list436))),
-((void) 0);_sharp__sharp_loop438_begin440:((void) 0),
+List__O__Form__C____type__type _sharp_make_list817;
+({_sharp_make_list817;
+_sharp_make_list_ptr818;
+(_sharp_make_list_ptr818 = ((void *) (&_sharp_make_list817)));
+({({_sharp__sharp_loop819_begin821:;
 ({
-Int__type _sharp_peeked_char_star435;
-(_sharp_peeked_char_star435 = (peek_char)());
-({if( (!(((((((int) _sharp_peeked_char_star435 >= (int) 94))&&(((int) _sharp_peeked_char_star435 <= (int) 255))))||(((((((int) _sharp_peeked_char_star435 >= (int) 93))&&(((int) _sharp_peeked_char_star435 <= (int) 92))))||((((_sharp_peeked_char_star435 == 92))||(((((((int) _sharp_peeked_char_star435 >= (int) 0))&&(((int) _sharp_peeked_char_star435 <= (int) 91))))||(((Bool__type ) 0))))))))))))
+({if( (!(((((Bool__type ) 1))&&(((((((int) (new_peek_char)(0) >= (int) 94))&&(((int) (new_peek_char)(0) <= (int) 255))))||(((((((int) (new_peek_char)(0) >= (int) 93))&&(((int) (new_peek_char)(0) <= (int) 92))))||(((((new_peek_char)(0) == 92))||(((((((int) (new_peek_char)(0) >= (int) 0))&&(((int) (new_peek_char)(0) <= (int) 91))))||(((Bool__type ) 0))))))))))))))
 {
-({goto _sharp__sharp_loop438_end439;});}})
+({goto _sharp__sharp_loop819_end820;});}})
 ;
-(cr = (_l__parse__parse_grammar__Character_Range)()),
-((* _sharp_make_list_ptr437) = (alloc_cons_cell)()),
-(((* (* ((struct struct0x0851c278 **) _sharp_make_list_ptr437))).car) = ((void *) cr)),
-(_sharp_make_list_ptr437 = (&((* (* ((struct struct0x0851c278 **) _sharp_make_list_ptr437))).cdr))),
-((void) 0);
+({(cr = (_l__parse__parse_grammar__Character_Range)());
+({({((* _sharp_make_list_ptr818) = (alloc_cons_cell)());
+(((* (* ((struct struct0x085364e8 **) _sharp_make_list_ptr818))).car) = ((void *) cr));
+(_sharp_make_list_ptr818 = (&((* (* ((struct struct0x085364e8 **) _sharp_make_list_ptr818))).cdr)));
+((void) 0);});});});
 })
-,
-({goto _sharp__sharp_loop438_begin440;}),
-((void) 0);_sharp__sharp_loop438_end439:((void) 0),
-((* _sharp_make_list_ptr437) = ((void *) 0)),
-_sharp_make_list436;
+;
+({goto _sharp__sharp_loop819_begin821;});});
+_sharp__sharp_loop819_end820:;});
+((* _sharp_make_list_ptr818) = ((void *) 0));
+_sharp_make_list817;});
 })
-),
-(read_char)(),
-(Compound_Form)(char_selector, cr_list);
+);
+({(read_char)();});
+({(Compound_Form)(char_selector, cr_list);});});
 })
 ;}
 
 Form__type  _l__parse__parse_grammar__Callable_Rule_or_Binding(void)
 {
 return ({
+Symbol__type id2;
 Symbol__type id;
+Form__type form2;
 Form__type form;
-(id = (_l__parse__parse_grammar__Identifier)()),
-(form = (Id_Form)(id)),
+({(id = (_l__parse__parse_grammar__Identifier)());
+(form = ({(Id_Form)(id);}));
 ({
-Int__type _sharp_peeked_char_maybe441;
-(_sharp_peeked_char_maybe441 = (peek_char)());
-({if( (((_sharp_peeked_char_maybe441 == 58))||((((_sharp_peeked_char_maybe441 == 46))||(((Bool__type ) 0))))))
-{
-({
-Int__type _sharp_peeked_char_alt442;
-(_sharp_peeked_char_alt442 = (peek_char)());
-(((((_sharp_peeked_char_alt442 == 58))||(((Bool__type ) 0))))?
-((read_char)(),
-(form = (_l__parse__parse_grammar__Postfix)()),
-(form = (Compound_Form)(intern( "<>"), ({
-struct struct0x080663e8 *_sharp_pair_446;
-_sharp_pair_446,
-(_sharp_pair_446 = ((struct struct0x080663e8 *) (alloc_cons_cell)()));
-(((* _sharp_pair_446).car) = (Id_Form)(id));
-(((* _sharp_pair_446).cdr) = ({
-struct struct0x080663e8 *_sharp_pair_445;
-_sharp_pair_445,
-(_sharp_pair_445 = ((struct struct0x080663e8 *) (alloc_cons_cell)()));
-(((* _sharp_pair_445).car) = form);
-(((* _sharp_pair_445).cdr) = ((List__O__Form__C____type__type ) 0));
-((List__O__Form__C____type__type ) _sharp_pair_445);
+((((((Bool__type ) 1))&&(((((new_peek_char)(0) == 46))||(((Bool__type ) 0))))))?
+(({({(read_char)();});
+(id2 = (_l__parse__parse_grammar__Identifier)());
+({(Compound_Form)(intern( "."), ({
+struct struct0x08067248 *_sharp_pair_823;
+({_sharp_pair_823;
+(_sharp_pair_823 = ((struct struct0x08067248 *) (alloc_cons_cell)()));});
+(((* _sharp_pair_823).car) = form);
+(((* _sharp_pair_823).cdr) = ({
+struct struct0x08067248 *_sharp_pair_822;
+({_sharp_pair_822;
+(_sharp_pair_822 = ((struct struct0x08067248 *) (alloc_cons_cell)()));});
+(((* _sharp_pair_822).car) = (Id_Form)(id2));
+(((* _sharp_pair_822).cdr) = ((List__O__Form__C____type__type ) 0));
+((List__O__Form__C____type__type ) _sharp_pair_822);
 })
 );
-((List__O__Form__C____type__type ) _sharp_pair_446);
+((List__O__Form__C____type__type ) _sharp_pair_823);
 })
-))):
-((((((_sharp_peeked_char_alt442 == 46))||(((Bool__type ) 0))))?
-((read_char)(),
-(id = (_l__parse__parse_grammar__Identifier)()),
-(form = (Compound_Form)(intern( "."), ({
-struct struct0x080663e8 *_sharp_pair_444;
-_sharp_pair_444,
-(_sharp_pair_444 = ((struct struct0x080663e8 *) (alloc_cons_cell)()));
-(((* _sharp_pair_444).car) = form);
-(((* _sharp_pair_444).cdr) = ({
-struct struct0x080663e8 *_sharp_pair_443;
-_sharp_pair_443,
-(_sharp_pair_443 = ((struct struct0x080663e8 *) (alloc_cons_cell)()));
-(((* _sharp_pair_443).car) = (Id_Form)(id));
-(((* _sharp_pair_443).cdr) = ((List__O__Form__C____type__type ) 0));
-((List__O__Form__C____type__type ) _sharp_pair_443);
+);});})):
+(({
+((((((Bool__type ) 1))&&(((((new_peek_char)(0) == 58))||(((Bool__type ) 0))))))?
+(({({(read_char)();});
+(form2 = (_l__parse__parse_grammar__Postfix)());
+({(Compound_Form)(intern( ":"), ({
+struct struct0x08067248 *_sharp_pair_825;
+({_sharp_pair_825;
+(_sharp_pair_825 = ((struct struct0x08067248 *) (alloc_cons_cell)()));});
+(((* _sharp_pair_825).car) = form);
+(((* _sharp_pair_825).cdr) = ({
+struct struct0x08067248 *_sharp_pair_824;
+({_sharp_pair_824;
+(_sharp_pair_824 = ((struct struct0x08067248 *) (alloc_cons_cell)()));});
+(((* _sharp_pair_824).car) = form2);
+(((* _sharp_pair_824).cdr) = ((List__O__Form__C____type__type ) 0));
+((List__O__Form__C____type__type ) _sharp_pair_824);
 })
 );
-((List__O__Form__C____type__type ) _sharp_pair_444);
+((List__O__Form__C____type__type ) _sharp_pair_825);
 })
-))):
-((parse_error)()))));
+);});})):
+(({form;})));
 })
-;}})
-;
+));
 })
-,
-form;
+;});
 })
 ;}
 
@@ -376,92 +321,106 @@ Form__type  _l__parse__parse_grammar__Semantic_Action(void)
 {
 return ({
 Form__type exp;
-(read_char)(),
-(exp = (_l__parse__parse_grammar__Expression)()),
-(read_char)(),
-(Compound_Form)(intern( "{}"), ({
-struct struct0x080663e8 *_sharp_pair_447;
-_sharp_pair_447,
-(_sharp_pair_447 = ((struct struct0x080663e8 *) (alloc_cons_cell)()));
-(((* _sharp_pair_447).car) = exp);
-(((* _sharp_pair_447).cdr) = ((List__O__Form__C____type__type ) 0));
-((List__O__Form__C____type__type ) _sharp_pair_447);
+({({(read_char)();});
+(exp = (_l__parse__parse_grammar__Expression)());
+({(read_char)();});
+({(Compound_Form)(intern( "{}"), ({
+struct struct0x08067248 *_sharp_pair_826;
+({_sharp_pair_826;
+(_sharp_pair_826 = ((struct struct0x08067248 *) (alloc_cons_cell)()));});
+(((* _sharp_pair_826).car) = exp);
+(((* _sharp_pair_826).cdr) = ((List__O__Form__C____type__type ) 0));
+((List__O__Form__C____type__type ) _sharp_pair_826);
 })
-);
+);});});
+})
+;}
+
+Form__type  _l__parse__parse_grammar__Semantic_Predicate(void)
+{
+return ({
+Form__type form;
+({({(read_char)();});
+(form = (_l__parse__parse_grammar__Primary)());
+({(Compound_Form)(intern( "&"), ({
+struct struct0x08067248 *_sharp_pair_827;
+({_sharp_pair_827;
+(_sharp_pair_827 = ((struct struct0x08067248 *) (alloc_cons_cell)()));});
+(((* _sharp_pair_827).car) = form);
+(((* _sharp_pair_827).cdr) = ((List__O__Form__C____type__type ) 0));
+((List__O__Form__C____type__type ) _sharp_pair_827);
+})
+);});});
 })
 ;}
 
 Form__type  _l__parse__parse_grammar__Rule_Macro(void)
 {
 return ({
-void **_sharp_make_list_ptr451;
+void **_sharp_make_list_ptr830;
 Form__type arg;
-List__O__Form__C____type__type rest_list;
 Form__type arg1;
+List__O__Form__C____type__type arg_list;
 Symbol__type id;
 List__O__Form__C____type__type form_list;
-(read_char)(),
-(id = (_l__parse__parse_grammar__Identifier)()),
-(read_char)(),
-(_l__parse__parse_grammar__Spacing)(),
-(form_list = ({
-Int__type _sharp_peeked_char_alt448;
-(_sharp_peeked_char_alt448 = (peek_char)());
-(((((_sharp_peeked_char_alt448 == 123))||(((((((int) _sharp_peeked_char_alt448 >= (int) 97))&&(((int) _sharp_peeked_char_alt448 <= (int) 122))))||((((_sharp_peeked_char_alt448 == 95))||((((_sharp_peeked_char_alt448 == 91))||(((((((int) _sharp_peeked_char_alt448 >= (int) 65))&&(((int) _sharp_peeked_char_alt448 <= (int) 90))))||((((_sharp_peeked_char_alt448 == 64))||((((_sharp_peeked_char_alt448 == 40))||((((_sharp_peeked_char_alt448 == 39))||((((_sharp_peeked_char_alt448 == 36))||((((_sharp_peeked_char_alt448 == 34))||(((Bool__type ) 0))))))))))))))))))))))?
-((arg1 = (_l__parse__parse_grammar__Rule)()),
-(_l__parse__parse_grammar__Spacing)(),
-(rest_list = ({
-List__O__Form__C____type__type _sharp_make_list450;
-_sharp_make_list450,
-_sharp_make_list_ptr451,
-(_sharp_make_list_ptr451 = ((void *) (&_sharp_make_list450))),
-((void) 0);_sharp__sharp_loop452_begin454:((void) 0),
+({({(read_char)();});
+(id = (_l__parse__parse_grammar__Identifier)());
+({(read_char)();});
+(_l__parse__parse_grammar__Spacing)();
+(form_list = ({(arg_list = ({((List__O__Form__C____type__type ) 0);}));
 ({
-Int__type _sharp_peeked_char_star449;
-(_sharp_peeked_char_star449 = (peek_char)());
-({if( (!((((_sharp_peeked_char_star449 == 44))||(((Bool__type ) 0))))))
+({if( ((((Bool__type ) 1))&&(((((new_peek_char)(0) == 123))||(((((((int) (new_peek_char)(0) >= (int) 97))&&(((int) (new_peek_char)(0) <= (int) 122))))||(((((new_peek_char)(0) == 95))||(((((new_peek_char)(0) == 91))||(((((((int) (new_peek_char)(0) >= (int) 65))&&(((int) (new_peek_char)(0) <= (int) 90))))||(((((new_peek_char)(0) == 64))||(((((new_peek_char)(0) == 40))||(((((new_peek_char)(0) == 39))||(((((new_peek_char)(0) == 38))||(((((new_peek_char)(0) == 36))||(((((new_peek_char)(0) == 34))||(((Bool__type ) 0))))))))))))))))))))))))))
 {
-({goto _sharp__sharp_loop452_end453;});}})
-;
-(parse_symbol)(((String__type) &__string_14)),
-(arg = (_l__parse__parse_grammar__Rule)()),
-((* _sharp_make_list_ptr451) = (alloc_cons_cell)()),
-(((* (* ((struct struct0x0851c278 **) _sharp_make_list_ptr451))).car) = ((void *) arg)),
-(_sharp_make_list_ptr451 = (&((* (* ((struct struct0x0851c278 **) _sharp_make_list_ptr451))).cdr))),
-((void) 0);
-})
-,
-({goto _sharp__sharp_loop452_begin454;}),
-((void) 0);_sharp__sharp_loop452_end453:((void) 0),
-((* _sharp_make_list_ptr451) = ((void *) 0)),
-_sharp_make_list450;
-})
-),
-(read_char)(),
+({(arg1 = (_l__parse__parse_grammar__Rule)());
+(arg_list = ({
+List__O__Form__C____type__type _sharp_make_list829;
+({_sharp_make_list829;
+_sharp_make_list_ptr830;
+(_sharp_make_list_ptr830 = ((void *) (&_sharp_make_list829)));
+({({_sharp__sharp_loop831_begin833:;
 ({
-struct struct0x080663e8 *_sharp_pair_455;
-_sharp_pair_455,
-(_sharp_pair_455 = ((struct struct0x080663e8 *) (alloc_cons_cell)()));
-(((* _sharp_pair_455).car) = arg1);
-(((* _sharp_pair_455).cdr) = rest_list);
-((List__O__Form__C____type__type ) _sharp_pair_455);
+({if( (!(((((Bool__type ) 1))&&(((((new_peek_char)(0) == 44))||(((Bool__type ) 0))))))))
+{
+({goto _sharp__sharp_loop831_end832;});}})
+;
+({({({(read_char)();});
+(_l__parse__parse_grammar__Spacing)();});
+(arg = (_l__parse__parse_grammar__Rule)());
+({({((* _sharp_make_list_ptr830) = (alloc_cons_cell)());
+(((* (* ((struct struct0x085364e8 **) _sharp_make_list_ptr830))).car) = ((void *) arg));
+(_sharp_make_list_ptr830 = (&((* (* ((struct struct0x085364e8 **) _sharp_make_list_ptr830))).cdr)));
+((void) 0);});});});
 })
-):
-((((((_sharp_peeked_char_alt448 == 41))||(((Bool__type ) 0))))?
-((read_char)(),
-((List__O__Form__C____type__type ) 0)):
-((parse_error)()))));
-})
-),
-(Compound_Form)(intern( "@"), ({
-struct struct0x080663e8 *_sharp_pair_456;
-_sharp_pair_456,
-(_sharp_pair_456 = ((struct struct0x080663e8 *) (alloc_cons_cell)()));
-(((* _sharp_pair_456).car) = (Compound_Form)(id, form_list));
-(((* _sharp_pair_456).cdr) = ((List__O__Form__C____type__type ) 0));
-((List__O__Form__C____type__type ) _sharp_pair_456);
+;
+({goto _sharp__sharp_loop831_begin833;});});
+_sharp__sharp_loop831_end832:;});
+((* _sharp_make_list_ptr830) = ((void *) 0));
+_sharp_make_list829;});
 })
 );
+(arg_list = ({({
+struct struct0x08067248 *_sharp_pair_834;
+({_sharp_pair_834;
+(_sharp_pair_834 = ((struct struct0x08067248 *) (alloc_cons_cell)()));});
+(((* _sharp_pair_834).car) = arg1);
+(((* _sharp_pair_834).cdr) = arg_list);
+((List__O__Form__C____type__type ) _sharp_pair_834);
+})
+;}));});}})
+;
+})
+;
+({arg_list;});}));
+({(read_char)();});
+({(Compound_Form)(intern( "@"), ({
+struct struct0x08067248 *_sharp_pair_835;
+({_sharp_pair_835;
+(_sharp_pair_835 = ((struct struct0x08067248 *) (alloc_cons_cell)()));});
+(((* _sharp_pair_835).car) = (Compound_Form)(id, form_list));
+(((* _sharp_pair_835).cdr) = ((List__O__Form__C____type__type ) 0));
+((List__O__Form__C____type__type ) _sharp_pair_835);
+})
+);});});
 })
 ;}
 
@@ -469,18 +428,18 @@ Form__type  _l__parse__parse_grammar__Replacement(void)
 {
 return ({
 Form__type exp;
-(read_char)(),
-(exp = (_l__parse__parse_grammar__Expression)()),
-(read_char)(),
-(Compound_Form)(intern( "$"), ({
-struct struct0x080663e8 *_sharp_pair_457;
-_sharp_pair_457,
-(_sharp_pair_457 = ((struct struct0x080663e8 *) (alloc_cons_cell)()));
-(((* _sharp_pair_457).car) = exp);
-(((* _sharp_pair_457).cdr) = ((List__O__Form__C____type__type ) 0));
-((List__O__Form__C____type__type ) _sharp_pair_457);
+({({(read_char)();});
+(exp = (_l__parse__parse_grammar__Expression)());
+({(read_char)();});
+({(Compound_Form)(intern( "$"), ({
+struct struct0x08067248 *_sharp_pair_836;
+({_sharp_pair_836;
+(_sharp_pair_836 = ((struct struct0x08067248 *) (alloc_cons_cell)()));});
+(((* _sharp_pair_836).car) = exp);
+(((* _sharp_pair_836).cdr) = ((List__O__Form__C____type__type ) 0));
+((List__O__Form__C____type__type ) _sharp_pair_836);
 })
-);
+);});});
 })
 ;}
 
@@ -489,71 +448,48 @@ Form__type  _l__parse__parse_grammar__Primary(void)
 return ({
 Form__type r;
 ({
-Int__type _sharp_peeked_char_alt458;
-(_sharp_peeked_char_alt458 = (peek_char)());
-(((((_sharp_peeked_char_alt458 == 40))||(((Bool__type ) 0))))?
-((read_char)(),
-(_l__parse__parse_grammar__Spacing)(),
-(r = (_l__parse__parse_grammar__Rule)()),
-(read_char)(),
-r):
-((((((_sharp_peeked_char_alt458 == 123))||(((((((int) _sharp_peeked_char_alt458 >= (int) 97))&&(((int) _sharp_peeked_char_alt458 <= (int) 122))))||((((_sharp_peeked_char_alt458 == 95))||((((_sharp_peeked_char_alt458 == 91))||(((((((int) _sharp_peeked_char_alt458 >= (int) 65))&&(((int) _sharp_peeked_char_alt458 <= (int) 90))))||((((_sharp_peeked_char_alt458 == 64))||((((_sharp_peeked_char_alt458 == 39))||((((_sharp_peeked_char_alt458 == 36))||((((_sharp_peeked_char_alt458 == 34))||(((Bool__type ) 0))))))))))))))))))))?
-(({
-Int__type _sharp_peeked_char_alt459;
-(_sharp_peeked_char_alt459 = (peek_char)());
-(((((_sharp_peeked_char_alt459 == 36))||(((Bool__type ) 0))))?
-((_l__parse__parse_grammar__Replacement)()):
-((((((_sharp_peeked_char_alt459 == 123))||(((((((int) _sharp_peeked_char_alt459 >= (int) 97))&&(((int) _sharp_peeked_char_alt459 <= (int) 122))))||((((_sharp_peeked_char_alt459 == 95))||((((_sharp_peeked_char_alt459 == 91))||(((((((int) _sharp_peeked_char_alt459 >= (int) 65))&&(((int) _sharp_peeked_char_alt459 <= (int) 90))))||((((_sharp_peeked_char_alt459 == 64))||((((_sharp_peeked_char_alt459 == 39))||((((_sharp_peeked_char_alt459 == 34))||(((Bool__type ) 0))))))))))))))))))?
-(({
-Int__type _sharp_peeked_char_alt460;
-(_sharp_peeked_char_alt460 = (peek_char)());
-(((((_sharp_peeked_char_alt460 == 64))||(((Bool__type ) 0))))?
-((_l__parse__parse_grammar__Rule_Macro)()):
-((((((_sharp_peeked_char_alt460 == 123))||(((((((int) _sharp_peeked_char_alt460 >= (int) 97))&&(((int) _sharp_peeked_char_alt460 <= (int) 122))))||((((_sharp_peeked_char_alt460 == 95))||((((_sharp_peeked_char_alt460 == 91))||(((((((int) _sharp_peeked_char_alt460 >= (int) 65))&&(((int) _sharp_peeked_char_alt460 <= (int) 90))))||((((_sharp_peeked_char_alt460 == 39))||((((_sharp_peeked_char_alt460 == 34))||(((Bool__type ) 0))))))))))))))))?
-(({
-Int__type _sharp_peeked_char_alt461;
-(_sharp_peeked_char_alt461 = (peek_char)());
-(((((_sharp_peeked_char_alt461 == 123))||(((Bool__type ) 0))))?
-((_l__parse__parse_grammar__Semantic_Action)()):
-(((((((((int) _sharp_peeked_char_alt461 >= (int) 97))&&(((int) _sharp_peeked_char_alt461 <= (int) 122))))||((((_sharp_peeked_char_alt461 == 95))||((((_sharp_peeked_char_alt461 == 91))||(((((((int) _sharp_peeked_char_alt461 >= (int) 65))&&(((int) _sharp_peeked_char_alt461 <= (int) 90))))||((((_sharp_peeked_char_alt461 == 39))||((((_sharp_peeked_char_alt461 == 34))||(((Bool__type ) 0))))))))))))))?
-(({
-Int__type _sharp_peeked_char_alt462;
-(_sharp_peeked_char_alt462 = (peek_char)());
-((((((((int) _sharp_peeked_char_alt462 >= (int) 97))&&(((int) _sharp_peeked_char_alt462 <= (int) 122))))||((((_sharp_peeked_char_alt462 == 95))||(((((((int) _sharp_peeked_char_alt462 >= (int) 65))&&(((int) _sharp_peeked_char_alt462 <= (int) 90))))||(((Bool__type ) 0))))))))?
-((_l__parse__parse_grammar__Callable_Rule_or_Binding)()):
-((((((_sharp_peeked_char_alt462 == 91))||((((_sharp_peeked_char_alt462 == 39))||((((_sharp_peeked_char_alt462 == 34))||(((Bool__type ) 0))))))))?
-(({
-Int__type _sharp_peeked_char_alt463;
-(_sharp_peeked_char_alt463 = (peek_char)());
-(((((_sharp_peeked_char_alt463 == 91))||(((Bool__type ) 0))))?
-((_l__parse__parse_grammar__Character_Set)()):
-((((((_sharp_peeked_char_alt463 == 39))||((((_sharp_peeked_char_alt463 == 34))||(((Bool__type ) 0))))))?
-(({
-Int__type _sharp_peeked_char_alt464;
-(_sharp_peeked_char_alt464 = (peek_char)());
-(((((_sharp_peeked_char_alt464 == 39))||(((Bool__type ) 0))))?
-((_l__parse__parse_grammar__Symbol)()):
-((((((_sharp_peeked_char_alt464 == 34))||(((Bool__type ) 0))))?
+((((((Bool__type ) 1))&&(((((new_peek_char)(0) == 34))||(((Bool__type ) 0))))))?
 ((_l__parse__parse_grammar__String)()):
-((parse_error)()))));
+(({
+((((((Bool__type ) 1))&&(((((new_peek_char)(0) == 39))||(((Bool__type ) 0))))))?
+((_l__parse__parse_grammar__Symbol)()):
+(({
+((((((Bool__type ) 1))&&(((((new_peek_char)(0) == 91))||(((Bool__type ) 0))))))?
+((_l__parse__parse_grammar__Character_Set)()):
+(({
+((((((Bool__type ) 1))&&(((((((int) (new_peek_char)(0) >= (int) 97))&&(((int) (new_peek_char)(0) <= (int) 122))))||(((((new_peek_char)(0) == 95))||(((((((int) (new_peek_char)(0) >= (int) 65))&&(((int) (new_peek_char)(0) <= (int) 90))))||(((Bool__type ) 0))))))))))?
+((_l__parse__parse_grammar__Callable_Rule_or_Binding)()):
+(({
+((((((Bool__type ) 1))&&(((((new_peek_char)(0) == 123))||(((Bool__type ) 0))))))?
+((_l__parse__parse_grammar__Semantic_Action)()):
+(({
+((((((Bool__type ) 1))&&(((((new_peek_char)(0) == 38))||(((Bool__type ) 0))))))?
+((_l__parse__parse_grammar__Semantic_Predicate)()):
+(({
+((((((Bool__type ) 1))&&(((((new_peek_char)(0) == 64))||(((Bool__type ) 0))))))?
+((_l__parse__parse_grammar__Rule_Macro)()):
+(({
+((((((Bool__type ) 1))&&(((((new_peek_char)(0) == 36))||(((Bool__type ) 0))))))?
+((_l__parse__parse_grammar__Replacement)()):
+(({({(read_char)();});
+(_l__parse__parse_grammar__Spacing)();
+(r = (_l__parse__parse_grammar__Rule)());
+({(read_char)();});
+({r;});})));
 })
-):
-((parse_error)()))));
+));
 })
-):
-((parse_error)()))));
+));
 })
-):
-((parse_error)()))));
+));
 })
-):
-((parse_error)()))));
+));
 })
-):
-((parse_error)()))));
+));
 })
-):
-((parse_error)()))));
+));
+})
+));
 })
 ;
 })
@@ -564,125 +500,107 @@ Form__type  _l__parse__parse_grammar__Postfix(void)
 return ({
 Symbol__type op;
 Form__type form;
-(form = (_l__parse__parse_grammar__Primary)()),
+({(form = (_l__parse__parse_grammar__Primary)());
 ({
-Int__type _sharp_peeked_char_maybe465;
-(_sharp_peeked_char_maybe465 = (peek_char)());
-({if( (((_sharp_peeked_char_maybe465 == 63))||((((_sharp_peeked_char_maybe465 == 43))||((((_sharp_peeked_char_maybe465 == 42))||(((Bool__type ) 0))))))))
-{
-(op = ({
-Int__type _sharp_peeked_char_alt466;
-(_sharp_peeked_char_alt466 = (peek_char)());
-(((((_sharp_peeked_char_alt466 == 43))||(((Bool__type ) 0))))?
-((parse_symbol)(((String__type) &__string_15))):
-((((((_sharp_peeked_char_alt466 == 63))||((((_sharp_peeked_char_alt466 == 42))||(((Bool__type ) 0))))))?
-(({
-Int__type _sharp_peeked_char_alt467;
-(_sharp_peeked_char_alt467 = (peek_char)());
-(((((_sharp_peeked_char_alt467 == 42))||(((Bool__type ) 0))))?
+((((((Bool__type ) 1))&&(((((new_peek_char)(0) == 63))||(((((new_peek_char)(0) == 43))||(((((new_peek_char)(0) == 42))||(((Bool__type ) 0))))))))))?
+(({(op = ({
+((((((Bool__type ) 1))&&(((((new_peek_char)(0) == 63))||(((Bool__type ) 0))))))?
 ((parse_symbol)(((String__type) &__string_16))):
-((((((_sharp_peeked_char_alt467 == 63))||(((Bool__type ) 0))))?
+(({
+((((((Bool__type ) 1))&&(((((new_peek_char)(0) == 42))||(((Bool__type ) 0))))))?
 ((parse_symbol)(((String__type) &__string_17))):
-((parse_error)()))));
+((parse_symbol)(((String__type) &__string_18))));
 })
-):
-((parse_error)()))));
+));
 })
-),
-(form = (Compound_Form)(op, ({
-struct struct0x080663e8 *_sharp_pair_468;
-_sharp_pair_468,
-(_sharp_pair_468 = ((struct struct0x080663e8 *) (alloc_cons_cell)()));
-(((* _sharp_pair_468).car) = form);
-(((* _sharp_pair_468).cdr) = ((List__O__Form__C____type__type ) 0));
-((List__O__Form__C____type__type ) _sharp_pair_468);
+);
+({(Compound_Form)(op, ({
+struct struct0x08067248 *_sharp_pair_837;
+({_sharp_pair_837;
+(_sharp_pair_837 = ((struct struct0x08067248 *) (alloc_cons_cell)()));});
+(((* _sharp_pair_837).car) = form);
+(((* _sharp_pair_837).cdr) = ((List__O__Form__C____type__type ) 0));
+((List__O__Form__C____type__type ) _sharp_pair_837);
 })
-));}})
-;
+);});})):
+(({form;})));
 })
-,
-form;
+;});
 })
 ;}
 
 Form__type  _l__parse__parse_grammar__Sequence(void)
 {
 return ({
-void **_sharp_make_list_ptr471;
+void **_sharp_make_list_ptr839;
 Form__type post;
 List__O__Form__C____type__type post_list;
-(post_list = ({
-List__O__Form__C____type__type _sharp_make_list470;
-_sharp_make_list470,
-_sharp_make_list_ptr471,
-(_sharp_make_list_ptr471 = ((void *) (&_sharp_make_list470))),
-((void) 0);_sharp__sharp_loop472_begin474:((void) 0),
+({(post_list = ({
+List__O__Form__C____type__type _sharp_make_list838;
+({_sharp_make_list838;
+_sharp_make_list_ptr839;
+(_sharp_make_list_ptr839 = ((void *) (&_sharp_make_list838)));
+({({_sharp__sharp_loop840_begin842:;
 ({
-Int__type _sharp_peeked_char_star469;
-(post = (_l__parse__parse_grammar__Postfix)()),
-(_l__parse__parse_grammar__Spacing)(),
-((* _sharp_make_list_ptr471) = (alloc_cons_cell)()),
-(((* (* ((struct struct0x0851c278 **) _sharp_make_list_ptr471))).car) = ((void *) post)),
-(_sharp_make_list_ptr471 = (&((* (* ((struct struct0x0851c278 **) _sharp_make_list_ptr471))).cdr))),
-((void) 0);
-(_sharp_peeked_char_star469 = (peek_char)());
-({if( (!((((_sharp_peeked_char_star469 == 123))||(((((((int) _sharp_peeked_char_star469 >= (int) 97))&&(((int) _sharp_peeked_char_star469 <= (int) 122))))||((((_sharp_peeked_char_star469 == 95))||((((_sharp_peeked_char_star469 == 91))||(((((((int) _sharp_peeked_char_star469 >= (int) 65))&&(((int) _sharp_peeked_char_star469 <= (int) 90))))||((((_sharp_peeked_char_star469 == 64))||((((_sharp_peeked_char_star469 == 40))||((((_sharp_peeked_char_star469 == 39))||((((_sharp_peeked_char_star469 == 36))||((((_sharp_peeked_char_star469 == 34))||(((Bool__type ) 0))))))))))))))))))))))))
+({(post = (_l__parse__parse_grammar__Postfix)());
+(_l__parse__parse_grammar__Spacing)();
+({({((* _sharp_make_list_ptr839) = (alloc_cons_cell)());
+(((* (* ((struct struct0x085364e8 **) _sharp_make_list_ptr839))).car) = ((void *) post));
+(_sharp_make_list_ptr839 = (&((* (* ((struct struct0x085364e8 **) _sharp_make_list_ptr839))).cdr)));
+((void) 0);});});});
+({if( (!(((((Bool__type ) 1))&&(((((new_peek_char)(0) == 123))||(((((((int) (new_peek_char)(0) >= (int) 97))&&(((int) (new_peek_char)(0) <= (int) 122))))||(((((new_peek_char)(0) == 95))||(((((new_peek_char)(0) == 91))||(((((((int) (new_peek_char)(0) >= (int) 65))&&(((int) (new_peek_char)(0) <= (int) 90))))||(((((new_peek_char)(0) == 64))||(((((new_peek_char)(0) == 40))||(((((new_peek_char)(0) == 39))||(((((new_peek_char)(0) == 38))||(((((new_peek_char)(0) == 36))||(((((new_peek_char)(0) == 34))||(((Bool__type ) 0))))))))))))))))))))))))))))
 {
-({goto _sharp__sharp_loop472_end473;});}})
+({goto _sharp__sharp_loop840_end841;});}})
 ;
 })
-,
-({goto _sharp__sharp_loop472_begin474;}),
-((void) 0);_sharp__sharp_loop472_end473:((void) 0),
-((* _sharp_make_list_ptr471) = ((void *) 0)),
-_sharp_make_list470;
+;
+({goto _sharp__sharp_loop840_begin842;});});
+_sharp__sharp_loop840_end841:;});
+((* _sharp_make_list_ptr839) = ((void *) 0));
+_sharp_make_list838;});
 })
-),
-(((((* ((struct struct0x0805f088 *) post_list)).tail) == ((List__O__Form__C____type__type ) 0)))?
+);
+({(((((* ((struct struct0x0805f088 *) post_list)).tail) == ((List__O__Form__C____type__type ) 0)))?
 (((* ((struct struct0x0805f088 *) post_list)).head)):
-((Compound_Form)(intern( " "), post_list)));
+((Compound_Form)(intern( " "), post_list)));});});
 })
 ;}
 
 Form__type  _l__parse__parse_grammar__Alternative(void)
 {
 return ({
-Form__type sec;
-Form__type prim;
-(prim = (_l__parse__parse_grammar__Sequence)()),
-((void) 0);_sharp__sharp_loop478_begin480:((void) 0),
+Symbol__type id;
+Form__type form2;
+Form__type form;
+({(form = (_l__parse__parse_grammar__Sequence)());
 ({
-Int__type _sharp_peeked_char_star475;
-(_sharp_peeked_char_star475 = (peek_char)());
-({if( (!((((_sharp_peeked_char_star475 == 124))||(((Bool__type ) 0))))))
+({if( ((((Bool__type ) 1))&&(((((new_peek_char)(0) == 124))||(((Bool__type ) 0))))))
 {
-({goto _sharp__sharp_loop478_end479;});}})
-;
-(read_char)(),
-(_l__parse__parse_grammar__Spacing)(),
-(sec = (_l__parse__parse_grammar__Sequence)()),
-(prim = (Compound_Form)(intern( "|"), ({
-struct struct0x080663e8 *_sharp_pair_477;
-_sharp_pair_477,
-(_sharp_pair_477 = ((struct struct0x080663e8 *) (alloc_cons_cell)()));
-(((* _sharp_pair_477).car) = prim);
-(((* _sharp_pair_477).cdr) = ({
-struct struct0x080663e8 *_sharp_pair_476;
-_sharp_pair_476,
-(_sharp_pair_476 = ((struct struct0x080663e8 *) (alloc_cons_cell)()));
-(((* _sharp_pair_476).car) = sec);
-(((* _sharp_pair_476).cdr) = ((List__O__Form__C____type__type ) 0));
-((List__O__Form__C____type__type ) _sharp_pair_476);
+({(id = ({({(read_char)();});
+(_l__parse__parse_grammar__Spacing)();
+({intern( "|");});}));
+(form2 = (_l__parse__parse_grammar__Alternative)());
+(form = ({(Compound_Form)(id, ({
+struct struct0x08067248 *_sharp_pair_844;
+({_sharp_pair_844;
+(_sharp_pair_844 = ((struct struct0x08067248 *) (alloc_cons_cell)()));});
+(((* _sharp_pair_844).car) = form);
+(((* _sharp_pair_844).cdr) = ({
+struct struct0x08067248 *_sharp_pair_843;
+({_sharp_pair_843;
+(_sharp_pair_843 = ((struct struct0x08067248 *) (alloc_cons_cell)()));});
+(((* _sharp_pair_843).car) = form2);
+(((* _sharp_pair_843).cdr) = ((List__O__Form__C____type__type ) 0));
+((List__O__Form__C____type__type ) _sharp_pair_843);
 })
 );
-((List__O__Form__C____type__type ) _sharp_pair_477);
+((List__O__Form__C____type__type ) _sharp_pair_844);
 })
-));
+);}));});}})
+;
 })
-,
-({goto _sharp__sharp_loop478_begin480;}),
-((void) 0);_sharp__sharp_loop478_end479:((void) 0),
-prim;
+;
+({form;});});
 })
 ;}
 
@@ -696,235 +614,332 @@ return ({
 Form__type  _l__parse__parse_grammar__Grammar_Rule(void)
 {
 return ({
+void **_sharp_make_list_ptr851;
 Form__type ret_type;
+Symbol__type param;
 Form__type r;
+Form__type arg;
+Form__type arg1;
+List__O__Form__C____type__type arg_list;
 Symbol__type id;
-(read_char)(),
-(read_char)(),
-(read_char)(),
-(read_char)(),
-(_l__parse__parse_grammar__Spacing)(),
-(id = (_l__parse__parse_grammar__Identifier)()),
-(read_char)(),
-(ret_type = (_l__parse__parse_grammar__Type)()),
-(_l__parse__parse_grammar__Spacing)(),
-(read_char)(),
-(_l__parse__parse_grammar__Spacing)(),
-(r = (_l__parse__parse_grammar__Rule)()),
-(_l__parse__parse_grammar__Spacing)(),
-(read_char)(),
-(_l__parse__parse_grammar__Spacing)(),
-(Compound_Form)(intern( "rule"), ({
-struct struct0x080663e8 *_sharp_pair_483;
-_sharp_pair_483,
-(_sharp_pair_483 = ((struct struct0x080663e8 *) (alloc_cons_cell)()));
-(((* _sharp_pair_483).car) = (Id_Form)(id));
-(((* _sharp_pair_483).cdr) = ({
-struct struct0x080663e8 *_sharp_pair_482;
-_sharp_pair_482,
-(_sharp_pair_482 = ((struct struct0x080663e8 *) (alloc_cons_cell)()));
-(((* _sharp_pair_482).car) = ret_type);
-(((* _sharp_pair_482).cdr) = ({
-struct struct0x080663e8 *_sharp_pair_481;
-_sharp_pair_481,
-(_sharp_pair_481 = ((struct struct0x080663e8 *) (alloc_cons_cell)()));
-(((* _sharp_pair_481).car) = r);
-(((* _sharp_pair_481).cdr) = ((List__O__Form__C____type__type ) 0));
-((List__O__Form__C____type__type ) _sharp_pair_481);
+List__O__Form__C____type__type form_list;
+Form__type type;
+({({(read_char)();
+(read_char)();
+(read_char)();
+(read_char)();});
+(_l__parse__parse_grammar__Spacing)();
+(id = (_l__parse__parse_grammar__Identifier)());
+(form_list = ({((List__O__Form__C____type__type ) 0);}));
+({
+({if( ((((Bool__type ) 1))&&(((((new_peek_char)(0) == 60))||(((Bool__type ) 0))))))
+{
+({({(read_char)();});
+(form_list = ({(arg_list = ({((List__O__Form__C____type__type ) 0);}));
+({
+({if( ((((Bool__type ) 1))&&(((((((int) (new_peek_char)(0) >= (int) 97))&&(((int) (new_peek_char)(0) <= (int) 122))))||(((((new_peek_char)(0) == 95))||(((((((int) (new_peek_char)(0) >= (int) 65))&&(((int) (new_peek_char)(0) <= (int) 90))))||(((Bool__type ) 0))))))))))
+{
+({(arg1 = ({(param = (_l__parse__parse_grammar__Identifier)());
+({(read_char)();});
+(type = (_l__parse__parse_grammar__Type)());
+({(Compound_Form)(intern( "label"), ({
+struct struct0x08067248 *_sharp_pair_846;
+({_sharp_pair_846;
+(_sharp_pair_846 = ((struct struct0x08067248 *) (alloc_cons_cell)()));});
+(((* _sharp_pair_846).car) = (Id_Form)(param));
+(((* _sharp_pair_846).cdr) = ({
+struct struct0x08067248 *_sharp_pair_845;
+({_sharp_pair_845;
+(_sharp_pair_845 = ((struct struct0x08067248 *) (alloc_cons_cell)()));});
+(((* _sharp_pair_845).car) = type);
+(((* _sharp_pair_845).cdr) = ((List__O__Form__C____type__type ) 0));
+((List__O__Form__C____type__type ) _sharp_pair_845);
 })
 );
-((List__O__Form__C____type__type ) _sharp_pair_482);
+((List__O__Form__C____type__type ) _sharp_pair_846);
+})
+);});}));
+(arg_list = ({
+List__O__Form__C____type__type _sharp_make_list850;
+({_sharp_make_list850;
+_sharp_make_list_ptr851;
+(_sharp_make_list_ptr851 = ((void *) (&_sharp_make_list850)));
+({({_sharp__sharp_loop852_begin854:;
+({
+({if( (!(((((Bool__type ) 1))&&(((((new_peek_char)(0) == 44))||(((Bool__type ) 0))))))))
+{
+({goto _sharp__sharp_loop852_end853;});}})
+;
+({(parse_symbol)(((String__type) &__string_19));
+(arg = ({(param = (_l__parse__parse_grammar__Identifier)());
+({(read_char)();});
+(type = (_l__parse__parse_grammar__Type)());
+({(Compound_Form)(intern( "label"), ({
+struct struct0x08067248 *_sharp_pair_849;
+({_sharp_pair_849;
+(_sharp_pair_849 = ((struct struct0x08067248 *) (alloc_cons_cell)()));});
+(((* _sharp_pair_849).car) = (Id_Form)(param));
+(((* _sharp_pair_849).cdr) = ({
+struct struct0x08067248 *_sharp_pair_848;
+({_sharp_pair_848;
+(_sharp_pair_848 = ((struct struct0x08067248 *) (alloc_cons_cell)()));});
+(((* _sharp_pair_848).car) = type);
+(((* _sharp_pair_848).cdr) = ((List__O__Form__C____type__type ) 0));
+((List__O__Form__C____type__type ) _sharp_pair_848);
 })
 );
-((List__O__Form__C____type__type ) _sharp_pair_483);
+((List__O__Form__C____type__type ) _sharp_pair_849);
+})
+);});}));
+({({((* _sharp_make_list_ptr851) = (alloc_cons_cell)());
+(((* (* ((struct struct0x085364e8 **) _sharp_make_list_ptr851))).car) = ((void *) arg));
+(_sharp_make_list_ptr851 = (&((* (* ((struct struct0x085364e8 **) _sharp_make_list_ptr851))).cdr)));
+((void) 0);});});});
+})
+;
+({goto _sharp__sharp_loop852_begin854;});});
+_sharp__sharp_loop852_end853:;});
+((* _sharp_make_list_ptr851) = ((void *) 0));
+_sharp_make_list850;});
 })
 );
+(arg_list = ({({
+struct struct0x08067248 *_sharp_pair_855;
+({_sharp_pair_855;
+(_sharp_pair_855 = ((struct struct0x08067248 *) (alloc_cons_cell)()));});
+(((* _sharp_pair_855).car) = arg1);
+(((* _sharp_pair_855).cdr) = arg_list);
+((List__O__Form__C____type__type ) _sharp_pair_855);
+})
+;}));});}})
+;
+})
+;
+({arg_list;});}));
+({(read_char)();});});}})
+;
+})
+;
+({(read_char)();});
+(ret_type = (_l__parse__parse_grammar__Type)());
+(_l__parse__parse_grammar__Spacing)();
+({(read_char)();});
+(_l__parse__parse_grammar__Spacing)();
+(r = (_l__parse__parse_grammar__Rule)());
+(_l__parse__parse_grammar__Spacing)();
+({(read_char)();});
+(_l__parse__parse_grammar__Spacing)();
+({(Compound_Form)(intern( "rule"), ({
+struct struct0x08067248 *_sharp_pair_859;
+({_sharp_pair_859;
+(_sharp_pair_859 = ((struct struct0x08067248 *) (alloc_cons_cell)()));});
+(((* _sharp_pair_859).car) = (Id_Form)(id));
+(((* _sharp_pair_859).cdr) = ({
+struct struct0x08067248 *_sharp_pair_858;
+({_sharp_pair_858;
+(_sharp_pair_858 = ((struct struct0x08067248 *) (alloc_cons_cell)()));});
+(((* _sharp_pair_858).car) = ret_type);
+(((* _sharp_pair_858).cdr) = ({
+struct struct0x08067248 *_sharp_pair_857;
+({_sharp_pair_857;
+(_sharp_pair_857 = ((struct struct0x08067248 *) (alloc_cons_cell)()));});
+(((* _sharp_pair_857).car) = (Compound_Form)(intern( "tuple"), form_list));
+(((* _sharp_pair_857).cdr) = ({
+struct struct0x08067248 *_sharp_pair_856;
+({_sharp_pair_856;
+(_sharp_pair_856 = ((struct struct0x08067248 *) (alloc_cons_cell)()));});
+(((* _sharp_pair_856).car) = r);
+(((* _sharp_pair_856).cdr) = ((List__O__Form__C____type__type ) 0));
+((List__O__Form__C____type__type ) _sharp_pair_856);
+})
+);
+((List__O__Form__C____type__type ) _sharp_pair_857);
+})
+);
+((List__O__Form__C____type__type ) _sharp_pair_858);
+})
+);
+((List__O__Form__C____type__type ) _sharp_pair_859);
+})
+);});});
 })
 ;}
 
 Form__type  _l__parse__parse_grammar__Grammar(void)
 {
 return ({
-void **_sharp_make_list_ptr486;
+void **_sharp_make_list_ptr862;
 Form__type gr;
 List__O__Form__C____type__type gr_list;
 Symbol__type id;
-(read_char)(),
-(read_char)(),
-(read_char)(),
-(read_char)(),
-(read_char)(),
-(read_char)(),
-(read_char)(),
-(_l__parse__parse_grammar__Spacing)(),
-(id = (_l__parse__parse_grammar__Identifier)()),
-(_l__parse__parse_grammar__Spacing)(),
-(read_char)(),
-(_l__parse__parse_grammar__Spacing)(),
-(read_char)(),
-(_l__parse__parse_grammar__Spacing)(),
+({({(read_char)();
+(read_char)();
+(read_char)();
+(read_char)();
+(read_char)();
+(read_char)();
+(read_char)();});
+(_l__parse__parse_grammar__Spacing)();
+(id = (_l__parse__parse_grammar__Identifier)());
+(_l__parse__parse_grammar__Spacing)();
+({(read_char)();});
+(_l__parse__parse_grammar__Spacing)();
+({(read_char)();});
+(_l__parse__parse_grammar__Spacing)();
 (gr_list = ({
-List__O__Form__C____type__type _sharp_make_list485;
-_sharp_make_list485,
-_sharp_make_list_ptr486,
-(_sharp_make_list_ptr486 = ((void *) (&_sharp_make_list485))),
-((void) 0);_sharp__sharp_loop487_begin489:((void) 0),
+List__O__Form__C____type__type _sharp_make_list861;
+({_sharp_make_list861;
+_sharp_make_list_ptr862;
+(_sharp_make_list_ptr862 = ((void *) (&_sharp_make_list861)));
+({({_sharp__sharp_loop863_begin865:;
 ({
-Int__type _sharp_peeked_char_star484;
-(_sharp_peeked_char_star484 = (peek_char)());
-({if( (!((((_sharp_peeked_char_star484 == 114))||(((Bool__type ) 0))))))
+({if( (!(((((Bool__type ) 1))&&(((((new_peek_char)(0) == 114))||(((Bool__type ) 0))))))))
 {
-({goto _sharp__sharp_loop487_end488;});}})
+({goto _sharp__sharp_loop863_end864;});}})
 ;
-(gr = (_l__parse__parse_grammar__Grammar_Rule)()),
-((* _sharp_make_list_ptr486) = (alloc_cons_cell)()),
-(((* (* ((struct struct0x0851c278 **) _sharp_make_list_ptr486))).car) = ((void *) gr)),
-(_sharp_make_list_ptr486 = (&((* (* ((struct struct0x0851c278 **) _sharp_make_list_ptr486))).cdr))),
-((void) 0);
+({(gr = (_l__parse__parse_grammar__Grammar_Rule)());
+({({((* _sharp_make_list_ptr862) = (alloc_cons_cell)());
+(((* (* ((struct struct0x085364e8 **) _sharp_make_list_ptr862))).car) = ((void *) gr));
+(_sharp_make_list_ptr862 = (&((* (* ((struct struct0x085364e8 **) _sharp_make_list_ptr862))).cdr)));
+((void) 0);});});});
 })
-,
-({goto _sharp__sharp_loop487_begin489;}),
-((void) 0);_sharp__sharp_loop487_end488:((void) 0),
-((* _sharp_make_list_ptr486) = ((void *) 0)),
-_sharp_make_list485;
-})
-),
-(read_char)(),
-(_l__parse__parse_grammar__Spacing)(),
-(read_char)(),
-(Compound_Form)(intern( "define"), ({
-struct struct0x080663e8 *_sharp_pair_491;
-_sharp_pair_491,
-(_sharp_pair_491 = ((struct struct0x080663e8 *) (alloc_cons_cell)()));
-(((* _sharp_pair_491).car) = (Id_Form)(intern( "grammar")));
-(((* _sharp_pair_491).cdr) = ({
-struct struct0x080663e8 *_sharp_pair_490;
-_sharp_pair_490,
-(_sharp_pair_490 = ((struct struct0x080663e8 *) (alloc_cons_cell)()));
-(((* _sharp_pair_490).car) = (Id_Form)(id));
-(((* _sharp_pair_490).cdr) = gr_list);
-((List__O__Form__C____type__type ) _sharp_pair_490);
+;
+({goto _sharp__sharp_loop863_begin865;});});
+_sharp__sharp_loop863_end864:;});
+((* _sharp_make_list_ptr862) = ((void *) 0));
+_sharp_make_list861;});
 })
 );
-((List__O__Form__C____type__type ) _sharp_pair_491);
+({(read_char)();});
+(_l__parse__parse_grammar__Spacing)();
+({(read_char)();});
+({(Compound_Form)(intern( "define"), ({
+struct struct0x08067248 *_sharp_pair_867;
+({_sharp_pair_867;
+(_sharp_pair_867 = ((struct struct0x08067248 *) (alloc_cons_cell)()));});
+(((* _sharp_pair_867).car) = (Id_Form)(intern( "grammar")));
+(((* _sharp_pair_867).cdr) = ({
+struct struct0x08067248 *_sharp_pair_866;
+({_sharp_pair_866;
+(_sharp_pair_866 = ((struct struct0x08067248 *) (alloc_cons_cell)()));});
+(((* _sharp_pair_866).car) = (Id_Form)(id));
+(((* _sharp_pair_866).cdr) = gr_list);
+((List__O__Form__C____type__type ) _sharp_pair_866);
 })
 );
+((List__O__Form__C____type__type ) _sharp_pair_867);
+})
+);});});
 })
 ;}
 
 Form__type  _l__parse__parse_grammar__Grammar_Macro(void)
 {
 return ({
-void **_sharp_make_list_ptr495;
-Symbol__type arg;
+void **_sharp_make_list_ptr870;
 List__O__Form__C____type__type rest_list;
+Symbol__type arg;
 Symbol__type arg1;
 Symbol__type id;
 Form__type rule;
 List__O__Form__C____type__type form_list;
-(read_char)(),
-(read_char)(),
-(read_char)(),
-(read_char)(),
-(read_char)(),
-(read_char)(),
-(read_char)(),
-(read_char)(),
-(read_char)(),
-(read_char)(),
-(read_char)(),
-(read_char)(),
-(read_char)(),
-(_l__parse__parse_grammar__Spacing)(),
-(read_char)(),
-(id = (_l__parse__parse_grammar__Identifier)()),
-(read_char)(),
-(_l__parse__parse_grammar__Spacing)(),
+({({(read_char)();
+(read_char)();
+(read_char)();
+(read_char)();
+(read_char)();
+(read_char)();
+(read_char)();
+(read_char)();
+(read_char)();
+(read_char)();
+(read_char)();
+(read_char)();
+(read_char)();});
+(_l__parse__parse_grammar__Spacing)();
+({(read_char)();});
+(id = (_l__parse__parse_grammar__Identifier)());
+({(read_char)();});
+(_l__parse__parse_grammar__Spacing)();
 (form_list = ({
-Int__type _sharp_peeked_char_alt492;
-(_sharp_peeked_char_alt492 = (peek_char)());
-((((((((int) _sharp_peeked_char_alt492 >= (int) 97))&&(((int) _sharp_peeked_char_alt492 <= (int) 122))))||((((_sharp_peeked_char_alt492 == 95))||(((((((int) _sharp_peeked_char_alt492 >= (int) 65))&&(((int) _sharp_peeked_char_alt492 <= (int) 90))))||(((Bool__type ) 0))))))))?
-((arg1 = (_l__parse__parse_grammar__Identifier)()),
-(_l__parse__parse_grammar__Spacing)(),
+((((((Bool__type ) 1))&&(((((new_peek_char)(0) == 62))||(((Bool__type ) 0))))))?
+(({({(read_char)();});
+({((List__O__Form__C____type__type ) 0);});})):
+(({(arg1 = (_l__parse__parse_grammar__Identifier)());
+(_l__parse__parse_grammar__Spacing)();
 (rest_list = ({
-List__O__Form__C____type__type _sharp_make_list494;
-_sharp_make_list494,
-_sharp_make_list_ptr495,
-(_sharp_make_list_ptr495 = ((void *) (&_sharp_make_list494))),
-((void) 0);_sharp__sharp_loop496_begin498:((void) 0),
+List__O__Form__C____type__type _sharp_make_list869;
+({_sharp_make_list869;
+_sharp_make_list_ptr870;
+(_sharp_make_list_ptr870 = ((void *) (&_sharp_make_list869)));
+({({_sharp__sharp_loop871_begin873:;
 ({
-Int__type _sharp_peeked_char_star493;
-(_sharp_peeked_char_star493 = (peek_char)());
-({if( (!((((_sharp_peeked_char_star493 == 44))||(((Bool__type ) 0))))))
+({if( (!(((((Bool__type ) 1))&&(((((new_peek_char)(0) == 44))||(((Bool__type ) 0))))))))
 {
-({goto _sharp__sharp_loop496_end497;});}})
+({goto _sharp__sharp_loop871_end872;});}})
 ;
-(parse_symbol)(((String__type) &__string_18)),
-(arg = (_l__parse__parse_grammar__Identifier)()),
-((* _sharp_make_list_ptr495) = (alloc_cons_cell)()),
-(((* (* ((struct struct0x0851c278 **) _sharp_make_list_ptr495))).car) = ((void *) (Id_Form)(arg))),
-(_sharp_make_list_ptr495 = (&((* (* ((struct struct0x0851c278 **) _sharp_make_list_ptr495))).cdr))),
-((void) 0);
+({(parse_symbol)(((String__type) &__string_20));
+(arg = (_l__parse__parse_grammar__Identifier)());
+({({((* _sharp_make_list_ptr870) = (alloc_cons_cell)());
+(((* (* ((struct struct0x085364e8 **) _sharp_make_list_ptr870))).car) = ((void *) (Id_Form)(arg)));
+(_sharp_make_list_ptr870 = (&((* (* ((struct struct0x085364e8 **) _sharp_make_list_ptr870))).cdr)));
+((void) 0);});});});
 })
-,
-({goto _sharp__sharp_loop496_begin498;}),
-((void) 0);_sharp__sharp_loop496_end497:((void) 0),
-((* _sharp_make_list_ptr495) = ((void *) 0)),
-_sharp_make_list494;
-})
-),
-(read_char)(),
-({
-struct struct0x080663e8 *_sharp_pair_499;
-_sharp_pair_499,
-(_sharp_pair_499 = ((struct struct0x080663e8 *) (alloc_cons_cell)()));
-(((* _sharp_pair_499).car) = (Id_Form)(arg1));
-(((* _sharp_pair_499).cdr) = rest_list);
-((List__O__Form__C____type__type ) _sharp_pair_499);
-})
-):
-((((((_sharp_peeked_char_alt492 == 41))||(((Bool__type ) 0))))?
-((read_char)(),
-((List__O__Form__C____type__type ) 0)):
-((parse_error)()))));
-})
-),
-(_l__parse__parse_grammar__Spacing)(),
-(parse_symbol)(((String__type) &__string_19)),
-(rule = (_l__parse__parse_grammar__Rule)()),
-(parse_symbol)(((String__type) &__string_20)),
-(Compound_Form)(intern( "define"), ({
-struct struct0x080663e8 *_sharp_pair_503;
-_sharp_pair_503,
-(_sharp_pair_503 = ((struct struct0x080663e8 *) (alloc_cons_cell)()));
-(((* _sharp_pair_503).car) = (Id_Form)(intern( "grammar_macro")));
-(((* _sharp_pair_503).cdr) = ({
-struct struct0x080663e8 *_sharp_pair_502;
-_sharp_pair_502,
-(_sharp_pair_502 = ((struct struct0x080663e8 *) (alloc_cons_cell)()));
-(((* _sharp_pair_502).car) = (Id_Form)(id));
-(((* _sharp_pair_502).cdr) = ({
-struct struct0x080663e8 *_sharp_pair_501;
-_sharp_pair_501,
-(_sharp_pair_501 = ((struct struct0x080663e8 *) (alloc_cons_cell)()));
-(((* _sharp_pair_501).car) = (Compound_Form)(intern( "tuple"), form_list));
-(((* _sharp_pair_501).cdr) = ({
-struct struct0x080663e8 *_sharp_pair_500;
-_sharp_pair_500,
-(_sharp_pair_500 = ((struct struct0x080663e8 *) (alloc_cons_cell)()));
-(((* _sharp_pair_500).car) = rule);
-(((* _sharp_pair_500).cdr) = ((List__O__Form__C____type__type ) 0));
-((List__O__Form__C____type__type ) _sharp_pair_500);
+;
+({goto _sharp__sharp_loop871_begin873;});});
+_sharp__sharp_loop871_end872:;});
+((* _sharp_make_list_ptr870) = ((void *) 0));
+_sharp_make_list869;});
 })
 );
-((List__O__Form__C____type__type ) _sharp_pair_501);
+({(read_char)();});
+({({
+struct struct0x08067248 *_sharp_pair_874;
+({_sharp_pair_874;
+(_sharp_pair_874 = ((struct struct0x08067248 *) (alloc_cons_cell)()));});
+(((* _sharp_pair_874).car) = (Id_Form)(arg1));
+(((* _sharp_pair_874).cdr) = rest_list);
+((List__O__Form__C____type__type ) _sharp_pair_874);
+})
+;});})));
 })
 );
-((List__O__Form__C____type__type ) _sharp_pair_502);
+(_l__parse__parse_grammar__Spacing)();
+(parse_symbol)(((String__type) &__string_21));
+(rule = (_l__parse__parse_grammar__Rule)());
+(parse_symbol)(((String__type) &__string_22));
+({(Compound_Form)(intern( "define"), ({
+struct struct0x08067248 *_sharp_pair_878;
+({_sharp_pair_878;
+(_sharp_pair_878 = ((struct struct0x08067248 *) (alloc_cons_cell)()));});
+(((* _sharp_pair_878).car) = (Id_Form)(intern( "grammar_macro")));
+(((* _sharp_pair_878).cdr) = ({
+struct struct0x08067248 *_sharp_pair_877;
+({_sharp_pair_877;
+(_sharp_pair_877 = ((struct struct0x08067248 *) (alloc_cons_cell)()));});
+(((* _sharp_pair_877).car) = (Id_Form)(id));
+(((* _sharp_pair_877).cdr) = ({
+struct struct0x08067248 *_sharp_pair_876;
+({_sharp_pair_876;
+(_sharp_pair_876 = ((struct struct0x08067248 *) (alloc_cons_cell)()));});
+(((* _sharp_pair_876).car) = (Compound_Form)(intern( "tuple"), form_list));
+(((* _sharp_pair_876).cdr) = ({
+struct struct0x08067248 *_sharp_pair_875;
+({_sharp_pair_875;
+(_sharp_pair_875 = ((struct struct0x08067248 *) (alloc_cons_cell)()));});
+(((* _sharp_pair_875).car) = rule);
+(((* _sharp_pair_875).cdr) = ((List__O__Form__C____type__type ) 0));
+((List__O__Form__C____type__type ) _sharp_pair_875);
 })
 );
-((List__O__Form__C____type__type ) _sharp_pair_503);
+((List__O__Form__C____type__type ) _sharp_pair_876);
 })
 );
+((List__O__Form__C____type__type ) _sharp_pair_877);
+})
+);
+((List__O__Form__C____type__type ) _sharp_pair_878);
+})
+);});});
 })
 ;}
