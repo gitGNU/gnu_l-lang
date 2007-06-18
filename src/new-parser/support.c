@@ -45,9 +45,15 @@ get_parser_support( void)
 		    
 
 int
-peek_char()
+peek_char(void)
 {
   return (int) (*parser_current_pointer);
+}
+
+int
+new_peek_char(int i )
+{
+  return (int) parser_current_pointer[i];
 }
 
 int
@@ -63,6 +69,69 @@ get_point_pos(void)
 {
   return parser_current_pointer;
 }
+
+// Create a string from what is parsed for a symbol.
+String
+get_parsed_string_symbol(unsigned int size, char *start, char *end)
+{
+  char *new_string = malloc( size);
+  int i = 0;
+  char *curptr = start;
+  
+  while(curptr < end)
+    {
+      if(*curptr == '\\')
+	{
+	  switch(*(++curptr))
+	    {
+	    case '\\' : new_string[i++] = '\\'; break;
+	    case 'n' : new_string[i++] = '\n'; break;
+	    case 't': new_string[i++] = '\t'; break;
+	    default : panic( "UNIMPLEMENTED\n");
+	    }
+	  curptr++;
+	}
+      else new_string[i++] = *(curptr++);
+    }
+
+  assert( i == size);
+  return maken_heap_string( new_string, size);
+}
+
+// Create a string from what is parsed for a string.
+// Multi-component strings (like "aa" "bb" are concatened. 
+String
+get_parsed_string_string(unsigned int size, char *start, char *end)
+{
+  char *new_string = malloc( size);
+  int i = 0;
+  char *curptr = start + 1;
+  
+  while(curptr < end - 1)
+    {
+      if(*curptr == '\\')
+	{
+	  switch(*(++curptr))
+	    {
+	    case '\\' : new_string[i++] = '\\'; break;
+	    case 'n' : new_string[i++] = '\n'; break;
+	    case 't': new_string[i++] = '\t'; break;
+	    default : panic( "UNIMPLEMENTED\n");
+	    }
+	  curptr++;
+	}
+      else if(*curptr == '"')
+	{
+	  while(*(++curptr)!= '"');
+	  curptr++;
+	}
+      else new_string[i++] = *(curptr++);
+    }
+  
+  assert( i == size);
+  maken_heap_string( new_string, size);
+}
+
 
 String
 substring(char *start, char *end)
@@ -338,12 +407,18 @@ char *string = "grammar parse_grammar = {"
 
 }
 
-
+void
+parse_error(void)
+{
+  printf( "Parse error\n");
+  exit( 3);
+}
 
 void
 init_newparser_support()
 {
   DEFINE_C_FUNCTION( set_parser_support_to, "Void <- String");
+  DEFINE_C_FUNCTION( new_peek_char, "Int <- (Int)");
   DEFINE_C_FUNCTION( peek_char, "Int <- ()");
   DEFINE_C_FUNCTION( read_char, "Int <- ()");
   DEFINE_C_FUNCTION( call_grammar_macro, "Form <- (Symbol, Form)");
@@ -354,12 +429,17 @@ init_newparser_support()
   DEFINE_C_FUNCTION( intern_string, "Symbol <- (String)");
   DEFINE_C_FUNCTION( get_point_pos, "Int <- ()");
   DEFINE_C_FUNCTION( substring, "String <- (Int, Int)");
+  DEFINE_C_FUNCTION( get_parsed_string_string, "String <- (Int, Int, Int)");
+  DEFINE_C_FUNCTION( get_parsed_string_symbol, "String <- (Int, Int, Int)");
   DEFINE_C_FUNCTION( string_to_int_list, "List( Int) <- (String)");
   DEFINE_C_FUNCTION( string_element, "Int <- (String, Int)");
   DEFINE_C_FUNCTION( _l__parse__parse_grammar__Expression, "Form <- ()");
   DEFINE_C_FUNCTION( _l__parse__parse_grammar__Type, "Form <- ()");
   DEFINE_C_FUNCTION( pre_define_function, "Void <- (Symbol, Form)");
   DEFINE_C_FUNCTION( get_test_string, "String <- ()");
+
+  eval_cstring( "type Exit = struct { dummy:Int;}*;");
+  DEFINE_C_FUNCTION( parse_error, "Exit <- ()");
 
   init_grammar_expander();
 }
