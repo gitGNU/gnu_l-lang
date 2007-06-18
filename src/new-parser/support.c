@@ -442,4 +442,5 @@ init_newparser_support()
   DEFINE_C_FUNCTION( parse_error, "Exit <- ()");
 
   init_grammar_expander();
+  init__parse_l();
 }

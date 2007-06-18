@@ -256,7 +256,7 @@ Void test_type()
 
 
 Void
-init_parse_l()
+init__parse_l()
 {
   parse_macro_hash = cast( Hash( Symbol, (Form <- (Symbol))*), make_hash_table());
   parse_macro_hash['let'] = &get_parse_function( Macro.let);
@@ -272,7 +272,7 @@ init_parse_l()
 Void
 test()
 {
-  init_parse_l();
+  init__parse_l();
 
   test_top();
   test_type();
