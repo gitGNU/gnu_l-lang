@@ -1,5 +1,5 @@
 //Test correct discard of unwanted results.
-Int test ()
+function test () -> Int =
 {
   let i:Int = 0;
 
@@ -11,4 +11,4 @@ Int test ()
   *pi; //Void expected type.
 
   3
-}
+};

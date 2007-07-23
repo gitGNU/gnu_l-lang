@@ -77,7 +77,7 @@ c_output_type( name:Symbol, t:Type)
     }
   else if(is_struct_type( t))
     {
-      print( "struct struct", cast( Int, t):hex,
+      print( "struct struct", hex:cast( Int, t),
 	     " ", name);
     }
   else if(is_pointer_type( t))
@@ -172,7 +172,7 @@ c_output_type_definition(t:Type)
 	      c_output_type_definition( subtype);
 	    }
 
-	  print( "struct struct", cast( Int, t):hex, " {\n");
+	  print( "struct struct", hex:cast( Int, t), " {\n");
 	  foreach( let label_form_ in cast( Compound_Form, tf).form_list)
 	    {
 	      let label_form = cast( Compound_Form, label_form_);
@@ -181,7 +181,7 @@ c_output_type_definition(t:Type)
 	      let subtf = label_form.form_list.tail.head;
 	      let subtype = intern_type( subtf);
 	      //	      print_error( "Field name: ", field_name, "|struct: ",
-	      //			   cast( Int, t):hex,"|");
+	      //			   hex:cast( Int, t),"|");
 	      //	      lispify( subtf);
 	      //	      print_error( "\n");
 	      c_output_type( field_name, subtype);

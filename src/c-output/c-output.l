@@ -135,35 +135,35 @@ c_output_form( expf:Expanded_Form)
 Void
 c_output_add_int( cf:Expanded_Compound_Form)
 {
-  buffered print( "((int) ", cf.form_list.head:gnu_c,
-		  " + (int) ", cf.form_list.tail.head:gnu_c, ")");
+  buffered print( "((int) ", gnu_c:cf.form_list.head,
+		  " + (int) ", gnu_c:cf.form_list.tail.head, ")");
 }
 
 Void
 c_output_mul_int( cf:Expanded_Compound_Form)
 {
-  buffered print( "((int) ", cf.form_list.head:gnu_c,
-		  " * (int) ", cf.form_list.tail.head:gnu_c, ")");
+  buffered print( "((int) ", gnu_c:cf.form_list.head,
+		  " * (int) ", gnu_c:cf.form_list.tail.head, ")");
 }
 
 Void
 c_output_sub_int( cf:Expanded_Compound_Form)
 {
-  buffered print( "((int) ", cf.form_list.head:gnu_c,
-		  " - (int) ", cf.form_list.tail.head:gnu_c, ")");
+  buffered print( "((int) ", gnu_c:cf.form_list.head,
+		  " - (int) ", gnu_c:cf.form_list.tail.head, ")");
 }
 
 Void
 c_output_div_int( cf:Expanded_Compound_Form)
 {
-  buffered print( "((int) ", cf.form_list.head:gnu_c,
-		  " / (int) ", cf.form_list.tail.head:gnu_c, ")");
+  buffered print( "((int) ", gnu_c:cf.form_list.head,
+		  " / (int) ", gnu_c:cf.form_list.tail.head, ")");
 }
 
 Void
 c_output_unary_minus_int( cf:Expanded_Compound_Form)
 {
-  buffered print( "(- (int) ", cf.form_list.head:gnu_c,")");
+  buffered print( "(- (int) ", gnu_c:cf.form_list.head,")");
 }
 
 
@@ -171,67 +171,67 @@ c_output_unary_minus_int( cf:Expanded_Compound_Form)
 Void
 c_output_ge_int( cf:Expanded_Compound_Form)
 {
-  buffered print( "((int) ", cf.form_list.head:gnu_c,
-		  " >= (int) ", cf.form_list.tail.head:gnu_c, ")");
+  buffered print( "((int) ", gnu_c:cf.form_list.head,
+		  " >= (int) ", gnu_c:cf.form_list.tail.head, ")");
 }
 
 Void
 c_output_gt_int( cf:Expanded_Compound_Form)
 {
-  buffered print( "((int) ", cf.form_list.head:gnu_c,
-		  " > (int) ", cf.form_list.tail.head:gnu_c, ")");
+  buffered print( "((int) ", gnu_c:cf.form_list.head,
+		  " > (int) ", gnu_c:cf.form_list.tail.head, ")");
 }
 
 
 Void
 c_output_le_int( cf:Expanded_Compound_Form)
 {
-  buffered print( "((int) ", cf.form_list.head:gnu_c,
-		  " <= (int) ", cf.form_list.tail.head:gnu_c, ")");
+  buffered print( "((int) ", gnu_c:cf.form_list.head,
+		  " <= (int) ", gnu_c:cf.form_list.tail.head, ")");
 }
 
 Void
 c_output_lt_int( cf:Expanded_Compound_Form)
 {
-  buffered print( "((int) ", cf.form_list.head:gnu_c,
-		  " < (int) ", cf.form_list.tail.head:gnu_c, ")");
+  buffered print( "((int) ", gnu_c:cf.form_list.head,
+		  " < (int) ", gnu_c:cf.form_list.tail.head, ")");
 }
 
 
 Void
 c_output_different( cf:Expanded_Compound_Form)
 {
-  buffered print( "(", cf.form_list.head:gnu_c,
-		  " != ", cf.form_list.tail.head:gnu_c, ")");
+  buffered print( "(", gnu_c:cf.form_list.head,
+		  " != ", gnu_c:cf.form_list.tail.head, ")");
 }
 
 
 Void
 c_output_equal( cf:Expanded_Compound_Form)
 {
-  buffered print( "(", cf.form_list.head:gnu_c,
-		  " == ", cf.form_list.tail.head:gnu_c, ")");
+  buffered print( "(", gnu_c:cf.form_list.head,
+		  " == ", gnu_c:cf.form_list.tail.head, ")");
 }
 
 Void
 c_output_logical_or( cf:Expanded_Compound_Form)
 {
-  buffered print( "((", cf.form_list.head:gnu_c,
-		  ")||(", cf.form_list.tail.head:gnu_c, "))");
+  buffered print( "((", gnu_c:cf.form_list.head,
+		  ")||(", gnu_c:cf.form_list.tail.head, "))");
 }
 
 Void
 c_output_logical_and( cf:Expanded_Compound_Form)
 {
-  buffered print( "((", cf.form_list.head:gnu_c,
-		  ")&&(", cf.form_list.tail.head:gnu_c, "))");
+  buffered print( "((", gnu_c:cf.form_list.head,
+		  ")&&(", gnu_c:cf.form_list.tail.head, "))");
 }
 
 
 Void
 c_output_logical_not( cf:Expanded_Compound_Form)
 {
-  buffered print( "(!(", cf.form_list.head:gnu_c,"))");
+  buffered print( "(!(", gnu_c:cf.form_list.head,"))");
 }
 
 
@@ -244,7 +244,7 @@ Void
 c_output_access_struct( cf:Expanded_Compound_Form)
 {
   buffered {
-    print( "(", cf.form_list.head:gnu_c, ".");
+    print( "(", gnu_c:cf.form_list.head, ".");
     assert( is_symbol_form( cf.form_list.tail.head.return_form));
     print( cast( Symbol_Form, cf.form_list.tail.head.return_form).value, ")");
   }
@@ -270,7 +270,7 @@ c_output_block( cf:Expanded_Compound_Form)
     print( "({\n");
     foreach( let subform in cf.form_list)
       {
-	print( subform:gnu_c, ";\n");
+	print( gnu_c:subform, ";\n");
       }
     print( "})\n");
   }
@@ -282,14 +282,14 @@ c_output_cast( cf:Expanded_Compound_Form)
   buffered {
     print( "((");
     c_output_type( '', intern_type( cf.form_list.head.return_form));
-    print( ") ", cf.form_list.tail.head:gnu_c, ")");
+    print( ") ", gnu_c:cf.form_list.tail.head, ")");
   }
 }
 
 Void
 c_output_deref( cf:Expanded_Compound_Form)
 {
-  buffered print( "(* ", cf.form_list.head:gnu_c, ")");
+  buffered print( "(* ", gnu_c:cf.form_list.head, ")");
 }
 
 
@@ -303,12 +303,12 @@ c_output_funcall( cf:Expanded_Compound_Form)
       globals_needed[cast( Id_Form, function.return_form).value] = cast( Bool, 1);
     }
   buffered {
-    print( "(", function:gnu_c, ")(");
+    print( "(", gnu_c:function, ")(");
     if(cf.form_list.tail != cast( List( Expanded_Form), 0))
       {
-	print( cf.form_list.tail.head:gnu_c);
+	print( gnu_c:cf.form_list.tail.head);
 	foreach( let subform in cf.form_list.tail.tail)
-	  print( ", ", subform:gnu_c);
+	  print( ", ", gnu_c:subform);
       }
     print( ")");
   }
@@ -323,14 +323,14 @@ c_output_if( cf:Expanded_Compound_Form)
   buffered {
     if(cf.form_list.tail.tail == cast( List( Expanded_Form), 0))
       {
-	print( "({if( ", condition:gnu_c, ")\n{\n", then:gnu_c, ";}})\n");
+	print( "({if( ", gnu_c:condition, ")\n{\n", gnu_c:then, ";}})\n");
       }
     else
       {
 	let elsef = cf.form_list.tail.tail.head;
-	print( "((", condition:gnu_c, ")?\n(",
-	       then:gnu_c, "):\n(",
-	       elsef:gnu_c, "))");
+	print( "((", gnu_c:condition, ")?\n(",
+	       gnu_c:then, "):\n(",
+	       gnu_c:elsef, "))");
       }
   }
 }
@@ -361,7 +361,7 @@ c_output_goto_variable( cf:Expanded_Compound_Form)
   assert( is_compound_form( cf.form_list.head.return_form));
   assert( cast( Compound_Form, cf.form_list.head.return_form).head == 'deref');
   print( "({goto *",
-	 cast( Expanded_Compound_Form, cf.form_list.head).form_list.head:gnu_c,
+	 gnu_c:cast( Expanded_Compound_Form, cf.form_list.head).form_list.head,
 	 ";})");
 }
 
@@ -405,12 +405,12 @@ c_output_ref( cf:Expanded_Compound_Form)
 	    print( "((");
 	    c_output_type( '', intern_type( csubform.form_list.head.return_form));
 	    print( ") ");
-	    print( "(&", csubform.form_list.tail.head:gnu_c, ")");
+	    print( "(&", gnu_c:csubform.form_list.tail.head, ")");
 	    print( ")");
 	    goto (end);
 	  }
       }
-    print( "(&", cf.form_list.head:gnu_c, ")");
+    print( "(&", gnu_c:cf.form_list.head, ")");
   }
  end:
 }
@@ -420,10 +420,10 @@ c_output_seq( cf:Expanded_Compound_Form)
 {
   buffered {
     assert( cf.form_list != cast( List( Expanded_Form), 0));
-    print( "({", cf.form_list.head:gnu_c);
+    print( "({", gnu_c:cf.form_list.head);
     foreach( let subform in cf.form_list.tail)
       {
-	print( ";\n", subform:gnu_c);
+	print( ";\n", gnu_c:subform);
       }
     print( ";})");
   }
@@ -442,14 +442,14 @@ c_output_struct( cf:Expanded_Compound_Form)
       assert( is_compound_form( subform_.return_form));
       assert( cast( Compound_Form, subform_.return_form).head == 'label');
       let form_subform = cast( Expanded_Compound_Form, subform_).form_list.tail.head;
-      print(form_subform:gnu_c); }
+      print(gnu_c:form_subform); }
     
     foreach( let subform_ in cf.form_list.tail)
       {
 	assert( is_compound_form( subform_.return_form));
 	assert( cast( Compound_Form, subform_.return_form).head == 'label');
 	let form_subform = cast( Expanded_Compound_Form, subform_).form_list.tail.head;
-	print(", ", form_subform:gnu_c);
+	print(", ", gnu_c:form_subform);
       }
     print( "})");
   }
@@ -553,7 +553,7 @@ c_output_function_definition( name:Symbol, l_:Form)
 	}
     }
   print( ")\n{\nreturn ");
-  print( cast( Expanded_Form, form_list.tail.tail.head):gnu_c);
+  print( gnu_c:cast( Expanded_Form, form_list.tail.tail.head));
   print( ";}\n\n");
   //let return_type_form = 
 }
@@ -763,14 +763,14 @@ test ()
 
 
   
-  doit("c-output/c-output.l", "c-output/c-output.c", "c-output/c-output.inc");
+//  doit("c-output/c-output.l", "c-output/c-output.c", "c-output/c-output.inc");
   //  doit( "std/error.l", "std/error.c", "std/error.inc");
   //  doit( "std/string.l", "std/string.c", "std/string.inc");
   // doit( "std/make-list.l", "std/make-list.c", "std/make-list.inc");
 
-  doit( "new-parser/grammar-expander.l", "new-parser/grammar-expander.c", "new-parser/grammar-expander.inc");
-  //doit( "new-parser/parse-grammar.l", "new-parser/parse-grammar.c", "new-parser/parse-grammar.inc");
-  doit( "new-parser/parse-l.l", "test.c", "test.inc");
+  //    doit( "new-parser/grammar-expander.l", "new-parser/grammar-expander.c", "new-parser/grammar-expander.inc");
+  //    doit( "new-parser/parse-grammar.l", "new-parser/parse-grammar.c", "new-parser/parse-grammar.inc");
+  doit( "new-parser/parse-l.l", "new-parser/parse-l.c", "new-parser/parse-l.inc");
   //doit( "std/error.l", "std/error.c", "std/error.inc");
   //  doit( "std/error.l", "test.c", "test.inc");
   //  doit( "test.l", "test.c", "test.inc");

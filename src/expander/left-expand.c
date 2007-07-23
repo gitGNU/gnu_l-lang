@@ -224,6 +224,7 @@ left_expand_let( generic_form_t form, expanded_form_t expression)
 void
 init_left_expand (void)
 {
+  define_left_expander (intern( "@deref"), left_expand_deref);
   define_left_expander (SYMBOL (deref), left_expand_deref);
   define_left_expander (SYMBOL (let), left_expand_let);
   define_left_expander (SYMBOL (tuple), left_expand_tuple);

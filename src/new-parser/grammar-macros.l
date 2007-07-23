@@ -9,6 +9,7 @@ grammar_macro @Left_Infix_Operator<operators, subrule, this_rule> =
 							 form2))})*
   {form};
 
+//XXX: this is the maybe_empty separator. Useful e.g. as arguments to C functions
 //Would be better with a type for null which would coerce into anything;
 //for now we can return only list of forms.
 grammar_macro @Separator<separator, rule> =
@@ -17,6 +18,17 @@ grammar_macro @Separator<separator, rule> =
     arg_list:(separator arg:rule {make( arg)})*
     arg_list:{cons( arg1, arg_list)} )?
   {arg_list};
+
+//XXX: this is the maybe_empty separator. Useful e.g. as arguments to C functions
+//Would be better with a type for null which would coerce into anything;
+//for now we can return only list of forms.
+grammar_macro @Maybe_Empty_Separator<separator, rule> = @Separator<separator, rule>;
+
+//This separator should not be an empty list.
+grammar_macro @Non_Empty_Separator<separator, rule> =
+  arg1:rule
+  arg_list:(separator arg:rule {make( arg)})*
+  {cons( arg1, arg_list)}; 
 
 grammar_macro @Right_Infix_Operator< operators, subrule, this_rule> =
   form:subrule
@@ -28,6 +40,16 @@ grammar_macro @Right_Infix_Operator< operators, subrule, this_rule> =
 grammar_macro @Unary_Prefix_Operator< operators, subrule, this_rule> =
   ( op:operators form:this_rule {Compound_Form( op, list( form))}
   | form:subrule);
+
+// Surround a rule by this macro when the rule's content is intended to be a replacement
+// XXX: should check that use of replacement is ok by using a dynamically scoped variable
+grammar_macro @Replacement< rule> = __rep_symb:('$@'|'$')//{if(replacable == false)
+                				           //parse_error( "Replacement not allowed here\n")}
+				    __rep_exp:rule '$' {Compound_Form( __rep_symb, list( __rep_exp))};
+
+// Allows a rule to use replacements.
+// XXX: should set the dynamically scoped variable
+grammar_macro @Replacable<rule> = rule;
 
 
 // Other tips:

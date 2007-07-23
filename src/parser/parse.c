@@ -806,8 +806,10 @@ parse_all ()
 	  expect( ID_RTK);
 	  symbol_t param = current_token.id;
 	  expect( CLOSE_PAREN_RTK);
+	  accept( ASSIGNMENT_RTK);
 	  form_t body;
 	  statement_or_expression_t se = parse_statement_or_expression( &body);
+	  accept( SEMICOLON_RTK);
 	  form = define_form( SYMBOL( expander), name,
 			      label_form_symbol( param, body));
 	  return form;
@@ -935,6 +937,23 @@ parse_all ()
 	  set_parser_support_to( &the_string);
 
 	  form_t form = _l__parse__parse_grammar__Grammar_Macro();
+
+	  lispify( form);
+	  scanner_pointer = get_parser_support();
+	  parse_initialize();
+	  
+	  return form;
+	  
+	}
+      else if(next_token.id == SYMBOL( function))
+	{
+	  struct string the_string;
+	  the_string.content = scanner_pointer;
+	  the_string.length = 4194304; /* 4 Mo of source code is quite much. */
+	  set_parser_support_to( &the_string);
+
+	  _l__parse__Lexical__Spacing();
+	  form_t form = _l__parse__Top_Level__function(SYMBOL( function));
 
 	  lispify( form);
 	  scanner_pointer = get_parser_support();
@@ -1149,9 +1168,11 @@ parse_function_definition ()
   statement_or_expression_t se = parse_block (&block);
   // assert (se == EXPRESSION);
 
-  return define_form (intern ("function"),
-		      name,
-		      lambda_form (type, parameters, block));
+  form_t df=  define_form (intern ("function"),
+			   name,
+			   lambda_form (type, parameters, block));
+  print_form( df);
+  return df;
 }
 
 #if 0

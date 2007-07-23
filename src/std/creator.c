@@ -270,7 +270,8 @@ check_struct_parameters( generic_form_t struct_type_form,
 	
 	generic_form_t expression = CAR (element);
 	assert( is_form( expression,generic_form));
-	assert( expression->head == SYMBOL( label));
+	assert( expression->head == SYMBOL( label)
+		|| expression->head == intern( "@label"));
 	
 	/* Get the form's label.  */
 	id_form_t id_form = CAR (expression->form_list);
@@ -404,7 +405,8 @@ indirect_pointer_creator( Type type_, list_t argument_list)
   generic_form_t gform = CAR( argument_list);
   if( is_form( gform, generic_form))
     {
-      if( gform->head == SYMBOL( label))
+      if( gform->head == SYMBOL( label)
+	  || gform->head == intern( "@label"))
 	{
 	  assert( gform->form_list);
 	  assert( gform->form_list->next);
@@ -457,7 +459,8 @@ direct_pointer_creator( Type type_, list_t argument_list)
   generic_form_t gform = CAR( argument_list);
   if( is_form( gform, generic_form))
     {
-      if( gform->head == SYMBOL( label))
+      if( gform->head == SYMBOL( label)
+	  || gform->head == intern( "@label"))
 	{
 	  assert( gform->form_list);
 	  assert( gform->form_list->next);

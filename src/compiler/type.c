@@ -173,6 +173,22 @@ bprint_type_function (Buffer buffer, generic_form_t form)
 }
 
 void
+new_bprint_type_function (Buffer buffer, generic_form_t form)
+{
+  form_t return_form = CAR (form->form_list->next);
+  form_t parameters_form = CAR (form->form_list);
+
+  bprint_type (buffer, return_form);
+  buffer_putchar (buffer,'<');
+  buffer_putchar (buffer,'-');
+
+  bprint_type (buffer, parameters_form);
+
+  // printf ("FUNCTION TYPE: %s\n", buffer->start);
+}
+
+
+void
 bprint_type_struct (Buffer buffer, generic_form_t form)
 {
   buffer_puts (buffer, "struct{");
@@ -181,7 +197,8 @@ bprint_type_struct (Buffer buffer, generic_form_t form)
     {
       generic_form_t label_form = CAR(element);
       assert(is_form(label_form, generic_form));
-      assert(label_form->head == SYMBOL(label));
+      assert(label_form->head == SYMBOL(label)
+	     || label_form->head == intern( ":"));
       form_t type = CAR(label_form->form_list->next);
       id_form_t idf = CAR (label_form->form_list);
       symbol_t name =  idf->value;
@@ -371,6 +388,24 @@ make_type_function (generic_form_t form)
   return type;
 }
 
+static Type
+new_make_type_function (generic_form_t form)
+{
+  form_t return_form = CAR (form->form_list->next);
+  form_t parameters_form = CAR (form->form_list);
+
+  function_type_t type = MALLOC (function_type);
+  type->size = -1;
+  type->alignment = -1;
+  type->type_form = form;
+  type->return_type = intern_type (return_form);
+  type->parameters_type = intern_type (parameters_form);
+  type->type_type = FUNCTION_TYPE;
+  //type->parameters_type = intern_type (form->type_form_list);
+  return type;
+}
+
+
 #include <l/access.h>
 
 static Type
@@ -385,7 +420,8 @@ make_type_struct (generic_form_t form)
     {
       generic_form_t label_form = CAR(element);
       assert(is_form(label_form, generic_form));
-      assert(label_form->head == SYMBOL(label));
+      assert(label_form->head == SYMBOL(label)
+	     || label_form->head == intern( ":"));
       form_t type_form = CAR(label_form->form_list->next);
       id_form_t idf = CAR (label_form->form_list);
       
@@ -738,12 +774,22 @@ new_init_type ()
   uncomplete_types = NULL;
   define_type_constructor (SYMBOL (tuple),
 			   bprint_type_tuple, make_type_tuple);
+  define_type_constructor (intern( "@tuple"),
+			   bprint_type_tuple, make_type_tuple);
+  
   define_type_constructor (SYMBOL (function), bprint_type_function,
 			   make_type_function);
+  define_type_constructor (intern( "->"), new_bprint_type_function,
+			   new_make_type_function);
+  
   define_type_constructor (SYMBOL (struct),
 			   bprint_type_struct, make_type_struct);
   define_type_constructor (SYMBOL (pointer),
 			   bprint_type_pointer, make_type_pointer);
+  define_type_constructor (intern( "*"),
+			   bprint_type_pointer, make_type_pointer);
   define_type_constructor (SYMBOL (label),
+			   bprint_type_label, make_type_label);
+  define_type_constructor (intern( ":"),
 			   bprint_type_label, make_type_label);
 }

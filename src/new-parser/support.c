@@ -27,8 +27,8 @@
 #include "../compiler/c-to-l.h"
 #include <assert.h>
 
-static char *parser_current_pointer;
-static char *parser_end_pointer;
+static unsigned char *parser_current_pointer;
+static unsigned char *parser_end_pointer;
 
 void
 set_parser_support_to( String s)
@@ -44,6 +44,10 @@ get_parser_support( void)
 }
 		    
 
+// We should work with unsigned char or at least unsigned int.
+// For now, it is at least important that parser_current_pointer is an
+// unsigned char, so that the int will be positive and tests will work.
+// Otherwise, ASCII characters with code >= 128 won't be parsed correctly.
 int
 peek_char(void)
 {
@@ -107,7 +111,7 @@ get_parsed_string_string(unsigned int size, char *start, char *end)
   int i = 0;
   char *curptr = start + 1;
   
-  while(curptr < end - 1)
+  while(curptr < end)
     {
       if(*curptr == '\\')
 	{
@@ -206,7 +210,10 @@ parse_symbol( String s)
   for(i = 0; i < s->length; i++)
     {
       if(read_char() != s->content[i])
-	panic( "Error while reading symbol %s\n", make_C_string_from_L_string( s));
+	{
+	  printf( "Error while reading symbol %s\n", make_C_string_from_L_string( s));
+	  panic( "error at: %s\n", parser_current_pointer);
+	}
     }
   
   /* Parse spacing.  */

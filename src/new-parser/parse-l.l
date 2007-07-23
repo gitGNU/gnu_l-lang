@@ -30,17 +30,23 @@ include "new-parser/grammar-macros.l";
 // the operators. This should be re-used by most L-specific grammars.
 grammar Lexical = {
   rule Comment:Int = "//" [^\n]* "\n" ;
+  //XXX: Maybe Spacing should have a +, and other parts could use Spacing? if they want.
   rule Spacing:Void = ([ \n\t]|Comment)* ;
   rule Alpha:Character = [a-zA-Z_] ;
   rule Alpha_Num:Character = [a-zA-Z_0-9] ;
   rule Digit:Character = d:[0-9] { d - Character( '0')};
-  rule Hexa_Digit:Character = (Digit | d:[a-f] { d - Character( 'a')});
+  rule Octal_Digit:Character = d:[0-7] { d - Character( '0')};
+  rule Hexa_Digit:Character = (Digit | d:[a-f] { d - Character( 'a') + 10});
 
   rule Decimal_Number:Int = n:( d:[1-9] {d - Character( '0')})
   (d:Digit {{n = n*10; n = n+d}})* {n};
-  rule Hexadecimal_Number:Int = "0x" n:{0}
+  rule Hexadecimal_Number_End:Int = n:{0}
                                 (d:Hexa_Digit {{n = n*16; n = n+d}})* {n};
-  rule Number:Int = Decimal_Number | Hexadecimal_Number;
+  rule Octal_Number_End:Int = n:{0}
+                                (d:Octal_Digit {{n = n*8; n = n+d}})* {n};
+  
+  rule Number:Int = Decimal_Number | "0" ("x" Hexadecimal_Number_End
+					 |Octal_Number_End);
   rule Number_Form:Form = n:Number Spacing {Int_Form( n)};
   
   rule Id:Symbol = start:_ Alpha Alpha_Num* end:_ Spacing
@@ -59,7 +65,7 @@ grammar Lexical = {
   rule Symbol_Form:Form = s:Symbol {Symbol_Form( s)};
   
   // Here we only count the size needed; the actual string is computed after.
-  rule String:String = i:{0} start:_ (["] (([^\'\\] | [\\] [\\nt]) i:{i + 1})* end:_ ["] Spacing)+
+  rule String:String = i:{0} start:_ (["] (([^\"\\] | [\\] [\\nt]) i:{i + 1})* end:_ ["] Spacing)+
                            { get_parsed_string_string( i, start, end)};
 
   rule String_Form:Form = s:String {String_Form( s)};
@@ -82,29 +88,32 @@ grammar Code = {
 	   funptr:{parse_macro_hash[id]} 
 	   ( &{funptr != cast( (Form <- Symbol)*, 0)} //semantic predicate
 	       { funcall( *funptr, id) }         // macro handling
-	   | '(' form_list:Expression_List ')' //function handling
+	     //	     | '(' form_list:@Separator<',', Expression> ')'//normal macro/function handling
+	     | '(' form_list:Expression_List ')'//normal macro/function handling
 	       { Compound_Form( id, form_list)}
-	   | ':' exp:Expression { Compound_Form( '@label',
-						 list( Id_Form( id),
-						       exp)) }
+	   | ':' exp:Maybe_Expression { Compound_Form( '@label',
+						       list( Id_Form( id),
+							     exp)) }
 	   | {Id_Form( id)})
        | Lexical.String_Form
        | Lexical.Symbol_Form
        | Lexical.Number_Form
+	 //       | @Replacement<exp:Expression>
+       | @Replacement<Sequence>
        | '(' expl:Expression_List ')'
            { if(expl == cast( List( Form), 0)
 		|| expl.tail != cast( List( Form), 0))
-	       Compound_Form( '@tuple', expl)
+	       Compound_Form( 'tuple', expl) // should be @tuple.
 	       else expl.head }
-       | '{' seq:Sequence_List '}'
-           { Compound_Form( '@block', seq) }
+       | '{' seq:Maybe_Empty_Sequence '}'
+           { Compound_Form( '@block', list( seq)) }
 	 );
 
   rule Postfix:Form = form:Primary ( '[' form2:Expression ']'
-                                       form:{Compound_Form( '@access',
+                                       form:{Compound_Form( '[]',
 							    list( form, form2))}
                                      | '.' id:Lexical.Id
-				       form:{Compound_Form( '@access',
+				       form:{Compound_Form( '[]',
 						       list( form, Symbol_Form( id)))}
                                      | '(' form_list:Expression_List ')'
 				       form:{Compound_Form( '@funcall',
@@ -113,11 +122,12 @@ grammar Code = {
 //								 list( form))}
 //				     | '--' form:{Compound_Form( '@post_--',
 //								 list( form))})?
-				     )?
+				     )*
 
                       {form};
 				       
   rule Unary_Operator:Form = @Unary_Prefix_Operator( ( '-' {'@unary_minus'}
+                                                     | '&&' {'@get_label'}
                                                      | '&' {'@ref'}
 	                                             | '*' {'@deref'}
 						     | '--' {'@pre_--'}
@@ -127,33 +137,53 @@ grammar Code = {
   rule Multiplicative:Form = @Left_Infix_Operator< '*', Unary_Operator, Multiplicative>;
   rule Additive:Form = @Left_Infix_Operator< ('+'|'-'), Multiplicative, Additive>;
   rule Shift:Form = @Left_Infix_Operator< ('>>'|'<<'), Additive, Shift>;
-  rule Relational:Form = @Left_Infix_Operator< ('>'|'>='|'<'|'<='), Shift, Relational>;
-  rule Equality:Form = @Left_Infix_Operator< '==', Relational, Equality>;
+  rule Relational:Form = @Left_Infix_Operator< ('>='|'>'|'<='|'<'), Shift, Relational>;
+  rule Equality:Form = @Left_Infix_Operator< ('=='|'!='), Relational, Equality>;
   rule Bitwise_And:Form = @Left_Infix_Operator< '|', Equality, Bitwise_And>;
   rule Bitwise_Xor:Form = @Left_Infix_Operator< '^', Bitwise_And, Bitwise_Xor>;
   rule Bitwise_Ior:Form = @Left_Infix_Operator< '|', Bitwise_Xor, Bitwise_Ior>;
   rule Logical_And:Form = @Left_Infix_Operator<('and' {'@and'}),Bitwise_Ior, Logical_And>;
   rule Logical_Or:Form = @Left_Infix_Operator< ('or' {'@or'}), Logical_And, Logical_Or>;
   rule Assignment:Form = @Right_Infix_Operator< '=', Logical_Or, Assignment>;
-  
+
   rule Expression:Form = Assignment;
 
-  //Parse a list of expression separated by semicolons, i.e. of the form
+  rule Maybe_Expression:Form = (Expression
+				|{Compound_Form( 'tuple', cast( List( Form), 0))});
+  
+  // For now, we have two types of sequence: maybe_empty or non empty.
+  // 
+  // The non empty is here for parse reasons only: because () gives a
+  // tuple containing one tuple, and in general the content of
+  // parenthesis expect expressions.
+
+  // Parse a list of expression separated by semicolons, i.e. of the form
   // exp1;exp2;....;exp3.
   // if an exp is empty (comprising the first or last), it is replaced by (), i.e. void.
-  rule Sequence_List:List( Form) = tup:{Compound_Form( '@tuple', cast( List( Form), 0))}
-                                   exp:(Expression|{tup}) exp_list:(';' e:(Expression|{tup}) {make( e)})*
-                                   {cons( exp, exp_list)};
-
-  // Parses as before, but returns a @seq with a simplification.
   // Note: ';' can be viewed as a low priority seq operator, with priority lower than =.
-  rule Sequence:Form = sl:Sequence_List { if( sl.tail != cast( List( Form), 0))
-                                            Compound_Form( '@seq', sl)
-					  else sl.head };
+  rule Maybe_Empty_Sequence:Form = tup:{Compound_Form( 'tuple', cast( List( Form), 0))} //should be @tuple.
+     ((exp:Expression (exp_list:( ';' exp2:(Expression|{tup}) {make( exp2)})+
+		         {Compound_Form( '@seq', cons( exp, exp_list))}
+		      |{exp}))
+      |{tup});
 
+  // Parse a list of expression separated by semicolons, i.e. of the form
+  // exp1;exp2;....;exp3.
+  // if an exp is empty (comprising the first or last), it is replaced by (), i.e. void.
+  // Note: ';' can be viewed as a low priority seq operator, with priority lower than =.
+  rule Non_Empty_Sequence:Form = 
+      exp:Expression (exp_list:( ';' exp2:Expression {make( exp2)})+
+                        {Compound_Form( '@seq', cons( exp, exp_list))}
+		     |{exp});
+
+  rule Sequence:Form = Non_Empty_Sequence;
+                                    
   // An expression list, a comma-separated list of Sequences. Should be surrounded
   // by delimiters, like (). ',' can be viewed as an even lower priority operator than ','.
-  rule Expression_List:List( Form) = @Separator< ',', Sequence>;
+  rule Expression_List:List( Form) = @Separator< ',', Non_Empty_Sequence>;
+  
+  
+  
 };
 
 grammar Type = {
@@ -171,7 +201,7 @@ grammar Type = {
                         Lexical.Spacing {form};        
 
   rule Tuple_Type:Form = ( "(" form_list:@Separator<',', Type> ")"
-                           {Compound_Form( '@tuple', form_list)}
+                           {Compound_Form( 'tuple', form_list)} // should be @tuple.
                          | Base_Type);
   
   rule Indirection_Type:Form = form:Tuple_Type ('*' form:{Compound_Form( '*', list( form))})*
@@ -187,21 +217,58 @@ grammar Type = {
 grammar Macro = {
 //  //import Code
 //  //import Lexical
-  rule let<symb:Symbol>:Form = id:Lexical.Id_Form typel:{cast( List( Form), 0)}
-                               (":" type:Type.Type typel:{list( type)})?
+//  rule let<symb:Symbol>:Form = id:Lexical.Id_Form typel:{cast( List( Form), 0)}
+//                               (":" type:Type.Type typel:{list( type)})?
+//                               {Compound_Form( 'let', cons( id, typel))};
+
+  rule let<symb:Symbol>:Form = id:Lexical.Id_Form 
+                               typel:(":" type:Type.Type {list( type)}
+			             | {cast( List( Form), 0)})
                                {Compound_Form( 'let', cons( id, typel))};
 
   rule if<symb:Symbol>:Form = '(' cond:Code.Expression ')'
-                              exp:Code.Expression 
-                              // No else is equivalent to "else void".
-                               exp2:( 'else' Code.Expression
-				    | {Form( () )})
-                               {Compound_Form( 'if', list( cond, exp, exp2))};
+                              exp:Code.Expression
+                              // No else is equivalent to "if (exp;()) else ()".
+                              elsel:( 'else' exp2:Code.Expression {list( exp2)}
+			            | {cast( List( Form), 0)})
+                              {Compound_Form( 'if', cons( cond, cons( exp, elsel)))};
+  
 
   // This type of construct is common, and the parser should be shared between them.
-  rule loop<symb:Symbol>:Form = exp:Code.Expression
+  rule loop_like<symb:Symbol>:Form = exp:Code.Expression
                                 {Compound_Form( symb, list( exp))};
+
+  // This one should be also shared.
+  rule break<symb:Symbol>:Form = {Compound_Form( 'break', cast( List( Form), 0))};
+
+  // continue jumps to the continue set point, which can be set using the continue: special label.
+  rule continue<symb:Symbol>:Form = (':' exp:Code.Maybe_Expression
+                                       {Compound_Form( '@seq',
+						       list( Compound_Form( '@set_continue',
+									    cast( List( Form), 0)),
+							     exp))}
+                                    | {Compound_Form( 'continue', cast( List( Form), 0))});
+
+  rule foreach<symb:Symbol>:Form = '(' var:Code.Expression 'in' collect:Code.Expression ')'
+                                     body:Code.Expression
+                                     {Compound_Form( 'foreach', list( var, collect, body))};
+
+
+  rule cast<symb:Symbol>:Form = '(' type:Type.Type ',' exp:Code.Expression ')'
+                                {Compound_Form( 'cast', list( type, exp))};
   
+  //Is it useful?
+//  rule print<symb:Symbol>:Form = '(' fl:@Maybe_Empty_Separator<',', (exp:Code.Expression
+//								     (':' exp2:Code.Expression
+//								      {Compound_Form( '@label',
+//										      list( exp, exp2))}
+//								      |{exp}))> ')'
+//                                          {Compound_Form( 'print', fl)};
+  rule Form<symb:Symbol>:Form = '(' exp:@Replacable<Code.Expression> ')'
+                                  {Compound_Form( 'Form', list( exp))};
+
+  rule XML<fsymb:Symbol>:Form = '(' form:XML_Parser.Content ')' {Compound_Form( 'XML',
+										list( form))};
 };
 
 
@@ -221,21 +288,57 @@ grammar Top_Level = {
                                         '->' ret_type:Type.Type '=' body:Code.Expression ';'
   { Compound_Form( 'define',
 		   list( Id_Form( fsymb),
-			 Compound_Form( ':',
-					list( Id_Form( name),
-					      Compound_Form( 'lambda',
-							     list( Compound_Form( '->',
-										  list( Compound_Form( '@tuple',
-												       params),
-											ret_type)),
-								   body))))))};
+			 Id_Form( name),
+			 Compound_Form( 'lambda',
+					list( ret_type,
+					      Compound_Form( 'tuple', //should be @tuple.
+							     params),
+					      body))))};
   rule global<fsymb:Symbol>:Form = ltype:Type.Labeled_Type
                                    { Compound_Form( 'define',
 						    list( Id_Form( fsymb),
 							  ltype))};
-			 
-  
 };
+
+// Should not be here; will be moved elsewhere as soon as possible.
+// Note: this is really a basic XML parser for demonstration.
+// A real one can be constructed from this EBNF http://www.jelks.nu/XML/xmlebnf.html
+grammar XML_Parser = {
+
+
+  // We use $...$ for replacements. If one want to insert a $, one must
+  // use $$, similarly to the XQuery language convention of doubling braces.
+  
+  //CharData a un Replacement
+  rule CharData:Form = start:_ [^<]+ end:_ {String_Form( get_parsed_string_string( end - start, start - 1, end))};
+
+  rule Content_List:List(Form) = ("<" ( "/" {cast( List( Form), 0)}
+                                      | form:( "$" exp:Code.Sequence "$" ">" {Compound_Form( '$', list( exp))}
+                                             | Tagged_Compound)
+					  cl:Content_List {cons( form, cl)})
+                                 | cd:CharData cl:Content_List {cons( cd, cl)});
+  
+  rule Tagged_Compound:Form = id:Lexical.Id ">" cl:Content_List id2:Lexical.Id ">" {Compound_Form( id, cl)};
+
+  rule Content:Form = "<" Tagged_Compound;
+};
+
+Void test_xml()
+{
+  //  set_parser_support_to( "<fact2>4<foo>toto</foo>$str</fact2>function add_three( i:Int) -> Int = i + 3 + 'toto\n' ;");
+  set_parser_support_to( "1 + XML( <fact2>4<foo>to<$1 + thing$>to</foo>24<$str;tu$></fact2>) + 3");
+  let exp = parse( Code.Expression);
+  print_form( exp);
+
+  set_parser_support_to( "<fact2>4<foo>toto</foo>24<$str$></fact2>function add_three( i:Int) -> Int = i + 3 + 'toto\n' ;");
+  let xml = parse( XML_Parser.Content);
+  print_form( xml);
+
+  let form = parse( Top_Level.Top);
+  print_form( form);
+  ();
+}
+  
 
 Void test_top()
 {
@@ -260,8 +363,17 @@ init__parse_l()
 {
   parse_macro_hash = cast( Hash( Symbol, (Form <- (Symbol))*), make_hash_table());
   parse_macro_hash['let'] = &get_parse_function( Macro.let);
+  parse_macro_hash['cast'] = &get_parse_function( Macro.cast);
   parse_macro_hash['if'] = &get_parse_function( Macro.if);
-  parse_macro_hash['loop'] = &get_parse_function( Macro.loop);
+  parse_macro_hash['loop'] = &get_parse_function( Macro.loop_like);
+  parse_macro_hash['buffered'] = &get_parse_function( Macro.loop_like);
+  parse_macro_hash['unbuffered'] = &get_parse_function( Macro.loop_like);
+  parse_macro_hash['foreach'] = &get_parse_function( Macro.foreach);
+  parse_macro_hash['Form'] = &get_parse_function( Macro.Form);
+  parse_macro_hash['XML'] = &get_parse_function( Macro.XML);
+  parse_macro_hash['break'] = &get_parse_function( Macro.break);
+  parse_macro_hash['continue'] = &get_parse_function( Macro.continue);
+  //  parse_macro_hash['print'] = &get_parse_function( Macro.print);
 
   parse_top_level_hash = cast( Hash( Symbol, (Form <- (Symbol))*), make_hash_table());
   parse_top_level_hash['function'] = &get_parse_function( Top_Level.function);
@@ -274,19 +386,41 @@ test()
 {
   init__parse_l();
 
+  test_xml();
+  exit( 3);
+    
+
+    
   test_top();
   test_type();
 
 
-  set_parser_support_to( "1 + {} + () + {truc; 25; 64} + {troc;52;} + (22;23,33) + (34) + (35;36;)");
+  //  set_parser_support_to( "1 + &&a + &r + 011 >= 3 + 0 + 0xf0 + {} + () + {truc; toto( 22); truc( empty()); truc( 1,2)} + {troc;52;} + (22;23,33) + (34) + (35;36) + tata( 1;2,3)");
+  //set_parser_support_to( "1 + {} + () + {truc; toto( 22); truc( empty()); truc( 1,2)} + {troc;52;} + (22;23,33) + (34) + (35;36;) + tata( 1;2,3)");
   //set_parser_support_to( "1 + {} + {truc; 25; 64}");
   //  set_parser_support_to( "{truc;}");
-  //set_parser_support_to( "{a;}");
+  //  set_parser_support_to( "{a}");
+  //  set_parser_support_to( "1 + {} + () + {truc; toto( 22); truc( empty()); truc( 1,2)} + {troc;52;} + (22;23,33) + (34) + (35;36;) + toto()");
+  //set_parser_support_to( "(35;36;)");
+  set_parser_support_to( "$3$ + 1 + toto + 1 + Form( $ 3 $ + toto)");
   let block_form = parse( Code.Expression);
   print_form( block_form);
 
+  exit( 3);
+  
   set_parser_support_to( "id:Form = 3");
+
+  // This is an artifice for C output, which does not handle the functions otherwise.
   let exp = parse( Macro.let, 'let');
+   exp = parse( Macro.if, 'let');
+   exp = parse( Macro.Form, 'let');
+   exp = parse( Macro.XML, 'let');
+   exp = parse( Macro.loop_like, 'let');
+   exp = parse( Macro.cast, 'let');
+   exp = parse( Macro.break, 'let');
+   exp = parse( Macro.continue, 'let');
+   exp = parse( Macro.foreach, 'let');
+   exp = parse( Top_Level.function, 'let');
   print_form( exp);
 
   set_parser_support_to( "(truc == 25) 3 + 023 else 23");

@@ -10,9 +10,9 @@ type_alias Integer = Int;
 
 //define int i = 3;
 
-Index correct (n:Int)
+function correct(n:Int) -> Index =
 { let i:Index; // = Index(23);
-  i }
+  i };
 
 //Index incorrect (int n)
 //{
@@ -54,18 +54,18 @@ Index correct (n:Int)
 //  t
 //}
 
-Int square (n:Integer)
+function square(n:Integer) -> Int =
 {
   n * n
-}
+};
 
 
-Int test ()
+function test() -> Int = 
 {
   let i:Int = 8;
   let p:Int = square (i);
   p
-}
+};
 
 //int test ()
 //{

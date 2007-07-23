@@ -267,6 +267,7 @@ derived_left_accesser (Type type_,
 void
 init_access ()
 {
+  //XXX: should be [] and .?
   define_expander(intern("[]"), expand_access);
   define_left_expander(intern("[]"), left_expand_access);
 }

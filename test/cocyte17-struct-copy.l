@@ -1,4 +1,4 @@
-Int test ()
+function test() -> Int =
 {
   //Use of a compound literal.
   let p:struct { x:Int; y:Int; } = struct(x:3, y:4);
@@ -39,4 +39,4 @@ Int test ()
   print ("v.x", struct (x:3,y:4).x,
 	 "v.y", struct (x:3,y:4).y);
   q.y
-}
+};

@@ -1,6 +1,5 @@
 //Automatic access to pointer structures.  I.e, transforms point.x into (*point).x
-Int
-test ()
+function test () -> Int =
 {
   let the_point:struct {x:Int; y:Int;};
 
@@ -15,4 +14,4 @@ test ()
   point.y = 5;
   print ("Point.y :", point.y, "\n");
   point.x
-}
+};

@@ -13,15 +13,13 @@ global name_table:Hash( Point, Symbol);
 attribute Point p.name = (left( arg): name_table[p] = arg,
 			  right: name_table[p]);
 
-Void
-test_point()
+function test_point() -> Void =
 {
   let p = Point( x:3, y:4);
   p.name = 'pointA';
   print( "Point: x:",p.x, ", y:", p.y, ", name:", p.name, "\n");
   print( "name_table[p]:", name_table[p], "\n");
-  ();
-}
+};
 
 // We choose to reuse a point instead of using inheritance for some
 //reason, but to hide this to the user of Point3D.
@@ -46,7 +44,7 @@ attribute Point3D p.y = p.p_.y;
 // Which is equivalent to:
 //attribute Point3D p.x = (left( arg): p.p_.x = arg, right: p.p_.x);
 
-Point3D test_point3d ()
+function test_point3d () -> Point3D =
 {
   let p = Point3D( x:1,y:2,z:3);
   print( "Value: ", p.p_.x + p.p_.y + p.z, "\n");
@@ -56,7 +54,7 @@ Point3D test_point3d ()
   p.z = 5;
   print( "P.x:", p.x, ", p.y:", p.y, ", p.z:", p.z, "\n");
   p
-}
+};
 
 // You can do this to any type:
 type Duration = Int;
@@ -68,14 +66,14 @@ attribute Duration d.minute = (right:cast( Int, cast( Int, d)/60));
 attribute Duration d.hour = right:cast( Int, cast( Int, d)/3600);
 
 
-Void test_Duration()
+function test_Duration() -> Void = 
 {
   let d = Duration( 8000);
   print( "Duration: ", d.second, " seconds (i.e. ",
 	 d.minute, " minutes i.e. ",
 	 d.hour,  " hours)\n" );
   //d.seconds = 25;
-}
+};
 
 
 // You can do that on Lists too:
@@ -83,19 +81,19 @@ attribute List( Int) l.sum = { let _sum = 0;
 			       foreach( let _element in l) {_sum = _sum + _element;}
 			       _sum};
 			       
-Void test_list()
+function test_list() -> Void = 
 {
   let l = list( 1,2,3);
   print( "Sum: ", l.sum, "\n");
-}
+};
 
-Void test()
+function test() -> Void = 
 {
   name_table = Hash( Point, Symbol);
   test_point();
   test_point3d();
   test_Duration();
   test_list();
-}
+};
 
 

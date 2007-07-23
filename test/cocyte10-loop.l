@@ -1,5 +1,5 @@
 //Tests loop by computing a factorial iteratively.
-Int fact (n:Int)
+function fact(n:Int) -> Int = 
 {
   let i:Int = 0;
   let result:Int = 1;
@@ -8,12 +8,18 @@ Int fact (n:Int)
      result = result * i;
      if (i >= n)
        break;
-   }
+   };
   result
-}
+};
 
-Void
-test2 ()
+function trac() -> Void =
+{
+  {
+    let i:Int = 0; 1 };
+  1;
+};
+
+function test2() -> Void =
 {
 //
 //  {
@@ -49,8 +55,8 @@ test2 ()
 	  continue;
 	print( i);
 	break;
-      }
-  }
+      };
+  };
   
   
   //Expansion of a for (let i = 0, i <= 3, i++) { if (i == 2) continue;}
@@ -72,13 +78,12 @@ test2 ()
 	//  if (not (i <= 3))
 	if (i > 3)
 	  break;
-      }
-  }
+      };
+  };
+};
 
- ();
-}
-
-Int test ()
+//Int test ()
+function test() -> Int =
 {
   //Test continue.
   let i:Int = 0;
@@ -89,11 +94,11 @@ Int test ()
       continue;
     print ("Hello\n");
     break;
-  }
+  };
   print (i, "\n");
 
   test2();
   print( "\n");
   
   fact (8) //40320
-}
+};

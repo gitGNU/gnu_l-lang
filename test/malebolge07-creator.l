@@ -7,7 +7,7 @@ type Point_Ptr = struct { x:Int; y:Int;} *;
 type Potato = Index *;
 type Potato_Ptr = Index **;
 
-Index test()
+function test() -> Index = 
 {
   //Test basic creators.
   let i:Int = Int( 3);
@@ -31,15 +31,15 @@ Index test()
   //Dereferencing a derived type does not work for now.
   print( "Ip pointe sur:", *( cast( Int *,
 				    ip)));
-  print( "Ip2 pointe sur:", *( cast( pointer( Int),
+  print( "Ip2 pointe sur:", *( cast( pointer<Int>,
 				     ip2)));
 
   let p2:Potato = Potato( Index( 8));
 
   //Test multiple pointers allocation.
   let p_ptr:Potato_Ptr = Potato_Ptr( alloc:malloc, alloc:auto, Index( 9));
-  print( "p_ptr pointe sur:", **( cast( pointer( pointer( Int)),
+  print( "p_ptr pointe sur:", **( cast( pointer<pointer<Int>>,
 					p_ptr)));
 
   Index( p.x + p.y)
-}
+};

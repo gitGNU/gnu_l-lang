@@ -1,5 +1,5 @@
 //Test declaration and usage of structure
-Int test ()
+function test () -> Int = 
 {
   let n:Int = 3;
   let point:struct { x:Int; y:Int; };
@@ -14,4 +14,4 @@ Int test ()
   point.y = n;
   print (point.x + point.y, "\n"); //58
   point.y
-}
+};

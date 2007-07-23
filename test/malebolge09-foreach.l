@@ -1,7 +1,7 @@
 type Test_Type = struct { key:Int;
                           name:String;} *;
 
-Int test ()
+function test () -> Int = 
 {
   let li = list( 1, 2, 3);
   foreach( let a in li)
@@ -28,13 +28,14 @@ Int test ()
   foreach( t in lt)
     {
       if(t.key == 3)
-	continue;
+	continue
       else if(t.key == 1)
 	break;
-    }
+    };
 
+  // t is still accessible at the end of the loop.
   print( "T.name: ", t.name, "\n");
 		 
   
   3
-}
+};

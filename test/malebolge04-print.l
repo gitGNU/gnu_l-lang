@@ -1,5 +1,6 @@
 //You can test this function with strace to see when write()s are done.
-Int test ()
+//Int test ()
+function test() -> Int = 
 {
   //By default, output is unbuffered. Contrary to C, the following is sent
   //even without a trailing \n.
@@ -15,7 +16,7 @@ Int test ()
   buffered {
     print ("This is not sent right now.");
     print ("\n Neither is this \n");
-  }
+  };
 
   //Back to unbuffered output, all the previously accumulated buffer
   //is flushed:
@@ -32,11 +33,11 @@ Int test ()
     unbuffered {
       print ("This is unbuffered\n");
       print ("This also.\n");
-    }
+    };
     print ("Back to buffered\n");
-  }
+  };
 
   //Test some formatters.
-  print ("Toto\n", 25:hex, "\n", 25, "\n", 25:dec, "\n");
+  print ("Toto\n", hex:25, "\n", 25, "\n", dec:25, "\n");
   (2)
-}
+};

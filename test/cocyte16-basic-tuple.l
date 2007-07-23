@@ -1,5 +1,5 @@
 //Basic tuple support.
-Int test ()
+function test() -> Int =
 {
   let a:Int;
   let b:Int;
@@ -31,5 +31,5 @@ Int test ()
   print (a, b, c, d, e, f, g);
 
   2
-}
+};
 

@@ -166,12 +166,14 @@ form_t expand_print (generic_form_t form) {
 	form_t formatter;
 	
 	if(is_form( subform, generic_form)
-	   && ((generic_form_t) subform)->head == intern( "label"))
+	   && (((generic_form_t) subform)->head == intern( "@label")
+	       || ((generic_form_t) subform)->head == intern( "label")))
+	   
 	  {
 	    /* There is a formatter.  */
 	    list_t form_list = ((generic_form_t) subform)->form_list;
-	    expform = expand( CAR( form_list));
-	    formatter = CAR( form_list->next);
+	    expform = expand( CAR( form_list->next));
+	    formatter = CAR( form_list);
 	  }
 	else
 	  {

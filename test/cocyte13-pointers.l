@@ -1,6 +1,5 @@
 //Test usage of pointers
-Int
-test ()
+function test() -> Int = 
 {
   let x:Int = 3;
   let px:Int * = &x;
@@ -11,4 +10,4 @@ test ()
 
   *px = 4;
   x + y
-}
+};

@@ -1,18 +1,19 @@
 
 global i:Int;
 
-Int test2 ()
+function test2 () -> Int =
 {
   i = 8;
-  2;
-}
+  2
+};
 
-Int test ()
+function test () -> Int = 
 {
  i = 3;
+ j = 4;
  test2 ();
- i + 2
-}
+ i + 2 + j
+};
 
-//Globals defined after do not work yet.
-//global j:Int
+//Globals defined after do work now.
+global j:Int;

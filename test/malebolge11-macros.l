@@ -47,9 +47,7 @@ macro whileee( condition:Bool, body) =
 //juste templating in macro; for that you can already use the full
 //expander.
 
-  
-Void
-test()
+function test() -> Void =
 {
   let j = 3;
   // This tests expansion of variable used here.
@@ -64,13 +62,7 @@ test()
   whileee(i <= 10, {i = i + 1});
   print( "I: ", i, "\n");
   ();
-}
-
-
-
-
-
-
+};
 
 //
 //En gros, les macros ca diffère des expanders surtout par leur forme.

@@ -1,21 +1,18 @@
 //Test booleans are correct values.
 
-Bool
-function (i:Int)
+function function( i:Int) -> Bool = 
 {
   i <= 4
-}
+};
 
 //Ensures that print is really void.
-Void
-void_function (message:String)
+function void_function( message:String) -> Void = 
 {
   cast (Void, print (message))
-}
+};
 
 
-Bool
-test ()
+function test() -> Bool = 
 {
   let i:Int = 4;
   print (cast (Int, i < 3));
@@ -27,4 +24,4 @@ test ()
   else void_function ("OK, 5 > 4");
 
   i <= 4
-}
+};

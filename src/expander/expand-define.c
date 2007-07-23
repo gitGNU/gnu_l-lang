@@ -326,9 +326,12 @@ expand_macro( Symbol macro,
 
 	if(parameter_form_type)
 	  {
-	    form = generic_form_symbol( SYMBOL( expand),
-					CONS( form,
-					      NULL));
+	    form = generic_form_symbol( SYMBOL( cast),
+					CONS( id_form( SYMBOL( Form)),
+					      CONS( generic_form_symbol( SYMBOL( expand),
+									 CONS( form,
+									       NULL)),
+						    NULL)));
 	    /* A simple expand would not suffice, because there can be
 	       parameters whose type is not known here.  Expansion
 	       of the parameters must happen on the caller's side.

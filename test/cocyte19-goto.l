@@ -7,8 +7,7 @@
 // an outside scope; but you can have only one label of the same name in one scope.
 
 //Backward labels.
-Int
-test1()
+function test1() -> Int = 
 {
  let i:Int = 24;
 
@@ -28,11 +27,10 @@ test1()
     goto (*l);
   
   i
-}
+};
 
 //Forward Labels
-Int
-test2()
+function test2() -> Int = 
 {
  let i:Int = 24;
 
@@ -42,7 +40,7 @@ test2()
     
     if(i == 24)
       goto( *l);
-  }
+  };
 
   i = i - 1;
 
@@ -54,20 +52,19 @@ test2()
   print( i, " ");
 
   i
-}
+};
 
 
 //Labels and scopes
 //As the labels are in two different scopes, it is legal that
 //they have the same name
-Void
-test3()
+function test3() -> Void =
 {
   {
     goto(toto);
 
   toto:;
-  }
+  };
 
   print( "Control is here\n");
   
@@ -75,11 +72,11 @@ test3()
     goto(toto);
 
     toto:;
-  }
+  };
 
   print( "Control is there\n");
 
-}
+};
 
 
 //Labels and scopes 2: this is forbidden
@@ -104,10 +101,9 @@ test3()
 
 
 
-Void
-test()
+function test() -> Void = 
 {
   test1();
   test2();
   test3();
-}
+};

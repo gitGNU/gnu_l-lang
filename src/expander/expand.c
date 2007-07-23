@@ -437,7 +437,7 @@ declare_function_begin( generic_form_t parameters,
   FOREACH(element, parameters->form_list)
     {
       generic_form_t gf = CAR(element);
-      assert(gf->head == SYMBOL(label));
+      assert(gf->head == SYMBOL(label) || gf->head == intern( ":"));
 
       symbol_form_t id_form = CAR(gf->form_list);
       assert(is_form(id_form, symbol_form));
@@ -648,7 +648,8 @@ expand_assign(generic_form_t form)
 expanded_form_t
 expand_tuple (generic_form_t form)
 {
-  assert (form->head == SYMBOL (tuple));
+  assert (form->head == SYMBOL (tuple)
+	  || form->head == intern( "@tuple"));
   
   list_t new_form_list;
   list_t type_list;
@@ -689,7 +690,9 @@ expand_struct (generic_form_t form)
     {
       generic_form_t genform = CAR (element);
       assert (is_form (genform, generic_form));
-      assert (genform->head == SYMBOL (label));
+      assert (genform->head == SYMBOL (label)
+	      || genform->head == intern( "@label"));
+
       assert (genform->form_list && genform->form_list->next
 	      && !genform->form_list->next->next);
 
@@ -1338,21 +1341,28 @@ init_expand (void)
   
   define_expander(SYMBOL(lambda), expand_lambda);
   define_expander(SYMBOL(block), expand_block);
+  define_expander(intern("@block"), expand_block); //should be "{}"?
   define_expander(SYMBOL(seq), expand_seq);
+  define_expander(intern( "@seq"), expand_seq); // should be ";"?
   define_expander(SYMBOL(let), expand_let);
   define_expander(SYMBOL(cast), expand_cast);
 
   define_expander(intern("="), expand_assign);
   define_expander(SYMBOL (struct), expand_struct);
   define_expander(SYMBOL (label), expand_label);
+  define_expander(intern ("@label"), expand_label); /* Should be :? */
   
   define_expander(intern( "@and"), expand_logical_and);
   define_expander(intern( "@or"), expand_logical_or);
   define_expander(intern( "@not"), expand_logical_not);
+  define_expander(intern( "not"), expand_logical_not);
   define_expander(SYMBOL (goto), expand_goto);
   define_expander(intern( "@get_label"), expand_at_get_label);
   define_expander(SYMBOL (tuple), expand_tuple);
+  define_expander(intern( "@tuple"), expand_tuple);
   define_expander(SYMBOL(ref), expand_ref);
+  define_expander(intern( "@ref"), expand_ref);
+  define_expander(intern( "@deref"), expand_deref);
   define_expander(SYMBOL(deref), expand_deref);
 
   define_expander(SYMBOL(if), expand_if);

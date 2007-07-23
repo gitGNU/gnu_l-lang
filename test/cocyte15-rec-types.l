@@ -31,8 +31,7 @@ type Int_List2 = struct
 //		    Int y; };
 //		
 
-Int
-test ()
+function test() -> Int = 
 {
   let i:struct { head:Int; tail:Int_List; }*;
   let b:Int_List;
@@ -46,4 +45,4 @@ test ()
 //  if((*o).b == a) 0 else 1
   //  if((*a).b == o) 0 else 1
 
-}
+};

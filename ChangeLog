@@ -1,3 +1,13 @@
+2007-07-24  Matthieu Lemerre  <racin@free.fr>
+
+	Many changes; now all the test cases work with the new L
+	grammar (including a new XML parser written this grammar).
+	
+	* c-output/*.l: Now use the new printer specification
+	convention (with prefix labels).
+
+	* test/*.l: Test cases now use the new L grammar.
+
 2007-06-18  Matthieu Lemerre  <racin@free.fr>
 
 	* src/new-parser/parse-l.l: New L grammar. Many changes in support

@@ -1,5 +1,6 @@
 //Tests spilling in different branches of an if.
-Int test ()
+
+function test() -> Int =
 {
   let i:Int = 4;
   let j:Int = 5;
@@ -11,4 +12,4 @@ Int test ()
   
    c = ((1 + i) + ((1 + i) + ((if(i == 4) (i + 1) + j  else 3) + j)));
    c
-}
+};

@@ -1,11 +1,9 @@
 //This tests multiple function definition, and calling of a simple function without arguments.
 
-Int toto () { 3 }
+function toto() -> Int = {3};
 
-
-Int test ()
+function test() -> Int = 
 {
-  let i:Int = toto ();
+  let i:Int = toto();
   i
-}
- 
+};

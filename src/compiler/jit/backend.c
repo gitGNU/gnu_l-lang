@@ -454,7 +454,8 @@ generate_function_start (symbol_t name, generic_form_t parameters)
       {
 	int i = jit_arg_ui ();
 	generic_form_t label_form = CAR (element);
-	assert (label_form->head == SYMBOL (label));
+	assert (label_form->head == SYMBOL (label)
+		|| label_form->head == intern( ":"));
 
 	type_form_t tf = CAR (label_form->form_list->next);
 	symbol_t param_name = ((id_form_t) CAR (label_form->form_list))->value;

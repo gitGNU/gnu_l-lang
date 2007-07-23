@@ -1,7 +1,7 @@
 type Point = struct { x:Int;
                       y:Int; } *;
 
-Int test ()
+function test () -> Int =
 {
   let i:Int;
   i = 3;
@@ -21,4 +21,4 @@ Int test ()
   let s = struct( x:3, y:4);
 
   s.x + s.y
-}
+};
