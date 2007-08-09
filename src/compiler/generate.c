@@ -689,10 +689,22 @@ compile_function_call (generic_form_t form)
   
   assert (expanded_function_form->type->type_type == FUNCTION_TYPE);
   Function_Type function_type = expanded_function_form->type;
-  unsigned int nb_arguments = function_type->parameters_type->length;
-  
-  location_t locations[nb_arguments];
+  unsigned int nb_arguments;
+  Type * fields;
 
+  if(function_type->parameters_type->type_type == TUPLE_TYPE)
+    {
+      nb_arguments = ((Tuple_Type) function_type->parameters_type)->length;
+      fields = ((Tuple_Type) function_type->parameters_type)->fields;
+    }
+  else
+    {
+      nb_arguments = 1;
+      fields = &function_type->parameters_type;
+    }
+
+  location_t locations[nb_arguments];
+  
   {
     int i = 0;
     FOREACH (element, args)
@@ -705,18 +717,15 @@ compile_function_call (generic_form_t form)
 	  }
 	
 	locations[i] = compile (CAR (element),
-				function_type->parameters_type->fields[i]);
+				fields[i]);
 	i++;
       }
   }
 
-
-  Type *fields;
-
   assert (function_type->type_type == FUNCTION_TYPE);
-  assert (function_type->parameters_type->type_type == TUPLE_TYPE);
+  //  assert (function_type->parameters_type->type_type == TUPLE_TYPE);
   
-  fields = ((Tuple_Type) ((Function_Type) function_type)->parameters_type)->fields;
+  //  fields = ((Tuple_Type) ((Function_Type) function_type)->parameters_type)->fields;
       
   
     for(int i = 0; i < nb_arguments; i++)

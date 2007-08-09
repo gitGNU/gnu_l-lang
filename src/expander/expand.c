@@ -872,7 +872,20 @@ expand_function(generic_form_t form)
 
   /* MAP expand on the forms; return the type of the last one.  */
   list_t expanded_form_list;
-  Type * type_array = function_type->parameters_type->fields;
+  unsigned int tuple_length;
+  Type * type_array;
+
+  if(function_type->parameters_type->type_type == TUPLE_TYPE)
+    {
+      tuple_length = ((Tuple_Type)function_type->parameters_type)->length;
+      type_array = ((Tuple_Type)function_type->parameters_type)->fields;
+    }
+  else
+    {
+      tuple_length = 1;
+      type_array = &function_type->parameters_type;
+    }
+  
   int type_counter = 0;
 
   
@@ -885,7 +898,7 @@ expand_function(generic_form_t form)
 	last_element = expand(CAR(element));
 
 	/* Check type.  */
-	if(type_counter >= function_type->parameters_type->length)
+	if(type_counter >= tuple_length)
 	  {
 	    compile_error( "Too many arguments given when calling %s\n", head->name);
 	  }
@@ -894,7 +907,7 @@ expand_function(generic_form_t form)
 	*expanded_form_list_ptr = CONS(last_element, NULL);
 	expanded_form_list_ptr = &((*expanded_form_list_ptr)->cdr);
       }
-    if(type_counter < function_type->parameters_type->length)
+    if(type_counter < tuple_length)
       {
 	compile_error( "Too few arguments given when calling %s\n", head->name);
       }
@@ -926,23 +939,37 @@ expand_funcall( generic_form_t form)
     int i = 0;
     Tuple_Type parameters = ((Function_Type) fun_form->type)->parameters_type;
 
+    Type *type_array;
+    unsigned int tuple_length;
+    
+    if(parameters->type_type == TUPLE_TYPE)
+      {
+	tuple_length = parameters->length;
+	type_array = parameters->fields;
+      }
+    else
+      {
+	tuple_length = 1;
+	type_array = &parameters;
+      }
+
     list_t *expform_list_ptr = &expform_list;
     
     
     FOREACH( element, form->form_list->next)
       {
-	if(i >= parameters->length)
+	if(i >= tuple_length)
 	  compile_error( "Error: too much parameters given\n");
 
 	expanded_form_t expsubform = expand( CAR( element));
-	type_check( expsubform->type, parameters->fields[i]);
+	type_check( expsubform->type, type_array[i]);
 	
 	(*expform_list_ptr) = CONS( expsubform, NULL);
 	expform_list_ptr = &((*expform_list_ptr)->next);
 	i++;
       }
 
-    if(i != parameters->length)
+    if(i != tuple_length)
       compile_error( "Error: too few parameters given\n");
 
     *expform_list_ptr = NULL;

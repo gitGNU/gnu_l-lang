@@ -846,16 +846,16 @@ return_function_value (location_t location)
 }
 
 location_t
-function_call (location_t funloc/*function_t function*/, unsigned int loc_size,
+function_call (location_t funloc/*function_t function*/, unsigned int nb_arguments,
 	       location_t *loc_array)
 {
   /* XXX: Save the used registers that can be destroyed by the
      function call (R0, R1, R2).  */
   Function_Type function_type = funloc->type;
   assert( function_type->type_type == FUNCTION_TYPE);
-  int nb_arguments = function_type->parameters_type->length;
+  //  int nb_arguments = function_type->parameters_type->length;
   
-  assert (loc_size == nb_arguments);
+  //  assert (loc_size == nb_arguments);
   
   /* XXX: use these registers too.  */
   assert (register_locations[REG_R0] == NULL);

@@ -59,7 +59,7 @@ typedef struct function_type
 {
   struct TYPE_CONTENT;
   Type return_type;
-  Tuple_Type parameters_type;
+  Type parameters_type;
 } *function_type_t;
 
 typedef function_type_t Function_Type;

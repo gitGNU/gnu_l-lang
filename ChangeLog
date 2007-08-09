@@ -1,3 +1,9 @@
+2007-08-10  Matthieu Lemerre  <racin@free.fr>
+
+	Function types parameters may now not be a tuple type. Handle this
+	case.  Singleton tuple types now return the original type;
+	i.e. types (Type) and Type are now the same.
+	
 2007-07-24  Matthieu Lemerre  <racin@free.fr>
 
 	Many changes; now all the test cases work with the new L

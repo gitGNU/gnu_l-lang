@@ -141,6 +141,15 @@ bprint_type (Buffer buffer, form_t form)
 void
 bprint_type_tuple (Buffer buffer, generic_form_t form)
 {
+  //#if 0  
+  if(form->form_list && !form->form_list->next)
+    {
+      /* 1-tuples types are the same than their content type.  */
+      form_t subform = CAR( form->form_list);
+      bprint_type( buffer, subform);
+      return;
+    }
+  //#endif  
   
   buffer_putchar (buffer, '(');
 
@@ -349,6 +358,17 @@ MAKE_STATIC_HASH_TABLE (make_type_hash);
 static Type
 make_type_tuple (generic_form_t form)
 {
+
+  //#if 0
+  if(form->form_list && !form->form_list->next)
+    {
+      /* 1-tuples types are the same than their content type.  */
+      form_t subform = CAR( form->form_list);
+      return intern_type( subform);
+    }
+  //#endif  
+
+  
   tuple_type_t type = MALLOC (tuple_type);
   unsigned int len = length (form->form_list);
   type->length = len;
