@@ -221,14 +221,34 @@ mangle_type_name_rec( char **start, form_t type_form)
      and for a comma, a __c__ */
   if(is_form( type_form, id_form))
     {
-      strcpy( *start, ((id_form_t) type_form)->value->name);
+      symbol_t id = ((id_form_t) type_form)->value;
+      char *str = id->name;
+      strcpy( *start, str);
       *start += strlen( *start);
     }
   else
     {
       assert( is_form( type_form, generic_form));
       generic_form_t cf = type_form;
-      strcpy( *start, ((generic_form_t) type_form)->head->name);
+
+      symbol_t id = ((generic_form_t) type_form)->head;
+      char *str = id->name;
+
+      if(id == intern( "tuple")
+	 && cf->form_list
+	 && !cf->form_list->next)
+	{
+	  // Si c'est un tuple a un seul element.
+	  mangle_type_name_rec( start, CAR( cf->form_list));
+	  return;
+	}
+      
+      if(id == intern( "*"))
+	str = "pointer";
+      else if(id == intern( "->"))
+	str = "function";
+      
+      strcpy( *start,  str);
       *start += strlen( *start);
       memcpy( *start, "__O__", 5);
       *start +=5;

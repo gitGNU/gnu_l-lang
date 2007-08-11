@@ -225,8 +225,10 @@ void
 bprint_type_pointer (Buffer buffer, generic_form_t form)
 {
   form_t subform = CAR (form->form_list);
-  
+
+  buffer_putchar( buffer, '(');
   bprint_type (buffer, subform);
+  buffer_putchar( buffer, ')');
   buffer_putchar (buffer, '*');
 }
 

@@ -14,13 +14,13 @@ attribute Expanded_Compound_Form exp.form_list = right:cast( List( Expanded_Form
 							     exp.return_form_.form_list);
 
 
-global c_output_hash:Hash( Symbol, (Void <- Expanded_Compound_Form)*);
+global c_output_hash:Hash< Symbol, (Expanded_Compound_Form -> Void)*>;
 
 //Set of the functions (in the future, also globals) needed
-global globals_needed:Hash( Symbol, Bool);
+global globals_needed:Hash< Symbol, Bool>;
 
 //Set of the strings needed.
-global strings_needed:Hash( Int, String);
+global strings_needed:Hash< Int, String>;
 global string_counter:Int;
 
 

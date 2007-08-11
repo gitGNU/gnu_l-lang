@@ -17,3 +17,5 @@ function test () -> Int =
 
 //Globals defined after do work now.
 global j:Int;
+
+global li:List<Int>;

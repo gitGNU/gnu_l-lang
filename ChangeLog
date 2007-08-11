@@ -1,8 +1,29 @@
+2007-08-11  Matthieu Lemerre  <racin@free.fr>
+
+	Now use the new parser to parse the globals.
+	
+	* src/parser/parse.c (parse_all): Now use new parser's global.
+
+	* src/compiler/type.c: Deal with an operator priority problem.
+
+	* src/c-output/c-output-type.l: Use new type syntax.
+	* src/c-output/c-output.l: Likewise.
+	* src/new-parser/parse-l.l: Likewise, some syntax changes.
+
+	* src/c-output/support.c (mangle_type_name_rec): Mangle correctly
+	new type forms.
+
+	
 2007-08-10  Matthieu Lemerre  <racin@free.fr>
 
 	Function types parameters may now not be a tuple type. Handle this
 	case.  Singleton tuple types now return the original type;
 	i.e. types (Type) and Type are now the same.
+
+	* src/compiler/generate.c
+	* src/compiler/type.c
+	* src/expander/expand.c
+	* src/include/l/sys/type.h
 	
 2007-07-24  Matthieu Lemerre  <racin@free.fr>
 

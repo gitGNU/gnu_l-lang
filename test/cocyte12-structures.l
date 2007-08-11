@@ -13,5 +13,12 @@ function test () -> Int =
   point.x = n;
   point.y = n;
   print (point.x + point.y, "\n"); //58
-  point.y
+  point.y;
+
+  let t:struct { i:Int; p:struct { x:Int; y:Int; }; j:Int;};
+
+  t.i = 3;
+
+  t.p.x = 4;
+  t.p.x
 };

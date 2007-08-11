@@ -6,7 +6,7 @@ type Point = struct { x:Int;
 
 // Now we need to associates objects of this structure (created elsewhere) to
 // a special name.  This can be achieved using Hash Tables:
-global name_table:Hash( Point, Symbol);
+global name_table:Hash<Point, Symbol>;
 
 // But this will make the program more generic and understandable.
 // It defines a name attribute for objects of type Point.

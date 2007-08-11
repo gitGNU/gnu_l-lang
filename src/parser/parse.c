@@ -784,6 +784,23 @@ parse_all ()
 	}
       else if(next_token.id == SYMBOL(global))
 	{
+	  struct string the_string;
+	  the_string.content = scanner_pointer;
+	  the_string.length = 4194304; /* 4 Mo of source code is quite much. */
+	  set_parser_support_to( &the_string);
+
+	  _l__parse__Lexical__Spacing();
+	  form_t form = _l__parse__Top_Level__global(SYMBOL( global));
+
+	  lispify( form);
+	  scanner_pointer = get_parser_support();
+	  parse_initialize();
+
+	  return form;
+	  
+	}
+      else if(next_token.id == SYMBOL(oldglobal))
+	{
 	  expect( ID_RTK);
 
 	  expect( ID_RTK);
@@ -794,6 +811,8 @@ parse_all ()
 	  form = define_form( SYMBOL( global),
 				      symbol,
 				      type_form);
+
+	  lispify( form);
 	  expect( SEMICOLON_RTK);
 	  return form;
 	}
@@ -955,7 +974,7 @@ parse_all ()
 	  _l__parse__Lexical__Spacing();
 	  form_t form = _l__parse__Top_Level__function(SYMBOL( function));
 
-	  lispify( form);
+	  //	  lispify( form);
 	  scanner_pointer = get_parser_support();
 	  parse_initialize();
 	  

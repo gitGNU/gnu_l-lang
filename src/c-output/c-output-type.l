@@ -53,10 +53,10 @@ Bool is_function_type( t:Type)
 }
 
 //Set to 1 if there is a need to output the definition
-global type_definition_needed:Hash( Type, Bool);
+global type_definition_needed:Hash< Type, Bool>;
 
 //Set to 1 when the type has been outputed.
-global has_been_outputed:Hash( Type, Bool);
+global has_been_outputed:Hash< Type, Bool>;
 
 //This outputs an object name of type TYPE.
 Void

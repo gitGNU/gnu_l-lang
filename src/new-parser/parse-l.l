@@ -78,7 +78,8 @@ grammar Lexical = {
 };
 
 // Hash table to call macro parsing functions.
-compile_time global parse_macro_hash:Hash( Symbol, (Form <- (Symbol))*);
+//compile_time oldglobal parse_macro_hash:Hash( Symbol, (Form <- (Symbol))*);
+compile_time global parse_macro_hash:Hash< Symbol, (Symbol -> Form)*>;
 
 // This is the grammar for L code, i.e. what is inside a function.
 grammar Code = {
@@ -194,13 +195,13 @@ grammar Type = {
 				          {make( lab_type)})* '}'
 			        {Compound_Form( 'struct', form_list)}
 			      // Misc. constructed types.
-			     | "<" form_list2:@Separator(',', Type) ">"
+			     | '<' form_list2:@Separator(',', Type) ">"
 			       {Compound_Form( id, form_list2)}
 			      // Base types.
 			     | {Id_Form( id)})
                         Lexical.Spacing {form};        
 
-  rule Tuple_Type:Form = ( "(" form_list:@Separator<',', Type> ")"
+  rule Tuple_Type:Form = ( '(' form_list:@Separator<',', Type> ')'
                            {Compound_Form( 'tuple', form_list)} // should be @tuple.
                          | Base_Type);
   
@@ -272,7 +273,8 @@ grammar Macro = {
 };
 
 
-compile_time global parse_top_level_hash:Hash( Symbol, (Form <- (Symbol))*);
+//compile_time oldglobal parse_top_level_hash:Hash( Symbol, (Form <- (Symbol))*);
+compile_time global parse_top_level_hash:Hash< Symbol, (Symbol -> Form)*>;
 
 // For global, top-level definitions.
 grammar Top_Level = {
@@ -294,10 +296,20 @@ grammar Top_Level = {
 					      Compound_Form( 'tuple', //should be @tuple.
 							     params),
 					      body))))};
-  rule global<fsymb:Symbol>:Form = ltype:Type.Labeled_Type
+  rule global<fsymb:Symbol>:Form = name:Lexical.Id ":" type:Type.Type ';'//ltype:Type.Labeled_Type
                                    { Compound_Form( 'define',
 						    list( Id_Form( fsymb),
-							  ltype))};
+							  Id_Form( name),
+							  type))};
+  
+  rule expander<fsymb:Symbol>:Form = name:Lexical.Id_Form '(' param:Lexical.Id_Form ')' '='
+                                     body:Code.Expression ';'
+                                     {Compound_Form( 'define',
+						     list( Id_Form( fsymb),
+							   name,
+							   Compound_Form( ':',
+									  list( param,
+										body))))};
 };
 
 // Should not be here; will be moved elsewhere as soon as possible.
@@ -340,13 +352,17 @@ Void test_xml()
 }
   
 
-Void test_top()
+function test_top() -> Void = 
 {
   set_parser_support_to( "function add_three( i:Int) -> Int = i + 3 + 'toto\n' ;");
   let form = parse( Top_Level.Top);
   print_form( form);
-  ();
-}
+
+  set_parser_support_to( "global c_output_hash:Hash<Symbol, ((Expanded_Compound_Form)-> Void)*>;");
+  set_parser_support_to( "global parse_macro_hash:Hash<Symbol, (Symbol -> Form)*>;");
+  form = parse( Top_Level.Top);
+  print_form( form);
+};
 
 
 Void test_type()
@@ -377,6 +393,8 @@ init__parse_l()
 
   parse_top_level_hash = cast( Hash( Symbol, (Form <- (Symbol))*), make_hash_table());
   parse_top_level_hash['function'] = &get_parse_function( Top_Level.function);
+  parse_top_level_hash['global'] = &get_parse_function( Top_Level.global);
+  parse_top_level_hash['expander'] = &get_parse_function( Top_Level.expander);
   
   ();
 }
@@ -385,13 +403,13 @@ Void
 test()
 {
   init__parse_l();
-
-  test_xml();
-  exit( 3);
-    
-
     
   test_top();
+  exit( 3);
+
+  test_xml();
+
+  
   test_type();
 
 
@@ -421,6 +439,8 @@ test()
    exp = parse( Macro.continue, 'let');
    exp = parse( Macro.foreach, 'let');
    exp = parse( Top_Level.function, 'let');
+   exp = parse( Top_Level.global, 'let');
+   exp = parse( Top_Level.expander, 'let');
   print_form( exp);
 
   set_parser_support_to( "(truc == 25) 3 + 023 else 23");
