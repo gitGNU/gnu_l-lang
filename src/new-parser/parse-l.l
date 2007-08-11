@@ -279,7 +279,25 @@ compile_time global parse_top_level_hash:Hash< Symbol, (Symbol -> Form)*>;
 // For global, top-level definitions.
 grammar Top_Level = {
 
-  rule All:List< Form> = list:(form:Top {make( form)})*  {list};
+  // Observe how regular expressions determinist automatons can be emulated.
+  // Note that with proper tail call optimisation (as performed by
+  // gcc), this construct is efficient.
+  //  rule Star_Comment_End:Int = ("*" ("/"
+  //				   | . Star_Comment_End)
+  //			      | . Star_Comment_End);
+  
+  // Without tail call optimisation or native support for regular expressions,
+  // this accelerates things a lot in most cases.
+  rule Star_Comment_End:Int = [^*]* ("*"+ ("/"
+					   | Star_Comment_End)
+				     |Star_Comment_End);
+  
+  rule Comment:Int = "/" ("/" [^\n]* "\n"
+			  |"*" Star_Comment_End);
+  //XXX: Maybe Spacing should have a +, and other parts could use Spacing? if they want.
+  rule Spacing:Void = ([ \n\t]|Comment)* ;
+  
+  rule All:List< Form> = Spacing list:(form:Top Spacing {make( form)})*  {list};
 
   
   rule Top:Form = id:Lexical.Id {{let funptr = parse_top_level_hash[id];
@@ -363,9 +381,20 @@ function test_top() -> Void =
   print_form( form);
 
   set_parser_support_to( "global c_output_hash:Hash<Symbol, ((Expanded_Compound_Form)-> Void)*>;");
-  set_parser_support_to( "global parse_macro_hash:Hash<Symbol, (Symbol -> Form)*>;");
   form = parse( Top_Level.Top);
   print_form( form);
+
+  //  /* troeuc * ta*/
+  set_parser_support_to( "/* tasoeu *-*-/* aa */ global parse_macro_hash:Hash<Symbol, (Symbol -> Form)*>;");
+  let list_form = parse( Top_Level.All);
+
+//  foreach( let f in list_form)
+//  {
+//    print( "Form: ");
+//    //    print_form( f);
+//    print( "\n");
+//  };
+  
 };
 
 

@@ -1,3 +1,7 @@
+2007-08-12  Matthieu Lemerre  <racin@free.fr>
+
+	* src/new-parser/parse-l.l: New rules Top_Level.All and Top_Level.Comment
+
 2007-08-11  Matthieu Lemerre  <racin@free.fr>
 
 	L grammar language now use new parser's syntax.

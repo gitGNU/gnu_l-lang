@@ -42,7 +42,7 @@ Form__type car;
 List__O__Form__C____type__type cdr;
 };
 typedef Hash_Table__type Hash__O__Symbol__c__pointer__O__function__O__Symbol__c__Form__C____C____C____type__type;
-struct struct0x0862b8d8 {
+struct struct0x08635598 {
 void *car;
 void *cdr;
 };
@@ -81,7 +81,11 @@ Form__type (_l__parse__XML_Parser__CharData)(void);
 Form__type (_l__parse__XML_Parser__Tagged_Compound)(void);
 List__O__Form__C____type__type (_l__parse__XML_Parser__Content_List)(void);
 Form__type (_l__parse__XML_Parser__Content)(void);
+Int__type (_l__parse__Top_Level__Star_Comment_End)(void);
 Form__type (_l__parse__Type__Base_Type)(void);
+Int__type (_l__parse__Top_Level__Comment)(void);
+void (_l__parse__Top_Level__Spacing)(void);
+List__O__Form__C____type__type (_l__parse__Top_Level__All)(void);
 Form__type (_l__parse__Top_Level__Top)(void);
 Form__type (_l__parse__Top_Level__function)(Symbol__type );
 Form__type (_l__parse__Top_Level__global)(Symbol__type );
@@ -144,7 +148,7 @@ static struct { unsigned int length; char *content; } __string_2 = { 70, "1 + XM
 static struct { unsigned int length; char *content; } __string_3 = { 93, "<fact2>4<foo>toto</foo>24<$str$></fact2>function add_three( i:Int) -> Int = i + 3 + 'toto\n' ;"};
 static struct { unsigned int length; char *content; } __string_4 = { 53, "function add_three( i:Int) -> Int = i + 3 + 'toto\n' ;"};
 static struct { unsigned int length; char *content; } __string_5 = { 70, "global c_output_hash:Hash<Symbol, ((Expanded_Compound_Form)-> Void)*>;"};
-static struct { unsigned int length; char *content; } __string_6 = { 56, "global parse_macro_hash:Hash<Symbol, (Symbol -> Form)*>;"};
+static struct { unsigned int length; char *content; } __string_6 = { 79, "/* tasoeu *-*-/* aa */ global parse_macro_hash:Hash<Symbol, (Symbol -> Form)*>;"};
 static struct { unsigned int length; char *content; } __string_7 = { 88, "truc<toto**,List<Int,Float>*> -> (void*, Hash<struct { a:Int; b:List<Float>; }*, ()>)***"};
 static struct { unsigned int length; char *content; } __string_8 = { 40, "$3$ + 1 + toto + 1 + Form( $ 3 $ + toto)"};
 static struct { unsigned int length; char *content; } __string_9 = { 11, "id:Form = 3"};
