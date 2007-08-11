@@ -1,5 +1,18 @@
 2007-08-11  Matthieu Lemerre  <racin@free.fr>
 
+	L grammar language now use new parser's syntax.
+	
+        * src/new-parser/grammar-macros.l
+        * src/new-parser/parse-grammar.c
+        * src/new-parser/parse-grammar.inc
+        * src/new-parser/parse-grammar.l
+        * src/new-parser/parse-l.c
+        * src/new-parser/parse-l.inc
+        * src/new-parser/parse-l.l
+	* src/new-parser/support.c
+
+2007-08-11  Matthieu Lemerre  <racin@free.fr>
+
 	Now use the new parser to parse the globals.
 	
 	* src/parser/parse.c (parse_all): Now use new parser's global.

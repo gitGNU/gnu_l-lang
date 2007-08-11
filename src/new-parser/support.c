@@ -154,51 +154,6 @@ string_element( String s, unsigned int num)
   return s->content[num];
 }
 
-#include "../parser/buffer.h"
-form_t
-_l__parse__parse_grammar__Expression()
-{
-  Read_Buffer rb = MALLOC( read_buffer);
-  rb->current = parser_current_pointer;
-  rb->end = parser_end_pointer;
-  rb->start = parser_current_pointer;
-
-  form_t form = l_parse_expression( rb);
-
-  parser_current_pointer = rb->current;
-  /* This is hacky: as the L parser has one lexer token in advance,
-     which is }, we just decrement the parser_current_pointer by
-     one.  */
-  parser_current_pointer--;
-
-  free( rb);
-  
-  return form;
-  //return generic_form_symbol( SYMBOL( toto), NULL);
-}
-
-form_t
-_l__parse__parse_grammar__Type()
-{
-  Read_Buffer rb = MALLOC( read_buffer);
-  rb->current = parser_current_pointer;
-  rb->end = parser_end_pointer;
-  rb->start = parser_current_pointer;
-
-  form_t form = l_parse_type( rb);
-
-  parser_current_pointer = rb->current;
-  /* This is hacky: as the L parser has one lexer token in advance,
-     which is =, we just decrement the parser_current_pointer by
-     one.  */
-  parser_current_pointer--;
-
-  free( rb);
-
-  //return   generic_form_symbol( SYMBOL( Type), CONS( form, NULL));
-  return form;
-}
-
 Symbol
 intern_string( String s);
 
@@ -421,6 +376,9 @@ parse_error(void)
   exit( 3);
 }
 
+void *_l__parse__Code__Sequence( void*);
+void *_l__parse__Type__Type( void*);
+
 void
 init_newparser_support()
 {
@@ -440,8 +398,8 @@ init_newparser_support()
   DEFINE_C_FUNCTION( get_parsed_string_symbol, "String <- (Int, Int, Int)");
   DEFINE_C_FUNCTION( string_to_int_list, "List( Int) <- (String)");
   DEFINE_C_FUNCTION( string_element, "Int <- (String, Int)");
-  DEFINE_C_FUNCTION( _l__parse__parse_grammar__Expression, "Form <- ()");
-  DEFINE_C_FUNCTION( _l__parse__parse_grammar__Type, "Form <- ()");
+  DEFINE_C_FUNCTION( _l__parse__Code__Sequence, "Form <- ()");
+  DEFINE_C_FUNCTION( _l__parse__Type__Type, "Form <- ()");
   DEFINE_C_FUNCTION( pre_define_function, "Void <- (Symbol, Form)");
   DEFINE_C_FUNCTION( get_test_string, "String <- ()");
 
