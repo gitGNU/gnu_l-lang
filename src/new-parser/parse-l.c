@@ -4,71 +4,6 @@ Hash__O__Symbol__c__pointer__O__function__O__Symbol__c__Form__C____C____C____typ
 
 Hash__O__Symbol__c__pointer__O__function__O__Symbol__c__Form__C____C____C____type__type parse_macro_hash;
 
-Exit__type  parse_error(void)
-{
-return ({
-({(print_String)(((String__type) &__string_1));
-(maybe_flush)();});
-(exit)(3);
-((Exit__type ) 3);
-})
-;}
-
-Form__type  Character_sharp__sharp_expander_function(Compound_Form__type  form)
-{
-return ({
-Int__type num;
-Symbol_Form__type symbol_form;
-(symbol_form = ((Symbol_Form__type ) ((* ((struct struct0x0805f3e8 *) ((* ((struct struct0x0805f238 *) form)).form_list))).head)));
-(num = (character_from_symbol)(((* ((struct struct0x08059698 *) symbol_form)).value)));
-(Int_Form)(num);
-})
-;}
-
-void  test_xml(void)
-{
-return ({
-Form__type xml;
-Form__type form;
-Form__type exp;
-(set_parser_support_to)(((String__type) &__string_2));
-(exp = (_l__parse__Code__Expression)());
-(print_form)(exp);
-(set_parser_support_to)(((String__type) &__string_3));
-(xml = (_l__parse__XML_Parser__Content)());
-(print_form)(xml);
-(form = (_l__parse__Top_Level__Top)());
-(print_form)(form);
-((void) 0);
-})
-;}
-
-void  test_top(void)
-{
-return ({
-Form__type form;
-({(set_parser_support_to)(((String__type) &__string_4));
-(form = (_l__parse__Top_Level__Top)());
-(print_form)(form);
-(set_parser_support_to)(((String__type) &__string_5));
-(set_parser_support_to)(((String__type) &__string_6));
-(form = (_l__parse__Top_Level__Top)());
-(print_form)(form);
-((void) 0);});
-})
-;}
-
-void  test_type(void)
-{
-return ({
-Form__type form;
-(set_parser_support_to)(((String__type) &__string_7));
-(form = (_l__parse__Type__Type)());
-(print_form)(form);
-((void) 0);
-})
-;}
-
 void  init__parse_l(void)
 {
 return ({
@@ -88,56 +23,6 @@ return ({
 ((Form__type (*)(Symbol__type )) (puthash)(((void *) intern( "function")), ((void *) (&_l__parse__Top_Level__function)), ((Hash_Table__type ) parse_top_level_hash)));
 ((Form__type (*)(Symbol__type )) (puthash)(((void *) intern( "global")), ((void *) (&_l__parse__Top_Level__global)), ((Hash_Table__type ) parse_top_level_hash)));
 ((Form__type (*)(Symbol__type )) (puthash)(((void *) intern( "expander")), ((void *) (&_l__parse__Top_Level__expander)), ((Hash_Table__type ) parse_top_level_hash)));
-((void) 0);
-})
-;}
-
-void  test(void)
-{
-return ({
-Form__type id;
-Form__type form;
-Form__type exp;
-Form__type block_form;
-(init__parse_l)();
-(test_top)();
-(exit)(3);
-(test_xml)();
-(test_type)();
-(set_parser_support_to)(((String__type) &__string_8));
-(block_form = (_l__parse__Code__Expression)());
-(print_form)(block_form);
-(exit)(3);
-(set_parser_support_to)(((String__type) &__string_9));
-(exp = (_l__parse__Macro__let)(intern( "let")));
-(exp = (_l__parse__Macro__if)(intern( "let")));
-(exp = (_l__parse__Macro__Form)(intern( "let")));
-(exp = (_l__parse__Macro__XML)(intern( "let")));
-(exp = (_l__parse__Macro__loop_like)(intern( "let")));
-(exp = (_l__parse__Macro__cast)(intern( "let")));
-(exp = (_l__parse__Macro__break)(intern( "let")));
-(exp = (_l__parse__Macro__continue)(intern( "let")));
-(exp = (_l__parse__Macro__foreach)(intern( "let")));
-(exp = (_l__parse__Top_Level__function)(intern( "let")));
-(exp = (_l__parse__Top_Level__global)(intern( "let")));
-(exp = (_l__parse__Top_Level__expander)(intern( "let")));
-(print_form)(exp);
-(set_parser_support_to)(((String__type) &__string_10));
-(exp = ((* ((Form__type (*)(Symbol__type )) (gethash)(((void *) intern( "if")), ((Hash_Table__type ) parse_macro_hash)))))(intern( "if")));
-(print_form)(exp);
-(set_parser_support_to)(((String__type) &__string_11));
-(exp = (_l__parse__Code__Expression)());
-(print_form)(exp);
-(exit)(1);
-(set_parser_support_to)(((String__type) &__string_12));
-(id = (_l__parse__Code__Expression)());
-(print_form)(id);
-(set_parser_support_to)(((String__type) &__string_13));
-(id = (_l__parse__Code__Expression)());
-(print_form)(id);
-(set_parser_support_to)(((String__type) &__string_14));
-(form = (_l__parse__Code__Expression)());
-(print_form)(form);
 ((void) 0);
 })
 ;}
@@ -2278,8 +2163,3 @@ return ({
 ;
 })
 ;}
-
-void init_parse_l(void){
-}
-
-void main() { init(); int (*test_ptr)( void); test_ptr = test; printf( "TEST result: %d", test_ptr());flush();}
