@@ -13,36 +13,36 @@ Void__type print_String( String__type s);
 void maybe_flush( void);
 String__type make_heap_string( char *s);
 
-typedef struct struct0x0805f238 *Compound_Form__type;
-typedef struct struct0x0805dab8 *Form__type;
-struct struct0x08059698 {
+typedef struct struct0x0805ee38 *Compound_Form__type;
+typedef struct struct0x0805d720 *Form__type;
+typedef void *Hash_Table__type;
+typedef void *Output_Descriptor__type;
+struct struct0x0805d720 {
+Int__type form_type_;
+};
+struct struct0x0805db90 {
 Int__type form_type_;
 Symbol__type value;
 };
-typedef void *Hash_Table__type;
-typedef void *Output_Descriptor__type;
-struct struct0x0805dab8 {
-Int__type form_type_;
-};
-typedef struct struct0x08059698 *Symbol_Form__type;
-typedef struct struct0x0805f3e8 *List__O__Form__C____type__type;
-struct struct0x0805f238 {
+typedef struct struct0x0805db90 *Symbol_Form__type;
+typedef struct struct0x0805efe8 *List__O__Form__C____type__type;
+struct struct0x0805ee38 {
 Int__type form_type_;
 Symbol__type head;
 Int__type garbage_;
 List__O__Form__C____type__type form_list;
 };
-struct struct0x0805f3e8 {
+struct struct0x0805efe8 {
 Form__type head;
 List__O__Form__C____type__type tail;
 };
-typedef struct struct0x0805da78 *Exit__type;
-struct struct0x08067470 {
+typedef struct struct0x0805d6e0 *Exit__type;
+struct struct0x08067088 {
 Form__type car;
 List__O__Form__C____type__type cdr;
 };
 typedef Hash_Table__type Hash__O__Symbol__c__pointer__O__function__O__Symbol__c__Form__C____C____C____type__type;
-struct struct0x086293a0 {
+struct struct0x0862b8d8 {
 void *car;
 void *cdr;
 };
@@ -55,6 +55,7 @@ Hash_Table__type (make_hash_table)(void);
 void (print_String)(String__type );
 void (flush)(void);
 void (maybe_flush)(void);
+Form__type (_l__parse__Code__Sequence)(void);
 Form__type (Int_Form)(Int__type );
 void *(gethash)(void *, Hash_Table__type );
 void *(puthash)(void *, void *, Hash_Table__type );
@@ -62,25 +63,26 @@ Form__type (Id_Form)(Symbol__type );
 Form__type (Compound_Form)(Symbol__type , List__O__Form__C____type__type );
 Int__type (print_form)(Form__type );
 Symbol__type (intern_string)(String__type );
+Int__type (read_char)(void);
 void (set_parser_support_to)(String__type );
 Int__type (new_peek_char)(Int__type );
-Int__type (read_char)(void);
 Symbol__type (parse_symbol)(String__type );
 Int__type (character_from_symbol)(Symbol__type );
 Int__type (get_point_pos)(void);
 String__type (get_parsed_string_string)(Int__type , Int__type , Int__type );
 String__type (substring)(Int__type , Int__type );
 String__type (get_parsed_string_symbol)(Int__type , Int__type , Int__type );
-Form__type (_l__parse__XML_Parser__CharData)(void);
+Form__type (_l__parse__Type__Type)(void);
 void (test_xml)(void);
 void (test_top)(void);
 void (test_type)(void);
 void (init__parse_l)(void);
+Form__type (_l__parse__XML_Parser__CharData)(void);
 Form__type (_l__parse__XML_Parser__Tagged_Compound)(void);
 List__O__Form__C____type__type (_l__parse__XML_Parser__Content_List)(void);
 Form__type (_l__parse__XML_Parser__Content)(void);
-Form__type (_l__parse__Top_Level__Top)(void);
 Form__type (_l__parse__Type__Base_Type)(void);
+Form__type (_l__parse__Top_Level__Top)(void);
 Form__type (_l__parse__Top_Level__function)(Symbol__type );
 Form__type (_l__parse__Top_Level__global)(Symbol__type );
 Form__type (_l__parse__Top_Level__expander)(Symbol__type );
@@ -96,7 +98,6 @@ Form__type (_l__parse__Macro__XML)(Symbol__type );
 Form__type (_l__parse__Type__Tuple_Type)(void);
 Form__type (_l__parse__Type__Indirection_Type)(void);
 Form__type (_l__parse__Type__Function_Type)(void);
-Form__type (_l__parse__Type__Type)(void);
 Form__type (_l__parse__Type__Labeled_Type)(void);
 Form__type (_l__parse__Code__Primary)(void);
 Form__type (_l__parse__Code__Postfix)(void);
@@ -104,20 +105,19 @@ Form__type (_l__parse__Code__Unary_Operator)(void);
 Form__type (_l__parse__Code__Multiplicative)(void);
 Form__type (_l__parse__Code__Additive)(void);
 Form__type (_l__parse__Code__Shift)(void);
+Form__type (_l__parse__Code__Assignment)(void);
 Form__type (_l__parse__Code__Relational)(void);
-List__O__Form__C____type__type (_l__parse__Code__Expression_List)(void);
-Form__type (_l__parse__Code__Expression)(void);
 Form__type (_l__parse__Code__Equality)(void);
 Form__type (_l__parse__Code__Bitwise_And)(void);
 Form__type (_l__parse__Code__Bitwise_Xor)(void);
 Form__type (_l__parse__Code__Bitwise_Ior)(void);
 Form__type (_l__parse__Code__Logical_And)(void);
 Form__type (_l__parse__Code__Logical_Or)(void);
-Form__type (_l__parse__Code__Assignment)(void);
+List__O__Form__C____type__type (_l__parse__Code__Expression_List)(void);
+Form__type (_l__parse__Code__Expression)(void);
 Form__type (_l__parse__Code__Maybe_Expression)(void);
 Form__type (_l__parse__Code__Maybe_Empty_Sequence)(void);
 Form__type (_l__parse__Code__Non_Empty_Sequence)(void);
-Form__type (_l__parse__Code__Sequence)(void);
 Int__type (_l__parse__Lexical__Comment)(void);
 void (_l__parse__Lexical__Spacing)(void);
 Int__type (_l__parse__Lexical__Alpha_Num)(void);
@@ -128,12 +128,12 @@ Int__type (_l__parse__Lexical__Hexa_Digit)(void);
 Int__type (_l__parse__Lexical__Decimal_Number)(void);
 Int__type (_l__parse__Lexical__Hexadecimal_Number_End)(void);
 Int__type (_l__parse__Lexical__Octal_Number_End)(void);
+Form__type (_l__parse__Lexical__Symbol_Form)(void);
 Symbol__type (_l__parse__Lexical__Symbol)(void);
 Form__type (_l__parse__Lexical__Number_Form)(void);
 Int__type (_l__parse__Lexical__Number)(void);
 Symbol__type (_l__parse__Lexical__Id)(void);
 Form__type (_l__parse__Lexical__Id_Form)(void);
-Form__type (_l__parse__Lexical__Symbol_Form)(void);
 Form__type (_l__parse__Lexical__String_Form)(void);
 String__type (_l__parse__Lexical__String)(void);
 Output_Descriptor__type current_output_descriptor;

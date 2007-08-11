@@ -87,7 +87,7 @@ grammar Code = {
   rule Primary:Form =
   form:( id:Lexical.Id //Begin by an id
 	   funptr:{parse_macro_hash[id]} 
-	   ( &{funptr != cast( (Form <- Symbol)*, 0)} //semantic predicate
+	   ( &{funptr != cast( (Symbol -> Form)*, 0)} //semantic predicate
 	       { funcall( *funptr, id) }         // macro handling
 	     //	     | '(' form_list:@Separator<',', Expression> ')'//normal macro/function handling
 	     | '(' form_list:Expression_List ')'//normal macro/function handling
@@ -102,8 +102,8 @@ grammar Code = {
 	 //       | @Replacement<exp:Expression>
        | @Replacement<Sequence>
        | '(' expl:Expression_List ')'
-           { if(expl == cast( List( Form), 0)
-		|| expl.tail != cast( List( Form), 0))
+           { if(expl == cast( List< Form>, 0)
+		or expl.tail != cast( List< Form>, 0))
 	       Compound_Form( 'tuple', expl) // should be @tuple.
 	       else expl.head }
        | '{' seq:Maybe_Empty_Sequence '}'
@@ -150,7 +150,7 @@ grammar Code = {
   rule Expression:Form = Assignment;
 
   rule Maybe_Expression:Form = (Expression
-				|{Compound_Form( 'tuple', cast( List( Form), 0))});
+				|{Compound_Form( 'tuple', cast( List< Form>, 0))});
   
   // For now, we have two types of sequence: maybe_empty or non empty.
   // 
@@ -162,7 +162,7 @@ grammar Code = {
   // exp1;exp2;....;exp3.
   // if an exp is empty (comprising the first or last), it is replaced by (), i.e. void.
   // Note: ';' can be viewed as a low priority seq operator, with priority lower than =.
-  rule Maybe_Empty_Sequence:Form = tup:{Compound_Form( 'tuple', cast( List( Form), 0))} //should be @tuple.
+  rule Maybe_Empty_Sequence:Form = tup:{Compound_Form( 'tuple', cast( List< Form>, 0))} //should be @tuple.
      ((exp:Expression (exp_list:( ';' exp2:(Expression|{tup}) {make( exp2)})+
 		         {Compound_Form( '@seq', cons( exp, exp_list))}
 		      |{exp}))
@@ -181,7 +181,7 @@ grammar Code = {
                                     
   // An expression list, a comma-separated list of Sequences. Should be surrounded
   // by delimiters, like (). ',' can be viewed as an even lower priority operator than ','.
-  rule Expression_List:List( Form) = @Separator< ',', Non_Empty_Sequence>;
+  rule Expression_List:List< Form> = @Separator< ',', Non_Empty_Sequence>;
   
   
   
@@ -218,20 +218,20 @@ grammar Type = {
 grammar Macro = {
 //  //import Code
 //  //import Lexical
-//  rule let<symb:Symbol>:Form = id:Lexical.Id_Form typel:{cast( List( Form), 0)}
+//  rule let<symb:Symbol>:Form = id:Lexical.Id_Form typel:{cast( List< Form>, 0)}
 //                               (":" type:Type.Type typel:{list( type)})?
 //                               {Compound_Form( 'let', cons( id, typel))};
 
   rule let<symb:Symbol>:Form = id:Lexical.Id_Form 
                                typel:(":" type:Type.Type {list( type)}
-			             | {cast( List( Form), 0)})
+			             | {cast( List< Form>, 0)})
                                {Compound_Form( 'let', cons( id, typel))};
 
   rule if<symb:Symbol>:Form = '(' cond:Code.Expression ')'
                               exp:Code.Expression
                               // No else is equivalent to "if (exp;()) else ()".
                               elsel:( 'else' exp2:Code.Expression {list( exp2)}
-			            | {cast( List( Form), 0)})
+			            | {cast( List< Form>, 0)})
                               {Compound_Form( 'if', cons( cond, cons( exp, elsel)))};
   
 
@@ -240,15 +240,15 @@ grammar Macro = {
                                 {Compound_Form( symb, list( exp))};
 
   // This one should be also shared.
-  rule break<symb:Symbol>:Form = {Compound_Form( 'break', cast( List( Form), 0))};
+  rule break<symb:Symbol>:Form = {Compound_Form( 'break', cast( List< Form>, 0))};
 
   // continue jumps to the continue set point, which can be set using the continue: special label.
   rule continue<symb:Symbol>:Form = (':' exp:Code.Maybe_Expression
                                        {Compound_Form( '@seq',
 						       list( Compound_Form( '@set_continue',
-									    cast( List( Form), 0)),
+									    cast( List< Form>, 0)),
 							     exp))}
-                                    | {Compound_Form( 'continue', cast( List( Form), 0))});
+                                    | {Compound_Form( 'continue', cast( List< Form>, 0))});
 
   rule foreach<symb:Symbol>:Form = '(' var:Code.Expression 'in' collect:Code.Expression ')'
                                      body:Code.Expression
@@ -278,8 +278,12 @@ compile_time global parse_top_level_hash:Hash< Symbol, (Symbol -> Form)*>;
 
 // For global, top-level definitions.
 grammar Top_Level = {
+
+  rule All:List< Form> = list:(form:Top {make( form)})*  {list};
+
+  
   rule Top:Form = id:Lexical.Id {{let funptr = parse_top_level_hash[id];
-			     if(funptr == cast( (Form <- Symbol)*, 0))
+			     if(funptr == cast( (Symbol -> Form)*, 0))
 			       panic( "Parse error: unknown definer '", id, "'\n");
 				  funcall( *funptr, id)}};
 
@@ -324,7 +328,7 @@ grammar XML_Parser = {
   //CharData a un Replacement
   rule CharData:Form = start:_ [^<]+ end:_ {String_Form( get_parsed_string_string( end - start, start - 1, end))};
 
-  rule Content_List:List(Form) = ("<" ( "/" {cast( List( Form), 0)}
+  rule Content_List:List<Form> = ("<" ( "/" {cast( List< Form>, 0)}
                                       | form:( "$" exp:Code.Sequence "$" ">" {Compound_Form( '$', list( exp))}
                                              | Tagged_Compound)
 					  cl:Content_List {cons( form, cl)})

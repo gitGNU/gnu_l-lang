@@ -62,7 +62,7 @@ grammar parse_grammar = {
 					      form2))}
     | {form});
   
-  rule Semantic_Action:Form = "{" exp:Expression "}"
+  rule Semantic_Action:Form = "{" Spacing exp:Code.Sequence "}"
                               {Compound_Form( '{}', list( exp))};
 
 
@@ -77,7 +77,7 @@ grammar parse_grammar = {
 
   
   // This is used in rule_macros.
-  rule Replacement:Form = "$" exp:Expression "$" {Compound_Form( '$', list( exp))};
+  rule Replacement:Form = "$" exp:Code.Sequence "$" {Compound_Form( '$', list( exp))};
 
   rule Primary:Form = (String
 		       | Symbol
@@ -97,7 +97,7 @@ grammar parse_grammar = {
   // Due to technical restrictions in head set calculation,
   // for now we use + instead of * for a sequence.
   rule Sequence:Form = post_list:(post:Postfix  Spacing {make( post)})+
-                       { if( post_list.tail == cast( List( Form), 0)) post_list.head
+                       { if( post_list.tail == cast( List< Form>, 0)) post_list.head
 			   else Compound_Form( ' ', post_list) };
 
   rule Alternative:Form = @Right_Infix_Operator<("|" Spacing {'|'}), Sequence, Alternative>;
@@ -106,13 +106,13 @@ grammar parse_grammar = {
   rule Rule:Form = Alternative;
 
   rule Grammar_Rule:Form = "rule" Spacing
-                                  id:Identifier form_list:{cast( List( Form), 0)}
-                                  ("<" form_list:@Separator( ',', (param:Identifier ":" type:Type
+                                  id:Identifier form_list:{cast( List< Form>, 0)}
+                                  ("<" form_list:@Separator( ',', (param:Identifier ":" type:Type.Type
 							     {Compound_Form( 'label',
 									     list( Id_Form( param),
 										   type))}))
 				   ">")?
-                               ":" ret_type:Type
+                               ":" ret_type:Type.Type
                                Spacing "=" Spacing r:Rule Spacing ";" Spacing
                                { Compound_Form( 'rule', list( Id_Form( id),
 							      ret_type,
@@ -130,7 +130,7 @@ grammar parse_grammar = {
 
   // Grammar macro; should use the @Separator grammar_macro.
   rule Grammar_Macro:Form = "grammar_macro" Spacing "@" id:Identifier
-     "<" Spacing form_list:( ">" {cast( List( Form), 0)}
+     "<" Spacing form_list:( ">" {cast( List< Form>, 0)}
                             | arg1:Identifier Spacing
      		              rest_list:(','  arg:Identifier {make( Id_Form( arg))})*
            		      ">" { cons( Id_Form( arg1), rest_list)} )
@@ -145,6 +145,7 @@ grammar parse_grammar = {
   //  rule Test:Form = "rule" Spacing num:0 {Form($num$)};//("toto" { num = num + 1})* {Form( num)};
 
 };
+
 
 Void
 test ()
@@ -170,7 +171,7 @@ test ()
   //let form = parse_Character_Range();
     //  let form =parse_Character_Set();
 
-  //let s = get_test_string();
+  //  let s = get_test_string();
   //    print( s);
 
   //  let form = parse (parse_grammar.Grammar_Rule);// _Grammar_Rule();

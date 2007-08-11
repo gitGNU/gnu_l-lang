@@ -13,7 +13,7 @@ grammar_macro @Left_Infix_Operator<operators, subrule, this_rule> =
 //Would be better with a type for null which would coerce into anything;
 //for now we can return only list of forms.
 grammar_macro @Separator<separator, rule> =
-  arg_list:{cast( List( Form), 0)}
+  arg_list:{cast( List< Form>, 0)}
   ( arg1:rule
     arg_list:(separator arg:rule {make( arg)})*
     arg_list:{cons( arg1, arg_list)} )?
