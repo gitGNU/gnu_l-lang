@@ -1407,6 +1407,7 @@ init_expand (void)
   define_expander(intern("/"), expand_binary_operator);
 
   define_expander(intern("unary_minus"), expand_unary_operator);
+  define_expander(intern("@unary_minus"), expand_unary_operator);
   
   define_expander(SYMBOL(let), expand_let);
   define_expander(SYMBOL(funcall), expand_funcall);

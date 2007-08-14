@@ -6,20 +6,20 @@ compile_time type Exit = struct { dummy:Int;}*;
 compile_time type_alias Character = Int;
 
 compile_time expander
-Character( form)
+Character( form) =
 {
   let symbol_form = cast( Symbol_Form, form.form_list.head);
   let num = character_from_symbol( symbol_form.value);
   Form( $Int_Form(num)$)
-}
+};
 
-compile_time Exit
-parse_error()
+compile_time function
+parse_error() ->  Exit =
 {
   print( "Parse error\n");
   exit( 3);
-  cast( Exit, 3);
-}
+  cast( Exit, 3)
+};
 
 include "new-parser/grammar-macros.l";
 
@@ -211,6 +211,7 @@ grammar Type = {
   rule Function_Type:Form = @Right_Infix_Operator( '->', Indirection_Type, Function_Type);
   rule Type:Form = Function_Type;
 
+  // XXX: Probably should allow a spacing after the ":" here.
   rule Labeled_Type:Form = idf:Lexical.Id_Form ":" type:Type {Compound_Form( ':', list(idf , type))};
   
 };
@@ -323,6 +324,13 @@ grammar Top_Level = {
 						    list( Id_Form( fsymb),
 							  Id_Form( name),
 							  type))};
+
+  //Works for both type and type alias.
+  rule type<fsymb:Symbol>:Form = type_name:Lexical.Id_Form '=' type:Type.Type ';'
+                                 {Compound_Form( 'define',
+						 list( Id_Form( fsymb),
+						       type_name,
+						       type))};
   
   rule expander<fsymb:Symbol>:Form = name:Lexical.Id_Form '(' param:Lexical.Id_Form ')' '='
                                      body:Code.Expression ';'
@@ -332,6 +340,53 @@ grammar Top_Level = {
 							   Compound_Form( ':',
 									  list( param,
 										body))))};
+
+  rule macro<fsymb:Symbol>:Form = macro_name:Lexical.Id_Form '(' params:@Maybe_Empty_Separator<',', (name:Lexical.Id_Form
+												     (":" type:Type.Type {Compound_Form( ':',
+																	 list( name,
+																	       type))}
+												       | {name}))> ')' '='
+                                  body:Code.Expression ';'
+                                  {Compound_Form( 'define',
+						  list( Id_Form( fsymb),
+							macro_name,
+							Compound_Form( 'tuple', params),
+							body))};
+
+
+  rule attribute_component:Form = ('left' '(' name:Lexical.Id_Form ")" ':' exp:Code.Expression
+                                    {Compound_Form( 'label',
+						    list( Compound_Form( 'left',
+									 list( name)),
+							  exp))}
+                                   | Code.Expression);
+
+  rule attributes_components:Form = ( '(' att1:attribute_component 
+				      (',' att2:attribute_component ')'
+				       {Compound_Form( 'tuple', list( att1, att2))}
+				      | ')' {att1})
+                                    | attribute_component);
+  
+  rule attribute<fsymb:Symbol>:Form = type:Type.Type objname:Lexical.Id "." fieldname:Lexical.Id '='
+                                      expression:attributes_components ';'
+  {Compound_Form( 'define',
+		  list( Id_Form( fsymb),
+			type,
+			Id_Form( objname),
+			Id_Form( fieldname),
+			expression))};
+
+  rule compile_time<fsymb:Symbol>:Form = any:Top {Compound_Form( 'define',
+								 list( Id_Form( fsymb),
+								       any))};
+
+  rule include<fsymb:Symbol>:Form = filename:Lexical.String ';'
+  {parse_include_filename( filename)};
+
+  rule grammar_macro<fsymb:Symbol>:Form = parse_grammar.Grammar_Macro_End;
+  rule grammar<fsymb:Symbol>:Form = parse_grammar.Grammar_End;
+  
+  
 };
 
 // Should not be here; will be moved elsewhere as soon as possible.
@@ -357,7 +412,7 @@ grammar XML_Parser = {
   rule Content:Form = "<" Tagged_Compound;
 };
 
-Void test_xml()
+function test_xml() -> Void =
 {
   //  set_parser_support_to( "<fact2>4<foo>toto</foo>$str</fact2>function add_three( i:Int) -> Int = i + 3 + 'toto\n' ;");
   set_parser_support_to( "1 + XML( <fact2>4<foo>to<$1 + thing$>to</foo>24<$str;tu$></fact2>) + 3");
@@ -370,8 +425,7 @@ Void test_xml()
 
   let form = parse( Top_Level.Top);
   print_form( form);
-  ();
-}
+};
   
 
 function test_top() -> Void = 
@@ -386,31 +440,45 @@ function test_top() -> Void =
 
   //  /* troeuc * ta*/
   set_parser_support_to( "/* tasoeu *-*-/* aa */ global parse_macro_hash:Hash<Symbol, (Symbol -> Form)*>;");
+  set_parser_support_to( "type Index = Int; type_alias Integer = Int;");
+  set_parser_support_to( "compile_time type Index = Int; type_alias Integer = Int;");
+  set_parser_support_to( "attribute Point p.name = (left( arg): name_table[p] = arg,"
+			 "right: name_table[p]);");
+  set_parser_support_to( "attribute Point3D p.x = p.p_.x;");
+  set_parser_support_to( "attribute Duration d.second = right:cast( Int, d);");
+//  set_parser_support_to( "macro assert( condition) = "
+//			 "if( condition == cast( Bool, 0))     {"
+//			 "print_form( Form( condition));"
+//			 "};");
+  set_parser_support_to( "attribute Duration d.second = right:cast( Int, d) * 3600;"
+			 "attribute Duration d.minute = (right:cast( Int, cast( Int, d)*60));"
+			 "attribute Duration d.hour = right:cast( Int, d);");
+  
   let list_form = parse( Top_Level.All);
 
-//  foreach( let f in list_form)
-//  {
-//    print( "Form: ");
-//    //    print_form( f);
-//    print( "\n");
-//  };
+  foreach( let f in list_form)
+  {
+    print( "Form: ");
+    print_form( f);
+    print( "\n");
+  };
   
 };
 
 
-Void test_type()
+function test_type() -> Void = 
 {
   set_parser_support_to( "truc<toto**,List<Int,Float>*> -> (void*, Hash<struct { a:Int; b:List<Float>; }*, ()>)***");
   let form = parse( Type.Type);
   print_form( form);
-  ();
-}
+};
 
 
-Void
-init__parse_l()
+function
+init__parse_l() -> Void =
 {
-  parse_macro_hash = cast( Hash( Symbol, (Form <- (Symbol))*), make_hash_table());
+  //  parse_macro_hash = cast( Hash( Symbol, (Form <- (Symbol))*), make_hash_table());
+  parse_macro_hash = cast( Hash< Symbol, (Symbol -> Form)*>, make_hash_table());
   parse_macro_hash['let'] = &get_parse_function( Macro.let);
   parse_macro_hash['cast'] = &get_parse_function( Macro.cast);
   parse_macro_hash['if'] = &get_parse_function( Macro.if);
@@ -424,16 +492,21 @@ init__parse_l()
   parse_macro_hash['continue'] = &get_parse_function( Macro.continue);
   //  parse_macro_hash['print'] = &get_parse_function( Macro.print);
 
-  parse_top_level_hash = cast( Hash( Symbol, (Form <- (Symbol))*), make_hash_table());
+  parse_top_level_hash = cast( Hash< Symbol, (Symbol -> Form)*>, make_hash_table());
   parse_top_level_hash['function'] = &get_parse_function( Top_Level.function);
   parse_top_level_hash['global'] = &get_parse_function( Top_Level.global);
   parse_top_level_hash['expander'] = &get_parse_function( Top_Level.expander);
-  
-  ();
-}
+  parse_top_level_hash['type'] = &get_parse_function( Top_Level.type);
+  parse_top_level_hash['type_alias'] = &get_parse_function( Top_Level.type);
+  parse_top_level_hash['macro'] = &get_parse_function( Top_Level.macro);
+  parse_top_level_hash['include'] = &get_parse_function( Top_Level.include);
+  parse_top_level_hash['grammar'] = &get_parse_function( Top_Level.grammar);
+  parse_top_level_hash['grammar_macro'] = &get_parse_function( Top_Level.grammar_macro);
+  parse_top_level_hash['attribute'] = &get_parse_function( Top_Level.attribute);
+  parse_top_level_hash['compile_time'] = &get_parse_function( Top_Level.compile_time);
+};
 
-Void
-test()
+function test() -> Void =
 {
   init__parse_l();
     
@@ -474,6 +547,13 @@ test()
    exp = parse( Top_Level.function, 'let');
    exp = parse( Top_Level.global, 'let');
    exp = parse( Top_Level.expander, 'let');
+   exp = parse( Top_Level.type, 'let');
+   exp = parse( Top_Level.macro, 'macro');
+   exp = parse( Top_Level.include, 'macro');
+   exp = parse( Top_Level.grammar, 'macro');
+   exp = parse( Top_Level.grammar_macro, 'macro');
+   exp = parse( Top_Level.attribute, 'let');
+   exp = parse( Top_Level.compile_time, 'let');
   print_form( exp);
 
   set_parser_support_to( "(truc == 25) 3 + 023 else 23");
@@ -512,5 +592,4 @@ test()
   //  set_parser_support_to( "uoto *  3");
   //   let id = parse( Code.Multiplicative);
    //   print( "HEllo ", id, "\n");
-  ();
-}
+};

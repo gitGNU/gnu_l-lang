@@ -89,7 +89,7 @@ function test() -> List<Int> =
   print( li.tail.head);
   li.head = 24;
   print_int_list(li);
-  li.tail = cast( List( Int), 0);
+  li.tail = cast( List< Int>, 0);
   print_int_list( li);
 
 //

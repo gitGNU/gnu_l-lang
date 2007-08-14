@@ -13,63 +13,63 @@ Void__type print_String( String__type s);
 void maybe_flush( void);
 String__type make_heap_string( char *s);
 
-typedef struct struct0x0805ee38 *Compound_Form__type;
-typedef struct struct0x08059198 *List__O__pointer__O__Void__C____C____type__type;
-typedef struct struct0x0805d720 *Form__type;
-struct struct0x08059198 {
+typedef struct struct0x0805ef20 *Compound_Form__type;
+typedef struct struct0x08059230 *List__O__pointer__O__Void__C____C____type__type;
+typedef struct struct0x0805d7c0 *Form__type;
+struct struct0x08059230 {
 void *head;
 List__O__pointer__O__Void__C____C____type__type tail;
 };
-struct struct0x08059c90 {
+struct struct0x08059d78 {
 Int__type form_type_;
 Int__type value;
 };
 typedef void *Output_Descriptor__type;
-struct struct0x0805d720 {
+struct struct0x0805d7c0 {
 Int__type form_type_;
 };
-typedef struct struct0x08059c90 *Int_Form__type;
-typedef struct struct0x0805efe8 *List__O__Form__C____type__type;
-struct struct0x0805ee38 {
+typedef struct struct0x08059d78 *Int_Form__type;
+typedef struct struct0x0805f0d0 *List__O__Form__C____type__type;
+struct struct0x0805ef20 {
 Int__type form_type_;
 Symbol__type head;
 Int__type garbage_;
 List__O__Form__C____type__type form_list;
 };
-struct struct0x0805efe8 {
+struct struct0x0805f0d0 {
 Form__type head;
 List__O__Form__C____type__type tail;
 };
-typedef struct struct0x08517680 *List__O__Character_Range__C____type__type;
-typedef List__O__Character_Range__C____type__type Character_Set__type;
-typedef struct struct0x0805d6e0 *Exit__type;
-struct struct0x08067088 {
+typedef struct struct0x0805d780 *Exit__type;
+struct struct0x08067530 {
 Form__type car;
 List__O__Form__C____type__type cdr;
 };
-typedef struct struct0x085172d0 *Character_Range__type;
-struct struct0x085172d0 {
+typedef struct struct0x085366f0 *Character_Range__type;
+struct struct0x085366f0 {
 Int__type min;
 Int__type max;
 };
-typedef struct struct0x08518000 *List__O__Character_Set__C____type__type;
-struct struct0x08517680 {
+typedef struct struct0x08536aa0 *List__O__Character_Range__C____type__type;
+struct struct0x08536aa0 {
 Character_Range__type head;
 List__O__Character_Range__C____type__type tail;
 };
-struct struct0x08518000 {
+typedef List__O__Character_Range__C____type__type Character_Set__type;
+typedef struct struct0x08537390 *List__O__Character_Set__C____type__type;
+struct struct0x08537390 {
 Character_Set__type head;
 List__O__Character_Set__C____type__type tail;
 };
-struct struct0x08519788 {
+struct struct0x08538ad0 {
 Character_Range__type car;
 List__O__Character_Range__C____type__type cdr;
 };
-struct struct0x08527ad0 {
+struct struct0x08546ff8 {
 void *car;
 void *cdr;
 };
-struct struct0x08542150 {
+struct struct0x08561ee0 {
 Character_Set__type car;
 List__O__Character_Set__C____type__type cdr;
 };
@@ -99,6 +99,8 @@ Int__type (character_from_symbol)(Symbol__type );
 Int__type (get_point_pos)(void);
 String__type (substring)(Int__type , Int__type );
 Form__type (_l__parse__Type__Type)(void);
+Form__type (_l__parse__parse_grammar__Grammar_Macro_End)(void);
+Form__type (_l__parse__parse_grammar__Grammar_End)(void);
 Character_Set__type (sort_Character_Set)(List__O__Character_Range__C____type__type );
 Character_Set__type (make_Character_Set)(Form__type );
 Character_Set__type (get_inverse_Character_Set)(Character_Set__type );
@@ -111,21 +113,21 @@ Symbol__type (_l__parse__parse_grammar__Identifier)(void);
 Int__type (_l__parse__parse_grammar__Escaped_Character)(void);
 Int__type (_l__parse__parse_grammar__Maybe_Escaped_Character)(void);
 Int__type (_l__parse__parse_grammar__Maybe_Escaped_Character_Character_Range)(void);
+Form__type (_l__parse__parse_grammar__Semantic_Action)(void);
 Form__type (_l__parse__parse_grammar__String)(void);
 Form__type (_l__parse__parse_grammar__Symbol)(void);
 Form__type (_l__parse__parse_grammar__Character_Range)(void);
-Form__type (_l__parse__parse_grammar__Rule_Macro)(void);
 Form__type (_l__parse__parse_grammar__Character_Set)(void);
 Form__type (_l__parse__parse_grammar__Callable_Rule_or_Binding)(void);
-Form__type (_l__parse__parse_grammar__Semantic_Action)(void);
+Form__type (_l__parse__parse_grammar__Postfix)(void);
 Form__type (_l__parse__parse_grammar__Semantic_Predicate)(void);
-Form__type (_l__parse__parse_grammar__Grammar_Rule)(void);
+Form__type (_l__parse__parse_grammar__Rule_Macro)(void);
 Form__type (_l__parse__parse_grammar__Replacement)(void);
 Form__type (_l__parse__parse_grammar__Primary)(void);
-Form__type (_l__parse__parse_grammar__Postfix)(void);
 Form__type (_l__parse__parse_grammar__Sequence)(void);
 Form__type (_l__parse__parse_grammar__Alternative)(void);
 Form__type (_l__parse__parse_grammar__Rule)(void);
+Form__type (_l__parse__parse_grammar__Grammar_Rule)(void);
 Form__type (_l__parse__parse_grammar__Grammar)(void);
 Output_Descriptor__type current_output_descriptor;
 Output_Descriptor__type stdout_output_descriptor;

@@ -8,13 +8,13 @@ compile_time type Exit = struct { dummy:Int;}*;
 
 // XXX: c'est un Int pour satisfaire Digit_or_Alpha, mais en fait ca devrait etre
 // n'importe quoi (type Exit)
-compile_time Exit
-parse_error()
+compile_time function
+parse_error() -> Exit = 
 {
   print( "Parse error\n");
   exit( 3);
-  cast( Exit, 3);
-}
+  cast( Exit, 3)
+};
 
 compile_time type_alias Character = Int;
 
@@ -120,7 +120,9 @@ grammar parse_grammar = {
 									     form_list),
 							      r)) };
 
-  rule Grammar:Form = "grammar" Spacing id:Identifier Spacing "=" Spacing
+  rule Grammar:Form = "grammar" Spacing Grammar_End;
+
+  rule Grammar_End:Form = id:Identifier Spacing "=" Spacing
   "{" Spacing gr_list:(gr:Grammar_Rule {make( gr)})* "}" Spacing ";"
   {  Compound_Form( 'define',
 		    cons( Id_Form( 'grammar'),
@@ -129,7 +131,9 @@ grammar parse_grammar = {
 
 
   // Grammar macro; should use the @Separator grammar_macro.
-  rule Grammar_Macro:Form = "grammar_macro" Spacing "@" id:Identifier
+  rule Grammar_Macro:Form = "grammar_macro" Spacing Grammar_Macro_End;
+
+  rule Grammar_Macro_End:Form = "@" id:Identifier
      "<" Spacing form_list:( ">" {cast( List< Form>, 0)}
                             | arg1:Identifier Spacing
      		              rest_list:(','  arg:Identifier {make( Id_Form( arg))})*
@@ -147,8 +151,8 @@ grammar parse_grammar = {
 };
 
 
-Void
-test ()
+function
+test () -> Void =
 {
 
   set_parser_support_to( "rule Spacing<i:Int,j:Symbol>:Character = [ \n\t]* [^a-b]  ;");
@@ -188,6 +192,4 @@ test ()
 
   
   print_form( form2);
- ();
-
-}
+};

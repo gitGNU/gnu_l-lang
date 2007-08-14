@@ -211,7 +211,6 @@ call_grammar_macro( Symbol macro_name, form_t form)
   return expform;
 }
 
-
 
 
 int
@@ -282,6 +281,16 @@ intern_string( String s)
   return intern( make_C_string_from_L_string( s));
 }
   
+form_t
+parse_include_filename( String s)
+{
+  void *save_current_parser_pointer = parser_current_pointer;
+  list_t form_list = parse_file( make_C_string_from_L_string( s));
+  parser_current_pointer = save_current_parser_pointer;
+  return generic_form_symbol( SYMBOL( include), form_list);
+}
+
+
 
 /* This is for testing that the parser can auto-parse itself.  */
 String
@@ -379,6 +388,9 @@ parse_error(void)
 void *_l__parse__Code__Sequence( void*);
 void *_l__parse__Type__Type( void*);
 
+void *_l__parse__parse_grammar__Grammar_Macro_End( void*);
+void *_l__parse__parse_grammar__Grammar_End( void*);
+
 void
 init_newparser_support()
 {
@@ -392,6 +404,7 @@ init_newparser_support()
   DEFINE_C_FUNCTION( concat, "String <- (String, String)");
   DEFINE_C_FUNCTION( get_symbol_name, "String <- (Symbol)");
   DEFINE_C_FUNCTION( intern_string, "Symbol <- (String)");
+  DEFINE_C_FUNCTION( parse_include_filename, "Form <- (String)");
   DEFINE_C_FUNCTION( get_point_pos, "Int <- ()");
   DEFINE_C_FUNCTION( substring, "String <- (Int, Int)");
   DEFINE_C_FUNCTION( get_parsed_string_string, "String <- (Int, Int, Int)");
@@ -400,6 +413,8 @@ init_newparser_support()
   DEFINE_C_FUNCTION( string_element, "Int <- (String, Int)");
   DEFINE_C_FUNCTION( _l__parse__Code__Sequence, "Form <- ()");
   DEFINE_C_FUNCTION( _l__parse__Type__Type, "Form <- ()");
+  DEFINE_C_FUNCTION( _l__parse__parse_grammar__Grammar_Macro_End, "Form <- ()");
+  DEFINE_C_FUNCTION( _l__parse__parse_grammar__Grammar_End, "Form <- ()");
   DEFINE_C_FUNCTION( pre_define_function, "Void <- (Symbol, Form)");
   DEFINE_C_FUNCTION( get_test_string, "String <- ()");
 

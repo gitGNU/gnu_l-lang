@@ -61,9 +61,12 @@ type Duration = Int;
 
 // By specifying only left: or right: you can have read-only or
 // write-only attributes. Here, a Duration is immutable.
+//XXX: because of parsing problems there is no / right now.
 attribute Duration d.second = right:cast( Int, d);
-attribute Duration d.minute = (right:cast( Int, cast( Int, d)/60));
-attribute Duration d.hour = right:cast( Int, cast( Int, d)/3600);
+//attribute Duration d.minute = (right:cast( Int, cast( Int, d)/60));
+attribute Duration d.minute = right:cast( Int, cast( Int, d)*60);
+//attribute Duration d.hour = right:cast( Int, cast( Int, d)/3600);
+attribute Duration d.hour = right:cast( Int, cast( Int, d)*3600);
 
 
 function test_Duration() -> Void = 
@@ -77,8 +80,8 @@ function test_Duration() -> Void =
 
 
 // You can do that on Lists too:
-attribute List( Int) l.sum = { let _sum = 0;
-			       foreach( let _element in l) {_sum = _sum + _element;}
+attribute List< Int> l.sum = { let _sum = 0;
+			       foreach( let _element in l) {_sum = _sum + _element;};
 			       _sum};
 			       
 function test_list() -> Void = 

@@ -226,7 +226,8 @@ expand_expander( Symbol expander,
 
   generic_form_t tlabel_form = CAR( rest);
   assert( is_form( tlabel_form, generic_form));
-  assert( tlabel_form->head == SYMBOL( label));
+  assert( tlabel_form->head == SYMBOL( label)
+	  || tlabel_form->head == intern( ":"));
   
   id_form_t parameter_namef = CAR( tlabel_form->form_list);
   assert( is_form( parameter_namef, id_form));
@@ -296,7 +297,8 @@ expand_macro( Symbol macro,
 	  {
 	    assert( is_form( parameter, generic_form));
 	    generic_form_t gparameter = parameter;
-	    assert( gparameter->head == SYMBOL( label));
+	    assert( gparameter->head == SYMBOL( label)
+		    || gparameter->head == intern( ":"));
 	    assert( gparameter->form_list && gparameter->form_list->next);
 	    assert( is_form( (form_t) CAR( gparameter->form_list), id_form));
 	    parameter_name = ((id_form_t) CAR( gparameter->form_list))->value;
@@ -489,7 +491,9 @@ expand_attribute( Symbol macro,
 	    {
 	      generic_form_t glabel = CAR( element);
 	      assert( is_form( glabel, generic_form));
-	      assert( glabel->head == SYMBOL( label));
+	      assert( glabel->head == SYMBOL( label)
+		      || glabel->head == intern( "@label")
+		      || glabel->head == intern( ":"));
 
 	      if(is_form( (form_t) CAR( glabel->form_list), generic_form))
 		{
@@ -510,7 +514,9 @@ expand_attribute( Symbol macro,
 	    }
 	  goto next;
 	}
-      else if(glast_arg->head == SYMBOL( label))
+      else if(glast_arg->head == SYMBOL( label)
+	      || glast_arg->head == intern( ":")
+	      || glast_arg->head == intern( "@label"))
 	{
 	  generic_form_t glabel = glast_arg;
 	  /* A label form: the user wants either a read only or write
@@ -788,13 +794,24 @@ expand_all( list_t form_list)
     {
       generic_form_t df = CAR( element);
       assert( is_form(  df, generic_form));
-      assert( df->head == SYMBOL( define));
-      
-      id_form_t form_typef = CAR(df->form_list);
-      assert( is_form( form_typef, id_form));
-      Symbol form_type = form_typef->value;
-      
-      puthash( form_type, CONS( df, gethash( form_type, ht)), ht);
+
+      if(df->head == SYMBOL( include))
+	{
+	  /* XXX: module should be treated likewise.  */
+	  list_t new_form_list = df->form_list;
+	  list_t exp_l = expand_all( new_form_list);
+	  generate_list( exp_l);
+	}
+      else
+	{
+	  assert( df->head == SYMBOL( define));
+	  
+	  id_form_t form_typef = CAR(df->form_list);
+	  assert( is_form( form_typef, id_form));
+	  Symbol form_type = form_typef->value;
+	  
+	  puthash( form_type, CONS( df, gethash( form_type, ht)), ht);
+	}
     }
 
   /* First, we get the compile_time things.  */

@@ -9,7 +9,7 @@ type Int_List = struct
 //Note that the position of the pointer has changed.
 type Int_List2 = struct
 		 { head:Int;
-		   tail: Int_List2 *; }*;
+		   tail:Int_List2 *; }*;
 
 
 //doubly-recursive types. Don't work for now.

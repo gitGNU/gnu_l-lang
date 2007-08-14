@@ -1,3 +1,6 @@
+// Note: in the future, we could allow to declare macro return type too.
+// But this only makes sense if the macro is hygienic.
+
 // Sample macro; takes one parameter which is used in the macro.
 macro assert( condition) = 
   if( condition == cast( Bool, 0))
@@ -41,7 +44,7 @@ macro whileee( condition:Bool, body) =
 	  if(condition == cast( Bool, 0))
 	    break;
 	  body;
-	}
+};
 
 //We should also allow $ in macros to do more complicated work than
 //juste templating in macro; for that you can already use the full
