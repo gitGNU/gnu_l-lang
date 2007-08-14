@@ -15,8 +15,8 @@ type Letter = Int;
 compile_time type Character_Range = struct { min:Int;
                                 max:Int; }*;
 
-//compile_time type Character_Set = List< Character_Range>;
-compile_time type Character_Set = List( Character_Range);
+compile_time type Character_Set = List< Character_Range>;
+//compile_time type Character_Set = List( Character_Range);
 
 compile_time function min( a:Int, b:Int) -> Int =
 {

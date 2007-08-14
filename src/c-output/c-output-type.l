@@ -5,6 +5,8 @@
 //////////////////////////////
 // Type handling
 
+global inc_file_descriptor:Output_Descriptor;
+
 type Common_To_All_Type = struct { type_type:Int;
                          type_form:Form;
                          size:Int;
@@ -22,35 +24,40 @@ attribute Type t.type_form = cast( Real_Type, t).common_.type_form;
 attribute Base_Type t.type_form = cast( Real_Type, t).common_.type_form;
 
 // This could be done using the type form.
-Bool is_struct_type( t:Type)
+function
+is_struct_type( t:Type) -> Bool =
 {
   let nt = cast( Real_Type, t);
   nt.common_.type_type == 0
-}
+};
 
-Bool is_base_type( t:Type)
+function
+is_base_type( t:Type) -> Bool =
 {
   let nt = cast( Real_Type, t);
   nt.common_.type_type == 3
-}
+};
 
-Bool is_pointer_type( t:Type)
+function
+is_pointer_type( t:Type) -> Bool =
 {
   let nt = cast( Real_Type, t);
   nt.common_.type_type == 4
-}
+};
 
-Bool is_tuple_type( t:Type)
+function
+is_tuple_type( t:Type) -> Bool =
 {
   let nt = cast( Real_Type, t);
   nt.common_.type_type == 2
-}
+};
 
-Bool is_function_type( t:Type)
+function
+is_function_type( t:Type) -> Bool =
 {
   let nt = cast( Real_Type, t);
   nt.common_.type_type == 1
-}
+};
 
 //Set to 1 if there is a need to output the definition
 global type_definition_needed:Hash< Type, Bool>;
@@ -59,8 +66,8 @@ global type_definition_needed:Hash< Type, Bool>;
 global has_been_outputed:Hash< Type, Bool>;
 
 //This outputs an object name of type TYPE.
-Void
-c_output_type( name:Symbol, t:Type)
+function
+c_output_type( name:Symbol, t:Type) -> Void =
 {
   type_definition_needed[t] = cast( Bool, 1);
   if(is_base_type( t))
@@ -89,7 +96,7 @@ c_output_type( name:Symbol, t:Type)
   else if(is_tuple_type( t))
     {
       let tf = cast( Compound_Form, t.type_form);
-      if(tf.form_list == cast( List( Form), 0))
+      if(tf.form_list == cast( List< Form>, 0))
 	{
 	  print( "void ", name);
 	}
@@ -107,7 +114,7 @@ c_output_type( name:Symbol, t:Type)
       print( "(", name, ")");
 
       let parameters = cast( Compound_Form, form_list.tail.head);
-      if(parameters.form_list == cast( List( Form), 0))
+      if(parameters.form_list == cast( List< Form>, 0))
 	{
 	  print( "(void)");
 	}
@@ -119,19 +126,19 @@ c_output_type( name:Symbol, t:Type)
 	    {
 	      print( ", ");
 	      c_output_type('', intern_type( parameter));
-	    }
+	    };
 	  print( ")");
-	}
+	};
     }
   else {
       print_form( t.type_form);
       panic( "Unimplemented\n");
-    }
-}
+  };
+};
 
 //This output the type definitions.
-Void
-c_output_type_definition(t:Type)
+function
+c_output_type_definition(t:Type) -> Void =
 {
   if(has_been_outputed[t] == cast( Bool, 0))
     {
@@ -143,10 +150,10 @@ c_output_type_definition(t:Type)
 	    {
 	      //We found a base type, like Word.
 	      goto( end);
-	    }
+	    };
       
 	  if(has_been_outputed[bt.origin_type])
-	    {goto (next);}
+	    {goto (next);};
 	  c_output_type_definition( bt.origin_type);
 
 	next:
@@ -170,7 +177,7 @@ c_output_type_definition(t:Type)
 	      if(has_been_outputed[subtype])
 		continue;
 	      c_output_type_definition( subtype);
-	    }
+	    };
 
 	  print( "struct struct", hex:cast( Int, t), " {\n");
 	  foreach( let label_form_ in cast( Compound_Form, tf).form_list)
@@ -186,7 +193,7 @@ c_output_type_definition(t:Type)
 	      //	      print_error( "\n");
 	      c_output_type( field_name, subtype);
 	      print( ";\n");
-	    }
+	    };
 	  print( "};\n");
       
 	  //D'abord, on definit tous les sous types.
@@ -201,7 +208,7 @@ c_output_type_definition(t:Type)
 	      let ptf = cast( Compound_Form, tf.form_list.head);
 	      if(ptf.head == 'struct')
 		goto (end);
-	    }
+	    };
 	  // Else we have.  
 	  c_output_type_definition( intern_type( tf.form_list.head));
 	}
@@ -223,12 +230,12 @@ c_output_type_definition(t:Type)
 	      c_output_type_definition( type);
 	    }
 	}
-    }
+    };
  end:
-}
+};
 
-Void
-output_all_type_definitions()
+function
+output_all_type_definitions() -> Void =
 {
   let save_descriptor = current_output_descriptor;
   //  inc_file_descriptor = make_output_descriptor_write_file( "cocyte01.inc");
@@ -258,18 +265,18 @@ output_all_type_definitions()
 	{ c_output_type_definition( type);
 	}
     }
-}
+};
 
-Void
-reinit_types()
+function
+reinit_types() -> Void =
 {
   type_definition_needed = Hash( Type, Bool);
   has_been_outputed = Hash( Type, Bool);
   ();
-}
+};
 
-Void
-init_output_type()
+function
+init_output_type() -> Void =
 {
 
 //  let save_descriptor = current_output_descriptor;
@@ -292,7 +299,7 @@ init_output_type()
 //  flush();
 //  current_output_descriptor = save_descriptor;
 //  ();
-}
+};
 
 
 //Void

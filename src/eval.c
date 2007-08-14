@@ -51,7 +51,14 @@ parse_file( char *file_name)
 
   String s = make_heap_string (string);
 
-  list_t form_list = parse( s);
+  //   list_t form_list = parse( s);
+    set_parser_support_to( s);
+  list_t form_list = _l__parse__Top_Level__All();
+  
+//  FOREACH( element, form_list)
+//    {
+//      lispify( CAR( element));
+//    }
   
   munmap (string, length_);
   close (fd);

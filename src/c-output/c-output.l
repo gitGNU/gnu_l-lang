@@ -4,13 +4,13 @@
 //                              return_form: Form;
 //                              type: Type ;} *;
 
-type Expanded_Compound_Form = struct { useless_form_type_ : Int;
-                                       useless2: Int;
-                                       return_form_ : Compound_Form;
-                                       type: Type ;} *;
+type Expanded_Compound_Form = struct { useless_form_type_:Int;
+                                       useless2:Int;
+                                       return_form_:Compound_Form;
+                                       type:Type ;} *;
 
 attribute Expanded_Compound_Form exp.head = right:exp.return_form_.head;
-attribute Expanded_Compound_Form exp.form_list = right:cast( List( Expanded_Form),
+attribute Expanded_Compound_Form exp.form_list = right:cast( List< Expanded_Form>,
 							     exp.return_form_.form_list);
 
 
@@ -30,49 +30,49 @@ global output_file_descriptor:Output_Descriptor;
 global inc_file_descriptor:Output_Descriptor;
 
 ////////////////////////////////////////
-Bool
-is_compound_form( f:Form)
+function
+is_compound_form( f:Form) -> Bool =
 {
   let rf = cast( Form, f);
   rf.form_type_ == 1811939328
-}
+};
 
-Bool
-is_expanded_form( f:Form)
+function
+is_expanded_form( f:Form) -> Bool =
 {
   f.form_type_ == -536870912
-}
+};
    
 
-Bool
-is_id_form( f:Form)
+function
+is_id_form( f:Form) -> Bool =
 {
   let rf = cast( Form, f);
   rf.form_type_ == -1342177280
-}
+};
 
 
-Bool
-is_int_form( f:Form)
+function
+is_int_form( f:Form) -> Bool =
 {
   let rf = cast( Form, f);
   rf.form_type_ == -2147483648
-}
+};
 
-Bool
-is_symbol_form( f:Form)
+function
+is_symbol_form( f:Form) -> Bool =
 {
   let rf = cast( Form, f);
   rf.form_type_ == -1073741824
-}
+};
 
 
-Bool
-is_string_form( f:Form)
+function
+is_string_form( f:Form) -> Bool =
 {
   let rf = cast( Form, f);
   rf.form_type_ == -1610612736
-}
+};
 
 
 ////////////////////////////////////////
@@ -80,18 +80,18 @@ include "c-output/c-output-type.l";
 
 
 ///////////////////////////////////////
-Void
-c_output_form( expf:Expanded_Form)
+function
+c_output_form( expf:Expanded_Form) -> Void =
 { buffered {
     let f = expf.return_form;
     if( is_compound_form( f))
       {
 	let cf = cast( Compound_Form, f);
 	let fun = c_output_hash[cf.head];
-	if(fun == cast( (Void <- Expanded_Compound_Form)*, 0))
+	if(fun == cast( (Expanded_Compound_Form -> Void)*, 0))
 	  {
 	    panic( "No output function defined for ", cf.head, "\n");
-	  }
+	  };
 
 	funcall( *fun, cast( Expanded_Compound_Form, expf));
       }
@@ -127,112 +127,110 @@ c_output_form( expf:Expanded_Form)
 	  }
       }
   }
-}
+};
 
 //////////////////////////////
 //A macro would be useful here.
 
-Void
-c_output_add_int( cf:Expanded_Compound_Form)
+function
+c_output_add_int( cf:Expanded_Compound_Form) -> Void =
 {
   buffered print( "((int) ", gnu_c:cf.form_list.head,
 		  " + (int) ", gnu_c:cf.form_list.tail.head, ")");
-}
+};
 
-Void
-c_output_mul_int( cf:Expanded_Compound_Form)
+function
+c_output_mul_int( cf:Expanded_Compound_Form) -> Void =
 {
   buffered print( "((int) ", gnu_c:cf.form_list.head,
 		  " * (int) ", gnu_c:cf.form_list.tail.head, ")");
-}
+};
 
-Void
-c_output_sub_int( cf:Expanded_Compound_Form)
+function
+c_output_sub_int( cf:Expanded_Compound_Form) -> Void =
 {
   buffered print( "((int) ", gnu_c:cf.form_list.head,
 		  " - (int) ", gnu_c:cf.form_list.tail.head, ")");
-}
+};
 
-Void
-c_output_div_int( cf:Expanded_Compound_Form)
+function
+c_output_div_int( cf:Expanded_Compound_Form) -> Void =
 {
   buffered print( "((int) ", gnu_c:cf.form_list.head,
 		  " / (int) ", gnu_c:cf.form_list.tail.head, ")");
-}
+};
 
-Void
-c_output_unary_minus_int( cf:Expanded_Compound_Form)
+function
+c_output_unary_minus_int( cf:Expanded_Compound_Form) -> Void =
 {
   buffered print( "(- (int) ", gnu_c:cf.form_list.head,")");
-}
+};
 
 
-
-Void
-c_output_ge_int( cf:Expanded_Compound_Form)
+function
+c_output_ge_int( cf:Expanded_Compound_Form) -> Void =
 {
   buffered print( "((int) ", gnu_c:cf.form_list.head,
 		  " >= (int) ", gnu_c:cf.form_list.tail.head, ")");
-}
+};
 
-Void
-c_output_gt_int( cf:Expanded_Compound_Form)
+function
+c_output_gt_int( cf:Expanded_Compound_Form) -> Void =
 {
   buffered print( "((int) ", gnu_c:cf.form_list.head,
 		  " > (int) ", gnu_c:cf.form_list.tail.head, ")");
-}
+};
 
-
-Void
-c_output_le_int( cf:Expanded_Compound_Form)
+function
+c_output_le_int( cf:Expanded_Compound_Form) -> Void =
 {
   buffered print( "((int) ", gnu_c:cf.form_list.head,
 		  " <= (int) ", gnu_c:cf.form_list.tail.head, ")");
-}
+};
 
-Void
-c_output_lt_int( cf:Expanded_Compound_Form)
+function
+c_output_lt_int( cf:Expanded_Compound_Form) -> Void =
 {
   buffered print( "((int) ", gnu_c:cf.form_list.head,
 		  " < (int) ", gnu_c:cf.form_list.tail.head, ")");
-}
+};
 
 
-Void
-c_output_different( cf:Expanded_Compound_Form)
+function
+c_output_different( cf:Expanded_Compound_Form) -> Void =
 {
   buffered print( "(", gnu_c:cf.form_list.head,
 		  " != ", gnu_c:cf.form_list.tail.head, ")");
-}
+};
 
 
-Void
-c_output_equal( cf:Expanded_Compound_Form)
+function
+c_output_equal( cf:Expanded_Compound_Form) -> Void =
 {
   buffered print( "(", gnu_c:cf.form_list.head,
 		  " == ", gnu_c:cf.form_list.tail.head, ")");
-}
+};
 
-Void
-c_output_logical_or( cf:Expanded_Compound_Form)
+function
+c_output_logical_or( cf:Expanded_Compound_Form) -> Void =
 {
   buffered print( "((", gnu_c:cf.form_list.head,
 		  ")||(", gnu_c:cf.form_list.tail.head, "))");
-}
+};
 
-Void
-c_output_logical_and( cf:Expanded_Compound_Form)
+function
+c_output_logical_and( cf:Expanded_Compound_Form) -> Void =
 {
   buffered print( "((", gnu_c:cf.form_list.head,
 		  ")&&(", gnu_c:cf.form_list.tail.head, "))");
-}
+};
 
 
-Void
-c_output_logical_not( cf:Expanded_Compound_Form)
+function
+c_output_logical_not( cf:Expanded_Compound_Form) -> Void =
 {
   buffered print( "(!(", gnu_c:cf.form_list.head,"))");
-}
+};
 
 
 
@@ -240,18 +238,18 @@ c_output_logical_not( cf:Expanded_Compound_Form)
 ///////////////////////////
 //And also here, to extract all the constituents of an expanded compound form.
 
-Void
-c_output_access_struct( cf:Expanded_Compound_Form)
+function
+c_output_access_struct( cf:Expanded_Compound_Form) -> Void =
 {
   buffered {
     print( "(", gnu_c:cf.form_list.head, ".");
     assert( is_symbol_form( cf.form_list.tail.head.return_form));
     print( cast( Symbol_Form, cf.form_list.tail.head.return_form).value, ")");
   }
-}
+};
 
-Void
-c_output_assign( cf:Expanded_Compound_Form)
+function
+c_output_assign( cf:Expanded_Compound_Form) -> Void =
 {
   buffered {
     print( "(");
@@ -260,68 +258,68 @@ c_output_assign( cf:Expanded_Compound_Form)
     c_output_form( cf.form_list.tail.head);
     print( ")");
   }
-}
+};
 
 //We always output blocks as GNU C's statement expressions.
-Void
-c_output_block( cf:Expanded_Compound_Form)
+function
+c_output_block( cf:Expanded_Compound_Form) -> Void =
 {
   buffered {
     print( "({\n");
     foreach( let subform in cf.form_list)
       {
 	print( gnu_c:subform, ";\n");
-      }
+      };
     print( "})\n");
   }
-}
+};
 
-Void
-c_output_cast( cf:Expanded_Compound_Form)
+function
+c_output_cast( cf:Expanded_Compound_Form) -> Void =
 {
   buffered {
     print( "((");
     c_output_type( '', intern_type( cf.form_list.head.return_form));
     print( ") ", gnu_c:cf.form_list.tail.head, ")");
   }
-}
+};
 
-Void
-c_output_deref( cf:Expanded_Compound_Form)
+function
+c_output_deref( cf:Expanded_Compound_Form) -> Void =
 {
   buffered print( "(* ", gnu_c:cf.form_list.head, ")");
-}
+};
 
 
-Void
-c_output_funcall( cf:Expanded_Compound_Form)
+function
+c_output_funcall( cf:Expanded_Compound_Form) -> Void =
 {
   //XXX: There must be a first pass so that the arguments are processed in order.
   let function = cf.form_list.head;
   if(is_id_form( function.return_form))
     {
       globals_needed[cast( Id_Form, function.return_form).value] = cast( Bool, 1);
-    }
+    };
   buffered {
     print( "(", gnu_c:function, ")(");
-    if(cf.form_list.tail != cast( List( Expanded_Form), 0))
+    if(cf.form_list.tail != cast( List< Expanded_Form>, 0))
       {
 	print( gnu_c:cf.form_list.tail.head);
 	foreach( let subform in cf.form_list.tail.tail)
 	  print( ", ", gnu_c:subform);
-      }
+      };
     print( ")");
   }
-}
+};
 
 
-Void
-c_output_if( cf:Expanded_Compound_Form)
+function
+c_output_if( cf:Expanded_Compound_Form) -> Void =
 {
   let condition = cf.form_list.head;
   let then = cf.form_list.tail.head;
   buffered {
-    if(cf.form_list.tail.tail == cast( List( Expanded_Form), 0))
+    if(cf.form_list.tail.tail == cast( List< Expanded_Form>, 0))
       {
 	print( "({if( ", gnu_c:condition, ")\n{\n", gnu_c:then, ";}})\n");
       }
@@ -333,64 +331,64 @@ c_output_if( cf:Expanded_Compound_Form)
 	       gnu_c:elsef, "))");
       }
   }
-}
+};
 
-Void
-c_output_get_label( cf:Expanded_Compound_Form)
+function
+c_output_get_label( cf:Expanded_Compound_Form) -> Void =
 {
-  assert( cf.form_list.tail == cast( List( Expanded_Form), 0));
+  assert( cf.form_list.tail == cast( List< Expanded_Form>, 0));
   assert( is_id_form( cast( Form, cf.form_list.head)));
   let label_form = cast( Id_Form, cf.form_list.head);
   buffered print( "&&", convert_id( label_form.value));
-}
+};
 
-Void
-c_output_goto_constant( cf:Expanded_Compound_Form)
+function
+c_output_goto_constant( cf:Expanded_Compound_Form) -> Void =
 {
-  assert( cf.form_list.tail == cast( List( Expanded_Form), 0));
+  assert( cf.form_list.tail == cast( List< Expanded_Form>, 0));
   let id_form = cast( Id_Form, cf.form_list.head);
   assert( is_id_form( cast( Form, id_form)));
   
   buffered print( "({goto ", convert_id( id_form.value), ";})");
-}
+};
 
-Void
-c_output_goto_variable( cf:Expanded_Compound_Form)
+function
+c_output_goto_variable( cf:Expanded_Compound_Form) -> Void =
 {
-  assert( cf.form_list.tail == cast( List( Expanded_Form), 0));
+  assert( cf.form_list.tail == cast( List< Expanded_Form>, 0));
   assert( is_compound_form( cf.form_list.head.return_form));
   assert( cast( Compound_Form, cf.form_list.head.return_form).head == 'deref');
   print( "({goto *",
 	 gnu_c:cast( Expanded_Compound_Form, cf.form_list.head).form_list.head,
 	 ";})");
-}
+};
 
 
 
-Void
-c_output_label( cf:Expanded_Compound_Form)
+function
+c_output_label( cf:Expanded_Compound_Form) -> Void =
 {
-  assert( cf.form_list.tail == cast( List( Expanded_Form), 0));
+  assert( cf.form_list.tail == cast( List< Expanded_Form>, 0));
   assert( is_id_form( cast( Form, cf.form_list.head)));
   let label_form = cast( Id_Form, cf.form_list.head);
   //  buffered print( "((void) 0);", convert_id( label_form.value), ":((void) 0)");
   buffered print( convert_id( label_form.value), ":");
-}
+};
 
 
 //We rely on the fact that lets are at the beginning of blocks after expansion.
-Void
-c_output_let( cf:Expanded_Compound_Form)
+function
+c_output_let( cf:Expanded_Compound_Form) -> Void =
 {
   buffered {
     assert( is_id_form( cast( Form, cf.form_list.head)));
     c_output_type( convert_id( cast( Id_Form, cf.form_list.head).value),
 		   intern_type( cast( Form, cf.form_list.tail.head)));
   }
-}
+};
 
-Void
-c_output_ref( cf:Expanded_Compound_Form)
+function
+c_output_ref( cf:Expanded_Compound_Form) -> Void =
 {
   // Problem: &((void *)a) isn't permitted in C.
   // To cope with this, we invert the cast and the ref.
@@ -409,29 +407,29 @@ c_output_ref( cf:Expanded_Compound_Form)
 	    print( ")");
 	    goto (end);
 	  }
-      }
+      };
     print( "(&", gnu_c:cf.form_list.head, ")");
-  }
+  };
  end:
-}
+};
 
-Void
-c_output_seq( cf:Expanded_Compound_Form)
+function
+c_output_seq( cf:Expanded_Compound_Form) -> Void =
 {
   buffered {
-    assert( cf.form_list != cast( List( Expanded_Form), 0));
+    assert( cf.form_list != cast( List< Expanded_Form>, 0));
     print( "({", gnu_c:cf.form_list.head);
     foreach( let subform in cf.form_list.tail)
       {
 	print( ";\n", gnu_c:subform);
-      }
+      };
     print( ";})");
   }
-}
+};
 
 //We output C99 compound literals; we use the type information for that.
-Void
-c_output_struct( cf:Expanded_Compound_Form)
+function
+c_output_struct( cf:Expanded_Compound_Form) -> Void =
 {
   buffered {
     print( "((");
@@ -442,7 +440,7 @@ c_output_struct( cf:Expanded_Compound_Form)
       assert( is_compound_form( subform_.return_form));
       assert( cast( Compound_Form, subform_.return_form).head == 'label');
       let form_subform = cast( Expanded_Compound_Form, subform_).form_list.tail.head;
-      print(gnu_c:form_subform); }
+      print(gnu_c:form_subform); };
     
     foreach( let subform_ in cf.form_list.tail)
       {
@@ -450,26 +448,26 @@ c_output_struct( cf:Expanded_Compound_Form)
 	assert( cast( Compound_Form, subform_.return_form).head == 'label');
 	let form_subform = cast( Expanded_Compound_Form, subform_).form_list.tail.head;
 	print(", ", gnu_c:form_subform);
-      }
+      };
     print( "})");
   }
-}
+};
 
-Void
-c_output_tuple( cf:Expanded_Compound_Form)
+function
+c_output_tuple( cf:Expanded_Compound_Form) -> Void =
 {
-  if(cf.form_list == cast( List( Expanded_Form), 0))
+  if(cf.form_list == cast( List< Expanded_Form>, 0))
     {
       // Return explicit void.  
       print( "((void) 0)");
     }
   else panic( "Unimplemented\n");
-}
+};
 
-Void
-init_c_output()
+function
+init_c_output() -> Void =
 {
-  c_output_hash = cast( Hash( Symbol, ((Void) <- Expanded_Compound_Form)*), make_hash_table());
+  c_output_hash = cast( Hash< Symbol, (Expanded_Compound_Form -> Void)*>, make_hash_table());
   //  c_output_hash = Hash( Symbol, (Void <- Expanded_Compound_Form)*);
   c_output_hash['+_Int'] = &c_output_add_int;
   c_output_hash['*_Int'] = &c_output_mul_int;
@@ -507,12 +505,12 @@ init_c_output()
   c_output_hash['tuple'] = &c_output_tuple;
 
   init_output_type();
-}
+};
 
 //////////////////////////////////////////////////
 
-Void
-c_output_function_definition( name:Symbol, l_:Form)
+function
+c_output_function_definition( name:Symbol, l_:Form) -> Void =
 {
   assert( is_expanded_form( l_));
   //L is a lambda form.
@@ -520,7 +518,7 @@ c_output_function_definition( name:Symbol, l_:Form)
   assert( is_compound_form( l));
   assert( cast( Compound_Form, l).head == 'lambda');
   
-  let form_list = cast( List( Form), cast( Compound_Form, l).form_list);
+  let form_list = cast( List< Form>, cast( Compound_Form, l).form_list);
 
   let return_type = form_list.head;
   c_output_type( '', intern_type( return_type));
@@ -528,13 +526,12 @@ c_output_function_definition( name:Symbol, l_:Form)
   let parameters_type = cast( Compound_Form, form_list.tail.head);
   assert( parameters_type.head == 'tuple');
 
-  if(parameters_type.form_list == cast( List( Form), 0))
-    print( "void");
+  if(parameters_type.form_list == cast( List< Form>, 0))
+    print( "void")
   else
     {
       let first_parameter = cast( Compound_Form, parameters_type.form_list.head);
-      assert( first_parameter.head == 'label'
-	      || first_parameter.head == ':');
+      assert( first_parameter.head == 'label');
       let first_param_name = cast( Id_Form, first_parameter.form_list.head);
       let first_param_type = first_parameter.form_list.tail.head;
   
@@ -542,40 +539,39 @@ c_output_function_definition( name:Symbol, l_:Form)
       print( " ", convert_id( first_param_name.value));
    
       foreach( let parameter
-	       in cast( List( Compound_Form), parameters_type.form_list.tail))
+	       in cast( List< Compound_Form>, parameters_type.form_list.tail))
 	{
 	  print( ", ");
-	  assert( first_parameter.head == 'label'
-		  || first_parameter.head == ':');
+	  assert( first_parameter.head == 'label');
 	  let param_name = cast( Id_Form, parameter.form_list.head);
 	  let type = parameter.form_list.tail.head;
   
 	  c_output_type( '', intern_type( cast( Form, type)));
 	  print( " ", convert_id( param_name.value));
 	}
-    }
+    };
   print( ")\n{\nreturn ");
   print( gnu_c:cast( Expanded_Form, form_list.tail.tail.head));
   print( ";}\n\n");
   //let return_type_form = 
-}
+};
 
 
-Void
-c_output_global_definition( name:Symbol, form_type:Form)
+function
+c_output_global_definition( name:Symbol, form_type:Form) -> Void =
 {
   c_output_type( name, intern_type( form_type));
   print( ";\n\n");
-}
+};
 
 
 
-Void
-c_output_definition( f:Compound_Form)
+function
+c_output_definition( f:Compound_Form) -> Void =
 {
   assert( is_compound_form( cast( Form,f)));
   assert( f.head == 'define');
-  let form_list = cast( List( Form), cast( Compound_Form, f).form_list);
+  let form_list = cast( List< Form>, cast( Compound_Form, f).form_list);
   assert( is_id_form( form_list.head));
   let species = cast( Id_Form, form_list.head).value;
   
@@ -620,14 +616,14 @@ c_output_definition( f:Compound_Form)
       print_error( "Species '", species, "'\n");
       panic( "Not implemented\n");
     }
-}
+};
 
-Void
-c_output_init_definition(f:Compound_Form)
+function
+c_output_init_definition(f:Compound_Form) -> Void =
 {
   assert( is_compound_form( cast( Form,f)));
   assert( f.head == 'define');
-  let form_list = cast( List( Form), cast( Compound_Form, f).form_list);
+  let form_list = cast( List< Form>, cast( Compound_Form, f).form_list);
   assert( is_id_form( form_list.head));
   let species = cast( Id_Form, form_list.head).value;
   
@@ -643,11 +639,11 @@ c_output_init_definition(f:Compound_Form)
       print( 'intern( "', convert_id_as_string( name_form.value), '")');
       print( ", ", convert_id( funname), ");\n");
     }
-}
+};
 
 
-Void
-doit( l_file:String, out_c_file:String, out_inc_file:String)
+function
+doit( l_file:String, out_c_file:String, out_inc_file:String) -> Void =
 {
   string_counter = 0;
   strings_needed = Hash( Int, String);
@@ -684,7 +680,7 @@ doit( l_file:String, out_c_file:String, out_inc_file:String)
     {
       let t:Type = get_global_type( symbol);
       type_definition_needed[t] = cast( Bool, 1);
-    }
+    };
 
   //XXX: And the types of the globals.
   type_definition_needed[intern_type( Id_Form( 'Output_Descriptor'))] = cast( Bool, 1);
@@ -697,7 +693,7 @@ doit( l_file:String, out_c_file:String, out_inc_file:String)
       let t:Type = get_global_type( symbol);
       c_output_type( symbol, t);
       print( ";\n");
-    }
+    };
 
   // XXX: We don't print the globals for now.
   print( "Output_Descriptor__type current_output_descriptor;\n",
@@ -709,15 +705,15 @@ doit( l_file:String, out_c_file:String, out_inc_file:String)
     {
       print( "static struct { unsigned int length; char *content; }", " __string_", count,
 	     " = { ",get_string_length( string), ', "', quote_string( string), '"', "};\n");
-    }
+    };
 
   
   flush();
-}
+};
 
 
-Void
-test ()
+function
+test () -> Void =
 {
   stdout_descriptor = current_output_descriptor;
   init_c_output();
@@ -771,10 +767,12 @@ test ()
   // doit( "std/make-list.l", "std/make-list.c", "std/make-list.inc");
 
   //    doit( "new-parser/grammar-expander.l", "new-parser/grammar-expander.c", "new-parser/grammar-expander.inc");
-  doit( "new-parser/parse-grammar.l", "new-parser/parse-grammar.c", "new-parser/parse-grammar.inc");
-  //  doit( "new-parser/parse-l.l", "new-parser/parse-l.c", "new-parser/parse-l.inc");
+  //doit( "new-parser/parse-grammar.l", "new-parser/parse-grammar.c", "new-parser/parse-grammar.inc");
+//  doit( "test.l", "test.c", "test.inc");
+//  doit( "new-parser/parse-l.l", "new-parser/parse-l.c", "new-parser/parse-l.inc");
+  doit( "new-parser/parse-l.l", "new-parser/parse-l.c", "new-parser/parse-l.inc");
   //doit( "std/error.l", "std/error.c", "std/error.inc");
   //  doit( "std/error.l", "test.c", "test.inc");
-  //  doit( "test.l", "test.c", "test.inc");
+//  doit( "test.l", "test.c", "test.inc");
   
-}
+};

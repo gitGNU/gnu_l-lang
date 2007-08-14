@@ -285,8 +285,10 @@ form_t
 parse_include_filename( String s)
 {
   void *save_current_parser_pointer = parser_current_pointer;
+  void *save_end_parser_pointer = parser_end_pointer;
   list_t form_list = parse_file( make_C_string_from_L_string( s));
   parser_current_pointer = save_current_parser_pointer;
+  parser_end_pointer = save_end_parser_pointer;
   return generic_form_symbol( SYMBOL( include), form_list);
 }
 

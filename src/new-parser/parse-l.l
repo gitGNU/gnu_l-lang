@@ -23,7 +23,6 @@ parse_error() ->  Exit =
 
 include "new-parser/grammar-macros.l";
 
-
 //XXX: the *_Form rules should store the line and character number.
 // 
 // This comprenhends the lexical elements of the L grammar, but not

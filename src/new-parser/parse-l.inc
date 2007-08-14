@@ -37,12 +37,12 @@ Form__type head;
 List__O__Form__C____type__type tail;
 };
 typedef struct struct0x0805d780 *Exit__type;
-struct struct0x080674e0 {
+struct struct0x08067530 {
 Form__type car;
 List__O__Form__C____type__type cdr;
 };
 typedef Hash_Table__type Hash__O__Symbol__c__pointer__O__function__O__Symbol__c__Form__C____C____C____type__type;
-struct struct0x08643b88 {
+struct struct0x08666ea8 {
 void *car;
 void *cdr;
 };

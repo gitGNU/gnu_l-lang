@@ -1,3 +1,8 @@
+2007-08-15  Matthieu Lemerre  <racin@free.fr>
+
+	Change of the parser .l files to use the new syntax of the new parser.
+	
+
 2007-08-12  Matthieu Lemerre  <racin@free.fr>
 
 	* src/new-parser/parse-l.l: New rules Top_Level.All and Top_Level.Comment
