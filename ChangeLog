@@ -1,3 +1,23 @@
+2007-08-17  Matthieu Lemerre  <racin@free.fr>
+
+	* src/new-parser/parse-l.l: Add parse while_like.
+
+	* src/expander/expand-loop.c: Initialise expand_while
+	* src/expander/expand-loop.aux.c
+	* src/expander/expand-loop.aux.inc
+	* src/expander/expand-loop.l: New files
+
+2007-08-15  Matthieu Lemerre  <racin@free.fr>
+
+	* src/std/l-form.c Removal of form_parse.
+	* src/std/print.c: Removal of the buffered/unbuffered parsers.
+
+	Removal of some old parser functions.
+
+	* src/std/xml.c: Removal of the old XML parser.
+	
+
+
 2007-08-15  Matthieu Lemerre  <racin@free.fr>
 
 	Change of the parser .l files to use the new syntax of the new parser.

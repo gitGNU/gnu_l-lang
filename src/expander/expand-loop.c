@@ -185,8 +185,7 @@ expand_at_set_continue( generic_form_t form)
 
 /* C loops.  */
 
-/* expand_while, expand_for, expand_do_while.  */
-
+form_t while_sharp__sharp_expander_function( form_t arg);
 
 
 
@@ -197,4 +196,6 @@ init_expand_loop( void)
   define_expander(SYMBOL(break), expand_break);
   define_expander(SYMBOL(continue), expand_continue);
   define_expander(intern( "@set_continue"), expand_at_set_continue);
+
+  define_expander( SYMBOL( while), while_sharp__sharp_expander_function);
 }

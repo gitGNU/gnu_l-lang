@@ -1,3 +1,4 @@
+
 // New grammar for L.
 // Copyright (C) 2007 Matthieu Lemerre <racin@free.fr>
 
@@ -239,6 +240,13 @@ grammar Macro = {
   rule loop_like<symb:Symbol>:Form = exp:Code.Expression
                                 {Compound_Form( symb, list( exp))};
 
+
+  // This one is also common.
+  rule while_like<symb:Symbol>:Form = '(' cond:Code.Expression ')' body:Code.Expression
+                                      {Compound_Form( 'while',
+						      list( cond, body))};
+
+  
   // This one should be also shared.
   rule break<symb:Symbol>:Form = {Compound_Form( 'break', cast( List< Form>, 0))};
 
@@ -482,6 +490,7 @@ init__parse_l() -> Void =
   parse_macro_hash['cast'] = &get_parse_function( Macro.cast);
   parse_macro_hash['if'] = &get_parse_function( Macro.if);
   parse_macro_hash['loop'] = &get_parse_function( Macro.loop_like);
+  parse_macro_hash['while'] = &get_parse_function( Macro.while_like);
   parse_macro_hash['buffered'] = &get_parse_function( Macro.loop_like);
   parse_macro_hash['unbuffered'] = &get_parse_function( Macro.loop_like);
   parse_macro_hash['foreach'] = &get_parse_function( Macro.foreach);
@@ -539,6 +548,7 @@ function test() -> Void =
    exp = parse( Macro.Form, 'let');
    exp = parse( Macro.XML, 'let');
    exp = parse( Macro.loop_like, 'let');
+   exp = parse( Macro.while_like, 'let');
    exp = parse( Macro.cast, 'let');
    exp = parse( Macro.break, 'let');
    exp = parse( Macro.continue, 'let');
