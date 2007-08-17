@@ -296,13 +296,13 @@ init_output (void)
 
   current_output_descriptor = stdout_output_descriptor;
 
-  DEFINE_C_FUNCTION (print_String, "Void <- (String)");
-  DEFINE_C_FUNCTION (flush, "Void <- ()");
+  DEFINE_C_FUNCTION (print_String, "(String) -> Void");
+  DEFINE_C_FUNCTION (flush, "() -> Void");
   
   /* For now, maybe_flush is just like flush; but with
      maybe_flush,flushing must be done only if the stream is
      interactive.  */
-  DEFINE_C_FUNCTION2 ("maybe_flush", flush, "Void <- ()");
+  DEFINE_C_FUNCTION (maybe_flush, "() -> Void");
 
   eval_cstring( "type Output_Descriptor = Void *;");
   c_define_global( SYMBOL( current_output_descriptor),
@@ -314,14 +314,14 @@ init_output (void)
 		   "Output_Descriptor", &stderr_output_descriptor);
 
   DEFINE_C_FUNCTION( make_output_descriptor_write_file,
-		     "Output_Descriptor <- String");
+		     "String -> Output_Descriptor");
 
   /* Should return a String_Output_Descriptor.  */
   DEFINE_C_FUNCTION( make_string_output_descriptor,
-		     "Output_Descriptor <- ()");
+		     "() -> Output_Descriptor");
 
   DEFINE_C_FUNCTION( string_output_descriptor_to_string,
-		     "String <- (Output_Descriptor)");
+		     "(Output_Descriptor) -> String");
   
 }
 

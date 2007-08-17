@@ -270,21 +270,20 @@ init_l_form (void)
   //  define_parse (SYMBOL (Form), form_parse);
   define_expander (SYMBOL (Form), expand_form);
   
-  DEFINE_C_FUNCTION (print_form, "Int<-Form");
-  DEFINE_C_FUNCTION2 ("Int_Form", int_form, "Form<-Int");
-  DEFINE_C_FUNCTION2 ("Symbol_Form", symbol_form, "Form<-Symbol");
-  DEFINE_C_FUNCTION2 ("Id_Form", id_form, "Form<-Symbol");
-  DEFINE_C_FUNCTION2 ("String_Form", string_form, "Form<-String");
-  DEFINE_C_FUNCTION2 ("Compound_Form",
-		      generic_form_symbol,
-		      "Form<-(Symbol, List(Form))");
+  DEFINE_C_FUNCTION (print_form, "Form -> Int");
+  DEFINE_C_FUNCTION (Int_Form, "Int -> Form");
+  DEFINE_C_FUNCTION (Symbol_Form, "Symbol -> Form");
+  DEFINE_C_FUNCTION (Id_Form, "Symbol -> Form");
+  DEFINE_C_FUNCTION (String_Form, "String -> Form");
+  DEFINE_C_FUNCTION (Compound_Form,
+		     "(Symbol, List< Form>) -> Form");
 
-  DEFINE_C_FUNCTION( is_compound_form, "Bool<-Form");
-  DEFINE_C_FUNCTION( is_id_form, "Bool<-Form");
-  DEFINE_C_FUNCTION( is_symbol_form, "Bool<-Form");
-  DEFINE_C_FUNCTION( is_string_form, "Bool<-Form");
-  DEFINE_C_FUNCTION( is_int_form, "Bool<-Form");
+  DEFINE_C_FUNCTION( is_compound_form, "(Form) -> Bool");
+  DEFINE_C_FUNCTION( is_id_form, "Form -> Bool");
+  DEFINE_C_FUNCTION( is_symbol_form, "Form -> Bool");
+  DEFINE_C_FUNCTION( is_string_form, "Form -> Bool");
+  DEFINE_C_FUNCTION( is_int_form, "Form -> Bool");
   
   /* In fact, Expanded_Form<-Form.  */
-  DEFINE_C_FUNCTION (expand, "Expanded_Form<-Form");
+  DEFINE_C_FUNCTION (expand, "Form -> Expanded_Form");
 }

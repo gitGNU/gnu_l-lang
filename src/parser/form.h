@@ -442,6 +442,14 @@ Define_Form (generic_form, Generic_Compound_Form);
   (((form)->form_type.all & form_type_##_type_mask) == form_type_##_type)
 
 
+#undef Int_Form
+#undef Id_Form
+#undef String_Form
+#undef Compound_Form
+#undef Symbol_Form
+#undef Float_Form
+
+
 //form_t
 //sexp_to_form (object_t obj);
 

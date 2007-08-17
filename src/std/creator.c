@@ -623,7 +623,7 @@ init_creator ()
   define_creator (TYPE ("Symbol"), base_type_creator);
   define_expander (SYMBOL (Symbol), call_creator_same_name);
 
-  DEFINE_C_FUNCTION( GC_alloc, "Void * <- Int");
+  DEFINE_C_FUNCTION( GC_alloc, "Int -> Void *");
   define_expander (SYMBOL (creator), expand_creator);
 
 }

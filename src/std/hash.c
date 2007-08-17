@@ -932,14 +932,14 @@ init_hash (void)
   /* We should have: type Hash_Table = Pointer, with Pointer being a
      Word on most machines.  */
   eval_cstring ("type Hash_Table = Void *;");
-  DEFINE_C_FUNCTION (make_hash_table, "Hash_Table <- ()");
+  DEFINE_C_FUNCTION (make_hash_table, "() -> Hash_Table");
 
   /* XXX: gethash should also tell if there was a value or not.  */
-  DEFINE_C_FUNCTION (gethash, "Void * <- (Void *, Hash_Table)");
-  DEFINE_C_FUNCTION (puthash, "Void * <- (Void *, Void *, Hash_Table)");
+  DEFINE_C_FUNCTION (gethash, "(Void *, Hash_Table) -> Void *");
+  DEFINE_C_FUNCTION (puthash, "(Void *, Void *, Hash_Table) -> Void *");
 
-  DEFINE_C_FUNCTION( JudyLFirst, "Void ** <- (Void *, Void *, Int)");
-  DEFINE_C_FUNCTION( JudyLNext, "Void ** <- (Void *, Void *, Int)");
+  DEFINE_C_FUNCTION( JudyLFirst, "(Void *, Void *, Int) -> Void **");
+  DEFINE_C_FUNCTION( JudyLNext, "(Void *, Void *, Int) -> Void **");
   
   /* XXX: remove should also work: remove(table['toto'] would remove
      the entry 'toto' from the table.  */
@@ -950,10 +950,10 @@ init_hash (void)
 
   /* Hash strings.  */
   eval_cstring ("type Hash_String_Table = Void *;");
-  DEFINE_C_FUNCTION (make_hash_string_table, "Hash_String_Table <- ()");
+  DEFINE_C_FUNCTION (make_hash_string_table, "() -> Hash_String_Table");
 
-  DEFINE_C_FUNCTION (gethash_string, "Void * <- (String, Hash_String_Table)");
-  DEFINE_C_FUNCTION (puthash_string, "Void * <- (String, Void *, Hash_String_Table)");
+  DEFINE_C_FUNCTION (gethash_string, "(String, Hash_String_Table) -> Void *");
+  DEFINE_C_FUNCTION (puthash_string, "(String, Void *, Hash_String_Table) -> Void *");
 
   define_expander (SYMBOL (Hash_String), expand_hash_string);
   define_type_constructor (SYMBOL (Hash_String),

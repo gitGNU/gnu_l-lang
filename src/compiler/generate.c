@@ -1458,8 +1458,8 @@ init_generate (void)
 
   /* XXX: */
 
-  DEFINE_C_FUNCTION (test_function, "Int<-Int");
-  DEFINE_C_FUNCTION (exit, "Void<-Int");
+  DEFINE_C_FUNCTION (test_function, "Int -> Int");
+  DEFINE_C_FUNCTION (exit, "Int -> Void");
 }
 
 

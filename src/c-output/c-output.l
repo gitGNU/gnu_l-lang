@@ -768,20 +768,20 @@ test () -> Void =
 
   //doit( "new-parser/character-set.l", "new-parser/character-set.c", "new-parser/character-set.inc");
 
-  
+
   doit( "new-parser/grammar-expander.l", "new-parser/grammar-expander.c.new", "new-parser/grammar-expander.inc.new");
   doit( "new-parser/parse-l.l", "new-parser/parse-l.c.new", "new-parser/parse-l.inc.new");
-  
+
   //doit( "new-parser/parse-grammar.l", "new-parser/parse-grammar.c", "new-parser/parse-grammar.inc");
 //  doit( "test.l", "test.c", "test.inc");
   
-  //doit( "new-parser/parse-l.l", "new-parser/parse-l.c", "new-parser/parse-l.inc");
-
+//  doit( "new-parser/parse-l.l", "new-parser/parse-l.c", "new-parser/parse-l.inc");
+  //doit( "new-parser/grammar-expander.l", "new-parser/grammar-expander.c", "new-parser/grammar-expander.inc");
   
 //  doit( "new-parser/parse-l.l", "new-parser/parse-l.c.do", "new-parser/parse-l.inc.do");
 //doit ("expander/expand-loop.l", "expander/expand-loop.aux.c", "expander/expand-loop.aux.inc");
   //doit( "std/error.l", "std/error.c", "std/error.inc");
   //  doit( "std/error.l", "test.c", "test.inc");
-//  doit( "test.l", "test.c", "test.inc");
+  //doit( "test.l", "test.c", "test.inc");
   
 };

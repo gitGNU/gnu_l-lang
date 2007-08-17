@@ -49,5 +49,22 @@ generic_form_symbol (symbol_t head, list_t list);
 generic_form_t
 generic_form (id_form_t head, list_t list);
 
+int_form_t
+Int_Form (int value);
+
+float_form_t
+Float_Form (float value);
+
+symbol_form_t
+Id_Form (symbol_t value);
+
+quoted_symbol_form_t
+Symbol_Form (symbol_t value);
+
+string_form_t
+String_Form (string_t value);
+
+generic_form_t
+Compound_Form (symbol_t head, list_t list);
 
 #endif

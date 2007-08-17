@@ -371,21 +371,21 @@ void
 init_c_output_support()
 {
   define_printer( TYPE( "Expanded_Form"), Expanded_Form_printer);
-  DEFINE_C_FUNCTION( lispify, "Void <- Form");
-  DEFINE_C_FUNCTION( convert_id, "Symbol <- Symbol");
-  DEFINE_C_FUNCTION( convert_id_as_string, "String <- Symbol");
-  DEFINE_C_FUNCTION( convert_string, "String <- String");
-  DEFINE_C_FUNCTION( quote_string, "String <- String");
+  DEFINE_C_FUNCTION( lispify, "Form -> Void ");
+  DEFINE_C_FUNCTION( convert_id, "Symbol -> Symbol ");
+  DEFINE_C_FUNCTION( convert_id_as_string, "Symbol -> String ");
+  DEFINE_C_FUNCTION( convert_string, "String -> String ");
+  DEFINE_C_FUNCTION( quote_string, "String -> String ");
   DEFINE_C_FUNCTION( expanded_form_list_from_file_name,
-		     "List( Compound_Form) <- String");
-  DEFINE_C_FUNCTION( intern_type, "Type <- Form");
-  DEFINE_C_FUNCTION( mangle_type_name, "Symbol <- Type");
-  DEFINE_C_FUNCTION( type_to_string, "String <- Type");
-  DEFINE_C_FUNCTION( prepend_star, "Symbol <- Symbol");
-  DEFINE_C_FUNCTION( get_global_type, "Type <- Symbol");
-  DEFINE_C_FUNCTION( file_name_non_directory, "String <- String");
-  DEFINE_C_FUNCTION( file_name_non_extension, "String <- String");
-  DEFINE_C_FUNCTION( get_string_length, "Int <- String");
+		     "String -> List< Compound_Form>");
+  DEFINE_C_FUNCTION( intern_type, "Form -> Type ");
+  DEFINE_C_FUNCTION( mangle_type_name, "Type -> Symbol ");
+  DEFINE_C_FUNCTION( type_to_string, "Type -> String ");
+  DEFINE_C_FUNCTION( prepend_star, "Symbol -> Symbol ");
+  DEFINE_C_FUNCTION( get_global_type, "Symbol -> Type ");
+  DEFINE_C_FUNCTION( file_name_non_directory, "String -> String ");
+  DEFINE_C_FUNCTION( file_name_non_extension, "String -> String ");
+  DEFINE_C_FUNCTION( get_string_length, "String -> Int ");
 }
 
 //list_

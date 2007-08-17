@@ -109,26 +109,49 @@ c_output_type( name:Symbol, t:Type) -> Void =
   else if(is_function_type( t))
     {
       let form_list = cast( Compound_Form, t.type_form).form_list;
-      let return_type = intern_type( form_list.head);
+      let return_type = intern_type( form_list.tail.head);
+      let parameters = form_list.head;
+
+      // If the head is '->', it is normal sense, else it is the old sense.
+      if(cast( Compound_Form, t.type_form).head == 'function')
+	{
+	  return_type = intern_type( form_list.head);
+	  parameters = form_list.tail.head;
+	}
+      else
+	{
+	  assert( cast( Compound_Form, t.type_form).head == '->');
+	};
+      
       c_output_type( '', return_type);
       print( "(", name, ")");
 
-      let parameters = cast( Compound_Form, form_list.tail.head);
-      if(parameters.form_list == cast( List< Form>, 0))
+      if(is_compound_form( parameters))
 	{
-	  print( "(void)");
+	  //tuple type
+	  let parameters_ = cast( Compound_Form, parameters);
+	  if(parameters_.form_list == cast( List< Form>, 0))
+	    {
+	      print( "(void)");
+	    }
+	  else
+	    {
+	      print( "(");
+	      c_output_type('',  intern_type( parameters_.form_list.head));
+	      foreach( let parameter in parameters_.form_list.tail)
+		{
+		  print( ", ");
+		  c_output_type('', intern_type( parameter));
+		};
+	      print( ")");
+	    };
 	}
       else
 	{
 	  print( "(");
-	  c_output_type('',  intern_type( parameters.form_list.head));
-	  foreach( let parameter in parameters.form_list.tail)
-	    {
-	      print( ", ");
-	      c_output_type('', intern_type( parameter));
-	    };
+	  c_output_type('',  intern_type( parameters));
 	  print( ")");
-	};
+	}
     }
   else {
       print_form( t.type_form);
@@ -256,7 +279,6 @@ output_all_type_definitions() -> Void =
   print( "\n");
   flush();
   current_output_descriptor = save_descriptor;
-  ();
   
   //XXX: use remhash.
   foreach( (let type, let bool) in type_definition_needed)

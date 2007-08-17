@@ -361,10 +361,10 @@ init_print (void)
   define_printer (TYPE ("String"), String_printer);
   define_printer (TYPE ("Int"), Int_printer);
   define_printer (TYPE ("Symbol"), Symbol_printer);
-  DEFINE_C_FUNCTION (print_Int_Dec, "Void <- Int");
-  DEFINE_C_FUNCTION (print_Int_Hex, "Void <- Int");
+  DEFINE_C_FUNCTION (print_Int_Dec, "Int -> Void");
+  DEFINE_C_FUNCTION (print_Int_Hex, "Int -> Void");
   
   //  define_printer (TYPE_ ("Int"), SYMBOL (print_Int));
-  DEFINE_C_FUNCTION (print_Symbol, "Void <- Symbol");
+  DEFINE_C_FUNCTION (print_Symbol, "Symbol -> Void");
   //  define_printer (TYPE_ ("Symbol"), SYMBOL (print_Symbol));
 }

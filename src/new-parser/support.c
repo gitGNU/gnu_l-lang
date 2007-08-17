@@ -404,30 +404,30 @@ void
 init_export_newparser()
 {
   
-  DEFINE_C_FUNCTION( set_parser_support_to, "Void <- String");
-  DEFINE_C_FUNCTION( new_peek_char, "Int <- (Int)");
-  DEFINE_C_FUNCTION( peek_char, "Int <- ()");
-  DEFINE_C_FUNCTION( read_char, "Int <- ()");
-  DEFINE_C_FUNCTION( call_grammar_macro, "Form <- (Symbol, Form)");
-  DEFINE_C_FUNCTION( parse_symbol, "Symbol <- (String)");
-  DEFINE_C_FUNCTION( character_from_symbol, "Int <- Symbol");
-  DEFINE_C_FUNCTION( concat, "String <- (String, String)");
-  DEFINE_C_FUNCTION( get_symbol_name, "String <- (Symbol)");
-  DEFINE_C_FUNCTION( intern_string, "Symbol <- (String)");
-  DEFINE_C_FUNCTION( parse_include_filename, "Form <- (String)");
-  DEFINE_C_FUNCTION( get_point_pos, "Int <- ()");
-  DEFINE_C_FUNCTION( substring, "String <- (Int, Int)");
-  DEFINE_C_FUNCTION( get_parsed_string_string, "String <- (Int, Int, Int)");
-  DEFINE_C_FUNCTION( get_parsed_string_symbol, "String <- (Int, Int, Int)");
-  DEFINE_C_FUNCTION( string_to_int_list, "List( Int) <- (String)");
-  DEFINE_C_FUNCTION( string_element, "Int <- (String, Int)");
-  DEFINE_C_FUNCTION( _l__parse__Code__Sequence, "Form <- ()");
-  DEFINE_C_FUNCTION( _l__parse__Type__Type, "Form <- ()");
-  DEFINE_C_FUNCTION( _l__parse__parse_grammar__Grammar_Macro_End, "Form <- ()");
-  DEFINE_C_FUNCTION( _l__parse__parse_grammar__Grammar_End, "Form <- ()");
-  DEFINE_C_FUNCTION( pre_define_function, "Void <- (Symbol, Form)");
-  DEFINE_C_FUNCTION( get_test_string, "String <- ()");
+  DEFINE_C_FUNCTION( set_parser_support_to, "String -> Void ");
+  DEFINE_C_FUNCTION( new_peek_char, "(Int) -> Int ");
+  DEFINE_C_FUNCTION( peek_char, "() -> Int ");
+  DEFINE_C_FUNCTION( read_char, "() -> Int ");
+  DEFINE_C_FUNCTION( call_grammar_macro, "(Symbol, Form) -> Form ");
+  DEFINE_C_FUNCTION( parse_symbol, "(String) -> Symbol ");
+  DEFINE_C_FUNCTION( character_from_symbol, "Symbol -> Int ");
+  DEFINE_C_FUNCTION( concat, "(String, String) -> String ");
+  DEFINE_C_FUNCTION( get_symbol_name, "(Symbol) -> String ");
+  DEFINE_C_FUNCTION( intern_string, "(String) -> Symbol ");
+  DEFINE_C_FUNCTION( parse_include_filename, "(String) -> Form ");
+  DEFINE_C_FUNCTION( get_point_pos, "() -> Int ");
+  DEFINE_C_FUNCTION( substring, "(Int, Int) -> String ");
+  DEFINE_C_FUNCTION( get_parsed_string_string, "(Int, Int, Int) -> String ");
+  DEFINE_C_FUNCTION( get_parsed_string_symbol, "(Int, Int, Int) -> String ");
+  DEFINE_C_FUNCTION( string_to_int_list, "(String) -> List< Int> ");
+  DEFINE_C_FUNCTION( string_element, "(String, Int) -> Int ");
+  DEFINE_C_FUNCTION( _l__parse__Code__Sequence, "() -> Form ");
+  DEFINE_C_FUNCTION( _l__parse__Type__Type, "() -> Form ");
+  DEFINE_C_FUNCTION( _l__parse__parse_grammar__Grammar_Macro_End, "() -> Form ");
+  DEFINE_C_FUNCTION( _l__parse__parse_grammar__Grammar_End, "() -> Form ");
+  DEFINE_C_FUNCTION( pre_define_function, "(Symbol, Form) -> Void ");
+  DEFINE_C_FUNCTION( get_test_string, "() -> String ");
 
   eval_cstring( "type Exit = struct { dummy:Int;}*;");
-  DEFINE_C_FUNCTION( parse_error, "Exit <- ()");
+  DEFINE_C_FUNCTION( parse_error, "() -> Exit ");
 }

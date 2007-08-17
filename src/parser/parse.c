@@ -927,6 +927,7 @@ parse_misc_constructed_type (void)
    it's a ugly hack; the parser interface should be better.
 
    Must not be used while parsing something else.  */
+#if 0
 type_form_t
 string_to_type_form (char *string)
 {
@@ -936,6 +937,16 @@ string_to_type_form (char *string)
   type_form_t tf = parse_type_form ();
   //  lispify (tf);
   return tf;
+}
+#endif
+
+type_form_t
+string_to_type_form (char *string)
+{
+  //  printf ("STRING TO TYPE FORM %s\n", string);
+  set_parser_support_to( STRING( string));
+  form_t form = _l__parse__Type__Type();
+  return form;
 }
 
 /* These functions help calling a sub-help parser.  In the future, the

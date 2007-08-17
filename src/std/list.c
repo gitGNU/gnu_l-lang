@@ -351,9 +351,9 @@ init_list(void)
 {
   define_type_constructor (SYMBOL (List), bprint_type_misc, make_type_List);
   
-  DEFINE_C_FUNCTION2 ("alloc_cons_cell", alloc_cons_cell, "Void * <- ()");
-  DEFINE_C_FUNCTION2 ("print_int_list", print_int_list, "Void <- (List(Int))");
-  DEFINE_C_FUNCTION (append, "List( Void*)<- (List(Void *), List( Void*))");
+  DEFINE_C_FUNCTION (alloc_cons_cell, "() -> Void *");
+  DEFINE_C_FUNCTION (print_int_list, "List< Int> -> Void");
+  DEFINE_C_FUNCTION (append, "(List< Void *>, List< Void*>) -> List< Void*>");
 
   eval_cstring( "type List_Maker_Element = struct { ptr_name:Symbol;"
 		"type_listed:Type;} *;");

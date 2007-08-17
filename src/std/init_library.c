@@ -38,6 +38,6 @@ init_library ()
   init_error();
   init_string();
   
-  DEFINE_C_FUNCTION( gensym, "Symbol <- String");
+  DEFINE_C_FUNCTION( gensym, "String -> Symbol");
   
 }

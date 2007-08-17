@@ -591,9 +591,9 @@ init_xml ()
   //  DEFINE_TYPE ("XML_Node", TYPE (XML_Node), sizeof(void *), __alignof (void*));
   //  define_type_string ("XML_Node", sizeof(void *), __alignof__ (void *), NULL);
   eval_cstring( "type XML_Node = Void *;");
-  DEFINE_C_FUNCTION(make_xml_interior_node, "XML_Node<-(Symbol,Int,List(XML_Node))");
-  DEFINE_C_FUNCTION(make_xml_string_node, "XML_Node<-(String)");
-  DEFINE_C_FUNCTION(print_xml, "Void<-(XML_Node)");
+  DEFINE_C_FUNCTION(make_xml_interior_node, "(Symbol,Int,List< XML_Node>) -> XML_Node");
+  DEFINE_C_FUNCTION(make_xml_string_node, "(String) -> XML_Node");
+  DEFINE_C_FUNCTION(print_xml, "(XML_Node) -> Void");
 
 ////
 ////  

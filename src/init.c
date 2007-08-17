@@ -83,15 +83,15 @@ init ()
 
   
 
-  DEFINE_C_FUNCTION( declare_block_begin, "()<- ()");
-  DEFINE_C_FUNCTION( declare_block_end, "Expanded_Form <- (List( Form))");
-  DEFINE_C_FUNCTION( declare_function_begin, "() <- (Compound_Form, Form)");
-  DEFINE_C_FUNCTION( declare_function_end, "Expanded_Form <- (Expanded_Form)");
+  DEFINE_C_FUNCTION( declare_block_begin, "() -> ()");
+  DEFINE_C_FUNCTION( declare_block_end, "(List< Form>) -> Expanded_Form ");
+  DEFINE_C_FUNCTION( declare_function_begin, "(Compound_Form, Form) -> () ");
+  DEFINE_C_FUNCTION( declare_function_end, "(Expanded_Form) -> Expanded_Form ");
 
   
 
   
-  //  DEFINE_C_FUNCTION (expand, "Void *<-Form");
-  //  DEFINE_C_FUNCTION (compile, "Void <-Form");
+  //  DEFINE_C_FUNCTION (expand, "Form -> Void *");
+  //  DEFINE_C_FUNCTION (compile, "Form -> Void ");
 
 }
