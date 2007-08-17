@@ -2,6 +2,9 @@
 
 	First batch of changes to remove usage of the old parser.
 	Second batch of changes to remove usage of the old parser.
+	Third batch of changes to remove usage of the old parser: Removal of the lexer/
+	subdirectory.
+	
 	
 
 2007-08-17  Matthieu Lemerre  <racin@free.fr>

@@ -20,3 +20,11 @@ project that fits you well).
 Enjoy!
 
 Matthieu Lemerre
+
+
+Notes: a recent version of the autotools is needed. 
+
+To install, use autoreconf -f -i -s, then the usual ./configure && make.
+
+This will create a L executable in src/L, that you can test with the
+test/directory.

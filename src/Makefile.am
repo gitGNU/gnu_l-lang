@@ -18,7 +18,7 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301
 # USA.
 
-SUBDIRS = memory lexer compiler expander parser std objects c-output new-parser
+SUBDIRS = memory compiler expander parser std objects c-output new-parser
 
 #the L library, useful for linking with other programs.
 lib_LTLIBRARIES = libl.la
@@ -31,7 +31,6 @@ libl_la_LIBADD = objects/libl-objects.la \
 		compiler/libl-generator.la \
 	        expander/libl-expand.la \
 		memory/libl-memory.la \
-		lexer/libl-lexer.la  \
 		std/libl-std.la  \
 		c-output/libl-c-output.la \
 		new-parser/libl-new-parser.la \

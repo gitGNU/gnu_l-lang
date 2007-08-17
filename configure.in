@@ -11,7 +11,6 @@ AC_SUBST(DEFAULT_INCLUDES)
 AC_OUTPUT(Makefile
 	  src/Makefile
 	  src/memory/Makefile
-	  src/lexer/Makefile
 	  src/parser/Makefile
 	  src/compiler/Makefile
           src/objects/Makefile
