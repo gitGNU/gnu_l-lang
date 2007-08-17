@@ -491,6 +491,7 @@ init__parse_l() -> Void =
   parse_macro_hash['if'] = &get_parse_function( Macro.if);
   parse_macro_hash['loop'] = &get_parse_function( Macro.loop_like);
   parse_macro_hash['while'] = &get_parse_function( Macro.while_like);
+  parse_macro_hash['make_list'] = &get_parse_function( Macro.loop_like);
   parse_macro_hash['buffered'] = &get_parse_function( Macro.loop_like);
   parse_macro_hash['unbuffered'] = &get_parse_function( Macro.loop_like);
   parse_macro_hash['foreach'] = &get_parse_function( Macro.foreach);

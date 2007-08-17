@@ -253,11 +253,10 @@ head_set( parse_form:Form, next_rules:List< Form>) -> List< Character_Set> =
     {
       //A symbol needs a "check" from the rule following the current one to be validated.
       let l = string_to_int_list(  cast( Symbol_Form, parse_form).value.name);
-      cs_list = make_list({foreach( let head in l)
+      cs_list = make_list foreach( let head in l)
 	    {
 	      make( cast( Character_Set, list( Character_Range( min:head, max:head))));
-	    }; ()});
-      ();
+	    };
       //A symbol needs a "check" from the rule following the current one to be validated.
       //Useful when for instance = is prioritary over ==
       //TODO
@@ -384,7 +383,7 @@ grammar_expander_rec (parse_form:Form, next_rules:List< Form>) -> Form =
 	}
       else if(cf.head == ' ')
 	{
-	  let fl = make_list( {
+	  let fl = make_list {
 	      let grammar_rule_it = cf.form_list;
 	      while(grammar_rule_it != cast( List< Form>, 0))
 		{
@@ -392,7 +391,7 @@ grammar_expander_rec (parse_form:Form, next_rules:List< Form>) -> Form =
 		  let grammar_tail = grammar_rule_it.tail;
 		  make( grammar_expander_rec( grammar_rule, grammar_tail));
 		  grammar_rule_it = grammar_tail;
-		};});
+		}};
 	  //	      foreach( let grammar_rule in cf.form_list)
 		//XXX next is really important here.
 	  //		make( grammar_expander_rec( grammar_rule, cast(List< Form>, 0))); ()});
@@ -558,15 +557,13 @@ grammar_expander_rec (parse_form:Form, next_rules:List< Form>) -> Form =
       //Read the first character; check the other.
       //For now we check them all.
       let cl = string_to_int_list( cast( String_Form, parse_form).value);
-      let form_list = make_list( {
-      foreach( let Int in cl)
-	{
+      let form_list = make_list foreach( let Int in cl)
+      {
 	  //print( "Int: ", int, " ");
 	  //XXX: we don't make any check.
 	  make( Form( read_char()))
-	    }; ()});
+      };
       Form( seq( $@form_list$))
-	
     }
   else if(is_symbol_form( parse_form))
     {
@@ -657,8 +654,7 @@ expand_grammar_list( grammar_list:List< Compound_Form>) -> List< Form> =
     };
 
   //Creates the functions.
-  let form_list = make_list( {
-      foreach( let grammar in grammar_list)
+  let form_list = make_list foreach( let grammar in grammar_list)
 	{
 	  grammar_name = cast( Id_Form, grammar.form_list.tail.head).value;
 
@@ -685,8 +681,7 @@ expand_grammar_list( grammar_list:List< Compound_Form>) -> List< Form> =
 						       lambda_form.return_form));
 	      make( function_form);
 	    };
-	};});
-
+	};
 
   form_list
 };

@@ -13,36 +13,36 @@ Void__type print_String( String__type s);
 void maybe_flush( void);
 String__type make_heap_string( char *s);
 
-typedef struct struct0x0805ee60 *Compound_Form__type;
-typedef struct struct0x0805d760 *Form__type;
+typedef struct struct0x0805eec0 *Compound_Form__type;
+typedef struct struct0x0805d798 *Form__type;
 typedef void *Hash_Table__type;
 typedef void *Output_Descriptor__type;
-struct struct0x0805d760 {
+struct struct0x0805d798 {
 Int__type form_type_;
 };
-struct struct0x0805dbd0 {
+struct struct0x0805dc08 {
 Int__type form_type_;
 Symbol__type value;
 };
-typedef struct struct0x0805dbd0 *Symbol_Form__type;
-typedef struct struct0x0805f010 *List__O__Form__C____type__type;
-struct struct0x0805ee60 {
+typedef struct struct0x0805dc08 *Symbol_Form__type;
+typedef struct struct0x0805f070 *List__O__Form__C____type__type;
+struct struct0x0805eec0 {
 Int__type form_type_;
 Symbol__type head;
 Int__type garbage_;
 List__O__Form__C____type__type form_list;
 };
-struct struct0x0805f010 {
+struct struct0x0805f070 {
 Form__type head;
 List__O__Form__C____type__type tail;
 };
-typedef struct struct0x0805d720 *Exit__type;
-struct struct0x080b27c8 {
+typedef struct struct0x0805d758 *Exit__type;
+struct struct0x08067cc8 {
 Form__type car;
 List__O__Form__C____type__type cdr;
 };
 typedef Hash_Table__type Hash__O__Symbol__c__pointer__O__function__O__Symbol__c__Form__C____C____C____type__type;
-struct struct0x08642378 {
+struct struct0x08666c78 {
 void *car;
 void *cdr;
 };
@@ -85,7 +85,6 @@ Form__type (_l__parse__XML_Parser__Tagged_Compound)(void);
 List__O__Form__C____type__type (_l__parse__XML_Parser__Content_List)(void);
 Form__type (_l__parse__XML_Parser__Content)(void);
 Int__type (_l__parse__Top_Level__Star_Comment_End)(void);
-Form__type (_l__parse__Type__Base_Type)(void);
 Int__type (_l__parse__Top_Level__Comment)(void);
 void (_l__parse__Top_Level__Spacing)(void);
 List__O__Form__C____type__type (_l__parse__Top_Level__All)(void);
@@ -112,6 +111,7 @@ Form__type (_l__parse__Macro__foreach)(Symbol__type );
 Form__type (_l__parse__Macro__cast)(Symbol__type );
 Form__type (_l__parse__Macro__Form)(Symbol__type );
 Form__type (_l__parse__Macro__XML)(Symbol__type );
+Form__type (_l__parse__Type__Base_Type)(void);
 Form__type (_l__parse__Type__Tuple_Type)(void);
 Form__type (_l__parse__Type__Indirection_Type)(void);
 Form__type (_l__parse__Type__Function_Type)(void);

@@ -20,7 +20,7 @@
 
 lib_LTLIBRARIES = libl-new-parser.la
 
-libl_new_parser_la_SOURCES = support.c parse-grammar.c parse-l.c grammar-expander.c
+libl_new_parser_la_SOURCES = support.c parse-grammar.c parse-l.c grammar-expander.c character-set.c
 
 
 #bin_PROGRAMS = test

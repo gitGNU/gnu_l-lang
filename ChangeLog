@@ -1,5 +1,10 @@
 2007-08-17  Matthieu Lemerre  <racin@free.fr>
 
+	* src/new-parser/character-set.c:
+	* src/new-parser/character-set.inc: New files.
+	
+	* src/new-parser/grammar-expander.c: Use new parser for make_list.
+
 	Conversion of grammar-expander.l to new syntax + additions to
 	support it.
 	
