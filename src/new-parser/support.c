@@ -394,8 +394,16 @@ void *_l__parse__parse_grammar__Grammar_Macro_End( void*);
 void *_l__parse__parse_grammar__Grammar_End( void*);
 
 void
-init_newparser_support()
+init_newparser()
 {
+  init_grammar_expander();
+  init__parse_l();
+}
+
+void
+init_export_newparser()
+{
+  
   DEFINE_C_FUNCTION( set_parser_support_to, "Void <- String");
   DEFINE_C_FUNCTION( new_peek_char, "Int <- (Int)");
   DEFINE_C_FUNCTION( peek_char, "Int <- ()");
@@ -422,7 +430,4 @@ init_newparser_support()
 
   eval_cstring( "type Exit = struct { dummy:Int;}*;");
   DEFINE_C_FUNCTION( parse_error, "Exit <- ()");
-
-  init_grammar_expander();
-  init__parse_l();
 }

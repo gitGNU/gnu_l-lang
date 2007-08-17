@@ -35,6 +35,15 @@ void *declare_function_end( void*);
 void
 init ()
 {
+  /* Initialisation is divided into two parts: in the first round, we
+     initialize the necessary structures to get a working environment;
+     in the second, we export important definitions to make them
+     accessible from L.
+  */
+  init_newparser();
+  
+  
+  
   //  init_namespace ();
   // init_read_object ();
   //  init_symbol ();
@@ -57,7 +66,7 @@ init ()
 
   init_library ();
   init_c_output_support();
-  init_newparser_support();
+  init_export_newparser();
 
   eval_file( "init.l");
   

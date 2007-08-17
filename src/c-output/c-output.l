@@ -531,7 +531,7 @@ c_output_function_definition( name:Symbol, l_:Form) -> Void =
   else
     {
       let first_parameter = cast( Compound_Form, parameters_type.form_list.head);
-      assert( first_parameter.head == 'label');
+      assert( first_parameter.head == 'label' or first_parameter.head == ':');
       let first_param_name = cast( Id_Form, first_parameter.form_list.head);
       let first_param_type = first_parameter.form_list.tail.head;
   
@@ -542,7 +542,7 @@ c_output_function_definition( name:Symbol, l_:Form) -> Void =
 	       in cast( List< Compound_Form>, parameters_type.form_list.tail))
 	{
 	  print( ", ");
-	  assert( first_parameter.head == 'label');
+	  assert( parameter.head == 'label' or first_parameter.head == ':');
 	  let param_name = cast( Id_Form, parameter.form_list.head);
 	  let type = parameter.form_list.tail.head;
   
@@ -766,11 +766,20 @@ test () -> Void =
   //  doit( "std/string.l", "std/string.c", "std/string.inc");
   // doit( "std/make-list.l", "std/make-list.c", "std/make-list.inc");
 
-  //    doit( "new-parser/grammar-expander.l", "new-parser/grammar-expander.c", "new-parser/grammar-expander.inc");
+  //doit( "new-parser/character-set.l", "new-parser/character-set.c", "new-parser/character-set.inc");
+
+  
+  doit( "new-parser/grammar-expander.l", "new-parser/grammar-expander.c.new", "new-parser/grammar-expander.inc.new");
+  doit( "new-parser/parse-l.l", "new-parser/parse-l.c.new", "new-parser/parse-l.inc.new");
+  
   //doit( "new-parser/parse-grammar.l", "new-parser/parse-grammar.c", "new-parser/parse-grammar.inc");
 //  doit( "test.l", "test.c", "test.inc");
-//  doit( "new-parser/parse-l.l", "new-parser/parse-l.c", "new-parser/parse-l.inc");
-  doit( "new-parser/parse-l.l", "new-parser/parse-l.c", "new-parser/parse-l.inc");
+  
+  //doit( "new-parser/parse-l.l", "new-parser/parse-l.c", "new-parser/parse-l.inc");
+
+  
+//  doit( "new-parser/parse-l.l", "new-parser/parse-l.c.do", "new-parser/parse-l.inc.do");
+//doit ("expander/expand-loop.l", "expander/expand-loop.aux.c", "expander/expand-loop.aux.inc");
   //doit( "std/error.l", "std/error.c", "std/error.inc");
   //  doit( "std/error.l", "test.c", "test.inc");
 //  doit( "test.l", "test.c", "test.inc");

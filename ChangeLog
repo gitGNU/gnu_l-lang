@@ -1,5 +1,10 @@
 2007-08-17  Matthieu Lemerre  <racin@free.fr>
 
+	First batch of changes to remove usage of the old parser
+	
+
+2007-08-17  Matthieu Lemerre  <racin@free.fr>
+
 	* src/new-parser/character-set.c:
 	* src/new-parser/character-set.inc: New files.
 	

@@ -171,7 +171,7 @@ c_output_type_definition(t:Type) -> Void =
 	    {
 	      assert( is_compound_form( label_form_));
 	      let label_form = cast( Compound_Form, label_form_);
-	      assert( label_form.head == 'label');
+	      assert( label_form.head == 'label' or label_form.head == ':');
 	      let subtf = label_form.form_list.tail.head;
 	      let subtype = intern_type( subtf);
 	      if(has_been_outputed[subtype])

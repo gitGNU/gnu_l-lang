@@ -1411,6 +1411,7 @@ init_expand (void)
   
   define_expander(SYMBOL(let), expand_let);
   define_expander(SYMBOL(funcall), expand_funcall);
+  define_expander(intern( "@funcall"), expand_funcall);
   //  define_expander(SYMBOL(toto), expand_function);
   /* After we have expanded everything, for now we should strip the
 expand info so that the cocyte compiler has a normal tree. In the

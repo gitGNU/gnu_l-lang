@@ -29,6 +29,7 @@ print_form (form_t form);
 #include "../parser/buffer.h"
 #include "../parser/parse.h"
 
+#if 0
 /* Form parser.
 
    For now, we parse only expressions and statement.  Later, we could
@@ -60,6 +61,7 @@ form_parse (form_t *form, Read_Buffer buf)
      the parser.  */
   return ~(EXPRESSION);
 }
+#endif
 
 
 /* Transforms "3 + i" into "generic_form( '+', CONS( int_form( 3),
@@ -257,7 +259,7 @@ init_l_form (void)
 		"form_type_: Int;"
 		"head: Symbol;"
 		"garbage_:Int;"
-                "form_list: List( Form); } *;");
+                "form_list: List< Form>; } *;");
 
   eval_cstring( "type Expanded_Form = struct { form_type_: Int;"
 		"original_form : Form;"
@@ -265,7 +267,7 @@ init_l_form (void)
 		"type: Type ;} *;");
 
   
-  define_parse (SYMBOL (Form), form_parse);
+  //  define_parse (SYMBOL (Form), form_parse);
   define_expander (SYMBOL (Form), expand_form);
   
   DEFINE_C_FUNCTION (print_form, "Int<-Form");

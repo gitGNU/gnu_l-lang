@@ -83,6 +83,7 @@ expand_buffered(generic_form_t form)
   return expbody;
 }
 
+#if 0
 /* Buffered is followed by a statement;  so it can be called like this:
 
    buffered {
@@ -100,6 +101,7 @@ parse_buffered (form_t *form, Read_Buffer buf)
   *form = generic_form_symbol (SYMBOL (buffered), CONS (body, NULL));
   return STATEMENT;
 }
+#endif
 
 /* FORM is of the form (with_non_interactive_output_macro BODY).  Just
    set non_interactive to 1, so that print_macro does not call
@@ -118,6 +120,7 @@ expand_unbuffered(generic_form_t form)
   return expbody;
 }
 
+#if 0
 /* Unbuffered is parsed exactly like buffered.  */
 statement_or_expression_t
 parse_unbuffered (form_t *form, Read_Buffer buf)
@@ -126,6 +129,7 @@ parse_unbuffered (form_t *form, Read_Buffer buf)
   *form = generic_form_symbol (SYMBOL (unbuffered), CONS (body, NULL));
   return STATEMENT;
 }
+#endif
 
 
 
@@ -349,9 +353,11 @@ init_print (void)
   define_expander(SYMBOL(print), expand_print);
   define_expander(SYMBOL(unbuffered), expand_unbuffered);
   define_expander(SYMBOL(buffered), expand_buffered);
+  #if 0
   define_parse (SYMBOL (buffered), parse_buffered);
   define_parse (SYMBOL (unbuffered), parse_unbuffered);
-
+  #endif
+  
   define_printer (TYPE ("String"), String_printer);
   define_printer (TYPE ("Int"), Int_printer);
   define_printer (TYPE ("Symbol"), Symbol_printer);

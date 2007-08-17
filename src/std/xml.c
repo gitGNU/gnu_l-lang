@@ -133,6 +133,8 @@ contain ('stuff' 'toto'). */
 #include <assert.h>
 #include <l/sys/panic.h>
 #include <l/string.h>
+
+#if 0
 
 /* XML parser.  */
 
@@ -328,6 +330,8 @@ xml_parse_string_or_number (Read_Buffer buf)
   
   return maken_heap_string (first, current - first);
 }
+
+#endif
 
 /* An XML data structure and functions.  */
 
@@ -580,7 +584,7 @@ void
 init_xml ()
 {
 
-  define_parse (SYMBOL (XML), xml_parse);
+  //define_parse (SYMBOL (XML), xml_parse);
   //  DEFINE_GENERIC ("XML", compile_xml);
   define_expander(SYMBOL(XML), expand_xml);
 

@@ -212,7 +212,7 @@ grammar Type = {
   rule Type:Form = Function_Type;
 
   // XXX: Probably should allow a spacing after the ":" here.
-  rule Labeled_Type:Form = idf:Lexical.Id_Form ":" type:Type {Compound_Form( ':', list(idf , type))};
+  rule Labeled_Type:Form = idf:Lexical.Id_Form ':' type:Type {Compound_Form( ':', list(idf , type))};
   
 };
 
