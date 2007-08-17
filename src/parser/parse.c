@@ -42,10 +42,8 @@
 #include <string.h>
 #include <assert.h>
 
-#include "parse.h"
 //#include "../symtab/symbols.h"
 #include "form.h"
-#include "buffer.h"
 #include "../objects/symbol.h" 
 #include <l/string.h>
 #include "../objects/pair.h" 

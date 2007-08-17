@@ -20,48 +20,14 @@
 
 #include <assert.h>
 #include <l/form.h>
+#include <l/sys/panic.h>
 #include "../compiler/c-to-l.h"
 
 void
 print_form (form_t form);
 
 #include "../parser/form.h"
-#include "../parser/buffer.h"
-#include "../parser/parse.h"
 
-#if 0
-/* Form parser.
-
-   For now, we parse only expressions and statement.  Later, we could
-   parle any predefined rule in the same way: we could use
-   let Form f = Form(rule:definer, function f = $a);
-
-   Maybe the Form parser should be used differently: we could have
-   let f = Expression(...)
-   let f = Statement(...)
-   let f = Definition(...)
-
-   This is yet unclear.  
- */
-statement_or_expression_t
-form_parse (form_t *form, Read_Buffer buf)
-{
-  char c;
-  do {
-    c = buffer_getchar (buf);
-  } while(c == ' ');
-
-  assert (c == '(');
-
-  l_parse_statement_or_expression (form, buf);
-
-  *form = generic_form_symbol (SYMBOL (Form), CONS (*form, NULL));
-  
-  /* It is a hack, but the close paren token has just been eaten by
-     the parser.  */
-  return ~(EXPRESSION);
-}
-#endif
 
 
 /* Transforms "3 + i" into "generic_form( '+', CONS( int_form( 3),

@@ -62,7 +62,6 @@
 #include <l/sys/hash.h>
 #include <l/std/print.h>
 #include "../compiler/c-to-l.h"
-#include "../parser/parse.h"
 
 /* __thread */ static int is_buffered = 0;
 
@@ -83,26 +82,6 @@ expand_buffered(generic_form_t form)
   return expbody;
 }
 
-#if 0
-/* Buffered is followed by a statement;  so it can be called like this:
-
-   buffered {
-     print(...);
-     print(...);
-   }
-
-   or like this: buffered print(...);
-   or like this: buffered (print(...)); 
-*/
-statement_or_expression_t
-parse_buffered (form_t *form, Read_Buffer buf)
-{
-  form_t body = l_parse_statement (buf);
-  *form = generic_form_symbol (SYMBOL (buffered), CONS (body, NULL));
-  return STATEMENT;
-}
-#endif
-
 /* FORM is of the form (with_non_interactive_output_macro BODY).  Just
    set non_interactive to 1, so that print_macro does not call
    maybe_flush().  */
@@ -119,19 +98,6 @@ expand_unbuffered(generic_form_t form)
   
   return expbody;
 }
-
-#if 0
-/* Unbuffered is parsed exactly like buffered.  */
-statement_or_expression_t
-parse_unbuffered (form_t *form, Read_Buffer buf)
-{
-  form_t body = l_parse_statement (buf);
-  *form = generic_form_symbol (SYMBOL (unbuffered), CONS (body, NULL));
-  return STATEMENT;
-}
-#endif
-
-
 
 /* A hash Type->symbol.  Symbol may name a function, a macro
    ... anything expandable.  */
