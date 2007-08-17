@@ -1,5 +1,11 @@
 2007-08-17  Matthieu Lemerre  <racin@free.fr>
 
+	Conversion of grammar-expander.l to new syntax + additions to
+	support it.
+	
+	* src/init.l: New file. Loaded by init.c
+	* src/new-parser/grammar-expander.l: Converted to new syntax.
+
 	* src/new-parser/parse-l.l: Add parse while_like.
 
 	* src/expander/expand-loop.c: Initialise expand_while

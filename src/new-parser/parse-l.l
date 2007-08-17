@@ -117,7 +117,7 @@ grammar Code = {
 				       form:{Compound_Form( '[]',
 						       list( form, Symbol_Form( id)))}
                                      | '(' form_list:Expression_List ')'
-				       form:{Compound_Form( '@funcall',
+				       form:{Compound_Form( 'funcall',
 							    cons( form, form_list))}
 //				     | '++' form:{Compound_Form( '@post_++',
 //								 list( form))}

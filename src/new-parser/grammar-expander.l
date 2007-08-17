@@ -36,16 +36,17 @@ include "new-parser/character-set.l";
 compile_time global grammar_name:Symbol;
 
 //Rendered useless by get_parse_function.
-compile_time String function_name_from_grammar_and_rule( grammar_name:Symbol,
-							 rule_name:Symbol)
+compile_time function
+function_name_from_grammar_and_rule( grammar_name:Symbol,
+				     rule_name:Symbol) -> String =
 {
   concat( "_l__parse__", concat( convert_id( grammar_name).name,
-				 concat( "__", convert_id( rule_name).name)));
-}
+				 concat( "__", convert_id( rule_name).name)))
+};
 
 
 //Get a function name from its description of type head( grammar.rule)
-expander get_parse_function( form)
+expander get_parse_function( form) =
 {
   let form2 = form.form_list.head;
   assert( is_compound_form( form2));
@@ -64,7 +65,7 @@ expander get_parse_function( form)
   
   Id_Form(intern_string( function_name_from_grammar_and_rule( grammar,
 							      rule)))
-}
+};
 
 
 //compile_time type Exit = struct { dummy:Int;}*;
@@ -80,69 +81,64 @@ expander get_parse_function( form)
 //}
 
 // A hash grammar_name -> rule_name -> Character_Set
-compile_time global head_set_hash:Hash( Symbol, Hash( Symbol, List( Character_Set)));
+compile_time global head_set_hash:Hash< Symbol, Hash< Symbol, List< Character_Set>>>;
 
 // A hash grammar_name -> rule_name -> Form
-compile_time global rules_hash:Hash( Symbol, Hash( Symbol, Form));
+compile_time global rules_hash:Hash< Symbol, Hash< Symbol, Form>>;
 
 // Character set for .; could (or not) contain \n for instance.
 //compile_time global dot_character_set:Character_Set;
 
 // Associates a grammar to a grammar name. Usefule for inter-grammar
 // dependencies.
-compile_time global grammar_hash:Hash( Symbol, Form);
+compile_time global grammar_hash:Hash< Symbol, Form>;
 
 
-// Computes the Head_Set of a grammar rule. For now, it is a List( Character set).
+// Computes the Head_Set of a grammar rule. For now, it is a List< Character set>.
 // But as we want a beter LL( *) parsing, in the future it will be a graph.
 // The second argument is a list of "next rules"; the head is the closest.
 // This is used to compute follow sets.
-compile_time List( Character_Set)
-head_set( parse_form:Form, next_rules:List( Form))
+compile_time function
+head_set( parse_form:Form, next_rules:List< Form>) -> List< Character_Set> =
 {
   //  print_form( parse_form);
   let cs:Character_Set;
-  let cs_list:List( Character_Set);
+  let cs_list:List< Character_Set>;
   if(is_compound_form( parse_form))
     {
       let cf = cast( Compound_Form, parse_form);
       if(cf.head == '[]')
 	{
 	  cs_list = list( make_Character_Set( cast( Form, cf)));
-	  ();
 	}
       else if(cf.head == '[^]')
 	{
 	  cs_list = list( make_inverse_Character_Set( cast( Form, cf)));
-	  ();
 	}
       else if(cf.head == ' ')
 	{
 	  //XXX: make a concatenation of the second argument here?
 	  cs_list = head_set( cf.form_list.head, cf.form_list.tail);
-	  ();
 	}
       else if(cf.head == ':')
 	{
 	  cs_list = head_set( cf.form_list.tail.head, next_rules);
-	  ();
 	}
       else if(cf.head == '|')
 	{
 	  //We do the union of the character sets.
-	  assert( cf.form_list != cast( List( Form), 0));
+	  assert( cf.form_list != cast( List< Form>, 0));
 	  let cs_ = head_set( cf.form_list.head, next_rules);
 	  foreach( let rule in cf.form_list.tail)
 	    {
 	      //XXX: as the rules are normally disjoint, we do not need a real
 	      //union here.
 	      //cs = union_Character_Set( head_set( rule, next_rules), cs);
-	      //cs_ = append( cast( List( Void *), head_set( rule, next_rules)), cs_);
+	      //cs_ = append( cast( List< Void *>, head_set( rule, next_rules)), cs_);
 	      cs_ = union_Character_Set_List( head_set( rule, next_rules), cs_);
-	    }
-	  //	  cs_list = list( sort_Character_Set( cast( List( Character_Range), cs_)));
+	    };
+	  //	  cs_list = list( sort_Character_Set( cast( List< Character_Range>, cs_)));
 	  cs_list = cs_;
-	  ();
 	}
       else if(cf.head == '*')
 	{
@@ -151,51 +147,47 @@ head_set( parse_form:Form, next_rules:List( Form))
 					      head_set( next_rules.head,
 							next_rules.tail));
 	  cs_list = cs_;
-	  ();
 	}
       else if(cf.head == '+')
 	{
 	  cs_list = head_set( cf.form_list.head, cf.form_list.tail);
-	  ();
 	}
       else if(cf.head == '{}')
 	{
-	  if(next_rules == cast( List( Form), 0))
+	  if(next_rules == cast( List< Form>, 0))
 	   {
-	     cs_list = cast( List( Character_Set), 0);
+	     cs_list = cast( List< Character_Set>, 0);
 	     //	     print_form( cast( Form, cf));
 	     //	     panic( "Error in {}\n");
 	   }
-	  else cs_list = head_set( next_rules.head, next_rules.tail);
-	  ();
+	  else {cs_list = head_set( next_rules.head, next_rules.tail);};
 	}
       else if(cf.head == '.')
 	{
 	  let save_grammar_name = grammar_name;
 	  grammar_name = cast( Id_Form, cf.form_list.head).value;
 	  let rule_name = cast( Id_Form, cf.form_list.tail.head).value;
-	  assert( head_set_hash[grammar_name] != cast( Hash( Symbol, List( Character_Set)), 0));
+	  assert( head_set_hash[grammar_name] != cast( Hash< Symbol, List< Character_Set>>, 0));
 	  cs_list = head_set_hash[grammar_name][rule_name];
-	  if(cs_list == cast( List( Character_Set), 0))
+	  if(cs_list == cast( List< Character_Set>, 0))
 	    {
 	      //This is used to prevent infinite recursion
-	      head_set_hash[grammar_name][rule_name] = cast( List( Character_Set), -1);
-	     let named_rule = rules_hash[grammar_name][rule_name];
-	     if(named_rule == cast( Form, 0))
-	       {
-		 panic( "Trying to calculate the head set of an unknown rule: ", rule_name, "\n");
-	       }
-	     cs_list = head_set( named_rule, cast( List( Form), 0));
-	 if(cs_list == cast( List( Character_Set), -1))
-	   {
-	     print( "Error: infinite recursion in rule ", rule_name, "\n");
-	     exit( 3);
-	   }
+	      head_set_hash[grammar_name][rule_name] = cast( List< Character_Set>, -1);
+	      let named_rule = rules_hash[grammar_name][rule_name];
+	      if(named_rule == cast( Form, 0))
+		{
+		  panic( "Trying to calculate the head set of an unknown rule: ", rule_name, "\n");
+		};
+	      cs_list = head_set( named_rule, cast( List< Form>, 0));
+	      if(cs_list == cast( List< Character_Set>, -1))
+		{
+		  print( "Error: infinite recursion in rule ", rule_name, "\n");
+		  exit( 3);
+		};
 	 
-	 head_set_hash[grammar_name][rule_name] = cs_list;
-	   }
+	      head_set_hash[grammar_name][rule_name] = cs_list;
+	    };
 	 grammar_name = save_grammar_name;
-	 ();
 	}
       else if(cf.head == '@')
 	{
@@ -207,7 +199,6 @@ head_set( parse_form:Form, next_rules:List( Form))
 
 	  let grammar_form = call_grammar_macro( form_head, form);
 	  cs_list = head_set( grammar_form, next_rules);
-	  ();
 	}
       else {
 	print( "Unimplemented :|", cf.head, "|\n");
@@ -221,36 +212,34 @@ head_set( parse_form:Form, next_rules:List( Form))
      if(rule_name == '_')
        {
 	 //_ should be interpreted like (something?)
-	 if(next_rules == cast( List( Form), 0))
+	 if(next_rules == cast( List< Form>, 0))
 	   {
 	     panic( "Error in _\n");
-	   }
+	   };
 	 cs_list = head_set( next_rules.head, next_rules.tail);
-	 ();
        }
      else
        {
-	 assert( head_set_hash[grammar_name] != cast( Hash( Symbol, List( Character_Set)), 0));
+	 assert( head_set_hash[grammar_name] != cast( Hash< Symbol, List< Character_Set>>, 0));
 	 cs_list = head_set_hash[grammar_name][rule_name];
-	 if(cs_list == cast( List( Character_Set), 0))
+	 if(cs_list == cast( List< Character_Set>, 0))
 	   {
-	 //This is used to prevent infinite recursion
-	     head_set_hash[grammar_name][rule_name] = cast( List( Character_Set), -1);
+	     //This is used to prevent infinite recursion
+	     head_set_hash[grammar_name][rule_name] = cast( List< Character_Set>, -1);
 	     let named_rule = rules_hash[grammar_name][rule_name];
 	     if(named_rule == cast( Form, 0))
 	       {
 		 panic( "Trying to calculate the head set of an unknown rule: ", rule_name, "\n");
-	       }
-	     cs_list = head_set( named_rule, cast( List( Form), 0));
-	 if(cs_list == cast( List( Character_Set), -1))
-	   {
-	     print( "Error: infinite recursion in rule ", rule_name, "\n");
-	     exit( 3);
-	   }
+	       };
+	     cs_list = head_set( named_rule, cast( List< Form>, 0));
+	     if(cs_list == cast( List< Character_Set>, -1))
+	       {
+		 print( "Error: infinite recursion in rule ", rule_name, "\n");
+		 exit( 3);
+	       };
 	 
-	 head_set_hash[grammar_name][rule_name] = cs_list;
-	   }
-	 ();
+	     head_set_hash[grammar_name][rule_name] = cs_list;
+	   };
        }
    }
   else if(is_string_form( parse_form))
@@ -274,25 +263,25 @@ head_set( parse_form:Form, next_rules:List( Form))
       //TODO
     }
   
-  else {print( "Not handled\n"); print_form( parse_form); exit( 3);}
+  else {print( "Not handled\n"); print_form( parse_form); exit( 3);};
   
   //  let cs = make_Character_Set( cast( Compound_Form, Form( toto( '0'-'9'))));
   //  print_Character_Set( cs);
   //foreach( cs in cs_list) print_Character_Set( cs);
   cs_list
     
-}
+};
 
 // Return a Form usable as a condition for knowing whether to take the branch.
-compile_time Form
-head_set_function( parse_form:Form)
+compile_time function
+head_set_function( parse_form:Form) -> Form =
 {
   let ret_form = cast( Form, 0);
 
   // This introduction of & is a bit hacky, and only works on semantic predicates.
   let cop_form = parse_form;
   while (is_compound_form( cop_form)
-	 && cast( Compound_Form, cop_form).head == ' ')
+	 and cast( Compound_Form, cop_form).head == ' ')
     cop_form = cast( Compound_Form, cop_form).form_list.head;
 
   if(is_compound_form( cop_form))
@@ -302,25 +291,25 @@ head_set_function( parse_form:Form)
     if(cf.head == '&')
       {
 	assert( is_compound_form( cf.form_list.head)
-		&& cast( Compound_Form, cf.form_list.head).head == '{}');
-	ret_form = grammar_expander_rec( cf.form_list.head, cast( List( Form), 0));
-      }
-  }
+		and cast( Compound_Form, cf.form_list.head).head == '{}');
+	ret_form = grammar_expander_rec( cf.form_list.head, cast( List< Form>, 0));
+      };
+  };
   
  // C output does not support gotos in compound expressions.
  if(ret_form == cast( Form, 0))
    { 
-     let ret_set = head_set( parse_form, cast( List( Form), 0));
+     let ret_set = head_set( parse_form, cast( List< Form>, 0));
      
      ret_form = is_in_Character_Set_condition( ret_set);
-   }
+   };
  ret_form
-}
+};
 
-compile_time global id_used:Hash( Symbol, Type);
+compile_time global id_used:Hash< Symbol, Type>;
 
 
-compile_time global semantic_condition_then:struct {condition:Form; then:List( Form);};
+compile_time global semantic_condition_then:struct {condition:Form; then:List< Form>;};
   
 
 
@@ -347,13 +336,13 @@ compile_time global semantic_condition_then:struct {condition:Form; then:List( F
 // If the id is '.', it is replaced by "dot_character_range" (by default 1-255)
 
 //The second argument is a list of "next rules", used for follow_set computation.
-compile_time Form
-grammar_expander_rec (parse_form:Form, next_rules:List( Form))
+compile_time function
+grammar_expander_rec (parse_form:Form, next_rules:List< Form>) -> Form =
 {
   if(is_compound_form( parse_form))
     {
       let cf = cast( Compound_Form, parse_form);
-      if(cf.head == '[]' || cf.head == '[^]')
+      if(cf.head == '[]' or cf.head == '[^]')
 	{
 	  //We don't care about the content of the character set.
 	  Form( read_char())
@@ -370,11 +359,11 @@ grammar_expander_rec (parse_form:Form, next_rules:List( Form))
 
 	  // This should go away when we have context-dependent expanders.
 	  if( is_compound_form( subrule)
-	      && cast( Compound_Form, subrule).head == '*'
-	      || cast( Compound_Form, subrule).head == '+')
+	      and cast( Compound_Form, subrule).head == '*'
+	      or cast( Compound_Form, subrule).head == '+')
 	    {
 	      right_form = Form( make_list( $right_form$));
-	    }
+	    };
 	  
 	  let exp_right_form = expand( right_form);
 
@@ -386,7 +375,7 @@ grammar_expander_rec (parse_form:Form, next_rules:List( Form))
 				    list( cast( Form, id_form),
 					  exp_right_form.type.type_form)));
 	      
-	    }
+	    };
 	  Form( $left_form$ = $cast(Form, exp_right_form)$)
 	}
       else if(cf.head == '{}')
@@ -397,16 +386,16 @@ grammar_expander_rec (parse_form:Form, next_rules:List( Form))
 	{
 	  let fl = make_list( {
 	      let grammar_rule_it = cf.form_list;
-	      while(grammar_rule_it != cast( List( Form), 0))
+	      while(grammar_rule_it != cast( List< Form>, 0))
 		{
 		  let grammar_rule = grammar_rule_it.head;
 		  let grammar_tail = grammar_rule_it.tail;
 		  make( grammar_expander_rec( grammar_rule, grammar_tail));
 		  grammar_rule_it = grammar_tail;
-		} ()});
+		};});
 	  //	      foreach( let grammar_rule in cf.form_list)
 		//XXX next is really important here.
-	  //		make( grammar_expander_rec( grammar_rule, cast(List( Form), 0))); ()});
+	  //		make( grammar_expander_rec( grammar_rule, cast(List< Form>, 0))); ()});
 	  Form( seq( $@fl$))
 	}
       else if(cf.head == '|')
@@ -417,9 +406,9 @@ grammar_expander_rec (parse_form:Form, next_rules:List( Form))
 	  // predicates and semantic actions (e.g., min:('a' {23} | {32})
 	  if(cast( Bool, 1))
 	    {
-	      assert( cf.form_list != cast( List( Form), 0)
-		      && cf.form_list.tail != cast( List( Form), 0)
-		      && cf.form_list.tail.tail == cast( List( Form), 0));
+	      assert( cf.form_list != cast( List< Form>, 0)
+		      and cf.form_list.tail != cast( List< Form>, 0)
+		      and cf.form_list.tail.tail == cast( List< Form>, 0));
 
 	      let maybe_rule = cf.form_list.head;
 	      let cond_form = head_set_function( maybe_rule);
@@ -452,17 +441,16 @@ grammar_expander_rec (parse_form:Form, next_rules:List( Form))
 	  foreach( let grammar_rule in form_list)
 	    {
 	      //	      let char_set = head_set( grammar_rule, next_rules);
-	      let char_set = head_set( grammar_rule, cast( List( Form), 0));
-	      if(char_set == cast( List( Character_Set), 0))
+	      let char_set = head_set( grammar_rule, cast( List< Form>, 0));
+	      if(char_set == cast( List< Character_Set>, 0))
 		{
 		  number_rule_empty = number_rule_empty + 1;
 		  if(number_rule_empty > 1)
 		    panic( "An alternative must have at most one empty rule");
 		  assert( orig_else_form_ptr != cast( Form*, 0));
 		  //		  print_form( else_form);
-		  *orig_else_form_ptr = grammar_expander_rec( grammar_rule, cast( List( Form), 0));
+		  *orig_else_form_ptr = grammar_expander_rec( grammar_rule, cast( List< Form>, 0));
 		  //		  print_form( else_form);
-		  ();
 		}
 	      else
 		{
@@ -473,11 +461,9 @@ grammar_expander_rec (parse_form:Form, next_rules:List( Form))
 		    {
 		      let cfe = cast( Compound_Form, else_form);
 		      orig_else_form_ptr = &(cfe.form_list.tail.tail.head);
-		      ();
-		    }
-		  ();
-		}
-	    }
+		    };
+		};
+	    };
 
 	  let ret_form = Form( block( $Compound_Form('let',
 						     list( peeked_char_form))$ = peek_char(),
@@ -494,7 +480,7 @@ grammar_expander_rec (parse_form:Form, next_rules:List( Form))
 	  let peeked_char_form = Id_Form( peeked_char);
 
 	  Form(loop {
-	      if(!($cond_form$))
+	      if( not( $cond_form$))
 		break;
 	      $grammar_expander_rec(repeated_rule, next_rules)$;
 		})
@@ -507,7 +493,7 @@ grammar_expander_rec (parse_form:Form, next_rules:List( Form))
 
 	  Form(loop {
 	      $grammar_expander_rec(repeated_rule, next_rules)$;
-	      if(!($cond_form$))
+	      if( not( $cond_form$))
 		break;
 		})
 	}
@@ -595,33 +581,35 @@ grammar_expander_rec (parse_form:Form, next_rules:List( Form))
       print_form( parse_form);
       Form( imp2)
 	}
-}
+};
 
-compile_time Form expand_grammar_rule( rule:Form)
-{
-//  id_used = Hash( Symbol, Type);
-//
-//  let function_body = grammar_expander_rec( rule, cast( List( Form), 0));
-//
-//  let var_decl_list = make_list( {
-//  foreach( (let id, let type) in id_used)
-//    {
-//      make( 1);
-//    }; ()});
-//
-  Form( ());
-}
+
+//compile_time function
+//expand_grammar_rule( rule:Form) -> Form =
+//{
+////  id_used = Hash( Symbol, Type);
+////
+////  let function_body = grammar_expander_rec( rule, cast( List< Form>, 0));
+////
+////  let var_decl_list = make_list( {
+////  foreach( (let id, let type) in id_used)
+////    {
+////      make( 1);
+////    }; ()});
+////
+//  Form( ());
+//};
 
 // Allow to call a rule to parse from outside.
 // Future additional arguments may include the string
 // to parse and parameters to the rule.
-expander parse( form)
+expander parse( form) =
 {
   Form( funcall( get_parse_function( $form.form_list.head$),
 		 $@form.form_list.tail$))
-}
+};
 
-expander grammar_expander( form_)
+expander grammar_expander( form_) =
 {
   //XXX: we should tell the expander that we create a block here
   //so that all the allocated variables are defined in here.
@@ -631,29 +619,31 @@ expander grammar_expander( form_)
     {
       print( "Unknown rule\n", rule);
       exit( 3);
-    }
+    };
 
   grammar_name = 'parse_grammar';
-  let form = grammar_expander_rec(rules_hash[grammar_name][rule], cast( List( Form), 0));
+  let form = grammar_expander_rec(rules_hash[grammar_name][rule], cast( List< Form>, 0));
 
   //  print_form( cast( Form, form));
-  form;
-}
+  form
+};
 
-List( Form)
-expand_grammar_list( grammar_list:List( Compound_Form))
+function
+expand_grammar_list( grammar_list:List< Compound_Form>) -> List< Form> =
 {
-  rules_hash = cast( Hash( Symbol, Hash( Symbol, Form)), make_hash_table());
-  head_set_hash = Hash( Symbol, Hash( Symbol, List( Character_Set)));
+  rules_hash = cast( Hash< Symbol, Hash< Symbol, Form>>, make_hash_table());
+  head_set_hash = cast( Hash< Symbol, Hash< Symbol, List< Character_Set>>>,
+			make_hash_table());
   
   //Fill the rule_hashes, set head_set_hash and predefines the functions.
   foreach( let grammar in grammar_list)
     {
       grammar_name = cast( Id_Form, grammar.form_list.tail.head).value;
-      rules_hash[grammar_name] = cast( Hash( Symbol, Form), make_hash_table());
-      head_set_hash[grammar_name] = Hash( Symbol, List( Character_Set));
+      rules_hash[grammar_name] = cast( Hash< Symbol, Form>, make_hash_table());
+      head_set_hash[grammar_name] = cast( Hash< Symbol, List< Character_Set>>,
+					  make_hash_table());
       
-      let rule_list = cast( List( Compound_Form), grammar.form_list.tail.tail);
+      let rule_list = cast( List< Compound_Form>, grammar.form_list.tail.tail);
       
       foreach( let rule in rule_list)
 	{
@@ -663,8 +653,8 @@ expand_grammar_list( grammar_list:List( Compound_Form))
 	  pre_define_function( intern_string( function_name_from_grammar_and_rule( grammar_name,
 										   rule_name)),
 			       rule.form_list.tail.head);
-	}
-    }
+	};
+    };
 
   //Creates the functions.
   let form_list = make_list( {
@@ -672,7 +662,7 @@ expand_grammar_list( grammar_list:List( Compound_Form))
 	{
 	  grammar_name = cast( Id_Form, grammar.form_list.tail.head).value;
 
-	  let rule_list = cast( List( Compound_Form), grammar.form_list.tail.tail);
+	  let rule_list = cast( List< Compound_Form>, grammar.form_list.tail.tail);
 	  foreach( let rule in rule_list)
 	    {
 	      let rule_name = cast( Id_Form, rule.form_list.head).value;
@@ -682,11 +672,11 @@ expand_grammar_list( grammar_list:List( Compound_Form))
 	      let params = cast( Compound_Form, rule.form_list.tail.tail.head);
 	      let form = cast( Form, rule.form_list.tail.tail.tail.head);
 	      
-	      id_used = Hash( Symbol, Type);
+	      id_used = cast( Hash< Symbol, Type>, make_hash_table());
 	      declare_function_begin( params, return_type_form);
 	      declare_block_begin();
 	      
-	      let function_body = grammar_expander_rec( form, cast( List( Form), 0));
+	      let function_body = grammar_expander_rec( form, cast( List< Form>, 0));
 	      let exp_function_body = declare_block_end( list( function_body));
 	      let lambda_form = declare_function_end( exp_function_body);
 	      let function_form = Compound_Form( 'define',
@@ -694,15 +684,15 @@ expand_grammar_list( grammar_list:List( Compound_Form))
 						       Id_Form( function_name),
 						       lambda_form.return_form));
 	      make( function_form);
-	    }
-	}; ()});
+	    };
+	};});
 
 
-  form_list;
-}
+  form_list
+};
 
-Void
-test()
+function
+test() -> Void = 
 {
  //   let rule = Compound_Form( 'define',
  //			    list( Id_Form( 'rule'),
@@ -725,4 +715,4 @@ test()
   //  Form( ());
   //  expand_init_test();
   ();
-}
+};
