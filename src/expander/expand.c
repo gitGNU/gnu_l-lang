@@ -371,9 +371,16 @@ expand_id_no_fail(symbol_t symbol)
 
   if(glob)
     {
-      /* XXX: we could tell the expander this is a global.  */
-      return create_expanded_form( id_form( symbol),
-				   glob->type);
+      if(glob->global_type == GLOBAL_VARIABLE)
+	/* XXX: we could tell the expander this is a global.  */
+	return create_expanded_form( id_form( symbol),
+				     glob->type);
+
+      else if(glob->global_type == GLOBAL_CONSTANT)
+	{
+	  return glob->expression;
+	}
+      else panic( "Not implemented\n");
     }
 
   /* This is an error.  */

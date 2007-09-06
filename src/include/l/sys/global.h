@@ -30,7 +30,7 @@ extern hash_table_t global_hash;
    Maybe these will be only type qualifiers at the end.
 
    This is for use only in the backends, and in expand_id.  */
-typedef enum { NORMAL_GLOBAL,
-               CONSTANT_GLOBAL,
+typedef enum { NORMAL_GLOBAL, GLOBAL_VARIABLE = NORMAL_GLOBAL,
+               CONSTANT_GLOBAL, GLOBAL_CONSTANT = CONSTANT_GLOBAL,
                THREAD_LOCAL_GLOBAL } global_type_t;
 #endif

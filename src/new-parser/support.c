@@ -182,10 +182,10 @@ parse_symbol( String s)
 void
 pre_define_function( Symbol symbol, form_t return_type_form)
 {
-  define_global( symbol,
-		 intern_type( function_type_form( return_type_form,
-						  tuple_type_form( NULL))),
-		 NULL);
+  define_global_variable( symbol,
+			  intern_type( function_type_form( return_type_form,
+							   tuple_type_form( NULL))),
+			  NULL);
 }
 
 extern hash_table_t expander_hash;

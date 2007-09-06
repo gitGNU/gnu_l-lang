@@ -51,31 +51,74 @@
 MAKE_STATIC_HASH_TABLE (global_hash);
 
 void
-define_global( symbol_t name, Type type,
-	       void *address)
+define_global( symbol_t name, global_type_t global_type,
+	       void *param1, void *param2)
 {
   global_t glob = gethash( name, global_hash);
   if(glob)
     {
-      glob->type = type;
-      glob->address = address;
+
+      glob->global_type = global_type;
+      glob->param1 = param1;
+      glob->param2 = param2;
       /* XXX: should have a relocation list and patch all the
 	 relocations on redefinition. */
       return;
     }
   
   glob = MALLOC( global);
-  glob->global_type = NORMAL_GLOBAL;
-  glob->type = type;
-  glob->address = address;
+  glob->global_type = global_type;
+  glob->param1 = param1;
+  glob->param2 = param2;
 
   puthash( name, glob, global_hash);
 }
 
 void
+define_global_variable( symbol_t name, Type type,
+			void *address)
+{
+  define_global( name, NORMAL_GLOBAL, type, address);
+}
+
+
+void
+define_constant( Symbol name, generic_form_t expression)
+{
+  expanded_form_t expform = expand( expression);
+  define_global( name, CONSTANT_GLOBAL, expform, NULL);
+  //  define
+}
+
+void
+expand_all_constant( list_t form_list)
+{
+  FOREACH( element, form_list)
+    {
+      generic_form_t df = CAR( element);
+      assert( is_form(  df, generic_form));
+      assert( df->head == SYMBOL( define));
+	
+      id_form_t form_typef = CAR(df->form_list);
+      assert( is_form( form_typef, id_form));
+      Symbol form_type = form_typef->value;
+      assert( form_type == SYMBOL( constant));
+		
+      id_form_t name_form = CAR( df->form_list->next);
+      assert( is_form( name_form, id_form));
+      Symbol name = name_form->value;
+
+      generic_form_t expression = CAR( df->form_list->next->next);
+      define_constant( name, expression);
+    }
+}
+
+
+
+void
 define_function( Symbol name, Type type, void *address)
 {
-  define_global(  name, type, address);
+  define_global_variable(  name, type, address);
   define_expander(name, expand_function);
 }
 
@@ -133,7 +176,7 @@ expand_all_function_and_global( list_t form_list)
 	{
 	  assert( form_type == SYMBOL( global));
 	  form_t type_form = CAR( df->form_list->next->next);
-	  define_global( name, intern_type( type_form), NULL);
+	  define_global_variable( name, intern_type( type_form), NULL);
 	  expform = define_form(SYMBOL(global),
 				name, type_form);
 	}
@@ -179,7 +222,7 @@ expand_all_function_and_global( list_t form_list)
 	{
 	  assert( form_type == SYMBOL( global));
 	  form_t type_form = CAR( df->form_list->next->next);
-	  define_global( name, intern_type( type_form), NULL);
+	  define_global_variable( name, intern_type( type_form), NULL);
 	  expform = define_form(SYMBOL(global),
 				name, type_form);
 	}
@@ -893,6 +936,9 @@ expand_all( list_t form_list)
   list_t expanded_type_list = NULL;
   if(type_list)
     expanded_type_list = expand_all_types( type_list);
+
+  list_t constant_list = gethash( SYMBOL( constant), ht);
+  expand_all_constant( constant_list);
   
   
   list_t expander_list = reverse(nconc( gethash( SYMBOL( attribute), ht),

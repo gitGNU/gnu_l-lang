@@ -332,8 +332,20 @@ grammar Top_Level = {
 							  Id_Form( name),
 							  type))};
 
+  rule constant<fsymb:Symbol>:Form = name:Lexical.Id_Form '=' exp:Code.Expression ';'
+                                    {Compound_Form( 'define',
+						    list( Id_Form( fsymb),
+							  name,
+							  exp))};
+
   //Works for both type and type alias.
   rule type<fsymb:Symbol>:Form = type_name:Lexical.Id_Form '=' type:Type.Type ';'
+                                 {Compound_Form( 'define',
+						 list( Id_Form( fsymb),
+						       type_name,
+						       type))};
+
+  rule subtype<fsymb:Symbol>:Form = type_name:Lexical.Id_Form '<' type:Type.Type ';'
                                  {Compound_Form( 'define',
 						 list( Id_Form( fsymb),
 						       type_name,
@@ -513,6 +525,8 @@ init__parse_l() -> Void =
   parse_top_level_hash['grammar_macro'] = &get_parse_function( Top_Level.grammar_macro);
   parse_top_level_hash['attribute'] = &get_parse_function( Top_Level.attribute);
   parse_top_level_hash['compile_time'] = &get_parse_function( Top_Level.compile_time);
+  parse_top_level_hash['subtype'] = &get_parse_function( Top_Level.subtype);
+  parse_top_level_hash['constant'] = &get_parse_function( Top_Level.constant);
 };
 
 function test() -> Void =
@@ -564,6 +578,8 @@ function test() -> Void =
    exp = parse( Top_Level.grammar_macro, 'macro');
    exp = parse( Top_Level.attribute, 'let');
    exp = parse( Top_Level.compile_time, 'let');
+   exp = parse( Top_Level.subtype, 'let');
+   exp = parse( Top_Level.constant, 'let');
   print_form( exp);
 
   set_parser_support_to( "(truc == 25) 3 + 023 else 23");

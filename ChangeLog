@@ -1,3 +1,16 @@
+2007-09-06  Matthieu Lemerre  <racin@free.fr>
+
+	Handling of constants.
+
+	* src/init.l (true, false): New constants.
+	* src/expander/expand-define.c : Rename define_global to
+	define_global_variable.
+	Handling of constants.
+	* src/expander/expand.c (expand_id_no_fail): Implement expanding
+	of constants.
+	* src/new-parser/parse-l.l: Can now parse definers `subtype' and
+	`constant'.
+
 2007-08-17  Matthieu Lemerre  <racin@free.fr>
 
 	Cleanup: removal of the old parsers and lexers, completly replaced by the new ones in L.

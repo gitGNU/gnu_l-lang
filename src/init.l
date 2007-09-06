@@ -10,3 +10,9 @@ attribute Type t.type_form = cast( Real_Type, t).common_.type_form;
 
 /* Symbol-related definitions.  */
 attribute Symbol s.name = get_symbol_name( s);
+
+/* Some constants.  */
+//type Bool = Word1;						
+constant true = cast( Bool, 1);
+constant false = cast( Bool, 0);
+						

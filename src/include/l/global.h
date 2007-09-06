@@ -23,18 +23,41 @@
 
 #include <l/sys/global.h>
 
+/* Note: the current gestion of the globals is bad.  Globals should
+   apply to all things that have a global name, and should be
+   differenciated by a "definer type".  For instance, a grammar, an
+   expander, etc... are globals.
+
+   Some globals of different definer types can have the same name and
+   some can't. Thus definer types should be grouped together.
+
+   To prevent name clashesd, "modules" should help protecting distinct
+   names. These modules are just different namespaces.
+*/
 
 typedef struct global
 {
-  /* Address of the global. We put it first so as not to have offset
-     calculation for getting it, when the global is used dynamically
-     in PIC code.  */
-  void *address;
-
   global_type_t global_type;
-  
-  /* Type of the global. */
-  Type type;
+
+  union {
+    /* Address of the global, for global variables. We put it first so as
+     not to have offset calculation for getting it, when the global is
+     used dynamically in PIC code.  */
+    void *address;
+
+    /* Form by which the constant is replaced, for constant values.  */
+    expanded_form_t expression;
+
+    void *param1;
+  };
+
+  union
+  {
+    /* Type of the global, when it is a global variable. */
+    Type type;
+
+    void *param2;
+  };
 } *global_t;
 
 
@@ -48,6 +71,6 @@ get_global( Symbol name)
 
 /* If there is no address, use NULL.  */
 void
-define_global( Symbol name, Type type, void *address);
+define_global_variable( Symbol name, Type type, void *address);
 
 #endif
