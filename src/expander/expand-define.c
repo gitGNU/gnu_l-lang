@@ -78,7 +78,7 @@ void
 define_global_variable( symbol_t name, Type type,
 			void *address)
 {
-  define_global( name, NORMAL_GLOBAL, type, address);
+  define_global( name, NORMAL_GLOBAL, address, type);
 }
 
 
