@@ -819,6 +819,31 @@ expand_all_types( list_t form_list)
   return type_form_list;
 }
 
+
+list_t
+expand_all_subtypes( list_t form_list)
+{
+   FOREACH( element, form_list)
+    {
+      generic_form_t df = CAR( element);
+      assert( is_form(  df, generic_form));
+      assert( df->head == SYMBOL( define));
+	
+      id_form_t form_typef = CAR(df->form_list);
+      assert( is_form( form_typef, id_form));
+      Symbol form_type = form_typef->value;
+      assert( form_type == SYMBOL( subtype));
+		
+      form_t subtype_form = CAR( df->form_list->next);
+      form_t supertype_form = CAR( df->form_list->next->next);
+
+      Type sub = intern_type( subtype_form);
+      Type super = intern_type( supertype_form);
+
+      define_subtype_relationship( sub, super);
+    }
+}
+
 
 /* Expand all.  */
 
@@ -937,6 +962,10 @@ expand_all( list_t form_list)
   if(type_list)
     expanded_type_list = expand_all_types( type_list);
 
+  list_t subtype_list = gethash( SYMBOL( subtype), ht);
+  expand_all_subtypes( subtype_list);
+
+  
   list_t constant_list = gethash( SYMBOL( constant), ht);
   expand_all_constant( constant_list);
   

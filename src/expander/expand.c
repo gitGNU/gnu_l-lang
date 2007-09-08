@@ -473,10 +473,11 @@ declare_function_end( form_t body)
 
   /* TODO: The user may announce only a supertype of the returned
      type.  */
-  if(function_return_type != expanded_body->type)
-    panic("Function body's return type (%s) does not match"
-	  "the given return type(%s)\n", asprint_type(function_return_type),
-	  asprint_type(expanded_body->type));
+//  if(function_return_type != expanded_body->type)
+//    panic("Function body's return type (%s) does not match"
+//	  "the given return type(%s)\n", asprint_type(function_return_type),
+//	  asprint_type(expanded_body->type));
+  expanded_form_t coerced_expanded_body = coerced_form( expanded_body, function_return_type);
 
   /* Create the function type form.  */
   type_form_t function_form = function_type_form(function_return_type->type_form,
@@ -484,7 +485,7 @@ declare_function_end( form_t body)
 
   expanded_form_t eform = create_expanded_form(lambda_form(function_return_type->type_form,
 							   function_parameters,
-							   expanded_body),
+							   coerced_expanded_body),
 					       intern_type(function_form));
 
   function_parameters = NULL;
@@ -1372,6 +1373,7 @@ void
 init_expand (void)
 {
   init_expand_define();
+  init__subtype();
   
   define_expander(SYMBOL(lambda), expand_lambda);
   define_expander(SYMBOL(block), expand_block);

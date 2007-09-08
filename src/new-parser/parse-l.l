@@ -516,6 +516,7 @@ init__parse_l() -> Void =
   parse_top_level_hash = cast( Hash< Symbol, (Symbol -> Form)*>, make_hash_table());
   parse_top_level_hash['function'] = &get_parse_function( Top_Level.function);
   parse_top_level_hash['global'] = &get_parse_function( Top_Level.global);
+  parse_top_level_hash['variable'] = &get_parse_function( Top_Level.global);
   parse_top_level_hash['expander'] = &get_parse_function( Top_Level.expander);
   parse_top_level_hash['type'] = &get_parse_function( Top_Level.type);
   parse_top_level_hash['type_alias'] = &get_parse_function( Top_Level.type);

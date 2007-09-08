@@ -1,3 +1,23 @@
+2007-09-08  Matthieu Lemerre  <racin@free.fr>
+
+	Support for subtypes; function coerced_form can be use to coerce a
+	type into its supertype.
+
+	* test/malebolge14-subtypes.l : New test file.
+
+	* src/expander/Makefile.am : Compiles subtype.c
+
+	* src/expander/expand-define.c (expand_all_subtypes): New
+	function.
+	(expand_all): Call it.
+
+	* src/expander/subtype.l : New file.
+	* src/expander/expand.c (declare_function_end): Coercion for the
+	return value of a function.
+	(init_expand): Calls init__subtype.
+
+	* src/include/l/type.l (Module): New file.
+
 2007-09-06  Matthieu Lemerre  <racin@free.fr>
 
 	Handling of constants.
