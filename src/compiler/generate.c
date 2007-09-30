@@ -605,10 +605,10 @@ compile_struct (generic_form_t form, Struct_Type expected_type)
 {
   Type regular_get_expected_type( Symbol field_name)
   {
-    Type t = gethash( field_name, expected_type->field_hash);
-    if(t == NULL)
+    offset_type_t ot = gethash( field_name, expected_type->field_hash);
+    if(ot == NULL)
       panic( "Error: the expected type does not match the wanted type\n");
-    return t;
+    return ot->type;
   }
 
   location_t loc;

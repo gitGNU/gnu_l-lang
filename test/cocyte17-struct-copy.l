@@ -38,5 +38,7 @@ function test() -> Int =
 
   print ("v.x", struct (x:3,y:4).x,
 	 "v.y", struct (x:3,y:4).y);
-  q.y
+
+  let w = struct (a:3, b:struct (x:4, y:5));
+  w.b.y
 };
