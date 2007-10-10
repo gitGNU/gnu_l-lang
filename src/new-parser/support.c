@@ -172,7 +172,8 @@ parse_symbol( String s)
     }
   
   /* Parse spacing.  */
-  _l__parse__parse_grammar__Spacing();
+  //  _l__parse__parse_grammar__Spacing();
+  _l__parse__Lexical__Spacing();
   
   return intern_string( s);
 }
@@ -380,6 +381,17 @@ char *string = "grammar parse_grammar = {"
 
 }
 
+String
+get_test_string2_comment(void)
+{
+  char *string = "/* A pattern match has two parts: \n"
+"   - a verification part that checks whether there is a match \n"
+"   - an extraction part that binds variables to values as requested.\n"
+    "*/ type a = Int;   ";
+  return make_heap_string( string);
+
+}
+
 void
 parse_error(void)
 {
@@ -427,6 +439,7 @@ init_export_newparser()
   DEFINE_C_FUNCTION( _l__parse__parse_grammar__Grammar_End, "() -> Form ");
   DEFINE_C_FUNCTION( pre_define_function, "(Symbol, Form) -> Void ");
   DEFINE_C_FUNCTION( get_test_string, "() -> String ");
+  DEFINE_C_FUNCTION( get_test_string2_comment, "() -> String ");
 
   eval_cstring( "type Exit = struct { dummy:Int;}*;");
   DEFINE_C_FUNCTION( parse_error, "() -> Exit ");

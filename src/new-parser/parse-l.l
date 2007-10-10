@@ -22,14 +22,39 @@ parse_error() ->  Exit =
   cast( Exit, 3)
 };
 
+// Note: this is more a symbol-macro that a constant.
+compile_time constant
+void_form = Compound_Form( 'tuple', cast( List< Form>, 0));
+
+
 include "new-parser/grammar-macros.l";
+
 
 //XXX: the *_Form rules should store the line and character number.
 // 
 // This comprenhends the lexical elements of the L grammar, but not
 // the operators. This should be re-used by most L-specific grammars.
 grammar Lexical = {
-  rule Comment:Int = "//" [^\n]* "\n" ;
+
+
+  // Observe how regular expressions determinist automatons can be emulated.
+  // Note that with proper tail call optimisation (as performed by
+  // gcc), this construct is efficient.
+  //  rule Star_Comment_End:Int = ("*" ("/"
+  //				   | . Star_Comment_End)
+  //			      | . Star_Comment_End);
+  
+  // Without tail call optimisation or native support for regular expressions,
+  // this accelerates things a lot in most cases.
+  rule Star_Comment_End:Int = [^*]* ("*"+ ("/"
+					   | Star_Comment_End));
+  
+  rule Comment:Int = "/" ("/" [^\n]* "\n"
+			  |"*" Star_Comment_End);
+
+  //rule Slash_or_Comment, returns 1 if it is a slash and 0 if it is a comment.
+  
+  //  rule Comment:Int = "//" [^\n]* "\n" ;
   //XXX: Maybe Spacing should have a +, and other parts could use Spacing? if they want.
   rule Spacing:Void = ([ \n\t]|Comment)* ;
   rule Alpha:Character = [a-zA-Z_] ;
@@ -150,7 +175,14 @@ grammar Code = {
   rule Expression:Form = Assignment;
 
   rule Maybe_Expression:Form = (Expression
-				|{Compound_Form( 'tuple', cast( List< Form>, 0))});
+				|{void_form});//{Compound_Form( 'tuple', cast( List< Form>, 0))});
+
+  // It is an inclusive or, as both can appear; but there must be at
+  // least of of the two.
+  rule Expression_Ior_Semicolon:Form = (exp:Expression (';' {Compound_Form( '@seq',
+									    list( exp, void_form))}
+                                                       | {exp})
+					| ';' {void_form});
   
   // For now, we have two types of sequence: maybe_empty or non empty.
   // 
@@ -162,7 +194,7 @@ grammar Code = {
   // exp1;exp2;....;exp3.
   // if an exp is empty (comprising the first or last), it is replaced by (), i.e. void.
   // Note: ';' can be viewed as a low priority seq operator, with priority lower than =.
-  rule Maybe_Empty_Sequence:Form = tup:{Compound_Form( 'tuple', cast( List< Form>, 0))} //should be @tuple.
+  rule Maybe_Empty_Sequence:Form = tup:{void_form}
      ((exp:Expression (exp_list:( ';' exp2:(Expression|{tup}) {make( exp2)})+
 		         {Compound_Form( '@seq', cons( exp, exp_list))}
 		      |{exp}))
@@ -190,10 +222,18 @@ grammar Code = {
 grammar Type = {
   rule Base_Type:Form = id:Lexical.Id 
                         form:(// Structures.
+			      
 			       &{id == 'struct'} '{'
 			       form_list:(lab_type:Labeled_Type ';'
 				          {make( lab_type)})* '}'
 			        {Compound_Form( 'struct', form_list)}
+
+//			       // Sum types
+			       | &{id == 'sum'} '{'
+			       form_list:(lab_type:Labeled_Type ';'
+				 {make( lab_type)})* '}'
+			  {Compound_Form( 'sum', form_list)}
+			       
 			      // Misc. constructed types.
 			     | '<' form_list2:@Separator(',', Type) ">"
 			       {Compound_Form( id, form_list2)}
@@ -209,6 +249,7 @@ grammar Type = {
                                {form};
   
   rule Function_Type:Form = @Right_Infix_Operator( '->', Indirection_Type, Function_Type);
+  
   rule Type:Form = Function_Type;
 
   // XXX: Probably should allow a spacing after the ":" here.
@@ -265,6 +306,16 @@ grammar Macro = {
 
   rule cast<symb:Symbol>:Form = '(' type:Type.Type ',' exp:Code.Expression ')'
                                 {Compound_Form( 'cast', list( type, exp))};
+
+  rule match<symb:Symbol>:Form = '(' exp:Code.Expression ')' '{'
+                                 rule_list:( label:( id:Lexical.Id ( '(' form_list:Code.Expression_List ')' {Compound_Form( id, form_list)}
+               	                                                     | {Id_Form( id)}))
+                                             ':'
+               	                             action:Code.Expression_Ior_Semicolon
+				             {make( Compound_Form( ':', list( label, action)))} )* '}'
+                                 {Compound_Form( symb, cons( exp, rule_list))};
+  
+  
   
   //Is it useful?
 //  rule print<symb:Symbol>:Form = '(' fl:@Maybe_Empty_Separator<',', (exp:Code.Expression
@@ -287,25 +338,8 @@ compile_time global parse_top_level_hash:Hash< Symbol, (Symbol -> Form)*>;
 // For global, top-level definitions.
 grammar Top_Level = {
 
-  // Observe how regular expressions determinist automatons can be emulated.
-  // Note that with proper tail call optimisation (as performed by
-  // gcc), this construct is efficient.
-  //  rule Star_Comment_End:Int = ("*" ("/"
-  //				   | . Star_Comment_End)
-  //			      | . Star_Comment_End);
-  
-  // Without tail call optimisation or native support for regular expressions,
-  // this accelerates things a lot in most cases.
-  rule Star_Comment_End:Int = [^*]* ("*"+ ("/"
-					   | Star_Comment_End)
-				     |Star_Comment_End);
-  
-  rule Comment:Int = "/" ("/" [^\n]* "\n"
-			  |"*" Star_Comment_End);
-  //XXX: Maybe Spacing should have a +, and other parts could use Spacing? if they want.
-  rule Spacing:Void = ([ \n\t]|Comment)* ;
-  
-  rule All:List< Form> = Spacing list:(form:Top Spacing {make( form)})*  {list};
+  // Note: as the definers end with ';', they eat up all their spacing.
+  rule All:List< Form> = Lexical.Spacing list:(form:Top {make( form)})*  {list};
 
   
   rule Top:Form = id:Lexical.Id {{let funptr = parse_top_level_hash[id];
@@ -449,9 +483,14 @@ function test_xml() -> Void =
 
 function test_top() -> Void = 
 {
-  set_parser_support_to( "function add_three( i:Int) -> Int = i + 3 + 'toto\n' ;");
+  //  set_parser_support_to( "/* a***a */ type toto = sum {a:Int; b:Void *;};");
+  //  set_parser_support_to( "type toto /* truc  trac */ = sum {a:Int; b:Void *;};");
+  //  set_parser_support_to( "function add_three( i:Int) -> Int = i + 3 + 'toto\n' ;");
+  //  set_parser_support_to( get_test_string2_comment());
+  //  parse( Top_Level.Spacing);
   let form = parse( Top_Level.Top);
   print_form( form);
+  exit( 3);
 
   set_parser_support_to( "global c_output_hash:Hash<Symbol, ((Expanded_Compound_Form)-> Void)*>;");
   form = parse( Top_Level.Top);
@@ -511,6 +550,7 @@ init__parse_l() -> Void =
   parse_macro_hash['XML'] = &get_parse_function( Macro.XML);
   parse_macro_hash['break'] = &get_parse_function( Macro.break);
   parse_macro_hash['continue'] = &get_parse_function( Macro.continue);
+  parse_macro_hash['match'] = &get_parse_function( Macro.match);
   //  parse_macro_hash['print'] = &get_parse_function( Macro.print);
 
   parse_top_level_hash = cast( Hash< Symbol, (Symbol -> Form)*>, make_hash_table());
@@ -533,8 +573,27 @@ init__parse_l() -> Void =
 function test() -> Void =
 {
   init__parse_l();
-    
+
+  set_parser_support_to( "function test() -> Int = { /* a***/ 3 * 4};");
+  let lform2 = parse( Top_Level.Top);
+  print_form( lform2);
+  exit( 8);
+
+  
+  set_parser_support_to( get_test_string());
+  let lform = parse( Top_Level.Top);
+  print_form( lform);
+  exit( 7);
+  
   test_top();
+
+
+  //  set_parser_support_to( "{match( ts3) {  b:tr; a(let i): i b(let s): 23; c(let d, e:let e): {d + e} h:;}; 3}");
+  set_parser_support_to( "{match( ts3) {  a(let i): i; }; 3}");
+  let theform = parse( Code.Expression);
+  print_form( theform);
+  exit( 3);
+
   exit( 3);
 
   test_xml();
@@ -568,6 +627,7 @@ function test() -> Void =
    exp = parse( Macro.cast, 'let');
    exp = parse( Macro.break, 'let');
    exp = parse( Macro.continue, 'let');
+   exp = parse( Macro.match, 'let');
    exp = parse( Macro.foreach, 'let');
    exp = parse( Top_Level.function, 'let');
    exp = parse( Top_Level.global, 'let');

@@ -1,3 +1,10 @@
+2007-10-10  Matthieu Lemerre  <racin@free.fr>
+
+	Parser now handles the C-style /* ... */ comments.
+
+	* src/new-parser/parse-l.l : Change Lexical.Comment
+	* src/new-parser/support.c : Use Lexical.Spacing for spacing.
+
 2007-09-30  Matthieu Lemerre  <racin@free.fr>
 
 	Bugfix in the `struct' special form.
