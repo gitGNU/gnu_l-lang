@@ -281,12 +281,18 @@ Symbol
 mangle_type_name( Type t)
 {
   assert( t->type_type == BASE_TYPE);
-  /* For now.  */
-  if(is_form( t->type_form, id_form))
-    return ((id_form_t) t->type_form)->value;
 
   char buffer[1024];
   char *start = buffer;
+  
+//  if(is_form( t->type_form, id_form))
+//    {
+//      //return ((id_form_t) t->type_form)->value;
+//
+//    }
+    //return ((id_form_t) t->type_form)->value;
+
+
   mangle_type_name_rec( &start, t->type_form);
 
   /* L Types are in a different namespace than functions etc; this is

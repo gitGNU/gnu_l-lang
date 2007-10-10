@@ -1,3 +1,11 @@
+2007-10-11  Matthieu Lemerre  <racin@free.fr>
+
+	Remove special case for base types; fix typedef of pointer to functions bug.
+
+	* src/c-output/c-output-type.l:
+	* src/c-output/c-output.l:
+	* src/c-output/support.c:
+
 2007-10-10  Matthieu Lemerre  <racin@free.fr>
 
 	Parser now handles the C-style /* ... */ comments.

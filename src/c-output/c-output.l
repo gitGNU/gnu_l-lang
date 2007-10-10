@@ -769,9 +769,12 @@ test () -> Void =
   //doit( "new-parser/character-set.l", "new-parser/character-set.c", "new-parser/character-set.inc");
 
 
-  doit( "new-parser/grammar-expander.l", "new-parser/grammar-expander.c.new", "new-parser/grammar-expander.inc.new");
-  doit( "new-parser/parse-l.l", "new-parser/parse-l.c.new", "new-parser/parse-l.inc.new");
+  //  doit( "new-parser/grammar-expander.l", "new-parser/grammar-expander.c.new", "new-parser/grammar-expander.inc.new");
+//  doit( "new-parser/parse-l.l", "new-parser/parse-l.c", "new-parser/parse-l.inc");
+  doit( "expander/left-expand.l", "expander/left-expand_l.c", "expander/left_expand_l.inc");
 
+  //  doit( "expander/subtype.l", "expander/subtype.c", "expander/subtype.inc");
+  
   //doit( "new-parser/parse-grammar.l", "new-parser/parse-grammar.c", "new-parser/parse-grammar.inc");
 //  doit( "test.l", "test.c", "test.inc");
   

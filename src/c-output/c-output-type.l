@@ -77,10 +77,12 @@ c_output_type( name:Symbol, t:Type) -> Void =
 	{
 	  assert( is_id_form( bt.type_form));
 	  print( cast( Id_Form, bt.type_form).value);
+	  print( "__type");
 	}
       else print( mangle_type_name( t));
-      
-      print( "__type ", name);
+
+      print( " ", name);
+      //      print( "__type ", name);
     }
   else if(is_struct_type( t))
     {
@@ -183,7 +185,7 @@ c_output_type_definition(t:Type) -> Void =
 	  print( "typedef ");
 	  c_output_type( mangle_type_name( t),
 			 bt.origin_type);
-	  print( "__type");
+	  //	  print( "__type");
 	  print( ";\n");
 	}
       else if(is_struct_type( t))
