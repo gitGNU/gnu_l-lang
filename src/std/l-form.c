@@ -83,10 +83,10 @@ expand_form_rec (generic_form_t form, list_t id_list)
 
       expanded_form_t exp_form = expand (CAR (form_list));
 
-      if(exp_form->type != TYPE ("Form"))
-	panic ("Error: $can replace only forms.  \n");
+      //      if(exp_form->type != TYPE ("Form"))
+      //	panic ("Error: $can replace only forms.  \n");
 
-      return exp_form;
+      return coerced_form( exp_form, TYPE( "Form"));
     }
   
   if(form->head == intern ("$@"))
@@ -176,6 +176,13 @@ is_compound_form( form_t f)
 }
 
 int
+is_expanded_form( form_t f)
+{
+  return is_form( f, expanded_form);
+}
+
+
+int
 is_id_form( form_t f)
 {
   return is_form( f, id_form);
@@ -245,6 +252,7 @@ init_l_form (void)
 		     "(Symbol, List< Form>) -> Form");
 
   DEFINE_C_FUNCTION( is_compound_form, "(Form) -> Bool");
+  DEFINE_C_FUNCTION( is_expanded_form, "(Form) -> Bool");
   DEFINE_C_FUNCTION( is_id_form, "Form -> Bool");
   DEFINE_C_FUNCTION( is_symbol_form, "Form -> Bool");
   DEFINE_C_FUNCTION( is_string_form, "Form -> Bool");
@@ -252,4 +260,12 @@ init_l_form (void)
   
   /* In fact, Expanded_Form<-Form.  */
   DEFINE_C_FUNCTION (expand, "Form -> Expanded_Form");
+  DEFINE_C_FUNCTION( coerced_form, "(Expanded_Form, Type) -> Expanded_Form");
+
+  #undef Expanded_Form
+  expanded_form_t (Expanded_Form)( form_t f, Type t);
+  DEFINE_C_FUNCTION (Expanded_Form,
+		     "(Form, Type) -> Expanded_Form");
+
+  
 }

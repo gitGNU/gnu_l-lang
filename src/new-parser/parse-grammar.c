@@ -822,6 +822,7 @@ _sharp_make_list619;});
 ({(read_char)();});
 (_l__parse__parse_grammar__Spacing)();
 ({(read_char)();});
+ (_l__parse__parse_grammar__Spacing)();
 ({(Compound_Form)(intern( "define"), ({
 struct struct0x08067530 *_sharp_pair_625;
 ({_sharp_pair_625;

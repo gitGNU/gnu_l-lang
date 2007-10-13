@@ -149,6 +149,25 @@ generic_form_symbol (symbol_t head, list_t list)
 form_t Compound_Form( symbol_t head, list_t list) __attribute__((alias( "generic_form_symbol")));
 
 
+expanded_form_t
+create_expanded_form(form_t form, Type type)
+{
+  assert(!(is_form(form, expanded_form)));
+
+  expanded_form_t expanded_form = new_form(expanded);
+
+  expanded_form->return_form = form;
+  expanded_form->type = type;
+  
+  return expanded_form;
+}
+
+
+#undef Expanded_Form
+expanded_form_t
+Expanded_Form(form_t form, Type type) __attribute__((alias("create_expanded_form")));
+
+
 
 generic_form_t
 generic_form (id_form_t head, list_t list)
@@ -866,6 +885,15 @@ void lispify_rec (form_t form, int indent, int cur_indent)
     }
 }
 
+
+void
+print_form_list( list_t forml)
+{
+  FOREACH( element, forml)
+    {
+      lispify( CAR( element));
+    }
+}
 
 void
 lispify (form_t form)

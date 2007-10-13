@@ -1,3 +1,8 @@
+2007-10-13  Matthieu Lemerre  <racin@free.fr>
+
+	Make `coerced_form' and `is_expanded_form' available to L;
+	bugfix in the parser, in the expander, and in C output.
+
 2007-10-11  Matthieu Lemerre  <racin@free.fr>
 
 	Remove special case for base types; fix typedef of pointer to functions bug.

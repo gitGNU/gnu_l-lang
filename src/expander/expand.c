@@ -108,24 +108,6 @@
 
 MAKE_STATIC_HASH_TABLE(expander_hash);
 
-
-
-expanded_form_t
-create_expanded_form(form_t form, Type type)
-{
-  assert(!(is_form(form, expanded_form)));
-
-  expanded_form_t expanded_form = new_form(expanded);
-
-  expanded_form->return_form = form;
-  expanded_form->type = type;
-  
-  return expanded_form;
-}
-
-
-
-
 /*
 XXX: translate_id for id translation.  We could thus make
 current_block and current_function static.
@@ -910,9 +892,11 @@ expand_function(generic_form_t form)
 	  {
 	    compile_error( "Too many arguments given when calling %s\n", head->name);
 	  }
-	type_check( last_element->type, type_array[type_counter++]);
-	
-	*expanded_form_list_ptr = CONS(last_element, NULL);
+	//	type_check( last_element->type, type_array[type_counter++]);
+	expanded_form_t cform = coerced_form( last_element,
+					      type_array[type_counter++]);
+	//	*expanded_form_list_ptr = CONS(last_element, NULL);
+	*expanded_form_list_ptr = CONS(cform, NULL);
 	expanded_form_list_ptr = &((*expanded_form_list_ptr)->cdr);
       }
     if(type_counter < tuple_length)
@@ -1369,6 +1353,7 @@ define_expander(symbol_t symbol, expander_t expander)
   puthash(symbol, expander, expander_hash);
 }
 
+#include "../compiler/c-to-l.h"
 void
 init_expand (void)
 {

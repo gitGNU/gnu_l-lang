@@ -47,4 +47,10 @@ define_type_constructor (Symbol name,
 /* Prints the generic type form in the buffer in a generic way.  */
 void bprint_type_misc (Buffer, generic_form_t);
 
+
+/* Try to make form FORM fit into type T (e.g. it could be a subtype).  */
+void *
+coerced_form( /*expanded_form_t*/ void * form, Type t);
+
+
 #endif

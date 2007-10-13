@@ -123,7 +123,7 @@ grammar parse_grammar = {
   rule Grammar:Form = "grammar" Spacing Grammar_End;
 
   rule Grammar_End:Form = id:Identifier Spacing "=" Spacing
-  "{" Spacing gr_list:(gr:Grammar_Rule {make( gr)})* "}" Spacing ";"
+  "{" Spacing gr_list:(gr:Grammar_Rule {make( gr)})* "}" Spacing ';'
   {  Compound_Form( 'define',
 		    cons( Id_Form( 'grammar'),
 			  cons( Id_Form( id),

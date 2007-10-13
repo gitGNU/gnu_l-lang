@@ -448,6 +448,7 @@ Define_Form (generic_form, Generic_Compound_Form);
 #undef Compound_Form
 #undef Symbol_Form
 #undef Float_Form
+#undef Expanded_Form
 
 
 //form_t
