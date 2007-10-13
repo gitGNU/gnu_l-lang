@@ -546,8 +546,7 @@ c_output_function_definition( name:Symbol, l_:Form) -> Void =
 	  let param_name = cast( Id_Form, parameter.form_list.head);
 	  let type = parameter.form_list.tail.head;
   
-	  c_output_type( '', intern_type( cast( Form, type)));
-	  print( " ", convert_id( param_name.value));
+	  c_output_type( param_name.value, intern_type( cast( Form, type)));
 	}
     };
   print( ")\n{\nreturn ");
