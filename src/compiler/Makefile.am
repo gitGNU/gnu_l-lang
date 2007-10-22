@@ -22,7 +22,7 @@ SUBDIRS = jit
 
 lib_LTLIBRARIES = libl-generator.la
 
-libl_generator_la_SOURCES = analysis.c generate.c type.c #location.c form.c type_form.c analysis.c register.c stack.c jit_backend.c #high-location.c
+libl_generator_la_SOURCES = generate.c type.c #location.c form.c type_form.c analysis.c register.c stack.c jit_backend.c #high-location.c
 
 libl_generator_la_LIBADD = jit/libl-jit-backend.la
 
