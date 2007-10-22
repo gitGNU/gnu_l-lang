@@ -792,6 +792,17 @@ define_type_constructor (Symbol name,
 void
 new_init_type ()
 {
+  define_type_string ("Int", sizeof(int), __alignof__ (int), NULL);
+  define_type_string ("Bool", sizeof(int), __alignof__ (int), NULL); 
+  define_type_string ("Type", sizeof(int), __alignof__ (int), NULL);
+  define_type_string ("Function", sizeof(int), __alignof__ (int), NULL);
+  define_type_string ("Symbol", sizeof(int), __alignof__ (int), NULL);
+  define_type_string ("String", sizeof(int), __alignof__ (int), NULL);
+
+  /* Label should have a type of -1, like functions, but for now
+     we need them to be of size 0.  */
+  define_type_string ("Label", 0, 0, NULL);
+  
   is_defining_type = 0;
   uncomplete_types = NULL;
   define_type_constructor (SYMBOL (tuple),
@@ -814,4 +825,8 @@ new_init_type ()
 			   bprint_type_label, make_type_label);
   define_type_constructor (intern( ":"),
 			   bprint_type_label, make_type_label);
+
+  //define_type_string ("Void", -1, -1, NULL); /* Void has no size.  */
+  eval_cstring( "type_alias Void = ();");
+
 }
