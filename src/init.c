@@ -57,11 +57,9 @@ init ()
   //Exporting C functions to L requires the parser to be initialized
   init_parser ();
 
-
   init_expand ();
 
   init_location ();
-  init_analysis ();
   init_generate ();
 
   init_library ();
@@ -80,17 +78,12 @@ init ()
 //		"compile_time attribute Type t.type_form = cast( Real_Type, t).common_.type_form;");
 //
 //  eval_cstring( "compile_time attribute Symbol s.name = get_symbol_name( s);");
-
   
-
   DEFINE_C_FUNCTION( declare_block_begin, "() -> ()");
   DEFINE_C_FUNCTION( declare_block_end, "(List< Form>) -> Expanded_Form ");
   DEFINE_C_FUNCTION( declare_function_begin, "(Compound_Form, Form) -> () ");
   DEFINE_C_FUNCTION( declare_function_end, "(Expanded_Form) -> Expanded_Form ");
 
-  
-
-  
   //  DEFINE_C_FUNCTION (expand, "Form -> Void *");
   //  DEFINE_C_FUNCTION (compile, "Form -> Void ");
 
