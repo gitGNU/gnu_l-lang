@@ -1106,6 +1106,7 @@ expand_if(generic_form_t form)
 		{
 		  ret_type = exp_else_form->type;
 		}
+	      /* XXX: should find a common ancestor instead.  */
 	      else panic("Type of the then (%s) and the else (%s) should be the same\n", 
 			 asprint_type(exp_then_form->type),
 			 asprint_type(exp_else_form->type));
