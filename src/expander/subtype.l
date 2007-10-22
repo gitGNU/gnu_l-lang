@@ -1,8 +1,9 @@
 include "include/l/type.l";
 
 // We represent the subtype relationship by two doublehash.
-// It really could be modelled in a Prolog-like language.
-// The problem is the one of finding if there is a path between two nodes in a DAG.
+// It really could be modelled in a Prolog or Datalog-like language.
+// The main problem is the one of finding if there is a path between two nodes in a DAG;
+// But there are also other problems, such as finding a common ancestor between two nodes.
 //
 // Note: the direct_subtype hash has no use except for debugging for now.
 // 
