@@ -20,7 +20,7 @@
 
 lib_LTLIBRARIES = libl-expand.la
 
-libl_expand_la_SOURCES = expand.c access.c left-expand.c expand-loop.c expand-loop.aux.c expand-define.c subtype.c
+libl_expand_la_SOURCES = expand.c access.c expand-loop.c expand-loop.aux.c expand-define.c subtype.c left-expand_l.c
 
 AM_CFLAGS = -g -O0 -Wall
 CFLAGS = -g -O0 -Wall

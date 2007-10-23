@@ -1421,7 +1421,7 @@ future, the cocyte compiler will take the expanded tree as its
 input.  */
 
   DEFINE_C_FUNCTION( insert_local_variable, "(Symbol, Type) -> Symbol");
-  init_left_expand ();
+  init__left_expand ();
   init_access ();
   init_expand_loop();
 }

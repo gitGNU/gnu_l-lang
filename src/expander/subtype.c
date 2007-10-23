@@ -220,13 +220,3 @@ Output_Descriptor__type save_od_;
 Type__type  Type(Int__type  i)
 {
 return ((Type__type ) i);}
-
-Bool__type  test(void)
-{
-return ({
-({(init__subtype)();
-(define_subtype_relationship)((Type)(3), (Type)(4));
-(define_subtype_relationship)((Type)(2), (Type)(3));
-(is_subtype)((Type)(2), (Type)(4));});
-})
-;}
