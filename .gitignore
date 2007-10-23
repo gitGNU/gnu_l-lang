@@ -16,6 +16,9 @@
 *.so.*
 Makefile
 Makefile.in
+TAGS
+cscope.files
+cscope.out
 .deps
 .libs
 
