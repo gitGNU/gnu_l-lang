@@ -331,6 +331,13 @@ insert_id( symbol_t symbol, int can_shadow, Species species, ...)
   return ii->unique_name;
 }
 
+/* Return an uniquified variable.  */
+Symbol
+insert_local_variable( Symbol s, Type t)
+{
+  insert_id( s, 1, SPECIES_VARIABLE, t);
+}
+
 
 #include <l/global.h>
 
@@ -1413,6 +1420,7 @@ expand info so that the cocyte compiler has a normal tree. In the
 future, the cocyte compiler will take the expanded tree as its
 input.  */
 
+  DEFINE_C_FUNCTION( insert_local_variable, "(Symbol, Type) -> Symbol");
   init_left_expand ();
   init_access ();
   init_expand_loop();
