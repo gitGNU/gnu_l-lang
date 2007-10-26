@@ -290,13 +290,12 @@ check_struct_parameters( generic_form_t struct_type_form,
 	if(label != type_label)
 	  panic ("Label mismatch\n");
 
-	/* Check type.  */
-	type_check (intern_type (CAR (type_form->form_list->next)),
-		    expanded_exp->type);
+	expanded_form_t new_exp_form = coerced_form( expanded_exp,
+						     intern_type (CAR (type_form->form_list->next)));
 	
 	*expression_list_ptr = CONS ( create_expanded_form(label_form_symbol( label,
-									      expanded_exp),
-							   expanded_exp->type),
+									      new_exp_form),
+							   new_exp_form->type),
 				      NULL);
 	expression_list_ptr = &((*expression_list_ptr)->next);
       }
