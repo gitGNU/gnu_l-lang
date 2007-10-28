@@ -250,7 +250,7 @@ grammar Type = {
   
   rule Function_Type:Form = @Right_Infix_Operator( '->', Indirection_Type, Function_Type);
   
-  rule Type:Form = Function_Type;
+  rule Type:Form = @Replaceable<Function_Type>;
 
   // XXX: Probably should allow a spacing after the ":" here.
   rule Labeled_Type:Form = idf:Lexical.Id_Form ':' type:Type {Compound_Form( ':', list(idf , type))};
