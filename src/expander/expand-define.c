@@ -954,10 +954,14 @@ expand_all( list_t form_list)
      should be expanded, then the types, then the expanders, then the
      functions, then the globals.  */
 
+  /* Note: because of that, type aliases are treated before types for
+     no reason.  */
   list_t type_list = gethash( SYMBOL( type), ht);
   list_t type_alias_list = gethash( SYMBOL( type_alias), ht);
   type_list = reverse( nconc( type_list, type_alias_list));
+  
 
+  
   list_t expanded_type_list = NULL;
   if(type_list)
     expanded_type_list = expand_all_types( type_list);
