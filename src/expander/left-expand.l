@@ -187,12 +187,7 @@ left_expand_tuple (cf:Compound_Form, expression:Expanded_Form) -> Pattern_Return
 	*id_list_ptr = cons( tuple_copy, cast( List<Symbol>, 0));
 	id_list_ptr = &((*id_list_ptr).tail);
 	
-	//	let copy_form = Form( let $Id_Form(tuple_copy)$ = $subexpr$);
-	//	let copy_form = Form( let $Id_Form(tuple_copy)$ = $subexpr$);
-	let copy_form = Compound_Form( '=',
-				       list( Compound_Form( 'let',
-							    list( Id_Form( tuple_copy))),
-					     subexpr));
+	let copy_form = Form( let $Id_Form(tuple_copy)$ = $subexpr$);
 	
 	*assign_form_list_ptr = cons( expand( copy_form), cast( List<Expanded_Form>, 0));
 	assign_form_list_ptr = &((*assign_form_list_ptr).tail);
@@ -221,11 +216,9 @@ left_expand_tuple (cf:Compound_Form, expression:Expanded_Form) -> Pattern_Return
   };
 
   assert( cur_id == cast( List<Symbol>, 0));
-  //  let return_form = Form( ($assign_form_list$; $second_assign_list$));
-  let return_form = Compound_Form( 'seq',
-				   list( Compound_Form( 'seq', cast( List<Form>,
-								     assign_form_list)),
-					 Compound_Form( 'seq', second_assign_list)));
+  let return_form = Form( ($Compound_Form( 'seq', cast( List<Form>,
+							assign_form_list))$;
+			   $Compound_Form( 'seq', second_assign_list)$));
   
   Pattern_Return( verification:Form( ()),
 		  extraction:expand( return_form))

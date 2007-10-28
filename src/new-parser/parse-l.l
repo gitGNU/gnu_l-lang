@@ -264,7 +264,7 @@ grammar Macro = {
 //                               (":" type:Type.Type typel:{list( type)})?
 //                               {Compound_Form( 'let', cons( id, typel))};
 
-  rule let<symb:Symbol>:Form = id:Lexical.Id_Form 
+  rule let<symb:Symbol>:Form = id:@Replaceable<Lexical.Id_Form>
                                typel:(":" type:Type.Type {list( type)}
 			             | {cast( List< Form>, 0)})
                                {Compound_Form( 'let', cons( id, typel))};
@@ -324,7 +324,7 @@ grammar Macro = {
 //										      list( exp, exp2))}
 //								      |{exp}))> ')'
 //                                          {Compound_Form( 'print', fl)};
-  rule Form<symb:Symbol>:Form = '(' exp:@Replacable<Code.Expression> ')'
+  rule Form<symb:Symbol>:Form = '(' exp:@Allow_Replacement<Code.Expression> ')'
                                   {Compound_Form( 'Form', list( exp))};
 
   rule XML<fsymb:Symbol>:Form = '(' form:XML_Parser.Content ')' {Compound_Form( 'XML',

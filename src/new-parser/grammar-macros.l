@@ -43,13 +43,22 @@ grammar_macro @Unary_Prefix_Operator< operators, subrule, this_rule> =
 
 // Surround a rule by this macro when the rule's content is intended to be a replacement
 // XXX: should check that use of replacement is ok by using a dynamically scoped variable
+// XXX: we should define a Replacement2, with two $$, when $ cannot be used (e.g. in perl code)
 grammar_macro @Replacement< rule> = __rep_symb:('$@'|'$')//{if(replacable == false)
                 				           //parse_error( "Replacement not allowed here\n")}
 				    __rep_exp:rule '$' {Compound_Form( __rep_symb, list( __rep_exp))};
 
-// Allows a rule to use replacements.
+// Use this when a rule can be replaced. The rule must then return a Form.
+grammar_macro @Replaceable< rule> = ( @Replacement<Code.Sequence> 
+				   | rule );
+
+
+
+// Allows a rule to use replacements in the subrules.
+// The idea is to forbid replacements outside of the Form macro.
 // XXX: should set the dynamically scoped variable
-grammar_macro @Replacable<rule> = rule;
+grammar_macro @Allow_Replacement<rule> = rule;
+
 
 
 // Other tips:

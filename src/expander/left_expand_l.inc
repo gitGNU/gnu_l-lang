@@ -56,7 +56,7 @@ struct struct0x08218c30 {
 Expanded_Form__type car;
 List__O__Expanded_Form__C____type cdr;
 };
-typedef struct struct0x085a2668 *Pointer_Type__type;
+typedef struct struct0x085a2408 *Pointer_Type__type;
 struct struct0x0805e088 {
 Int__type type_type;
 Form__type type_form;
@@ -64,22 +64,22 @@ Int__type size;
 Int__type alignment;
 };
 typedef struct struct0x0805e088 Common_To_All_Type__type;
-struct struct0x085a2668 {
+struct struct0x085a2408 {
 Common_To_All_Type__type common_;
 Type__type pointed_type;
 };
-typedef struct struct0x085b70a8 *Pattern_Return__type;
-struct struct0x085b70a8 {
+typedef struct struct0x085b6e48 *Pattern_Return__type;
+struct struct0x085b6e48 {
 Form__type verification;
 Form__type extraction;
 };
 typedef Hash_Table__type Hash__O__Symbol__c__Left_Expander__C____type;
-typedef struct struct0x085d0028 *List__O__Symbol__C____type;
-struct struct0x085d0028 {
+typedef struct struct0x085cfdc8 *List__O__Symbol__C____type;
+struct struct0x085cfdc8 {
 Symbol__type head;
 List__O__Symbol__C____type tail;
 };
-struct struct0x085d8d60 {
+struct struct0x085d8b08 {
 Symbol__type car;
 List__O__Symbol__C____type cdr;
 };
