@@ -138,9 +138,9 @@ grammar Code = {
   rule Postfix:Form = form:Primary ( '[' form2:Expression ']'
                                        form:{Compound_Form( '[]',
 							    list( form, form2))}
-                                     | '.' id:Lexical.Id
+                                     | '.' sf:@Replaceable<id:Lexical.Id {Symbol_Form( id)}>
 				       form:{Compound_Form( '[]',
-						       list( form, Symbol_Form( id)))}
+						       list( form, sf))}
                                      | '(' form_list:Expression_List ')'
 				       form:{Compound_Form( 'funcall',
 							    cons( form, form_list))}
