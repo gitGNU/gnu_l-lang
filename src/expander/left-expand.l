@@ -8,13 +8,15 @@ include "include/l/type.l";
 
 /* XXX: This should be defined in a file form.l  */
 
-type Pattern_Return = struct {
+/* This is compile_time only because of a bug in the order of treatment of
+   type_alias vs type. */
+compile_time type Pattern_Return = struct {
   verification:Form;
   extraction:Form;
 }* ;
 
-//type Left_Expander = ((Compound_Form, Expanded_Form) -> Pattern_Return)*;
-type_alias Left_Expander = ((Compound_Form, Expanded_Form) -> Form)*;
+type_alias Left_Expander = ((Compound_Form, Expanded_Form) -> Pattern_Return)*;
+//type_alias Left_Expander = ((Compound_Form, Expanded_Form) -> Form)*;
 // Really, should be type Left_Expander = .... + subtype Left_Expander ....
 // where .... is in both case ((Compound_Form, Expanded_Form) -> Form)*.
 // This should be shortened as:
@@ -35,19 +37,30 @@ init__left_expand() -> Void =
   left_expander_hash['let'] = &left_expand_let;
   left_expander_hash['@deref'] = &left_expand_deref;
   left_expander_hash['deref'] = &left_expand_deref;
-  left_expander_hash['tuple'] = &left_expand_deref;
+  left_expander_hash['tuple'] = &left_expand_tuple;
 };
 
+/* Maybe should be in expand_equal directly.  */
 function
 left_expand( assignee:Form, expression:Expanded_Form) -> Form =
+{
+  let pr = left_expand_rec( assignee, expression);
+
+  //XXX: transformer toute les verifications en assertions.
+  pr.extraction
+};
+
+
+function
+left_expand_rec( assignee:Form, expression:Expanded_Form) -> Pattern_Return =
 {
   if( not( is_compound_form( assignee)))
     {
       let expanded_assignee = expand( assignee);
-
-      cast( Form, Expanded_Form( Form( $expanded_assignee$ = $coerced_form( expression,
-									    expanded_assignee.type)$),
-				 expanded_assignee.type))
+      Pattern_Return( verification:Form(()),
+		      extraction:Expanded_Form( Form( $expanded_assignee$ = $coerced_form( expression,
+											   expanded_assignee.type)$),
+						expanded_assignee.type))
     }
   else
     {
@@ -70,7 +83,7 @@ left_expand( assignee:Form, expression:Expanded_Form) -> Form =
 
 
 function
-left_expand_let( cf:Compound_Form, expression:Expanded_Form) -> Form =
+left_expand_let( cf:Compound_Form, expression:Expanded_Form) -> Pattern_Return =
 {
   let id_form = cast( Id_Form, cf.form_list.head);
 
@@ -96,12 +109,13 @@ left_expand_let( cf:Compound_Form, expression:Expanded_Form) -> Form =
   let exp_let = Expanded_Form( Id_Form( new_symbol),
 			       id_type);
 
-  Expanded_Form( Form( $exp_let$ = $new_expression$),
-		 id_type)
+  Pattern_Return( verification:Form( ()),
+		  extraction:Expanded_Form( Form( $exp_let$ = $new_expression$),
+					    id_type))
 };
 
 function
-left_expand_deref( cf:Compound_Form, expression:Expanded_Form) -> Form =
+left_expand_deref( cf:Compound_Form, expression:Expanded_Form) -> Pattern_Return =
 {
   let refed = cf.form_list.head;
   let expanded_refed = expand( refed);
@@ -112,8 +126,9 @@ left_expand_deref( cf:Compound_Form, expression:Expanded_Form) -> Form =
   let exp_deref = Expanded_Form( Form( deref( $expanded_refed$)),
 				 pointed_type);
 
-  Expanded_Form( Form( $exp_deref$ = $expression$),
-		 pointed_type)
+  Pattern_Return( verification:Form( ()),
+		  extraction:Expanded_Form( Form( $exp_deref$ = $expression$),
+					    pointed_type))
 };
 
 /* Note: With expansion of tuples we really begin patterning, so _
@@ -146,14 +161,74 @@ left_expand_deref( cf:Compound_Form, expression:Expanded_Form) -> Form =
    Simple_Tuple<> or something.
 
    This function could provide the meaning for () by transforming this
-   on two affectations: one to a temporary Tuple<>, the second from it.
+   on two affectations: one to a temporary Tuple<>, the second from
+   it.  There are additional complications because some affectations
+   will be transformed into something else, for instance to a call to
+   `puthash'.
 */
 function
-left_expand_tuple (cf:Compound_Form, expression:Expanded_Form) -> Form =
+left_expand_tuple (cf:Compound_Form, expression:Expanded_Form) -> Pattern_Return =
 {
-  /* Note: this was handled by left-expand.c that this function replace.  */
-  panic( "Not yet handled\n");
-  cast( Form, 0)
+
+  /* We infact have a need for simultaneous making of two lists.  */
+  let id_list:List<Symbol>;
+  let assign_form_list:List<Expanded_Form>;
+  {
+    let id_list_ptr = &id_list;
+    let assign_form_list_ptr = &assign_form_list;
+
+    let gform = cast( Compound_Form, expression.return_form);
+    assert( is_compound_form( gform));
+    assert( gform.head == 'tuple');
+
+    foreach( let subexpr in gform.form_list)
+      {
+	let tuple_copy = gensym( "tuple");
+	*id_list_ptr = cons( tuple_copy, cast( List<Symbol>, 0));
+	id_list_ptr = &((*id_list_ptr).tail);
+	
+	//	let copy_form = Form( let $Id_Form(tuple_copy)$ = $subexpr$);
+	//	let copy_form = Form( let $Id_Form(tuple_copy)$ = $subexpr$);
+	let copy_form = Compound_Form( '=',
+				       list( Compound_Form( 'let',
+							    list( Id_Form( tuple_copy))),
+					     subexpr));
+	
+	*assign_form_list_ptr = cons( expand( copy_form), cast( List<Expanded_Form>, 0));
+	assign_form_list_ptr = &((*assign_form_list_ptr).tail);
+      };
+    *assign_form_list_ptr = cast( List<Expanded_Form>, 0);
+    *id_list_ptr = cast( List<Symbol>, 0);
+  };
+    
+  /* Now, left-expand the left forms normally.  */
+  let cur_id = id_list;
+  let second_assign_list:List<Form>;
+  {
+    let second_assign_list_ptr = &second_assign_list;
+    
+    foreach( let cur_form in cf.form_list)
+      {
+	assert( cur_id != cast( List<Symbol>, 0)); /* XXX: for now. */
+	let id = cur_id.head;
+	*second_assign_list_ptr = cons( left_expand( cur_form, expand( Id_Form( id))),
+					cast( List<Form>, 0));
+	second_assign_list_ptr = &((*second_assign_list_ptr).tail);
+	cur_id = cur_id.tail;
+      };
+    
+    *second_assign_list_ptr = cast( List<Form>, 0);
+  };
+
+  assert( cur_id == cast( List<Symbol>, 0));
+  //  let return_form = Form( ($assign_form_list$; $second_assign_list$));
+  let return_form = Compound_Form( 'seq',
+				   list( Compound_Form( 'seq', cast( List<Form>,
+								     assign_form_list)),
+					 Compound_Form( 'seq', second_assign_list)));
+  
+  Pattern_Return( verification:Form( ()),
+		  extraction:expand( return_form))
 };
 
 function

@@ -175,8 +175,14 @@ left_expand_access(generic_form_t form,
 	     asprint_type (accessed_type));
     }
 
-  return laccesser (accessed_type, expanded_accessed,
-		    expanded_accessor, expression);
+  expanded_form_t left_expanded_access = laccesser (accessed_type, expanded_accessed,
+						    expanded_accessor, expression);
+
+  /* Should not be a cons, but a Pattern_Return.  */
+  return (CONS( generic_form_symbol( SYMBOL( tuple), NULL),
+    		left_expanded_access));
+  //    return left_expanded_access;
+	       
 }
 
 expanded_form_t

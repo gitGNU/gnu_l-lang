@@ -47,7 +47,16 @@ struct struct0x0805f9e0 {
 Form__type car;
 List__O__Form__C____type cdr;
 };
-typedef struct struct0x08590a98 *Pointer_Type__type;
+typedef struct struct0x081f9ae0 *List__O__Expanded_Form__C____type;
+struct struct0x081f9ae0 {
+Expanded_Form__type head;
+List__O__Expanded_Form__C____type tail;
+};
+struct struct0x08218c30 {
+Expanded_Form__type car;
+List__O__Expanded_Form__C____type cdr;
+};
+typedef struct struct0x085a2668 *Pointer_Type__type;
 struct struct0x0805e088 {
 Int__type type_type;
 Form__type type_form;
@@ -55,12 +64,28 @@ Int__type size;
 Int__type alignment;
 };
 typedef struct struct0x0805e088 Common_To_All_Type__type;
-struct struct0x08590a98 {
+struct struct0x085a2668 {
 Common_To_All_Type__type common_;
 Type__type pointed_type;
 };
+typedef struct struct0x085b70a8 *Pattern_Return__type;
+struct struct0x085b70a8 {
+Form__type verification;
+Form__type extraction;
+};
 typedef Hash_Table__type Hash__O__Symbol__c__Left_Expander__C____type;
+typedef struct struct0x085d0028 *List__O__Symbol__C____type;
+struct struct0x085d0028 {
+Symbol__type head;
+List__O__Symbol__C____type tail;
+};
+struct struct0x085d8d60 {
+Symbol__type car;
+List__O__Symbol__C____type cdr;
+};
 Bool__type (is_compound_form)(Form__type );
+Form__type (Symbol_Form)(Symbol__type );
+void *(GC_alloc)(Int__type );
 Symbol__type (insert_local_variable)(Symbol__type , Type__type );
 void (exit)(Int__type );
 void (print_Symbol)(Symbol__type );
@@ -69,21 +94,33 @@ Hash_Table__type (make_hash_table)(void);
 void (print_String)(String__type );
 void (flush)(void);
 void (maybe_flush)(void);
+Form__type (Int_Form)(Int__type );
 void *(gethash)(void *, Hash_Table__type );
 void *(puthash)(void *, void *, Hash_Table__type );
 Form__type (Id_Form)(Symbol__type );
 Expanded_Form__type (Expanded_Form)(Form__type , Type__type );
 Form__type (Compound_Form)(Symbol__type , List__O__Form__C____type );
+Int__type (print_form)(Form__type );
 Type__type (intern_type)(Form__type );
 Expanded_Form__type (expand)(Form__type );
 Expanded_Form__type (coerced_form)(Expanded_Form__type , Type__type );
-Form__type (left_expand_deref)(Compound_Form__type , Expanded_Form__type );
-Form__type (left_expand_let)(Compound_Form__type , Expanded_Form__type );
-Form__type (left_expand_tuple)(Compound_Form__type , Expanded_Form__type );
+Symbol__type (gensym)(String__type );
+Pattern_Return__type (left_expand_deref)(Compound_Form__type , Expanded_Form__type );
+Pattern_Return__type (left_expand_let)(Compound_Form__type , Expanded_Form__type );
+Pattern_Return__type (left_expand_tuple)(Compound_Form__type , Expanded_Form__type );
+Form__type (left_expand)(Form__type , Expanded_Form__type );
+Pattern_Return__type (left_expand_rec)(Form__type , Expanded_Form__type );
 Output_Descriptor__type current_output_descriptor;
 Output_Descriptor__type stdout_output_descriptor;
 Output_Descriptor__type stderr_output_descriptor;
 static struct { unsigned int length; char *content; } __string_1 = { 8, "Panic : "};
 static struct { unsigned int length; char *content; } __string_2 = { 36, "Error: no left expander defined for "};
-static struct { unsigned int length; char *content; } __string_3 = { 8, "Panic : "};
-static struct { unsigned int length; char *content; } __string_4 = { 16, "Not yet handled\n"};
+static struct { unsigned int length; char *content; } __string_3 = { 10, "Assertion "};
+static struct { unsigned int length; char *content; } __string_4 = { 8, " failed\n"};
+static struct { unsigned int length; char *content; } __string_5 = { 10, "Assertion "};
+static struct { unsigned int length; char *content; } __string_6 = { 8, " failed\n"};
+static struct { unsigned int length; char *content; } __string_7 = { 5, "tuple"};
+static struct { unsigned int length; char *content; } __string_8 = { 10, "Assertion "};
+static struct { unsigned int length; char *content; } __string_9 = { 8, " failed\n"};
+static struct { unsigned int length; char *content; } __string_10 = { 10, "Assertion "};
+static struct { unsigned int length; char *content; } __string_11 = { 8, " failed\n"};
