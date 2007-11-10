@@ -276,6 +276,10 @@ insert_id( symbol_t symbol, int can_shadow, Species species, ...)
   va_list ap;
   va_start( ap, species);
 
+  if(block_list == NULL)
+    panic( "Creating a local empty when there are no containing block\n");
+
+  
   int is_shadowing = 0;
   {
     /* Check if id is already present.  */
@@ -600,6 +604,9 @@ expand_seq(generic_form_t form)
 expanded_form_t
 expand_let(generic_form_t form)
 {
+  if(form->form_list->next == NULL)
+    panic( "Let declarations must be followed by :type when not followed by =\n");
+  
   type_form_t type_form = CAR (form->form_list->next);
   id_form_t id_form = CAR (form->form_list);
 
